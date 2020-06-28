@@ -1,0 +1,71 @@
+epochs: 200
+isTrain: True
+output_dir: output_dir
+lambda_L1: 100
+
+model:
+  name: Pix2PixModel
+  generator:
+    name: UnetGenerator
+    norm_type: batch
+    input_nc: 3
+    output_nc: 3
+    num_downs: 8 #unet256
+    ngf: 64
+    use_dropout: False
+  discriminator:
+    name: NLayerDiscriminator
+    ndf: 64
+    n_layers: 3
+    input_nc: 6
+    norm_type: batch
+  gan_mode: vanilla
+
+dataset:
+  train:
+    name: AlignedDataset
+    dataroot: data/cityscapes
+    phase: train
+    max_dataset_size: inf
+    direction: BtoA
+    input_nc: 3
+    output_nc: 3
+    serial_batches: False
+    pool_size: 0
+    transform:
+      load_size: 286
+      crop_size: 256
+      preprocess: resize_and_crop
+      no_flip: False
+  test:
+    name: AlignedDataset
+    dataroot: data/cityscapes/
+    phase: test
+    max_dataset_size: inf
+    direction: BtoA
+    input_nc: 3
+    output_nc: 3
+    serial_batches: True
+    pool_size: 50
+    transform:
+      load_size: 256
+      crop_size: 256
+      preprocess: resize_and_crop
+      no_flip: True
+
+optimizer:
+  name: Adam
+  beta1: 0.5
+  lr_scheduler:
+    name: linear
+    learning_rate: 0.0002
+    start_epoch: 100
+    decay_epochs: 100
+
+log_config:
+  interval: 100
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 5
+  

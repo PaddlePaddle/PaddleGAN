@@ -1,0 +1,74 @@
+epochs: 200
+isTrain: True
+output_dir: output_dir
+lambda_A: 10.0
+lambda_B: 10.0
+lambda_identity: 0.5
+
+model:
+  name: CycleGANModel
+  defaults: &defaults
+    norm_type: instance
+    input_nc: 3
+  generator:
+    name: ResnetGenerator
+    output_nc: 3
+    n_blocks: 9
+    ngf: 64
+    use_dropout: False
+    <<: *defaults
+  discriminator:
+    name: NLayerDiscriminator
+    ndf: 64
+    n_layers: 3
+    <<: *defaults
+  gan_mode: lsgan
+
+dataset:
+  train:
+    name: UnalignedDataset
+    dataroot: data/cityscapes
+    phase: train
+    max_dataset_size: inf
+    direction: AtoB
+    input_nc: 3
+    output_nc: 3
+    serial_batches: False
+    pool_size: 50
+    transform:
+      load_size: 286
+      crop_size: 256
+      preprocess: resize_and_crop
+      no_flip: False
+  test:
+    name: SingleDataset
+    dataroot: data/cityscapes/testB
+    max_dataset_size: inf
+    direction: BtoA
+    input_nc: 3
+    output_nc: 3
+    serial_batches: False
+    pool_size: 50
+    transform:
+      load_size: 256
+      crop_size: 256
+      preprocess: resize_and_crop
+      no_flip: True
+
+
+optimizer:
+  name: Adam
+  beta1: 0.5
+  lr_scheduler:
+    name: linear
+    learning_rate: 0.0004
+    start_epoch: 100
+    decay_epochs: 100
+
+log_config:
+  interval: 100
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 5
+  
