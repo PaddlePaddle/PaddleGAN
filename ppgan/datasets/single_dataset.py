@@ -33,15 +33,9 @@ class SingleDataset(BaseDataset):
             A_paths(str) - - the path of the image
         """
         A_path = self.A_paths[index]
-        # A_img = Image.open(A_path).convert('RGB')
         A_img = cv2.imread(A_path)
         A = self.transform(A_img)
-        # items = {}
-        # if self.cfg.direction == 'AtoB':
-        #     items = {'A': A, 'A_paths': A_path}
-        # else:
-        #     items = {'B': A, 'B_paths': A_path}
-        # return items
+
         return {'A': A, 'A_paths': A_path}
 
     def __len__(self):
