@@ -97,13 +97,12 @@ class DictDataLoader():
         if isinstance(indexs, paddle.Variable):
             indexs = indexs.numpy()
         current_items = []
-        items = getattr(self.dataset, key)
+        items = self.dataset.non_tensor_dict[key]
 
         for index in indexs:
             current_items.append(items[index])
 
         return current_items
-
 
 
 def build_dataloader(cfg, is_train=True):
