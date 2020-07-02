@@ -84,32 +84,50 @@ class CycleGANModel(BaseModel):
 
         The option 'direction' can be used to swap domain A and domain B.
         """
-        AtoB = self.opt.dataset.train.direction == 'AtoB'
+        mode = 'train' if self.isTrain else 'test'
+        AtoB = self.opt.dataset[mode].direction == 'AtoB'
         
-        self.real_A = paddle.imperative.to_variable(input[0] if AtoB else input[1])
-        self.real_B = paddle.imperative.to_variable(input[1] if AtoB else input[0])
+        if AtoB:
+            if 'A' in input:
+                self.real_A = paddle.imperative.to_variable(input['A'])
+            if 'B' in input:
+                self.real_B = paddle.imperative.to_variable(input['B'])
+        else:
+            if 'B' in input:
+                self.real_A = paddle.imperative.to_variable(input['B'])
+            if 'A' in input:
+                self.real_B = paddle.imperative.to_variable(input['A'])
+
+        if 'A_paths' in input:
+            self.image_paths = input['A_paths']
+        elif 'B_paths' in input:
+            self.image_paths = input['B_paths']
+        # self.image_paths = input['A_paths' if AtoB else 'B_paths']
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
-        self.fake_B = self.netG_A(self.real_A)  # G_A(A)
-        self.rec_A = self.netG_B(self.fake_B)   # G_B(G_A(A))
-        self.fake_A = self.netG_B(self.real_B)  # G_B(B)
-        self.rec_B = self.netG_A(self.fake_A)   # G_A(G_B(B))
+        if hasattr(self, 'real_A'):
+            self.fake_B = self.netG_A(self.real_A)  # G_A(A)
+            self.rec_A = self.netG_B(self.fake_B)   # G_B(G_A(A))
+
+        if hasattr(self, 'real_B'):
+            self.fake_A = self.netG_B(self.real_B)  # G_B(B)
+            self.rec_B = self.netG_A(self.fake_A)   # G_A(G_B(B))
 
 
-    def forward_test(self, input):
-        input = paddle.imperative.to_variable(input)
-        net_g = getattr(self, 'netG_' + self.opt.dataset.test.direction[0])
-        return net_g(input)
+    # def forward_test(self, input):
+    #     input = paddle.imperative.to_variable(input)
+    #     net_g = getattr(self, 'netG_' + self.opt.dataset.test.direction[0])
+    #     return net_g(input)
 
-    def test(self, input):
-        """Forward function used in test time.
+    # def test(self, input):
+    #     """Forward function used in test time.
 
-        This function wraps <forward> function in no_grad() so we don't save intermediate steps for backprop
-        It also calls <compute_visuals> to produce additional visualization results
-        """
-        with paddle.imperative.no_grad():
-            return self.forward_test(input)
+    #     This function wraps <forward> function in no_grad() so we don't save intermediate steps for backprop
+    #     It also calls <compute_visuals> to produce additional visualization results
+    #     """
+    #     with paddle.imperative.no_grad():
+    #         return self.forward_test(input)
 
     def backward_D_basic(self, netD, real, fake):
         """Calculate GAN loss for the discriminator

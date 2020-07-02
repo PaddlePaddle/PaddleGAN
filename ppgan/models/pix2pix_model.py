@@ -83,8 +83,11 @@ class Pix2PixModel(BaseModel):
         # self.real_B = input['B' if AtoB else 'A'].to(self.device)
         # self.image_paths = input['A_paths' if AtoB else 'B_paths']
         AtoB = self.opt.dataset.train.direction == 'AtoB'
-        self.real_A = paddle.imperative.to_variable(input[0] if AtoB else input[1])
-        self.real_B = paddle.imperative.to_variable(input[1] if AtoB else input[0])
+        self.real_A = paddle.imperative.to_variable(input['A' if AtoB else 'B'])
+        self.real_B = paddle.imperative.to_variable(input['B' if AtoB else 'A'])
+        self.image_paths = input['A_paths' if AtoB else 'B_paths']
+        # self.real_A = paddle.imperative.to_variable(input[0] if AtoB else input[1])
+        # self.real_B = paddle.imperative.to_variable(input[1] if AtoB else input[0])
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
@@ -94,14 +97,14 @@ class Pix2PixModel(BaseModel):
         input = paddle.imperative.to_variable(input)
         return self.netG(input)
 
-    def test(self, input):
-        """Forward function used in test time.
+    # def test(self, input):
+    #     """Forward function used in test time.
 
-        This function wraps <forward> function in no_grad() so we don't save intermediate steps for backprop
-        It also calls <compute_visuals> to produce additional visualization results
-        """
-        with paddle.imperative.no_grad():
-            return self.forward_test(input)
+    #     This function wraps <forward> function in no_grad() so we don't save intermediate steps for backprop
+    #     It also calls <compute_visuals> to produce additional visualization results
+    #     """
+    #     with paddle.imperative.no_grad():
+    #         return self.forward_test(input)
             
     def backward_D(self):
         """Calculate GAN loss for the discriminator"""

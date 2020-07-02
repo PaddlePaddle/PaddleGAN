@@ -1,5 +1,6 @@
 import os
 import time
+
 import logging
 
 from paddle.imperative import ParallelEnv
@@ -7,7 +8,7 @@ from paddle.imperative import ParallelEnv
 from ..datasets.builder import build_dataloader
 from ..models.builder import build_model
 from ..utils.visual import tensor2img, save_image
-from ..utils.filesystems import save, load, makedirs
+from ..utils.filesystem import save, load, makedirs
 
 
 class Trainer:
@@ -45,6 +46,7 @@ class Trainer:
             for i, data in enumerate(self.train_dataloader):
                 self.batch_id = i
                 # unpack data from dataset and apply preprocessing
+                # data input should be dict
                 self.model.set_input(data)
                 self.model.optimize_parameters()
 
@@ -67,26 +69,21 @@ class Trainer:
         # test batch size must be 1
         for i, data in enumerate(self.test_dataloader):
             self.batch_id = i
-            # FIXME: dataloader not support map input, hard code now!!!
-            if self.cfg.dataset.test.name == 'AlignedDataset':
-                if self.cfg.dataset.test.direction == 'BtoA':
-                    fake = self.model.test(data[1])
-                else:
-                    fake = self.model.test(data[0])
-            elif self.cfg.dataset.test.name == 'SingleDataset':
-                fake = self.model.test(data[0])
-                
-            current_paths = self.test_dataloader.dataset.get_path_by_indexs(data[-1])
+
+            self.model.set_input(data)
+            self.model.test()
 
             visual_results = {}
-            for j in range(len(current_paths)):
-                name = os.path.basename(current_paths[j])
-                name = os.path.splitext(name)[0]
+            current_paths = self.model.get_image_paths()
+            current_visuals = self.model.get_current_visuals()
 
-                visual_results.update({name + '_fakeB': fake[j]})
-            visual_results.update({name + '_realA': data[1]})
-            visual_results.update({name + '_realB': data[0]})
-            # visual_results.update({'realB': data[1]})
+            for j in range(len(current_paths)):
+                short_path = os.path.basename(current_paths[j])
+                basename = os.path.splitext(short_path)[0]
+                for k, img_tensor in current_visuals.items():
+                    name = '%s_%s' % (basename, k)
+                    visual_results.update({name: img_tensor[j]})
+
             self.visual('visual_test', visual_results=visual_results)
             
             if i % self.log_interval == 0:

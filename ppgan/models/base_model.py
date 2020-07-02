@@ -83,14 +83,14 @@ class BaseModel(ABC):
                 net = getattr(self, 'net' + name)
                 net.eval()
 
-    def test(self, input):
+    def test(self):
         """Forward function used in test time.
 
         This function wraps <forward> function in no_grad() so we don't save intermediate steps for backprop
         It also calls <compute_visuals> to produce additional visualization results
         """
         with paddle.imperative.no_grad():
-            self.forward_test()
+            self.forward()
             self.compute_visuals()
 
     def compute_visuals(self):
@@ -105,7 +105,7 @@ class BaseModel(ABC):
         """Return visualization images. train.py will display these images with visdom, and save the images to a HTML"""
         visual_ret = OrderedDict()
         for name in self.visual_names:
-            if isinstance(name, str):
+            if isinstance(name, str) and hasattr(self, name):
                 visual_ret[name] = getattr(self, name)
         return visual_ret
 

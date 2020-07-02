@@ -11,16 +11,15 @@ def save(state_dicts, file_name):
 
     def convert(state_dict):
         model_dict = {}
-        name_table = {}
+        # name_table = {}
         for k, v in state_dict.items():
             if isinstance(v, (paddle.framework.Variable, paddle.imperative.core.VarBase)):
                 model_dict[k] = v.numpy()
             else:
                 model_dict[k] = v
-                print('enter k', k)
                 return state_dict
-            name_table[k] = v.name
-        model_dict["StructuredToParameterName@@"] = name_table
+        #     name_table[k] = v.name
+        # model_dict["StructuredToParameterName@@"] = name_table
         return model_dict
 
     final_dict = {}

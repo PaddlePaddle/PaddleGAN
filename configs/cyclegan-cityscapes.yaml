@@ -61,7 +61,7 @@ optimizer:
   beta1: 0.5
   lr_scheduler:
     name: linear
-    learning_rate: 0.0004
+    learning_rate: 0.0002
     start_epoch: 100
     decay_epochs: 100
 

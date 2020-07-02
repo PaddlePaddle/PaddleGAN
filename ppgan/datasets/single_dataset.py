@@ -36,7 +36,13 @@ class SingleDataset(BaseDataset):
         # A_img = Image.open(A_path).convert('RGB')
         A_img = cv2.imread(A_path)
         A = self.transform(A_img)
-        return (A, index) #{'A': A, 'A_paths': A_path}
+        # items = {}
+        # if self.cfg.direction == 'AtoB':
+        #     items = {'A': A, 'A_paths': A_path}
+        # else:
+        #     items = {'B': A, 'B_paths': A_path}
+        # return items
+        return {'A': A, 'A_paths': A_path}
 
     def __len__(self):
         """Return the total number of images in the dataset."""
