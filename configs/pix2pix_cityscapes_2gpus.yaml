@@ -23,7 +23,7 @@ model:
 
 dataset:
   train:
-    name: AlignedDataset
+    name: PairedDataset
     dataroot: data/cityscapes
     phase: train
     max_dataset_size: inf
@@ -38,7 +38,7 @@ dataset:
       preprocess: resize_and_crop
       no_flip: False
   test:
-    name: AlignedDataset
+    name: PairedDataset
     dataroot: data/cityscapes/
     phase: test
     max_dataset_size: inf

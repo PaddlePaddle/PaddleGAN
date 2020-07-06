@@ -1,7 +1,16 @@
+English | [简体中文](./README.md)
+
 # PaddleGAN
 
 still under development!!
 
+## Download Dataset
+This script could download several dataset for paired images for image2image translation task.
+
+```
+cd PaddleGAN/script/
+bash pix2pix_download.sh [cityscapes|facades|edges2handbags|edges2shoes|maps]
+```
 ## Train
 ```
 python -u tools/main.py --config-file configs/cyclegan-cityscapes.yaml

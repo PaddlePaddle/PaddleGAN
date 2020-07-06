@@ -5,7 +5,7 @@ from .builder import MODELS
 from .generators.builder import build_generator
 from .discriminators.builder import build_discriminator
 from .losses import GANLoss
-# from ..modules.nn import L1Loss
+
 from ..solver import build_optimizer
 from ..utils.image_pool import ImagePool
 
@@ -27,7 +27,7 @@ class CycleGANModel(BaseModel):
         """Initialize the CycleGAN class.
 
         Parameters:
-            opt (Option class)-- stores all the experiment flags; needs to be a subclass of BaseOptions
+            opt (config)-- stores all the experiment flags; needs to be a subclass of Dict
         """
         BaseModel.__init__(self, opt)
         # specify the training losses you want to print out. The training/test scripts will call <BaseModel.get_current_losses>
@@ -35,12 +35,15 @@ class CycleGANModel(BaseModel):
         # specify the images you want to save/display. The training/test scripts will call <BaseModel.get_current_visuals>
         visual_names_A = ['real_A', 'fake_B', 'rec_A']
         visual_names_B = ['real_B', 'fake_A', 'rec_B']
-        if self.isTrain and self.opt.lambda_identity > 0.0:  # if identity loss is used, we also visualize idt_B=G_A(B) ad idt_A=G_A(B)
+
+         # if identity loss is used, we also visualize idt_B=G_A(B) ad idt_A=G_A(B)
+        if self.isTrain and self.opt.lambda_identity > 0.0:
             visual_names_A.append('idt_B')
             visual_names_B.append('idt_A')
 
-        self.visual_names = visual_names_A + visual_names_B  # combine visualizations for A and B
-        # specify the models you want to save to the disk. The training/test scripts will call <BaseModel.save_networks> and <BaseModel.load_networks>.
+        # combine visualizations for A and B
+        self.visual_names = visual_names_A + visual_names_B
+        # specify the models you want to save to the disk.
         if self.isTrain:
             self.model_names = ['G_A', 'G_B', 'D_A', 'D_B']
         else:  # during test time, only load Gs
@@ -59,22 +62,22 @@ class CycleGANModel(BaseModel):
         if self.isTrain:
             if opt.lambda_identity > 0.0:  # only works when input and output images have the same number of channels
                 assert(opt.dataset.train.input_nc == opt.dataset.train.output_nc)
-            self.fake_A_pool = ImagePool(opt.dataset.train.pool_size)  # create image buffer to store previously generated images
-            self.fake_B_pool = ImagePool(opt.dataset.train.pool_size)  # create image buffer to store previously generated images
+            # create image buffer to store previously generated images
+            self.fake_A_pool = ImagePool(opt.dataset.train.pool_size)
+            # create image buffer to store previously generated images
+            self.fake_B_pool = ImagePool(opt.dataset.train.pool_size)
             # define loss functions
-            self.criterionGAN = GANLoss(opt.model.gan_mode, [[[[1.0]]]], [[[[0.0]]]])#.to(self.device)  # define GAN loss.
+            self.criterionGAN = GANLoss(opt.model.gan_mode)
             self.criterionCycle = paddle.nn.L1Loss() 
             self.criterionIdt = paddle.nn.L1Loss()
             
             self.optimizer_G =  build_optimizer(opt.optimizer, parameter_list=self.netG_A.parameters() + self.netG_B.parameters())
             self.optimizer_D = build_optimizer(opt.optimizer, parameter_list=self.netD_A.parameters() + self.netD_B.parameters())
-            # self.optimizer_DA = build_optimizer(opt.optimizer, parameter_list=self.netD_A.parameters()) 
-            # self.optimizer_DB = build_optimizer(opt.optimizer, parameter_list=self.netD_B.parameters()) 
+
             self.optimizers.append(self.optimizer_G)
             self.optimizers.append(self.optimizer_D)
-            # self.optimizers.append(self.optimizer_DA)
-            # self.optimizers.append(self.optimizer_DB)
-            self.optimizer_names.extend(['optimizer_G', 'optimizer_D'])#A', 'optimizer_DB'])
+
+            self.optimizer_names.extend(['optimizer_G', 'optimizer_D'])
 
     def set_input(self, input):
         """Unpack input data from the dataloader and perform necessary pre-processing steps.
@@ -102,7 +105,7 @@ class CycleGANModel(BaseModel):
             self.image_paths = input['A_paths']
         elif 'B_paths' in input:
             self.image_paths = input['B_paths']
-        # self.image_paths = input['A_paths' if AtoB else 'B_paths']
+
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
@@ -114,20 +117,6 @@ class CycleGANModel(BaseModel):
             self.fake_A = self.netG_B(self.real_B)  # G_B(B)
             self.rec_B = self.netG_A(self.fake_A)   # G_A(G_B(B))
 
-
-    # def forward_test(self, input):
-    #     input = paddle.imperative.to_variable(input)
-    #     net_g = getattr(self, 'netG_' + self.opt.dataset.test.direction[0])
-    #     return net_g(input)
-
-    # def test(self, input):
-    #     """Forward function used in test time.
-
-    #     This function wraps <forward> function in no_grad() so we don't save intermediate steps for backprop
-    #     It also calls <compute_visuals> to produce additional visualization results
-    #     """
-    #     with paddle.imperative.no_grad():
-    #         return self.forward_test(input)
 
     def backward_D_basic(self, netD, real, fake):
         """Calculate GAN loss for the discriminator
@@ -193,27 +182,26 @@ class CycleGANModel(BaseModel):
     def optimize_parameters(self):
         """Calculate losses, gradients, and update network weights; called in every training iteration"""
         # forward
-        self.forward()      # compute fake images and reconstruction images.
+        # compute fake images and reconstruction images.
+        self.forward()
         # G_A and G_B
-        self.set_requires_grad([self.netD_A, self.netD_B], False)  # Ds require no gradients when optimizing Gs
-        self.optimizer_G.clear_gradients() #zero_grad()  # set G_A and G_B's gradients to zero
-        self.backward_G()             # calculate gradients for G_A and G_B
-        self.optimizer_G.minimize(self.loss_G) #step()       # update G_A and G_B's weights
-        # self.optimizer_G.clear_gradients()
-        # self.optimizer_G.clear_gradients()
+        # Ds require no gradients when optimizing Gs
+        self.set_requires_grad([self.netD_A, self.netD_B], False)
+        # set G_A and G_B's gradients to zero
+        self.optimizer_G.clear_gradients()
+        # calculate gradients for G_A and G_B
+        self.backward_G()
+        # update G_A and G_B's weights
+        self.optimizer_G.minimize(self.loss_G)
         # D_A and D_B
         self.set_requires_grad([self.netD_A, self.netD_B], True)
-        # self.set_requires_grad(self.netD_A, True)
-        self.optimizer_D.clear_gradients() #zero_grad()   # set D_A and D_B's gradients to zero
-        self.backward_D_A()      # calculate gradients for D_A
-        self.backward_D_B()      # calculate graidents for D_B
-        self.optimizer_D.minimize(self.loss_D_A + self.loss_D_B)  # update D_A and D_B's weights
-        # self.backward_D_A()      # calculate gradients for D_A
-        # self.optimizer_DA.minimize(self.loss_D_A) #step()  # update D_A and D_B's weights
-        # self.optimizer_DA.clear_gradients() #zero_g
-        # self.set_requires_grad(self.netD_B, True)
-        # self.optimizer_DB.clear_gradients() #zero_grad()   # set D_A and D_B's gradients to zero
 
-        # self.backward_D_B()      # calculate graidents for D_B
-        # self.optimizer_DB.minimize(self.loss_D_B) #step()  # update D_A and D_B's weights
-        # self.optimizer_DB.clear_gradients() #zero_grad()   # set D_A and D_B's gradients to zero
+        # set D_A and D_B's gradients to zero
+        self.optimizer_D.clear_gradients()
+        # calculate gradients for D_A
+        self.backward_D_A()
+        # calculate graidents for D_B
+        self.backward_D_B()
+          # update D_A and D_B's weights
+        self.optimizer_D.minimize(self.loss_D_A + self.loss_D_B)
+

@@ -23,8 +23,8 @@ model:
 
 dataset:
   train:
-    name: AlignedDataset
-    dataroot: data/cityscapes
+    name: PairedDataset
+    dataroot: data/facades/
     phase: train
     max_dataset_size: inf
     direction: BtoA
@@ -38,8 +38,8 @@ dataset:
       preprocess: resize_and_crop
       no_flip: False
   test:
-    name: AlignedDataset
-    dataroot: data/cityscapes/
+    name: PairedDataset
+    dataroot: data/facades/
     phase: test
     max_dataset_size: inf
     direction: BtoA
@@ -68,4 +68,3 @@ log_config:
 
 snapshot_config:
   interval: 5
-  
