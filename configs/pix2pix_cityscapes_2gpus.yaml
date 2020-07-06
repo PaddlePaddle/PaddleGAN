@@ -23,7 +23,7 @@ model:
 
 dataset:
   train:
-    name: AlignedDataset
+    name: PairedDataset
     dataroot: data/cityscapes
     phase: train
     max_dataset_size: inf
@@ -38,7 +38,7 @@ dataset:
       preprocess: resize_and_crop
       no_flip: False
   test:
-    name: AlignedDataset
+    name: PairedDataset
     dataroot: data/cityscapes/
     phase: test
     max_dataset_size: inf
@@ -58,7 +58,7 @@ optimizer:
   beta1: 0.5
   lr_scheduler:
     name: linear
-    learning_rate: 0.0002
+    learning_rate: 0.0004
     start_epoch: 100
     decay_epochs: 100
 

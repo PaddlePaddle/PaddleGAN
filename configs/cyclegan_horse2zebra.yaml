@@ -1,51 +1,53 @@
 epochs: 200
 isTrain: True
 output_dir: output_dir
-lambda_L1: 100
+lambda_A: 10.0
+lambda_B: 10.0
+lambda_identity: 0.5
 
 model:
-  name: Pix2PixModel
-  generator:
-    name: UnetGenerator
-    norm_type: batch
+  name: CycleGANModel
+  defaults: &defaults
+    norm_type: instance
     input_nc: 3
+  generator:
+    name: ResnetGenerator
     output_nc: 3
-    num_downs: 8 #unet256
+    n_blocks: 9
     ngf: 64
     use_dropout: False
+    <<: *defaults
   discriminator:
     name: NLayerDiscriminator
     ndf: 64
     n_layers: 3
-    input_nc: 6
-    norm_type: batch
-  gan_mode: vanilla
+    <<: *defaults
+  gan_mode: lsgan
 
 dataset:
   train:
-    name: AlignedDataset
-    dataroot: data/cityscapes
+    name: UnpairedDataset
+    dataroot: data/horse2zebra
     phase: train
     max_dataset_size: inf
-    direction: BtoA
+    direction: AtoB
     input_nc: 3
     output_nc: 3
     serial_batches: False
-    pool_size: 0
+    pool_size: 50
     transform:
       load_size: 286
       crop_size: 256
       preprocess: resize_and_crop
       no_flip: False
   test:
-    name: AlignedDataset
-    dataroot: data/cityscapes/
-    phase: test
+    name: SingleDataset
+    dataroot: data/horse2zebra/testA
     max_dataset_size: inf
-    direction: BtoA
+    direction: AtoB
     input_nc: 3
     output_nc: 3
-    serial_batches: True
+    serial_batches: False
     pool_size: 50
     transform:
       load_size: 256
@@ -53,12 +55,13 @@ dataset:
       preprocess: resize_and_crop
       no_flip: True
 
+
 optimizer:
   name: Adam
   beta1: 0.5
   lr_scheduler:
     name: linear
-    learning_rate: 0.0004
+    learning_rate: 0.0002
     start_epoch: 100
     decay_epochs: 100
 

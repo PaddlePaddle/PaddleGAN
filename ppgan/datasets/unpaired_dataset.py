@@ -8,7 +8,7 @@ from .builder import DATASETS
 
 
 @DATASETS.register()
-class UnalignedDataset(BaseDataset):
+class UnpairedDataset(BaseDataset):
     """
     """
 

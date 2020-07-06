@@ -1,3 +1,3 @@
-from .unaligned_dataset import UnalignedDataset
+from .unpaired_dataset import UnpairedDataset
 from .single_dataset import SingleDataset
-from .aligned_dataset import AlignedDataset
+from .paired_dataset import PairedDataset
