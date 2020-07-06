@@ -8,19 +8,19 @@ from .builder import DATASETS
 
 
 @DATASETS.register()
-class AlignedDataset(BaseDataset):
+class PairedDataset(BaseDataset):
     """A dataset class for paired image dataset.
     """
 
-    def __init__(self, opt):
+    def __init__(self, cfg):
         """Initialize this dataset class.
 
         Args:
             cfg (dict) -- stores all the experiment flags
         """
-        BaseDataset.__init__(self, opt)
-        self.dir_AB = os.path.join(opt.dataroot, opt.phase)  # get the image directory
-        self.AB_paths = sorted(make_dataset(self.dir_AB, opt.max_dataset_size))  # get image paths
+        BaseDataset.__init__(self, cfg)
+        self.dir_AB = os.path.join(cfg.dataroot, cfg.phase)  # get the image directory
+        self.AB_paths = sorted(make_dataset(self.dir_AB, cfg.max_dataset_size))  # get image paths
         assert(self.cfg.transform.load_size >= self.cfg.transform.crop_size)   # crop_size should be smaller than the size of loaded image
         self.input_nc = self.cfg.output_nc if self.cfg.direction == 'BtoA' else self.cfg.input_nc
         self.output_nc = self.cfg.input_nc if self.cfg.direction == 'BtoA' else self.cfg.output_nc
