@@ -1,3 +1,4 @@
+import time
 import paddle
 import numbers
 import numpy as np
@@ -23,7 +24,7 @@ class DictDataset(paddle.io.Dataset):
         
         for k, v in single_item.items():
             if not isinstance(v, (numbers.Number, np.ndarray)):
-                self.non_tensor_dict.update({k: {}})
+                setattr(self, k, Manager().dict())
                 self.non_tensor_keys_set.add(k)
             else:
                 self.tensor_keys_set.add(k)
@@ -38,9 +39,7 @@ class DictDataset(paddle.io.Dataset):
             if isinstance(v, (numbers.Number, np.ndarray)):
                 tmp_list.append(v)
             else:
-                tmp_dict = self.non_tensor_dict[k]
-                tmp_dict.update({index: v})
-                self.non_tensor_dict[k] = tmp_dict
+                getattr(self, k).update({index: v})
 
         tmp_list.append(index)
         return tuple(tmp_list)
@@ -50,11 +49,11 @@ class DictDataset(paddle.io.Dataset):
 
     def reset(self):
         for k in self.non_tensor_keys_set:
-            self.non_tensor_dict[k] = {}
+            setattr(self, k, Manager().dict())
 
 
 class DictDataLoader():
-    def __init__(self, dataset, batch_size, is_train, num_workers=0):
+    def __init__(self, dataset, batch_size, is_train, num_workers=4):
 
         self.dataset = DictDataset(dataset)
 
@@ -97,12 +96,13 @@ class DictDataLoader():
         if isinstance(indexs, paddle.Variable):
             indexs = indexs.numpy()
         current_items = []
-        items = self.dataset.non_tensor_dict[key]
+        items = getattr(self.dataset, key)
 
         for index in indexs:
             current_items.append(items[index])
 
         return current_items
+
 
 
 def build_dataloader(cfg, is_train=True):

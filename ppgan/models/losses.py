@@ -4,6 +4,7 @@ import numpy as np
 
 from ..modules.nn import BCEWithLogitsLoss
 
+
 class GANLoss(paddle.fluid.dygraph.Layer):
     """Define different GAN objectives.
 
@@ -23,16 +24,14 @@ class GANLoss(paddle.fluid.dygraph.Layer):
         LSGAN needs no sigmoid. vanilla GANs will handle it with BCEWithLogitsLoss.
         """
         super(GANLoss, self).__init__()
-        self.real_label = paddle.fluid.dygraph.to_variable(np.array(target_real_label))
-        self.fake_label = paddle.fluid.dygraph.to_variable(np.array(target_fake_label))
-        # self.real_label.stop_gradients = True
-        # self.fake_label.stop_gradients = True
+        self.target_real_label = target_real_label
+        self.target_fake_label = target_fake_label
 
         self.gan_mode = gan_mode
         if gan_mode == 'lsgan':
             self.loss = nn.MSELoss()
         elif gan_mode == 'vanilla':
-            self.loss = BCEWithLogitsLoss()#nn.BCEWithLogitsLoss()
+            self.loss = BCEWithLogitsLoss()
         elif gan_mode in ['wgangp']:
             self.loss = None
         else:
@@ -50,14 +49,16 @@ class GANLoss(paddle.fluid.dygraph.Layer):
         """
 
         if target_is_real:
-            target_tensor = paddle.fill_constant(shape=paddle.shape(prediction), value=1.0, dtype='float32')#self.real_label
+            if not hasattr(self, 'target_real_tensor'):
+                self.target_real_tensor = paddle.fill_constant(shape=paddle.shape(prediction), value=self.target_real_label, dtype='float32')
+            target_tensor = self.target_real_tensor
         else:
-            target_tensor = paddle.fill_constant(shape=paddle.shape(prediction), value=0.0, dtype='float32')#self.fake_label
+            if not hasattr(self, 'target_fake_tensor'):
+                self.target_fake_tensor = paddle.fill_constant(shape=paddle.shape(prediction), value=self.target_fake_label, dtype='float32')
+            target_tensor = self.target_fake_tensor
 
-        # target_tensor = paddle.cast(target_tensor, prediction.dtype)
-        # target_tensor = paddle.expand_as(target_tensor, prediction)
         # target_tensor.stop_gradient = True
-        return target_tensor#paddle.expand_as(target_tensor, prediction)
+        return target_tensor
 
     def __call__(self, prediction, target_is_real):
         """Calculate loss given Discriminator's output and grount truth labels.
