@@ -111,6 +111,6 @@ def build_dataloader(cfg, is_train=True):
     batch_size = cfg.get('batch_size', 1)
     num_workers = cfg.get('num_workers', 0)
 
-    dataloader = DictDataLoader(dataset, batch_size, is_train)
+    dataloader = DictDataLoader(dataset, batch_size, is_train, num_workers)
 
     return dataloader

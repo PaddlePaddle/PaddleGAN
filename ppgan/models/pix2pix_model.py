@@ -1,4 +1,5 @@
 import paddle
+from paddle.imperative import ParallelEnv
 from .base_model import BaseModel
 
 from .builder import MODELS
@@ -42,7 +43,6 @@ class Pix2PixModel(BaseModel):
 
         # define networks (both generator and discriminator)
         self.netG = build_generator(opt.model.generator)
-
 
         # define a discriminator; conditional GANs need to take both input and output images; Therefore, #channels for D is input_nc + output_nc
         if self.isTrain:
@@ -98,7 +98,12 @@ class Pix2PixModel(BaseModel):
         self.loss_D_real = self.criterionGAN(pred_real, True)
         # combine loss and calculate gradients
         self.loss_D = (self.loss_D_fake + self.loss_D_real) * 0.5
-        self.loss_D.backward()
+        if ParallelEnv().nranks > 1:
+            self.loss_D = self.netD.scale_loss(self.loss_D)
+            self.loss_D.backward()
+            self.netD.apply_collective_grads()
+        else:
+            self.loss_D.backward()
 
     def backward_G(self):
         """Calculate GAN and L1 loss for the generator"""
@@ -110,8 +115,13 @@ class Pix2PixModel(BaseModel):
         self.loss_G_L1 = self.criterionL1(self.fake_B, self.real_B) * self.opt.lambda_L1
         # combine loss and calculate gradients
         self.loss_G = self.loss_G_GAN + self.loss_G_L1
-        # self.loss_G = self.loss_G_L1
-        self.loss_G.backward()
+
+        if ParallelEnv().nranks > 1:
+            self.loss_G = self.netG.scale_loss(self.loss_G)
+            self.loss_G.backward()
+            self.netG.apply_collective_grads()
+        else:
+            self.loss_G.backward()
 
     def optimize_parameters(self):
         # compute fake images: G(A)

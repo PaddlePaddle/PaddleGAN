@@ -1,4 +1,5 @@
 import paddle
+from paddle.imperative import ParallelEnv
 from .base_model import BaseModel
 
 from .builder import MODELS
@@ -137,7 +138,13 @@ class CycleGANModel(BaseModel):
         loss_D_fake = self.criterionGAN(pred_fake, False)
         # Combined loss and calculate gradients
         loss_D = (loss_D_real + loss_D_fake) * 0.5
-        loss_D.backward()
+        # loss_D.backward()
+        if ParallelEnv().nranks > 1:
+            loss_D = netD.scale_loss(loss_D)
+            loss_D.backward()
+            netD.apply_collective_grads()
+        else:
+            loss_D.backward()
         return loss_D
 
     def backward_D_A(self):
@@ -177,7 +184,14 @@ class CycleGANModel(BaseModel):
         self.loss_cycle_B = self.criterionCycle(self.rec_B, self.real_B) * lambda_B
         # combined loss and calculate gradients
         self.loss_G = self.loss_G_A + self.loss_G_B + self.loss_cycle_A + self.loss_cycle_B + self.loss_idt_A + self.loss_idt_B
-        self.loss_G.backward()
+        
+        if ParallelEnv().nranks > 1:
+            self.loss_G = self.netG_A.scale_loss(self.loss_G)
+            self.loss_G.backward()
+            self.netG_A.apply_collective_grads()
+            self.netG_B.apply_collective_grads()
+        else:
+            self.loss_G.backward()
 
     def optimize_parameters(self):
         """Calculate losses, gradients, and update network weights; called in every training iteration"""
