@@ -36,11 +36,8 @@ class ResnetGenerator(paddle.fluid.dygraph.Layer):
         else:
             use_bias = norm_layer == nn.InstanceNorm
 
-        print('norm layer:', norm_layer, 'use bias:', use_bias)
-
         model = [ReflectionPad2d(3),
                  nn.Conv2D(input_nc, ngf, filter_size=7, padding=0, bias_attr=use_bias),
-                #  nn.nn.Conv2D(input_nc, ngf, filter_size=7, padding=0, bias_attr=use_bias),
                  norm_layer(ngf),
                  nn.ReLU()]
 
@@ -62,8 +59,7 @@ class ResnetGenerator(paddle.fluid.dygraph.Layer):
             model += [
                       nn.Conv2DTranspose(ngf * mult, int(ngf * mult / 2),
                                          filter_size=3, stride=2,
-                                         padding=1, #output_padding=1,
-                                        #  padding='same', #output_padding=1,
+                                         padding=1, 
                                          bias_attr=use_bias),
                       Pad2D(paddings=[0, 1, 0, 1], mode='constant', pad_value=0.0),
                       norm_layer(int(ngf * mult / 2)),

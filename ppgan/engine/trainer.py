@@ -2,8 +2,9 @@ import os
 import time
 
 import logging
+import paddle
 
-from paddle.imperative import ParallelEnv
+from paddle.imperative import ParallelEnv, DataParallel
 
 from ..datasets.builder import build_dataloader
 from ..models.builder import build_model
@@ -22,10 +23,13 @@ class Trainer:
         
         # build model
         self.model = build_model(cfg)
+        # multiple gpus prepare
+        if ParallelEnv().nranks > 1:
+            self.distributed_data_parallel()
 
         self.logger = logging.getLogger(__name__)
+
         # base config
-        # self.timestamp = time.strftime('-%Y-%m-%d-%H-%M', time.localtime())
         self.output_dir = cfg.output_dir
         self.epochs = cfg.epochs
         self.start_epoch = 0
@@ -37,25 +41,39 @@ class Trainer:
         self.cfg = cfg
 
         self.local_rank = ParallelEnv().local_rank
+
+        # time count
+        self.time_count = {}
     
+    def distributed_data_parallel(self):
+        strategy = paddle.imperative.prepare_context()
+        for name in self.model.model_names:
+            if isinstance(name, str):
+                net = getattr(self.model, 'net' + name)
+                setattr(self.model, 'net' + name, DataParallel(net, strategy))
+
     def train(self):
         
         for epoch in range(self.start_epoch, self.epochs):
-            start_time = time.time()
             self.current_epoch = epoch
+            start_time = step_start_time = time.time()
             for i, data in enumerate(self.train_dataloader):
+                data_time = time.time()
                 self.batch_id = i
                 # unpack data from dataset and apply preprocessing
                 # data input should be dict
                 self.model.set_input(data)
                 self.model.optimize_parameters()
-
+                
+                self.data_time = data_time - step_start_time
+                self.step_time = time.time() - step_start_time
                 if i % self.log_interval == 0:
                     self.print_log()
                     
                 if i % self.visual_interval == 0:
                     self.visual('visual_train')
 
+                step_start_time = time.time()
             self.logger.info('train one epoch time: {}'.format(time.time() - start_time))
             if epoch % self.weight_interval == 0:
                 self.save(epoch, 'weight', keep=-1)
@@ -97,6 +115,12 @@ class Trainer:
 
         for k, v in losses.items():
             message += '%s: %.3f ' % (k, v)
+
+        if hasattr(self, 'data_time'):
+            message += 'reader cost: %.5fs ' % self.data_time
+
+        if hasattr(self, 'step_time'):
+            message += 'batch cost: %.5fs' % self.step_time
 
         # print the message
         self.logger.info(message)
