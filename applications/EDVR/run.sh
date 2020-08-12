@@ -34,7 +34,6 @@ if [ "$mode"x == "predict"x ]; then
         python predict.py --model_name=$name \
                           --config=$configs \
                           --log_interval=$log_interval \
-                          --weights=$weights \
                           --video_path='' \
                           --use_gpu=$use_gpu
     else

@@ -56,12 +56,12 @@ def parse_args():
         type=ast.literal_eval,
         default=True,
         help='default use gpu.')
-    parser.add_argument(
-        '--weights',
-        type=str,
-        default=None,
-        help='weight path, None to automatically download weights provided by Paddle.'
-    )
+   # parser.add_argument(
+   #     '--weights',
+   #     type=str,
+   #     default=None,
+   #     help='weight path, None to automatically download weights provided by Paddle.'
+   # )
     parser.add_argument(
         '--batch_size',
         type=int,
@@ -117,11 +117,6 @@ def infer(args):
     config = parse_config(args.config)
     infer_config = merge_configs(config, 'infer', vars(args))
     print_configs(infer_config, "Infer")
-    #infer_model = models.get_model(args.model_name, infer_config, mode='infer')
-    #infer_model.build_input(use_dataloader=False)
-    #infer_model.build_model()
-    #infer_feeds = infer_model.feeds()
-    #infer_outputs = infer_model.outputs()
     
     model_path = '/workspace/video_test/video/for_eval/data/inference_model'
     model_filename = 'EDVR_model.pdmodel'
