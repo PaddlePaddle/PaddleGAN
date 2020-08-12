@@ -131,30 +131,7 @@ def infer(args):
 
     [inference_program, feed_list, fetch_list] = fluid.io.load_inference_model(dirname=model_path, model_filename=model_filename, params_filename=params_filename, executor=exe)
 
-    #filelist = args.filelist or infer_config.INFER.filelist
-    #filepath = args.video_path or infer_config.INFER.get('filepath', '')
-    #if filepath != '':
-    #    assert os.path.exists(filepath), "{} not exist.".format(filepath)
-    #else:
-    #    assert os.path.exists(filelist), "{} not exist.".format(filelist)
-
-    # get infer reader
-    infer_feeds = [inference_program.global_block().var(var_name) for var_name in feed_list]
     infer_reader = get_reader(args.model_name.upper(), 'infer', infer_config)
-    #print(inference_program)
-
-    #if args.weights:
-    #    assert os.path.exists(
-    #        args.weights), "Given weight dir {} not exist.".format(args.weights)
-    # if no weight files specified, download weights from paddle
-    #weights = args.weights or infer_model.get_weights()
-
-    #infer_model.load_test_weights(exe, weights,
-    #                             fluid.default_main_program(), place)
-
-    infer_feeder = fluid.DataFeeder(place=place, feed_list=infer_feeds)
-    #fetch_list = infer_model.fetches()
-
     #infer_metrics = get_metrics(args.model_name.upper(), 'infer', infer_config)
     #infer_metrics.reset()
 
