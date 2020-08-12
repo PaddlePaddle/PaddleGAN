@@ -19,7 +19,6 @@ INFER:
     number_frames: 5
     batch_size: 1
     file_root: "/workspace/color/input_frames"
-    #file_root: "/workspace/video_test/video/data/dataset/edvr/REDS4/sharp_bicubic"
-    #gt_root: "/workspace/video_test/video/data/dataset/edvr/REDS4/GT"
+    inference_model: "/workspace/PaddleGAN/applications/EDVR/data/inference_model"
     use_flip: False
     use_rot: False

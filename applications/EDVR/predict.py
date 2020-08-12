@@ -47,6 +47,11 @@ def parse_args():
         default='AttentionCluster',
         help='name of model to train.')
     parser.add_argument(
+        '--inference_model',
+        type=str,
+        default='./data/inference_model',
+        help='path of inference_model.')
+    parser.add_argument(
         '--config',
         type=str,
         default='configs/attention_cluster.txt',
@@ -111,14 +116,13 @@ def infer(args):
     config = parse_config(args.config)
     infer_config = merge_configs(config, 'infer', vars(args))
     print_configs(infer_config, "Infer")
-    
-    model_path = '/workspace/PaddleGAN/applications/EDVR/data/inference_model'
+    inference_model = args.inference_model 
     model_filename = 'EDVR_model.pdmodel'
     params_filename = 'EDVR_params.pdparams'
     place = fluid.CUDAPlace(0) if args.use_gpu else fluid.CPUPlace()
     exe = fluid.Executor(place)
 
-    [inference_program, feed_list, fetch_list] = fluid.io.load_inference_model(dirname=model_path, model_filename=model_filename, params_filename=params_filename, executor=exe)
+    [inference_program, feed_list, fetch_list] = fluid.io.load_inference_model(dirname=inference_model, model_filename=model_filename, params_filename=params_filename, executor=exe)
 
     infer_reader = get_reader(args.model_name.upper(), 'infer', infer_config)
     #infer_metrics = get_metrics(args.model_name.upper(), 'infer', infer_config)
