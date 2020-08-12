@@ -27,7 +27,7 @@ import paddle.fluid as fluid
 import cv2
 
 from utils.config_utils import *
-import models
+#import models
 from reader import get_reader
 #from metrics import get_metrics
 from utils.utility import check_cuda
@@ -112,7 +112,7 @@ def infer(args):
     infer_config = merge_configs(config, 'infer', vars(args))
     print_configs(infer_config, "Infer")
     
-    model_path = '/workspace/video_test/video/for_eval/data/inference_model'
+    model_path = '/workspace/PaddleGAN/applications/EDVR/data/inference_model'
     model_filename = 'EDVR_model.pdmodel'
     params_filename = 'EDVR_params.pdparams'
     place = fluid.CUDAPlace(0) if args.use_gpu else fluid.CPUPlace()

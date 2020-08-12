@@ -280,6 +280,7 @@ def read_img(path, size=None, is_gt=False):
     #if not is_gt:
     #    #print(path)
     #    img = cv2.resize(img, (0, 0), fx=0.25, fy=0.25)
+    #print("path: ", path)
     img = img.astype(np.float32) / 255.
     if img.ndim == 2:
         img = np.expand_dims(img, axis=2)
