@@ -1,19 +1,13 @@
 # examples of running programs:
-# bash ./run.sh train CTCN ./configs/ctcn.yaml
-# bash ./run.sh eval NEXTVLAD ./configs/nextvlad.yaml
-# bash ./run.sh predict NONLOCAL ./cofings/nonlocal.yaml
+# bash ./run.sh inference EDVR ./configs/edvr_L.yaml
+# bash ./run.sh predict EDvR ./cofings/edvr_L.yaml
 
-# mode should be one of [train, eval, predict, inference]
-# name should be one of [AttentionCluster, AttentionLSTM, NEXTVLAD, NONLOCAL, TSN, TSM, STNET, CTCN]
 # configs should be ./configs/xxx.yaml
 
 mode=$1
 name=$2
 configs=$3
 
-#pretrain="./tmp/name_map/paddle_state_dict.npz" # set pretrain model path if needed
-#resume="" # set pretrain model path if needed
-#save_dir="./data/checkpoints"
 save_inference_dir="./data/inference_model"
 use_gpu=True
 fix_random_seed=False
