@@ -28,7 +28,7 @@ import paddle.fluid as fluid
 from utils.config_utils import *
 import models
 from reader import get_reader
-from metrics import get_metrics
+#from metrics import get_metrics
 from utils.utility import check_cuda
 
 logging.root.handlers = []

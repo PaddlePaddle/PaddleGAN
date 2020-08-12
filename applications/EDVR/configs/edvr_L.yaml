@@ -11,18 +11,6 @@ MODEL:
     HR_in: False
     w_TSA: True #False
 
-TEST:
-    scale: 4
-    crop_size: 256
-    interval_list: [1]
-    random_reverse: False
-    number_frames: 5
-    batch_size: 1
-    file_root: "/workspace/video_test/video/data/dataset/edvr/REDS4/sharp_bicubic"
-    gt_root: "/workspace/video_test/video/data/dataset/edvr/REDS4/GT"
-    use_flip: False
-    use_rot: False
-
 INFER:
     scale: 4
     crop_size: 256
@@ -31,6 +19,6 @@ INFER:
     number_frames: 5
     batch_size: 1
     file_root: "/workspace/color/input_frames"
-    gt_root: "/workspace/video_test/video/data/dataset/edvr/REDS4/GT"
+    #gt_root: "/workspace/video_test/video/data/dataset/edvr/REDS4/GT"
     use_flip: False
     use_rot: False

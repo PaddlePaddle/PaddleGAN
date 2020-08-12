@@ -29,7 +29,7 @@ import cv2
 from utils.config_utils import *
 import models
 from reader import get_reader
-from metrics import get_metrics
+#from metrics import get_metrics
 from utils.utility import check_cuda
 from utils.utility import check_version
 
@@ -56,12 +56,6 @@ def parse_args():
         type=ast.literal_eval,
         default=True,
         help='default use gpu.')
-   # parser.add_argument(
-   #     '--weights',
-   #     type=str,
-   #     default=None,
-   #     help='weight path, None to automatically download weights provided by Paddle.'
-   # )
     parser.add_argument(
         '--batch_size',
         type=int,
