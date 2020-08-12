@@ -37,21 +37,5 @@ if [ "$mode"x == "predict"x ]; then
                           --use_gpu=$use_gpu \
                           --video_path=''
     fi
-elif [ "$mode"x == "inference"x ]; then
-    echo $mode $name $configs $weights
-    if [ "$weights"x != ""x ]; then
-        python inference_model.py --model_name=$name \
-                                  --config=$configs \
-                                  --weights=$weights \
-                                  --use_gpu=$use_gpu \
-                                  --save_dir=$save_inference_dir
-    else
-        python inference_model.py --model_name=$name \
-                                  --config=$configs \
-                                  --use_gpu=$use_gpu \
-                                  --save_dir=$save_inference_dir
-    fi
-else
-    echo "Not implemented mode " $mode
 fi
 
