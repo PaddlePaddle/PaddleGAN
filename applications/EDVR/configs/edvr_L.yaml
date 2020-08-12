@@ -22,9 +22,7 @@ TRAIN:
     number_frames: 5
     batch_size: 32
     file_root: "/workspace/video_test/video/data/dataset/edvr/REDS/train_sharp_bicubic/X4"
-    #file_root: "/ssd1/vis/sungaofeng/edvr/mmsr/datasets/REDS/train_sharp_bicubic/X4"
     gt_root: "/workspace/video_test/video/data/dataset/edvr/REDS/train_sharp"
-    #gt_root: "/ssd1/vis/sungaofeng/edvr/mmsr/datasets/REDS/train_sharp"
     use_flip: True
     use_rot: True
     base_learning_rate: 0.0004
@@ -57,8 +55,6 @@ TEST:
     random_reverse: False
     number_frames: 5
     batch_size: 1
-    #file_root: "/ssd1/vis/sungaofeng/edvr/mmsr/datasets/REDS4/sharp_bicubic"
-    #gt_root: "/ssd1/vis/sungaofeng/edvr/mmsr/datasets/REDS4/GT"
     file_root: "/workspace/video_test/video/data/dataset/edvr/REDS4/sharp_bicubic"
     gt_root: "/workspace/video_test/video/data/dataset/edvr/REDS4/GT"
     use_flip: False
@@ -71,8 +67,6 @@ INFER:
     random_reverse: False
     number_frames: 5
     batch_size: 1
-    #file_root: "/workspace/video_test/video/data/dataset/edvr/REDS4/sharp_bicubic"
-    #gt_root: "/workspace/video_test/video/data/dataset/edvr/REDS4/GT"
     file_root: "/workspace/color/input_frames"
     gt_root: "/workspace/video_test/video/data/dataset/edvr/REDS4/GT"
     use_flip: False
