@@ -51,8 +51,8 @@ def main():
     batch_size = args.batch_size
 
     with fluid.dygraph.guard():
-        fid_value = calculate_fid_given_paths(paths, inference_model_path, 1,
-                                              True, 2048)
+        fid_value = calculate_fid_given_paths(paths, inference_model_path,
+                                              batch_size, args.use_gpu, 2048)
         print('FID: ', fid_value)
 
 
