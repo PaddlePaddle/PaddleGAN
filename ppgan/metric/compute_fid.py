@@ -198,10 +198,10 @@ def _compute_statistics_of_path(path, model, batch_size, dims, use_gpu,
 
 
 def calculate_fid_given_paths(paths,
+                              premodel_path,
                               batch_size,
                               use_gpu,
                               dims,
-                              premodel_path,
                               model=None):
     assert os.path.exists(
         premodel_path
@@ -222,12 +222,3 @@ def calculate_fid_given_paths(paths,
 
     fid_value = _calculate_frechet_distance(m1, s1, m2, s2)
     return fid_value
-
-
-if __name__ == '__main__':
-    with fluid.dygraph.guard():
-        fid_value = calculate_fid_given_paths(
-            ('/workspace/color/fid_test/real',
-             '/workspace/color/fid_test/fake'), 1, True, 2048,
-            'pretrained/params_inceptionV3/compare.pdparams')
-        print('FID: ', fid_value)
