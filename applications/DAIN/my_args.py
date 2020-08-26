@@ -91,4 +91,4 @@ parser.add_argument('--use_cuda',
                     help='use cuda or not')
 parser.add_argument('--use_cudnn', default=1, type=int, help='use cudnn or not')
 
-args = parser.parse_args()
+# args = parser.parse_args()

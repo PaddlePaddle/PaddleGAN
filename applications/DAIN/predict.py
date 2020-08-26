@@ -1,19 +1,23 @@
-import os, sys
-import math
-import random
+import os
+import sys
+
+cur_path = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(cur_path)
+
 import time
 import glob
-import shutil
 import numpy as np
 from imageio import imread, imsave
 import cv2
 
 import paddle.fluid as fluid
+from paddle.incubate.hapi.download import get_path_from_url
 
 import networks
 from util import *
-from my_args import args
+from my_args import parser
 
+DAIN_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/applications/DAIN_weight.tar'
 
 def infer_engine(model_dir,
                  run_mode='fluid',
@@ -76,18 +80,17 @@ class VideoFrameInterp(object):
                  key_frame_thread=0.,
                  output_path='output'):
         self.video_path = video_path
-        self.output_path = output_path
+        self.output_path = os.path.join(output_path, 'DAIN')
+        if model_path is None:
+            model_path = get_path_from_url(DAIN_WEIGHT_URL, cur_path)
+
         self.model_path = model_path
         self.time_step = time_step
         self.key_frame_thread = key_frame_thread
 
         self.exe, self.program, self.fetch_targets = executor(model_path,
                                                               use_gpu=use_gpu)
-        # self.predictor = load_predictor(
-        #     model_dir,
-        #     run_mode=run_mode,
-        #     min_subgraph_size=3,
-        #     use_gpu=use_gpu)
+
 
     def run(self):
         frame_path_input = os.path.join(self.output_path, 'frames-input')
@@ -269,9 +272,12 @@ class VideoFrameInterp(object):
                 os.remove(video_pattern_output)
             frames_to_video_ffmpeg(frame_pattern_combined, video_pattern_output,
                                    r2)
+            
+        return frame_pattern_combined, video_pattern_output
 
 
 if __name__ == '__main__':
+    args = parser.parse_args()
     predictor = VideoFrameInterp(args.time_step, args.saved_model,
                                  args.video_path, args.output_path)
     predictor.run()

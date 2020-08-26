@@ -95,8 +95,12 @@ def combine_frames(input, interpolated, combined, num_frames):
         dst = os.path.join(combined, '{:08d}.png'.format(i * (num_frames + 1)))
         shutil.copy2(src, dst)
         if i < num1 - 1:
-            for k in range(num_frames):
-                src = frames2[i * num_frames + k]
-                dst = os.path.join(
-                    combined, '{:08d}.png'.format(i * (num_frames + 1) + k + 1))
-                shutil.copy2(src, dst)
+            try:
+                for k in range(num_frames):
+                    src = frames2[i * num_frames + k]
+                    dst = os.path.join(
+                        combined, '{:08d}.png'.format(i * (num_frames + 1) + k + 1))
+                    shutil.copy2(src, dst)
+            except Exception as e:
+                print(e)
+                print(len(frames2), num_frames, i, k, i * num_frames + k)
