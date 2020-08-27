@@ -17,10 +17,10 @@ valid_interval=1
 weights="./weights/paddle_state_dict_L.npz"
 
 
-export CUDA_VISIBLE_DEVICES=4,5,6,7   #0,1,5,6 fast,  2,3,4,7 slow
-export FLAGS_fast_eager_deletion_mode=1
-export FLAGS_eager_delete_tensor_gb=0.0
-export FLAGS_fraction_of_gpu_memory_to_use=0.98
+export CUDA_VISIBLE_DEVICES=6   #0,1,5,6 fast,  2,3,4,7 slow
+# export FLAGS_fast_eager_deletion_mode=1
+# export FLAGS_eager_delete_tensor_gb=0.0
+# export FLAGS_fraction_of_gpu_memory_to_use=0.98
 
 if [ "$mode"x == "predict"x ]; then
     echo $mode $name $configs $weights
