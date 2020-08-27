@@ -4,7 +4,7 @@ import time
 import logging
 import paddle
 
-from paddle.imperative import ParallelEnv, DataParallel
+from paddle import ParallelEnv, DataParallel
 
 from ..datasets.builder import build_dataloader
 from ..models.builder import build_model
@@ -46,7 +46,7 @@ class Trainer:
         self.time_count = {}
     
     def distributed_data_parallel(self):
-        strategy = paddle.imperative.prepare_context()
+        strategy = paddle.prepare_context()
         for name in self.model.model_names:
             if isinstance(name, str):
                 net = getattr(self.model, 'net' + name)
@@ -127,7 +127,7 @@ class Trainer:
 
     @property
     def current_learning_rate(self):
-        return self.model.optimizers[0].current_step_lr()
+        return self.model.optimizers[0].get_lr()
 
     def visual(self, results_dir, visual_results=None):
         self.model.compute_visuals()

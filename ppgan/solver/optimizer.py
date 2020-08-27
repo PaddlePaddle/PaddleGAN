@@ -13,4 +13,4 @@ def build_optimizer(cfg, parameter_list=None):
 
     opt_name = cfg_copy.pop('name')
 
-    return getattr(paddle.optimizer, opt_name)(lr_scheduler, parameter_list=parameter_list, **cfg_copy)
+    return getattr(paddle.optimizer, opt_name)(lr_scheduler, parameters=parameter_list, **cfg_copy)

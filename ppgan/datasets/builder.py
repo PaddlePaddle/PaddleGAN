@@ -3,7 +3,7 @@ import paddle
 import numbers
 import numpy as np
 from multiprocessing import Manager
-from paddle.imperative import ParallelEnv
+from paddle import ParallelEnv
 
 from paddle.incubate.hapi.distributed import DistributedBatchSampler
 from ..utils.registry import Registry

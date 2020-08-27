@@ -2,7 +2,7 @@ import paddle
 import paddle.nn as nn
 import functools
 
-from ...modules.nn import ReflectionPad2d, LeakyReLU, Tanh, Dropout, BCEWithLogitsLoss, Conv2DTranspose, Conv2D, Pad2D, MSELoss
+from ...modules.nn import ReflectionPad2d, LeakyReLU, Tanh, Dropout, BCEWithLogitsLoss, Pad2D, MSELoss
 from ...modules.norm import build_norm_layer
 
 from .builder import GENERATORS
@@ -37,7 +37,7 @@ class ResnetGenerator(paddle.fluid.dygraph.Layer):
             use_bias = norm_layer == nn.InstanceNorm
 
         model = [ReflectionPad2d(3),
-                 nn.Conv2D(input_nc, ngf, filter_size=7, padding=0, bias_attr=use_bias),
+                 nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0, bias_attr=use_bias),
                  norm_layer(ngf),
                  nn.ReLU()]
 
@@ -45,7 +45,7 @@ class ResnetGenerator(paddle.fluid.dygraph.Layer):
         for i in range(n_downsampling):  # add downsampling layers
             mult = 2 ** i
             model += [
-                      nn.Conv2D(ngf * mult, ngf * mult * 2, filter_size=3, stride=2, padding=1, bias_attr=use_bias),
+                      nn.Conv2d(ngf * mult, ngf * mult * 2, kernel_size=3, stride=2, padding=1, bias_attr=use_bias),
                       norm_layer(ngf * mult * 2),
                       nn.ReLU()]
 
@@ -57,16 +57,16 @@ class ResnetGenerator(paddle.fluid.dygraph.Layer):
         for i in range(n_downsampling):  # add upsampling layers
             mult = 2 ** (n_downsampling - i)
             model += [
-                      nn.Conv2DTranspose(ngf * mult, int(ngf * mult / 2),
-                                         filter_size=3, stride=2,
-                                         padding=1, 
+                      nn.ConvTranspose2d(ngf * mult, int(ngf * mult / 2),
+                                         kernel_size=3, stride=2,
+                                         padding=1,
+                                         output_padding=1,
                                          bias_attr=use_bias),
-                      Pad2D(paddings=[0, 1, 0, 1], mode='constant', pad_value=0.0),
                       norm_layer(int(ngf * mult / 2)),
                       nn.ReLU()]
         model += [ReflectionPad2d(3)]
-        model += [nn.Conv2D(ngf, output_nc, filter_size=7, padding=0)]
-        model += [Tanh()]
+        model += [nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0)]
+        model += [nn.Tanh()]
 
         self.model = nn.Sequential(*model)
 
@@ -112,7 +112,7 @@ class ResnetBlock(paddle.fluid.dygraph.Layer):
         else:
             raise NotImplementedError('padding [%s] is not implemented' % padding_type)
 
-        conv_block += [nn.Conv2D(dim, dim, filter_size=3, padding=p, bias_attr=use_bias), norm_layer(dim), nn.ReLU()]
+        conv_block += [nn.Conv2d(dim, dim, kernel_size=3, padding=p, bias_attr=use_bias), norm_layer(dim), nn.ReLU()]
         if use_dropout:
             conv_block += [Dropout(0.5)]
         
@@ -125,7 +125,7 @@ class ResnetBlock(paddle.fluid.dygraph.Layer):
             p = 1
         else:
             raise NotImplementedError('padding [%s] is not implemented' % padding_type)
-        conv_block += [nn.Conv2D(dim, dim, filter_size=3, padding=p, bias_attr=use_bias), norm_layer(dim)]
+        conv_block += [nn.Conv2d(dim, dim, kernel_size=3, padding=p, bias_attr=use_bias), norm_layer(dim)]
 
         return nn.Sequential(*conv_block)
 
