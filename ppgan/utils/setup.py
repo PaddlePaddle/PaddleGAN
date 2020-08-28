@@ -2,7 +2,7 @@ import os
 import time
 import paddle
 
-from paddle.imperative import ParallelEnv
+from paddle import ParallelEnv
 
 from .logger import setup_logger
 
@@ -20,4 +20,4 @@ def setup(args, cfg):
 
     place = paddle.fluid.CUDAPlace(ParallelEnv().dev_id) \
                     if ParallelEnv().nranks > 1 else paddle.fluid.CUDAPlace(0)
-    paddle.enable_imperative(place)
+    paddle.disable_static(place)

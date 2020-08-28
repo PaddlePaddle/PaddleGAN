@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 
-from paddle.imperative import ParallelEnv
+from paddle import ParallelEnv
 
 
 def setup_logger(output=None, name="ppgan"):

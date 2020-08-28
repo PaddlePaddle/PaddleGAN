@@ -1,5 +1,5 @@
 import paddle
-from paddle.imperative import ParallelEnv
+from paddle import ParallelEnv
 from .base_model import BaseModel
 
 from .builder import MODELS
@@ -93,14 +93,14 @@ class CycleGANModel(BaseModel):
         
         if AtoB:
             if 'A' in input:
-                self.real_A = paddle.imperative.to_variable(input['A'])
+                self.real_A = paddle.to_tensor(input['A'])
             if 'B' in input:
-                self.real_B = paddle.imperative.to_variable(input['B'])
+                self.real_B = paddle.to_tensor(input['B'])
         else:
             if 'B' in input:
-                self.real_A = paddle.imperative.to_variable(input['B'])
+                self.real_A = paddle.to_tensor(input['B'])
             if 'A' in input:
-                self.real_B = paddle.imperative.to_variable(input['A'])
+                self.real_B = paddle.to_tensor(input['A'])
 
         if 'A_paths' in input:
             self.image_paths = input['A_paths']

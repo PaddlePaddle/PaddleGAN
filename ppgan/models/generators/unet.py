@@ -2,7 +2,7 @@ import paddle
 import paddle.nn as nn
 import functools
 
-from ...modules.nn import ReflectionPad2d, LeakyReLU, Tanh, Dropout, Conv2DTranspose, Conv2D
+from ...modules.nn import ReflectionPad2d, LeakyReLU, Tanh, Dropout
 from ...modules.norm import build_norm_layer
 from .builder import GENERATORS
 
@@ -77,7 +77,7 @@ class UnetSkipConnectionBlock(paddle.fluid.dygraph.Layer):
             use_bias = norm_layer == nn.InstanceNorm
         if input_nc is None:
             input_nc = outer_nc
-        downconv = Conv2D(input_nc, inner_nc, filter_size=4,
+        downconv = nn.Conv2d(input_nc, inner_nc, kernel_size=4,
                              stride=2, padding=1, bias_attr=use_bias)
         downrelu = LeakyReLU(0.2, True)
         downnorm = norm_layer(inner_nc)
@@ -85,22 +85,22 @@ class UnetSkipConnectionBlock(paddle.fluid.dygraph.Layer):
         upnorm = norm_layer(outer_nc)
 
         if outermost:
-            upconv = Conv2DTranspose(inner_nc * 2, outer_nc,
-                                        filter_size=4, stride=2,
+            upconv = nn.ConvTranspose2d(inner_nc * 2, outer_nc,
+                                        kernel_size=4, stride=2,
                                         padding=1)
             down = [downconv]
             up = [uprelu, upconv, Tanh()]
             model = down + [submodule] + up
         elif innermost:
-            upconv = Conv2DTranspose(inner_nc, outer_nc,
-                                        filter_size=4, stride=2,
+            upconv = nn.ConvTranspose2d(inner_nc, outer_nc,
+                                        kernel_size=4, stride=2,
                                         padding=1, bias_attr=use_bias)
             down = [downrelu, downconv]
             up = [uprelu, upconv, upnorm]
             model = down + up
         else:
-            upconv = Conv2DTranspose(inner_nc * 2, outer_nc,
-                                        filter_size=4, stride=2,
+            upconv = nn.ConvTranspose2d(inner_nc * 2, outer_nc,
+                                        kernel_size=4, stride=2,
                                         padding=1, bias_attr=use_bias)
             down = [downrelu, downconv, downnorm]
             up = [uprelu, upconv, upnorm]

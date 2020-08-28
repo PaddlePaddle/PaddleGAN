@@ -28,7 +28,7 @@ dataset:
   train:
     name: UnpairedDataset
     dataroot: data/cityscapes
-    num_workers: 4
+    num_workers: 0
     phase: train
     max_dataset_size: inf
     direction: AtoB
