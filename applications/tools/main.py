@@ -26,9 +26,11 @@ if __name__ == "__main__":
     temp_video_path = None
 
     for order in orders:
+        if temp_video_path is None:
+            temp_video_path = args.input
         if order == 'DAIN':
             predictor = VideoFrameInterp(args.time_step, args.DAIN_weight,
-                                        args.input, output_path=args.output)
+                                        temp_video_path, output_path=args.output)
             frames_path, temp_video_path = predictor.run()
         elif order == 'DeOldify':
             print('frames:', frames_path)
