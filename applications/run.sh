@@ -10,4 +10,4 @@ cd -
 # proccess_order 使用模型的顺序
 
 python tools/main.py \
---input input.mp4  --output output --proccess_order DAIN DeOldify EDVR
+--input input.mp4  --output output --proccess_order DAIN DeepRemaster DeOldify EDVR
