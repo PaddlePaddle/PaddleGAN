@@ -252,7 +252,7 @@ class VideoFrameInterp(object):
                     for item, time_offset in zip(y_, time_offsets):
                         out_dir = os.path.join(
                             frame_path_interpolated, vidname,
-                            "{:0>4d}_{:0>4d}.png".format(i, count))
+                            "{:0>6d}_{:0>4d}.png".format(i, count))
                         count = count + 1
                         imsave(out_dir, np.round(item).astype(np.uint8))
 

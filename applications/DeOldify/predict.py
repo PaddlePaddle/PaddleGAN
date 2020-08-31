@@ -74,7 +74,7 @@ class DeOldifyPredictor():
         img += img_mean
         img = img.transpose((1, 2, 0))
 
-        return (img * 255).astype('uint8')
+        return (img * 255).clip(0, 255).astype('uint8')
     
     def post_process(self, raw_color, orig):
         color_np = np.asarray(raw_color)
