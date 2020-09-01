@@ -23,9 +23,11 @@ import paddle.fluid as fluid
 from inception import InceptionV3
 from paddle.fluid.dygraph.base import to_variable
 
-
-def tqdm(x):
-    return x
+try:
+    from tqdm import tqdm
+except:
+    def tqdm(x):
+        return x
 
 
 """ based on https://github.com/mit-han-lab/gan-compression/blob/master/metric/fid_score.py
