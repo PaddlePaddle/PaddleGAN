@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 
-from paddle import ParallelEnv
+from paddle.distributed import ParallelEnv
 
 
 def setup_logger(output=None, name="ppgan"):
@@ -23,8 +23,8 @@ def setup_logger(output=None, name="ppgan"):
     logger.propagate = False
 
     plain_formatter = logging.Formatter(
-        "[%(asctime)s] %(name)s %(levelname)s: %(message)s", datefmt="%m/%d %H:%M:%S"
-    )
+        "[%(asctime)s] %(name)s %(levelname)s: %(message)s",
+        datefmt="%m/%d %H:%M:%S")
     # stdout logging: master only
     local_rank = ParallelEnv().local_rank
     if local_rank == 0:

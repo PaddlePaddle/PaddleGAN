@@ -11,13 +11,14 @@ from imageio import imread, imsave
 import cv2
 
 import paddle.fluid as fluid
-from paddle.incubate.hapi.download import get_path_from_url
+from paddle.utils.download import get_path_from_url
 
 import networks
 from util import *
 from my_args import parser
 
 DAIN_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/applications/DAIN_weight.tar'
+
 
 def infer_engine(model_dir,
                  run_mode='fluid',
@@ -90,7 +91,6 @@ class VideoFrameInterp(object):
 
         self.exe, self.program, self.fetch_targets = executor(model_path,
                                                               use_gpu=use_gpu)
-
 
     def run(self):
         frame_path_input = os.path.join(self.output_path, 'frames-input')
@@ -272,7 +272,7 @@ class VideoFrameInterp(object):
                 os.remove(video_pattern_output)
             frames_to_video_ffmpeg(frame_pattern_combined, video_pattern_output,
                                    r2)
-            
+
         return frame_pattern_combined, video_pattern_output
 
 

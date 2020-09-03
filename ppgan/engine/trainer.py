@@ -4,7 +4,7 @@ import time
 import logging
 import paddle
 
-from paddle import ParallelEnv, DataParallel
+from paddle.distributed import ParallelEnv
 
 from ..datasets.builder import build_dataloader
 from ..models.builder import build_model
@@ -17,10 +17,11 @@ class Trainer:
 
         # build train dataloader
         self.train_dataloader = build_dataloader(cfg.dataset.train)
-        
+
         if 'lr_scheduler' in cfg.optimizer:
-            cfg.optimizer.lr_scheduler.step_per_epoch = len(self.train_dataloader)
-        
+            cfg.optimizer.lr_scheduler.step_per_epoch = len(
+                self.train_dataloader)
+
         # build model
         self.model = build_model(cfg)
         # multiple gpus prepare
@@ -44,16 +45,17 @@ class Trainer:
 
         # time count
         self.time_count = {}
-    
+
     def distributed_data_parallel(self):
         strategy = paddle.prepare_context()
         for name in self.model.model_names:
             if isinstance(name, str):
                 net = getattr(self.model, 'net' + name)
-                setattr(self.model, 'net' + name, DataParallel(net, strategy))
+                setattr(self.model, 'net' + name,
+                        paddle.DataParallel(net, strategy))
 
     def train(self):
-        
+
         for epoch in range(self.start_epoch, self.epochs):
             self.current_epoch = epoch
             start_time = step_start_time = time.time()
@@ -64,24 +66,27 @@ class Trainer:
                 # data input should be dict
                 self.model.set_input(data)
                 self.model.optimize_parameters()
-                
+
                 self.data_time = data_time - step_start_time
                 self.step_time = time.time() - step_start_time
                 if i % self.log_interval == 0:
                     self.print_log()
-                    
+
                 if i % self.visual_interval == 0:
                     self.visual('visual_train')
 
                 step_start_time = time.time()
-            self.logger.info('train one epoch time: {}'.format(time.time() - start_time))
+            self.logger.info('train one epoch time: {}'.format(time.time() -
+                                                               start_time))
+            self.model.lr_scheduler.step()
             if epoch % self.weight_interval == 0:
                 self.save(epoch, 'weight', keep=-1)
             self.save(epoch)
 
     def test(self):
         if not hasattr(self, 'test_dataloader'):
-            self.test_dataloader = build_dataloader(self.cfg.dataset.test, is_train=False)
+            self.test_dataloader = build_dataloader(self.cfg.dataset.test,
+                                                    is_train=False)
 
         # data[0]: img, data[1]: img path index
         # test batch size must be 1
@@ -103,14 +108,15 @@ class Trainer:
                     visual_results.update({name: img_tensor[j]})
 
             self.visual('visual_test', visual_results=visual_results)
-            
+
             if i % self.log_interval == 0:
-                self.logger.info('Test iter: [%d/%d]' % (i, len(self.test_dataloader)))
+                self.logger.info('Test iter: [%d/%d]' %
+                                 (i, len(self.test_dataloader)))
 
     def print_log(self):
         losses = self.model.get_current_losses()
         message = 'Epoch: %d, iters: %d ' % (self.current_epoch, self.batch_id)
-        
+
         message += '%s: %.6f ' % ('lr', self.current_learning_rate)
 
         for k, v in losses.items():
@@ -143,13 +149,14 @@ class Trainer:
         makedirs(os.path.join(self.output_dir, results_dir))
         for label, image in visual_results.items():
             image_numpy = tensor2img(image)
-            img_path = os.path.join(self.output_dir, results_dir, msg + '%s.png' % (label))
+            img_path = os.path.join(self.output_dir, results_dir,
+                                    msg + '%s.png' % (label))
             save_image(image_numpy, img_path)
 
     def save(self, epoch, name='checkpoint', keep=1):
         if self.local_rank != 0:
             return
-            
+
         assert name in ['checkpoint', 'weight']
 
         state_dicts = {}
@@ -175,8 +182,8 @@ class Trainer:
 
         if keep > 0:
             try:
-                checkpoint_name_to_be_removed = os.path.join(self.output_dir, 
-                                            'epoch_%s_%s.pkl' % (epoch - keep, name))
+                checkpoint_name_to_be_removed = os.path.join(
+                    self.output_dir, 'epoch_%s_%s.pkl' % (epoch - keep, name))
                 if os.path.exists(checkpoint_name_to_be_removed):
                     os.remove(checkpoint_name_to_be_removed)
 
@@ -187,7 +194,7 @@ class Trainer:
         state_dicts = load(checkpoint_path)
         if state_dicts.get('epoch', None) is not None:
             self.start_epoch = state_dicts['epoch'] + 1
-        
+
         for name in self.model.model_names:
             if isinstance(name, str):
                 net = getattr(self.model, 'net' + name)
@@ -200,9 +207,8 @@ class Trainer:
 
     def load(self, weight_path):
         state_dicts = load(weight_path)
-        
+
         for name in self.model.model_names:
             if isinstance(name, str):
                 net = getattr(self.model, 'net' + name)
                 net.set_dict(state_dicts['net' + name])
- 

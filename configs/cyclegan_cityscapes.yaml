@@ -60,11 +60,12 @@ dataset:
 optimizer:
   name: Adam
   beta1: 0.5
-  lr_scheduler:
-    name: linear
-    learning_rate: 0.0002
-    start_epoch: 100
-    decay_epochs: 100
+
+lr_scheduler:
+  name: linear
+  learning_rate: 0.0002
+  start_epoch: 100
+  decay_epochs: 100
 
 log_config:
   interval: 100
@@ -72,4 +73,3 @@ log_config:
 
 snapshot_config:
   interval: 5
-  

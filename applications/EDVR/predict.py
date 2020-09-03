@@ -28,29 +28,28 @@ import paddle.fluid as fluid
 import cv2
 
 from data import EDVRDataset
-from paddle.incubate.hapi.download import get_path_from_url
+from paddle.utils.download import get_path_from_url
 
 EDVR_weight_url = 'https://paddlegan.bj.bcebos.com/applications/edvr_infer_model.tar'
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--input',
-        type=str,
-        default=None,
-        help='input video path')
-    parser.add_argument(
-        '--output',
-        type=str,
-        default='output',
-        help='output path')
-    parser.add_argument(
-        '--weight_path',
-        type=str,
-        default=None,
-        help='weight path')
+    parser.add_argument('--input',
+                        type=str,
+                        default=None,
+                        help='input video path')
+    parser.add_argument('--output',
+                        type=str,
+                        default='output',
+                        help='output path')
+    parser.add_argument('--weight_path',
+                        type=str,
+                        default=None,
+                        help='weight path')
     args = parser.parse_args()
     return args
+
 
 def get_img(pred):
     print('pred shape', pred.shape)
@@ -59,9 +58,10 @@ def get_img(pred):
     pred = pred * 255
     pred = pred.round()
     pred = pred.astype('uint8')
-    pred = np.transpose(pred, (1, 2, 0)) # chw -> hwc
-    pred = pred[:, :, ::-1] # rgb -> bgr
+    pred = np.transpose(pred, (1, 2, 0))  # chw -> hwc
+    pred = pred[:, :, ::-1]  # rgb -> bgr
     return pred
+
 
 def save_img(img, framename):
     dirname = os.path.dirname(framename)
@@ -84,19 +84,8 @@ def dump_frames_ffmpeg(vid_path, outpath, r=None, ss=None, t=None):
 
     if ss is not None and t is not None and r is not None:
         cmd = ffmpeg + [
-            ' -ss ',
-            ss,
-            ' -t ',
-            t,
-            ' -i ',
-            vid_path,
-            ' -r ',
-            r,
-            ' -qscale:v ',
-            ' 0.1 ',
-            ' -start_number ',
-            ' 0 ',
-            outformat
+            ' -ss ', ss, ' -t ', t, ' -i ', vid_path, ' -r ', r, ' -qscale:v ',
+            ' 0.1 ', ' -start_number ', ' 0 ', outformat
         ]
     else:
         cmd = ffmpeg + [' -i ', vid_path, ' -start_number ', ' 0 ', outformat]
@@ -134,20 +123,21 @@ class EDVRPredictor:
         self.input = input
         self.output = os.path.join(output, 'EDVR')
 
-        place = fluid.CUDAPlace(0) if fluid.is_compiled_with_cuda() else fluid.CPUPlace()
+        place = fluid.CUDAPlace(
+            0) if fluid.is_compiled_with_cuda() else fluid.CPUPlace()
         self.exe = fluid.Executor(place)
 
         if weight_path is None:
             weight_path = get_path_from_url(EDVR_weight_url, cur_path)
-        
+
         print(weight_path)
 
         model_filename = 'EDVR_model.pdmodel'
         params_filename = 'EDVR_params.pdparams'
-        
-        out = fluid.io.load_inference_model(dirname=weight_path, 
-                                            model_filename=model_filename, 
-                                            params_filename=params_filename, 
+
+        out = fluid.io.load_inference_model(dirname=weight_path,
+                                            model_filename=model_filename,
+                                            params_filename=params_filename,
                                             executor=self.exe)
         self.infer_prog, self.feed_list, self.fetch_list = out
 
@@ -176,16 +166,19 @@ class EDVRPredictor:
         cur_time = time.time()
         for infer_iter, data in enumerate(dataset):
             data_feed_in = [data[0]]
-            
-            infer_outs = self.exe.run(self.infer_prog,
-                                fetch_list=self.fetch_list,
-                                feed={self.feed_list[0]:np.array(data_feed_in)})
+
+            infer_outs = self.exe.run(
+                self.infer_prog,
+                fetch_list=self.fetch_list,
+                feed={self.feed_list[0]: np.array(data_feed_in)})
             infer_result_list = [item for item in infer_outs]
 
             frame_path = data[1]
-            
+
             img_i = get_img(infer_result_list[0])
-            save_img(img_i, os.path.join(pred_frame_path, os.path.basename(frame_path)))                   
+            save_img(
+                img_i,
+                os.path.join(pred_frame_path, os.path.basename(frame_path)))
 
             prev_time = cur_time
             cur_time = time.time()
@@ -194,13 +187,15 @@ class EDVRPredictor:
 
             print('Processed {} samples'.format(infer_iter + 1))
         frame_pattern_combined = os.path.join(pred_frame_path, '%08d.png')
-        vid_out_path = os.path.join(self.output, '{}_edvr_out.mp4'.format(base_name))
-        frames_to_video_ffmpeg(frame_pattern_combined, vid_out_path, str(int(fps)))
+        vid_out_path = os.path.join(self.output,
+                                    '{}_edvr_out.mp4'.format(base_name))
+        frames_to_video_ffmpeg(frame_pattern_combined, vid_out_path,
+                               str(int(fps)))
 
         return frame_pattern_combined, vid_out_path
 
 
 if __name__ == "__main__":
+    args = parse_args()
     predictor = EDVRPredictor(args.input, args.output, args.weight_path)
     predictor.run()
-
