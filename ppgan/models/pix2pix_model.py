@@ -1,5 +1,5 @@
 import paddle
-from paddle import ParallelEnv
+from paddle.distributed import ParallelEnv
 from .base_model import BaseModel
 
 from .builder import MODELS
@@ -22,7 +22,6 @@ class Pix2PixModel(BaseModel):
 
     pix2pix paper: https://arxiv.org/pdf/1611.07004.pdf
     """
-
     def __init__(self, opt):
         """Initialize the pix2pix class.
 
@@ -48,15 +47,21 @@ class Pix2PixModel(BaseModel):
         if self.isTrain:
             self.netD = build_discriminator(opt.model.discriminator)
 
-
         if self.isTrain:
             # define loss functions
             self.criterionGAN = GANLoss(opt.model.gan_mode)
             self.criterionL1 = paddle.nn.L1Loss()
 
             # build optimizers
-            self.optimizer_G = build_optimizer(opt.optimizer, parameter_list=self.netG.parameters())
-            self.optimizer_D = build_optimizer(opt.optimizer, parameter_list=self.netD.parameters()) 
+            self.build_lr_scheduler()
+            self.optimizer_G = build_optimizer(
+                opt.optimizer,
+                self.lr_scheduler,
+                parameter_list=self.netG.parameters())
+            self.optimizer_D = build_optimizer(
+                opt.optimizer,
+                self.lr_scheduler,
+                parameter_list=self.netD.parameters())
 
             self.optimizers.append(self.optimizer_G)
             self.optimizers.append(self.optimizer_D)
@@ -75,7 +80,6 @@ class Pix2PixModel(BaseModel):
         self.real_A = paddle.to_tensor(input['A' if AtoB else 'B'])
         self.real_B = paddle.to_tensor(input['B' if AtoB else 'A'])
         self.image_paths = input['A_paths' if AtoB else 'B_paths']
- 
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
@@ -84,7 +88,7 @@ class Pix2PixModel(BaseModel):
     def forward_test(self, input):
         input = paddle.imperative.to_variable(input)
         return self.netG(input)
-            
+
     def backward_D(self):
         """Calculate GAN loss for the discriminator"""
         # Fake; stop backprop to the generator by detaching fake_B
@@ -112,7 +116,8 @@ class Pix2PixModel(BaseModel):
         pred_fake = self.netD(fake_AB)
         self.loss_G_GAN = self.criterionGAN(pred_fake, True)
         # Second, G(A) = B
-        self.loss_G_L1 = self.criterionL1(self.fake_B, self.real_B) * self.opt.lambda_L1
+        self.loss_G_L1 = self.criterionL1(self.fake_B,
+                                          self.real_B) * self.opt.lambda_L1
         # combine loss and calculate gradients
         self.loss_G = self.loss_G_GAN + self.loss_G_L1
 
@@ -129,12 +134,12 @@ class Pix2PixModel(BaseModel):
 
         # update D
         self.set_requires_grad(self.netD, True)
-        self.optimizer_D.clear_gradients() 
+        self.optimizer_D.clear_gradients()
         self.backward_D()
-        self.optimizer_D.minimize(self.loss_D) 
-       
+        self.optimizer_D.minimize(self.loss_D)
+
         # update G
-        self.set_requires_grad(self.netD, False) 
+        self.set_requires_grad(self.netD, False)
         self.optimizer_G.clear_gradients()
         self.backward_G()
         self.optimizer_G.minimize(self.loss_G)

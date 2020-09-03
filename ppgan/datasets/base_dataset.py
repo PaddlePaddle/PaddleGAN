@@ -6,7 +6,7 @@ from paddle.io import Dataset
 from PIL import Image
 import cv2
 
-import paddle.incubate.hapi.vision.transforms as transforms
+import paddle.vision.transforms as transforms
 from .transforms import transforms as T
 from abc import ABC, abstractmethod
 
@@ -14,7 +14,6 @@ from abc import ABC, abstractmethod
 class BaseDataset(Dataset, ABC):
     """This class is an abstract base class (ABC) for datasets.
     """
-
     def __init__(self, cfg):
         """Initialize the class; save the options in the class
 
@@ -60,8 +59,11 @@ def get_params(cfg, size):
     return {'crop_pos': (x, y), 'flip': flip}
 
 
-
-def get_transform(cfg, params=None, grayscale=False, method=cv2.INTER_CUBIC, convert=True):
+def get_transform(cfg,
+                  params=None,
+                  grayscale=False,
+                  method=cv2.INTER_CUBIC,
+                  convert=True):
     transform_list = []
     if grayscale:
         print('grayscale not support for now!!!')
@@ -89,8 +91,10 @@ def get_transform(cfg, params=None, grayscale=False, method=cv2.INTER_CUBIC, con
             transform_list.append(transforms.RandomHorizontalFlip())
         elif params['flip']:
             transform_list.append(transforms.RandomHorizontalFlip(1.0))
-    
+
     if convert:
         transform_list += [transforms.Permute(to_rgb=True)]
-        transform_list += [transforms.Normalize((127.5, 127.5, 127.5), (127.5, 127.5, 127.5))]
+        transform_list += [
+            transforms.Normalize((127.5, 127.5, 127.5), (127.5, 127.5, 127.5))
+        ]
     return transforms.Compose(transform_list)

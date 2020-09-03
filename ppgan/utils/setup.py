@@ -2,7 +2,7 @@ import os
 import time
 import paddle
 
-from paddle import ParallelEnv
+from paddle.distributed import ParallelEnv
 
 from .logger import setup_logger
 
@@ -12,7 +12,8 @@ def setup(args, cfg):
         cfg.isTrain = False
 
     cfg.timestamp = time.strftime('-%Y-%m-%d-%H-%M', time.localtime())
-    cfg.output_dir = os.path.join(cfg.output_dir, str(cfg.model.name) + cfg.timestamp)
+    cfg.output_dir = os.path.join(cfg.output_dir,
+                                  str(cfg.model.name) + cfg.timestamp)
 
     logger = setup_logger(cfg.output_dir)
 

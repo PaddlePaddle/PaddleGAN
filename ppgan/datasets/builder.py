@@ -3,11 +3,10 @@ import paddle
 import numbers
 import numpy as np
 from multiprocessing import Manager
-from paddle import ParallelEnv
+from paddle.distributed import ParallelEnv
 
-from paddle.incubate.hapi.distributed import DistributedBatchSampler
+from paddle.io import DistributedBatchSampler
 from ..utils.registry import Registry
-
 
 DATASETS = Registry("DATASETS")
 
@@ -21,7 +20,7 @@ class DictDataset(paddle.io.Dataset):
 
         single_item = dataset[0]
         self.keys = single_item.keys()
-        
+
         for k, v in single_item.items():
             if not isinstance(v, (numbers.Number, np.ndarray)):
                 setattr(self, k, Manager().dict())
@@ -32,9 +31,9 @@ class DictDataset(paddle.io.Dataset):
     def __getitem__(self, index):
 
         ori_map = self.dataset[index]
-        
+
         tmp_list = []
-        
+
         for k, v in ori_map.items():
             if isinstance(v, (numbers.Number, np.ndarray)):
                 tmp_list.append(v)
@@ -60,17 +59,15 @@ class DictDataLoader():
         place = paddle.fluid.CUDAPlace(ParallelEnv().dev_id) \
                     if ParallelEnv().nranks > 1 else paddle.fluid.CUDAPlace(0)
 
-        sampler = DistributedBatchSampler(
-                                        self.dataset,
-                                        batch_size=batch_size,
-                                        shuffle=True if is_train else False,
-                                        drop_last=True if is_train else False)
+        sampler = DistributedBatchSampler(self.dataset,
+                                          batch_size=batch_size,
+                                          shuffle=True if is_train else False,
+                                          drop_last=True if is_train else False)
 
-        self.dataloader = paddle.io.DataLoader(
-                                        self.dataset,
-                                        batch_sampler=sampler,
-                                        places=place,
-                                        num_workers=num_workers)
+        self.dataloader = paddle.io.DataLoader(self.dataset,
+                                               batch_sampler=sampler,
+                                               places=place,
+                                               num_workers=num_workers)
 
         self.batch_size = batch_size
 
@@ -83,7 +80,9 @@ class DictDataLoader():
             j = 0
             for k in self.dataset.keys:
                 if k in self.dataset.tensor_keys_set:
-                    return_dict[k] = data[j] if isinstance(data, (list, tuple)) else data
+                    return_dict[k] = data[j] if isinstance(data,
+                                                           (list,
+                                                            tuple)) else data
                     j += 1
                 else:
                     return_dict[k] = self.get_items_by_indexs(k, data[-1])
@@ -104,10 +103,9 @@ class DictDataLoader():
         return current_items
 
 
-
 def build_dataloader(cfg, is_train=True):
     dataset = DATASETS.get(cfg.name)(cfg)
-    
+
     batch_size = cfg.get('batch_size', 1)
     num_workers = cfg.get('num_workers', 0)
 

@@ -25,7 +25,7 @@ dataset:
   train:
     name: PairedDataset
     dataroot: data/cityscapes
-    num_workers: 0
+    num_workers: 4
     phase: train
     max_dataset_size: inf
     direction: BtoA
@@ -57,11 +57,12 @@ dataset:
 optimizer:
   name: Adam
   beta1: 0.5
-  lr_scheduler:
-    name: linear
-    learning_rate: 0.0002
-    start_epoch: 100
-    decay_epochs: 100
+
+lr_scheduler:
+  name: linear
+  learning_rate: 0.0002
+  start_epoch: 100
+  decay_epochs: 100
 
 log_config:
   interval: 100
@@ -69,4 +70,3 @@ log_config:
 
 snapshot_config:
   interval: 5
-  

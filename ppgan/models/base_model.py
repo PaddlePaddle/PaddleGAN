@@ -5,6 +5,7 @@ import numpy as np
 from collections import OrderedDict
 from abc import ABC, abstractmethod
 
+from ..solver.lr_scheduler import build_lr_scheduler
 
 
 class BaseModel(ABC):
@@ -16,7 +17,6 @@ class BaseModel(ABC):
         -- <optimize_parameters>:           calculate losses, gradients, and update network weights.
         -- <modify_commandline_options>:    (optionally) add model-specific options and set default options.
     """
-    
     def __init__(self, opt):
         """Initialize the BaseModel class.
 
@@ -33,8 +33,10 @@ class BaseModel(ABC):
         """
         self.opt = opt
         self.isTrain = opt.isTrain
-        self.save_dir = os.path.join(opt.output_dir, opt.model.name)  # save all the checkpoints to save_dir
-       
+        self.save_dir = os.path.join(
+            opt.output_dir,
+            opt.model.name)  # save all the checkpoints to save_dir
+
         self.loss_names = []
         self.model_names = []
         self.visual_names = []
@@ -75,6 +77,8 @@ class BaseModel(ABC):
         """Calculate losses, gradients, and update network weights; called in every training iteration"""
         pass
 
+    def build_lr_scheduler(self):
+        self.lr_scheduler = build_lr_scheduler(self.opt.lr_scheduler)
 
     def eval(self):
         """Make models eval mode during test time"""
@@ -114,9 +118,10 @@ class BaseModel(ABC):
         errors_ret = OrderedDict()
         for name in self.loss_names:
             if isinstance(name, str):
-                errors_ret[name] = float(getattr(self, 'loss_' + name))  # float(...) works for both scalar tensor and float number
+                errors_ret[name] = float(
+                    getattr(self, 'loss_' + name)
+                )  # float(...) works for both scalar tensor and float number
         return errors_ret
-
 
     def set_requires_grad(self, nets, requires_grad=False):
         """Set requies_grad=Fasle for all the networks to avoid unnecessary computations
