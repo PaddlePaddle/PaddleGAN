@@ -93,7 +93,7 @@ class BaseModel(ABC):
         This function wraps <forward> function in no_grad() so we don't save intermediate steps for backprop
         It also calls <compute_visuals> to produce additional visualization results
         """
-        with paddle.imperative.no_grad():
+        with paddle.no_grad():
             self.forward()
             self.compute_visuals()
 

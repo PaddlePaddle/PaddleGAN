@@ -86,7 +86,7 @@ class Pix2PixModel(BaseModel):
         self.fake_B = self.netG(self.real_A)  # G(A)
 
     def forward_test(self, input):
-        input = paddle.imperative.to_variable(input)
+        input = paddle.to_tensor(input)
         return self.netG(input)
 
     def backward_D(self):
