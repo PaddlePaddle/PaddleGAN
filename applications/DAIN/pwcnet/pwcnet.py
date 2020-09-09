@@ -17,8 +17,7 @@ import numpy as np
 import paddle
 import paddle.fluid as fluid
 from paddle.fluid.dygraph import Conv2D, Conv2DTranspose
-
-from .correlation_op.correlation import correlation
+from paddle.fluid.contrib import correlation
 
 __all__ = ['pwc_dc_net']
 
