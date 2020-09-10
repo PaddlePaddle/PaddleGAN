@@ -28,7 +28,7 @@ RealSR_weight_url = 'https://paddlegan.bj.bcebos.com/applications/DF2K_JPEG.pdpa
 
 
 def frames_to_video_ffmpeg(framepath, videopath, r):
-    ffmpeg = ['ffmpeg ', ' -loglevel ', ' error ']
+    ffmpeg = ['ffmpeg ', ' -y -loglevel ', ' error ']
     cmd = ffmpeg + [
         ' -r ', r, ' -f ', ' image2 ', ' -i ', framepath, ' -vcodec ',
         ' libx264 ', ' -pix_fmt ', ' yuv420p ', ' -crf ', ' 16 ', videopath
@@ -110,7 +110,7 @@ class RealSRPredictor():
 
 
 def dump_frames_ffmpeg(vid_path, outpath, r=None, ss=None, t=None):
-    ffmpeg = ['ffmpeg ', ' -loglevel ', ' error ']
+    ffmpeg = ['ffmpeg ', ' -y -loglevel ', ' error ']
     vid_name = vid_path.split('/')[-1].split('.')[0]
     out_full_path = os.path.join(outpath, 'frames_input')
 

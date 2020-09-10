@@ -29,7 +29,7 @@ DeOldify_weight_url = 'https://paddlegan.bj.bcebos.com/applications/DeOldify_sta
 
 
 def frames_to_video_ffmpeg(framepath, videopath, r):
-    ffmpeg = ['ffmpeg ', ' -loglevel ', ' error ']
+    ffmpeg = ['ffmpeg ', ' -y -loglevel ', ' error ']
     cmd = ffmpeg + [
         ' -r ', r, ' -f ', ' image2 ', ' -i ', framepath, ' -vcodec ',
         ' libx264 ', ' -pix_fmt ', ' yuv420p ', ' -crf ', ' 16 ', videopath
@@ -139,7 +139,7 @@ class DeOldifyPredictor():
 
 
 def dump_frames_ffmpeg(vid_path, outpath, r=None, ss=None, t=None):
-    ffmpeg = ['ffmpeg ', ' -loglevel ', ' error ']
+    ffmpeg = ['ffmpeg ', ' -y -loglevel ', ' error ']
     vid_name = vid_path.split('/')[-1].split('.')[0]
     out_full_path = os.path.join(outpath, 'frames_input')
 
@@ -169,7 +169,7 @@ def dump_frames_ffmpeg(vid_path, outpath, r=None, ss=None, t=None):
 
 
 if __name__ == '__main__':
-    paddle.enable_imperative()
+    paddle.disable_static()
     args = parser.parse_args()
 
     predictor = DeOldifyPredictor(args.input,
