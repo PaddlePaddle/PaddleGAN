@@ -147,10 +147,8 @@ def custom_conv_layer(ni: int,
                      stride=stride,
                      padding=padding)
     if norm_type == 'Weight':
-        print('use weight norm')
         conv = nn.utils.weight_norm(conv)
     elif norm_type == 'Spectral':
-        # pass
         conv = Spectralnorm(conv)
     layers = [conv]
     if use_activ:

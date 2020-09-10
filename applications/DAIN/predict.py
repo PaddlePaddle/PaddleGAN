@@ -8,6 +8,7 @@ import time
 import glob
 import numpy as np
 from imageio import imread, imsave
+from tqdm import tqdm
 import cv2
 
 import paddle.fluid as fluid
@@ -175,8 +176,7 @@ class VideoFrameInterp(object):
             if not os.path.exists(os.path.join(frame_path_combined, vidname)):
                 os.makedirs(os.path.join(frame_path_combined, vidname))
 
-            for i in range(frame_num - 1):
-                print(frames[i])
+            for i in tqdm(range(frame_num - 1)):
                 first = frames[i]
                 second = frames[i + 1]
 
@@ -208,12 +208,10 @@ class VideoFrameInterp(object):
                     assert (X0.shape[1] == X1.shape[1])
                     assert (X0.shape[2] == X1.shape[2])
 
-                    print("size before padding ", X0.shape)
                     X0 = np.pad(X0, ((0,0), (padding_top, padding_bottom), \
                         (padding_left, padding_right)), mode='edge')
                     X1 = np.pad(X1, ((0,0), (padding_top, padding_bottom), \
                         (padding_left, padding_right)), mode='edge')
-                    print("size after padding ", X0.shape)
 
                     X0 = np.expand_dims(X0, axis=0)
                     X1 = np.expand_dims(X1, axis=0)
@@ -233,8 +231,6 @@ class VideoFrameInterp(object):
                     proc_timer.update(time.time() - proc_end)
                     tot_timer.update(time.time() - end)
                     end = time.time()
-                    print("*********** current image process time \t " +
-                          str(time.time() - proc_end) + "s *********")
 
                     y_ = [
                         np.transpose(

@@ -2,19 +2,20 @@ import cv2
 
 import numpy as np
 
+
 def read_img(path, size=None, is_gt=False):
     """read image by cv2
     return: Numpy float32, HWC, BGR, [0,1]"""
-    # print('debug:', path)
     img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
-    
+
     img = img.astype(np.float32) / 255.
     if img.ndim == 2:
         img = np.expand_dims(img, axis=2)
-    
+
     if img.shape[2] > 3:
-        img = img[:, :, :3] 
-    return img 
+        img = img[:, :, :3]
+    return img
+
 
 def get_test_neighbor_frames(crt_i, N, max_n, padding='new_info'):
     """Generate an index list for reading N frames from a sequence of images
@@ -62,14 +63,13 @@ def get_test_neighbor_frames(crt_i, N, max_n, padding='new_info'):
         else:
             add_idx = i
         return_l.append(add_idx)
-    # name_b = '{:08d}'.format(crt_i)    
+    # name_b = '{:08d}'.format(crt_i)
     return return_l
 
 
 class EDVRDataset:
     def __init__(self, frame_paths):
         self.frames = frame_paths
-
 
     def __getitem__(self, index):
         indexs = get_test_neighbor_frames(index, 5, len(self.frames))
@@ -79,7 +79,6 @@ class EDVRDataset:
             frame_list.append(img)
 
         img_LQs = np.stack(frame_list, axis=0)
-        print('img:', img_LQs.shape)
         # BGR to RGB, HWC to CHW, numpy to tensor
         img_LQs = img_LQs[:, :, :, [2, 1, 0]]
         img_LQs = np.transpose(img_LQs, (0, 3, 1, 2)).astype('float32')
