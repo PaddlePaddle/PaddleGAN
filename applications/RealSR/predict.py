@@ -34,13 +34,12 @@ def frames_to_video_ffmpeg(framepath, videopath, r):
         ' libx264 ', ' -pix_fmt ', ' yuv420p ', ' -crf ', ' 16 ', videopath
     ]
     cmd = ''.join(cmd)
-    print(cmd)
 
     if os.system(cmd) == 0:
-        print('Video: {} done'.format(videopath))
+        pass
     else:
-        print('Video: {} error'.format(videopath))
-    print('')
+        print('ffmpeg process video: {} error'.format(videopath))
+
     sys.stdout.flush()
 
 
@@ -129,12 +128,12 @@ def dump_frames_ffmpeg(vid_path, outpath, r=None, ss=None, t=None):
         cmd = ffmpeg + [' -i ', vid_path, ' -start_number ', ' 0 ', outformat]
 
     cmd = ''.join(cmd)
-    print(cmd)
+
     if os.system(cmd) == 0:
-        print('Video: {} done'.format(vid_name))
+        pass
     else:
-        print('Video: {} error'.format(vid_name))
-    print('')
+        print('ffmpeg process video: {} error'.format(vid_name))
+
     sys.stdout.flush()
     return out_full_path
 

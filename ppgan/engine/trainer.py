@@ -47,7 +47,7 @@ class Trainer:
         self.time_count = {}
 
     def distributed_data_parallel(self):
-        strategy = paddle.prepare_context()
+        strategy = paddle.distributed.prepare_context()
         for name in self.model.model_names:
             if isinstance(name, str):
                 net = getattr(self.model, 'net' + name)

@@ -20,6 +20,10 @@ from paddle.utils.download import get_path_from_url
 parser = argparse.ArgumentParser(description='DeOldify')
 parser.add_argument('--input', type=str, default='none', help='Input video')
 parser.add_argument('--output', type=str, default='output', help='output dir')
+parser.add_argument('--render_factor',
+                    type=int,
+                    default=32,
+                    help='model inputsize=render_factor*16')
 parser.add_argument('--weight_path',
                     type=str,
                     default=None,
@@ -35,20 +39,25 @@ def frames_to_video_ffmpeg(framepath, videopath, r):
         ' libx264 ', ' -pix_fmt ', ' yuv420p ', ' -crf ', ' 16 ', videopath
     ]
     cmd = ''.join(cmd)
-    print(cmd)
 
     if os.system(cmd) == 0:
-        print('Video: {} done'.format(videopath))
+        pass
     else:
-        print('Video: {} error'.format(videopath))
-    print('')
+        print('ffmpeg process video: {} error'.format(videopath))
+
     sys.stdout.flush()
 
 
 class DeOldifyPredictor():
-    def __init__(self, input, output, batch_size=1, weight_path=None):
+    def __init__(self,
+                 input,
+                 output,
+                 batch_size=1,
+                 weight_path=None,
+                 render_factor=32):
         self.input = input
         self.output = os.path.join(output, 'DeOldify')
+        self.render_factor = render_factor
         self.model = build_model()
         if weight_path is None:
             weight_path = get_path_from_url(DeOldify_weight_url, cur_path)
@@ -93,7 +102,7 @@ class DeOldifyPredictor():
 
     def run_single(self, img_path):
         ori_img = Image.open(img_path).convert('LA').convert('RGB')
-        img = self.norm(ori_img)
+        img = self.norm(ori_img, self.render_factor)
         x = paddle.to_tensor(img[np.newaxis, ...])
         out = self.model(x)
 
@@ -158,12 +167,12 @@ def dump_frames_ffmpeg(vid_path, outpath, r=None, ss=None, t=None):
         cmd = ffmpeg + [' -i ', vid_path, ' -start_number ', ' 0 ', outformat]
 
     cmd = ''.join(cmd)
-    print(cmd)
+
     if os.system(cmd) == 0:
-        print('Video: {} done'.format(vid_name))
+        pass
     else:
-        print('Video: {} error'.format(vid_name))
-    print('')
+        print('ffmpeg process video: {} error'.format(vid_name))
+
     sys.stdout.flush()
     return out_full_path
 
@@ -174,7 +183,8 @@ if __name__ == '__main__':
 
     predictor = DeOldifyPredictor(args.input,
                                   args.output,
-                                  weight_path=args.weight_path)
+                                  weight_path=args.weight_path,
+                                  render_factor=args.render_factor)
     frames_path, temp_video_path = predictor.run()
 
     print('output video path:', temp_video_path)

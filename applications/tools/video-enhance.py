@@ -51,6 +51,11 @@ parser.add_argument('--mindim',
                     type=int,
                     default=360,
                     help='Length of minimum image edges')
+# DeOldify args
+parser.add_argument('--render_factor',
+                    type=int,
+                    default=32,
+                    help='model inputsize=render_factor*16')
 #process order support model name:[DAIN, DeepRemaster, DeOldify, RealSR, EDVR]
 parser.add_argument('--proccess_order',
                     type=str,
@@ -65,6 +70,7 @@ if __name__ == "__main__":
     temp_video_path = None
 
     for order in orders:
+        print('Model {} proccess start..'.format(order))
         if temp_video_path is None:
             temp_video_path = args.input
         if order == 'DAIN':
@@ -106,3 +112,4 @@ if __name__ == "__main__":
 
         print('Model {} output frames path:'.format(order), frames_path)
         print('Model {} output video path:'.format(order), temp_video_path)
+        print('Model {} proccess done!'.format(order))
