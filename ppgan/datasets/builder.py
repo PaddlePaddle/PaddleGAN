@@ -111,4 +111,8 @@ def build_dataloader(cfg, is_train=True):
 
     dataloader = DictDataLoader(dataset, batch_size, is_train, num_workers)
 
+    # for i, item in enumerate(dataloader):
+    #     print(i, item.keys())
+    #     # break
+    # print('dataset build success!')
     return dataloader

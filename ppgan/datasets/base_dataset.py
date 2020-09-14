@@ -95,6 +95,9 @@ def get_transform(cfg,
     if convert:
         transform_list += [transforms.Permute(to_rgb=True)]
         transform_list += [
-            transforms.Normalize((127.5, 127.5, 127.5), (127.5, 127.5, 127.5))
+            transforms.Normalize((0., 0., 0.), (255., 255., 255.))
         ]
+        # transform_list += [
+        #     transforms.Normalize((127.5, 127.5, 127.5), (127.5, 127.5, 127.5))
+        # ]
     return transforms.Compose(transform_list)
