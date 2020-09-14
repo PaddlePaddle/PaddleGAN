@@ -22,7 +22,7 @@ class AverageMeter(object):
 
 
 def dump_frames_ffmpeg(vid_path, outpath, r=None, ss=None, t=None):
-    ffmpeg = ['ffmpeg ', ' -loglevel ', ' error ']
+    ffmpeg = ['ffmpeg ', ' -y -loglevel ', ' error ']
     vid_name = vid_path.split('/')[-1].split('.')[0]
     out_full_path = os.path.join(outpath, vid_name)
 
@@ -55,30 +55,29 @@ def dump_frames_ffmpeg(vid_path, outpath, r=None, ss=None, t=None):
         cmd = ffmpeg + [' -i ', vid_path, ' -start_number ', ' 0 ', outformat]
 
     cmd = ''.join(cmd)
-    print(cmd)
+
     if os.system(cmd) == 0:
-        print('Video: {} done'.format(vid_name))
+        pass
     else:
-        print('Video: {} error'.format(vid_name))
-    print('')
+        print('ffmpeg process video: {} error'.format(vid_name))
+
     sys.stdout.flush()
     return out_full_path
 
 
 def frames_to_video_ffmpeg(framepath, videopath, r):
-    ffmpeg = ['ffmpeg ', ' -loglevel ', ' error ']
+    ffmpeg = ['ffmpeg ', ' -y -loglevel ', ' error ']
     cmd = ffmpeg + [
         ' -r ', r, ' -f ', ' image2 ', ' -i ', framepath, ' -vcodec ',
         ' libx264 ', ' -pix_fmt ', ' yuv420p ', ' -crf ', ' 16 ', videopath
     ]
     cmd = ''.join(cmd)
-    print(cmd)
 
     if os.system(cmd) == 0:
-        print('Video: {} done'.format(videopath))
+        pass
     else:
-        print('Video: {} error'.format(videopath))
-    print('')
+        print('ffmpeg process video: {} error'.format(videopath))
+
     sys.stdout.flush()
 
 
@@ -99,7 +98,8 @@ def combine_frames(input, interpolated, combined, num_frames):
                 for k in range(num_frames):
                     src = frames2[i * num_frames + k]
                     dst = os.path.join(
-                        combined, '{:08d}.png'.format(i * (num_frames + 1) + k + 1))
+                        combined,
+                        '{:08d}.png'.format(i * (num_frames + 1) + k + 1))
                     shutil.copy2(src, dst)
             except Exception as e:
                 print(e)

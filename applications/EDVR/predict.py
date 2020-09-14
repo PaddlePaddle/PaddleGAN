@@ -27,6 +27,7 @@ import numpy as np
 import paddle.fluid as fluid
 import cv2
 
+from tqdm import tqdm
 from data import EDVRDataset
 from paddle.utils.download import get_path_from_url
 
@@ -52,7 +53,6 @@ def parse_args():
 
 
 def get_img(pred):
-    print('pred shape', pred.shape)
     pred = pred.squeeze()
     pred = np.clip(pred, a_min=0., a_max=1.0)
     pred = pred * 255
@@ -72,7 +72,7 @@ def save_img(img, framename):
 
 
 def dump_frames_ffmpeg(vid_path, outpath, r=None, ss=None, t=None):
-    ffmpeg = ['ffmpeg ', ' -loglevel ', ' error ']
+    ffmpeg = ['ffmpeg ', ' -y -loglevel ', ' error ']
     vid_name = vid_path.split('/')[-1].split('.')[0]
     out_full_path = os.path.join(outpath, 'frames_input')
 
@@ -91,30 +91,29 @@ def dump_frames_ffmpeg(vid_path, outpath, r=None, ss=None, t=None):
         cmd = ffmpeg + [' -i ', vid_path, ' -start_number ', ' 0 ', outformat]
 
     cmd = ''.join(cmd)
-    print(cmd)
+
     if os.system(cmd) == 0:
-        print('Video: {} done'.format(vid_name))
+        pass
     else:
-        print('Video: {} error'.format(vid_name))
-    print('')
+        print('ffmpeg process video: {} error'.format(vid_name))
+
     sys.stdout.flush()
     return out_full_path
 
 
 def frames_to_video_ffmpeg(framepath, videopath, r):
-    ffmpeg = ['ffmpeg ', ' -loglevel ', ' error ']
+    ffmpeg = ['ffmpeg ', ' -y -loglevel ', ' error ']
     cmd = ffmpeg + [
         ' -r ', r, ' -f ', ' image2 ', ' -i ', framepath, ' -vcodec ',
         ' libx264 ', ' -pix_fmt ', ' yuv420p ', ' -crf ', ' 16 ', videopath
     ]
     cmd = ''.join(cmd)
-    print(cmd)
 
     if os.system(cmd) == 0:
-        print('Video: {} done'.format(videopath))
+        pass
     else:
-        print('Video: {} error'.format(videopath))
-    print('')
+        print('ffmpeg process video: {} error'.format(videopath))
+
     sys.stdout.flush()
 
 
@@ -164,7 +163,7 @@ class EDVRPredictor:
 
         periods = []
         cur_time = time.time()
-        for infer_iter, data in enumerate(dataset):
+        for infer_iter, data in enumerate(tqdm(dataset)):
             data_feed_in = [data[0]]
 
             infer_outs = self.exe.run(
@@ -185,7 +184,7 @@ class EDVRPredictor:
             period = cur_time - prev_time
             periods.append(period)
 
-            print('Processed {} samples'.format(infer_iter + 1))
+            # print('Processed {} samples'.format(infer_iter + 1))
         frame_pattern_combined = os.path.join(pred_frame_path, '%08d.png')
         vid_out_path = os.path.join(self.output,
                                     '{}_edvr_out.mp4'.format(base_name))

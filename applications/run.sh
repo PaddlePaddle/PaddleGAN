@@ -1,13 +1,9 @@
-cd DAIN/pwcnet/correlation_op
-# 第一次需要执行 
-# bash make.shap
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`python -c 'import paddle; print(paddle.sysconfig.get_lib())'`
-export PYTHONPATH=$PYTHONPATH:`pwd`
-cd -
-
+# 模型说明
+# 目前包含DAIN(插帧模型)，DeOldify(上色模型)，DeepRemaster(去噪与上色模型)，EDVR(基于连续帧(视频)超分辨率模型)，RealSR(基于图片的超分辨率模型)
+# 参数说明
 # input 输入视频的路径
 # output 输出视频保存的路径
-# proccess_order 使用模型的顺序
+# proccess_order 要使用的模型及顺序
 
-python tools/main.py \
---input input.mp4  --output output --proccess_order DAIN DeepRemaster DeOldify EDVR
+python tools/video-enhance.py \
+--input input.mp4  --output output --proccess_order DeOldify RealSR

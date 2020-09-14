@@ -5,14 +5,13 @@ import paddle.nn.functional as F
 
 from resnet_backbone import resnet34, resnet101
 from hook import hook_outputs, model_sizes, dummy_eval
-# from weight_norm import weight_norm
 from spectral_norm import Spectralnorm
-from conv import Conv1D
 from paddle import fluid
 
 
 class SequentialEx(nn.Layer):
     "Like `nn.Sequential`, but with ModuleList semantics, and can access module input"
+
     def __init__(self, *layers):
         super().__init__()
         self.layers = nn.LayerList(layers)
@@ -28,14 +27,32 @@ class SequentialEx(nn.Layer):
             res = nres
         return res
 
-    def __getitem__(self,i): return self.layers[i]
-    def append(self,l): return self.layers.append(l)
-    def extend(self,l): return self.layers.extend(l)
-    def insert(self,i,l): return self.layers.insert(i,l)
+    def __getitem__(self, i):
+        return self.layers[i]
+
+    def append(self, l):
+        return self.layers.append(l)
+
+    def extend(self, l):
+        return self.layers.extend(l)
+
+    def insert(self, i, l):
+        return self.layers.insert(i, l)
 
 
 class Deoldify(SequentialEx):
-    def __init__(self, encoder, n_classes, blur=False, blur_final=True, self_attention=False, y_range=None, last_cross=True, bottle=False, norm_type='Batch', nf_factor=1, **kwargs):
+    def __init__(self,
+                 encoder,
+                 n_classes,
+                 blur=False,
+                 blur_final=True,
+                 self_attention=False,
+                 y_range=None,
+                 last_cross=True,
+                 bottle=False,
+                 norm_type='Batch',
+                 nf_factor=1,
+                 **kwargs):
 
         imsize = (256, 256)
         sfs_szs = model_sizes(encoder, size=imsize)
@@ -47,12 +64,14 @@ class Deoldify(SequentialEx):
         extra_bn = norm_type == 'Spectral'
         ni = sfs_szs[-1][1]
         middle_conv = nn.Sequential(
-            custom_conv_layer(
-                ni, ni * 2, norm_type=norm_type, extra_bn=extra_bn
-            ),
-            custom_conv_layer(
-                ni * 2, ni, norm_type=norm_type, extra_bn=extra_bn
-            ),
+            custom_conv_layer(ni,
+                              ni * 2,
+                              norm_type=norm_type,
+                              extra_bn=extra_bn),
+            custom_conv_layer(ni * 2,
+                              ni,
+                              norm_type=norm_type,
+                              extra_bn=extra_bn),
         )
 
         layers = [encoder, nn.BatchNorm(ni), nn.ReLU(), middle_conv]
@@ -65,18 +84,16 @@ class Deoldify(SequentialEx):
 
             n_out = nf if not_final else nf // 2
 
-            unet_block = UnetBlockWide(
-                up_in_c,
-                x_in_c,
-                n_out,
-                self.sfs[i],
-                final_div=not_final,
-                blur=blur,
-                self_attention=sa,
-                norm_type=norm_type,
-                extra_bn=extra_bn,
-                **kwargs
-            )
+            unet_block = UnetBlockWide(up_in_c,
+                                       x_in_c,
+                                       n_out,
+                                       self.sfs[i],
+                                       final_div=not_final,
+                                       blur=blur,
+                                       self_attention=sa,
+                                       norm_type=norm_type,
+                                       extra_bn=extra_bn,
+                                       **kwargs)
             unet_block.eval()
             layers.append(unet_block)
             x = unet_block(x)
@@ -87,32 +104,34 @@ class Deoldify(SequentialEx):
         if last_cross:
             layers.append(MergeLayer(dense=True))
             ni += 3
-            layers.append(res_block(ni, bottle=bottle, norm_type=norm_type, **kwargs))
+            layers.append(
+                res_block(ni, bottle=bottle, norm_type=norm_type, **kwargs))
         layers += [
-            custom_conv_layer(ni, n_classes, ks=1, use_activ=False, norm_type=norm_type)
+            custom_conv_layer(ni,
+                              n_classes,
+                              ks=1,
+                              use_activ=False,
+                              norm_type=norm_type)
         ]
         if y_range is not None:
             layers.append(SigmoidRange(*y_range))
         super().__init__(*layers)
 
 
-
-def custom_conv_layer(
-    ni: int,
-    nf: int,
-    ks: int = 3,
-    stride: int = 1,
-    padding: int = None,
-    bias: bool = None,
-    is_1d: bool = False,
-    norm_type='Batch',
-    use_activ: bool = True,
-    leaky: float = None,
-    transpose: bool = False,
-    self_attention: bool = False,
-    extra_bn: bool = False,
-    **kwargs
-):
+def custom_conv_layer(ni: int,
+                      nf: int,
+                      ks: int = 3,
+                      stride: int = 1,
+                      padding: int = None,
+                      bias: bool = None,
+                      is_1d: bool = False,
+                      norm_type='Batch',
+                      use_activ: bool = True,
+                      leaky: float = None,
+                      transpose: bool = False,
+                      self_attention: bool = False,
+                      extra_bn: bool = False,
+                      **kwargs):
     "Create a sequence of convolutional (`ni` to `nf`), ReLU (if `use_activ`) and batchnorm (if `bn`) layers."
     if padding is None:
         padding = (ks - 1) // 2 if not transpose else 0
@@ -121,12 +140,15 @@ def custom_conv_layer(
         bias = not bn
     conv_func = nn.ConvTranspose2d if transpose else nn.Conv1d if is_1d else nn.Conv2d
 
-    conv = conv_func(ni, nf, kernel_size=ks, bias_attr=bias, stride=stride, padding=padding)
+    conv = conv_func(ni,
+                     nf,
+                     kernel_size=ks,
+                     bias_attr=bias,
+                     stride=stride,
+                     padding=padding)
     if norm_type == 'Weight':
-        print('use weight norm')
         conv = nn.utils.weight_norm(conv)
     elif norm_type == 'Spectral':
-        # pass
         conv = Spectralnorm(conv)
     layers = [conv]
     if use_activ:
@@ -135,11 +157,11 @@ def custom_conv_layer(
         layers.append((nn.BatchNorm if is_1d else nn.BatchNorm)(nf))
     if self_attention:
         layers.append(SelfAttention(nf))
-    
+
     return nn.Sequential(*layers)
 
 
-def relu(inplace:bool=False, leaky:float=None):
+def relu(inplace: bool = False, leaky: float = None):
     "Return a relu activation, maybe `leaky` and `inplace`."
     return nn.LeakyReLU(leaky) if leaky is not None else nn.ReLU()
 
@@ -147,29 +169,31 @@ def relu(inplace:bool=False, leaky:float=None):
 class UnetBlockWide(nn.Layer):
     "A quasi-UNet block, using `PixelShuffle_ICNR upsampling`."
 
-    def __init__(
-        self,
-        up_in_c: int,
-        x_in_c: int,
-        n_out: int,
-        hook,
-        final_div: bool = True,
-        blur: bool = False,
-        leaky: float = None,
-        self_attention: bool = False,
-        **kwargs
-    ):
+    def __init__(self,
+                 up_in_c: int,
+                 x_in_c: int,
+                 n_out: int,
+                 hook,
+                 final_div: bool = True,
+                 blur: bool = False,
+                 leaky: float = None,
+                 self_attention: bool = False,
+                 **kwargs):
         super().__init__()
         self.hook = hook
         up_out = x_out = n_out // 2
-        self.shuf = CustomPixelShuffle_ICNR(
-            up_in_c, up_out, blur=blur, leaky=leaky, **kwargs
-        )
+        self.shuf = CustomPixelShuffle_ICNR(up_in_c,
+                                            up_out,
+                                            blur=blur,
+                                            leaky=leaky,
+                                            **kwargs)
         self.bn = nn.BatchNorm(x_in_c)
         ni = up_out + x_in_c
-        self.conv = custom_conv_layer(
-            ni, x_out, leaky=leaky, self_attention=self_attention, **kwargs
-        )
+        self.conv = custom_conv_layer(ni,
+                                      x_out,
+                                      leaky=leaky,
+                                      self_attention=self_attention,
+                                      **kwargs)
         self.relu = relu(leaky=leaky)
 
     def forward(self, up_in):
@@ -186,29 +210,32 @@ class UnetBlockDeep(paddle.fluid.Layer):
     "A quasi-UNet block, using `PixelShuffle_ICNR upsampling`."
 
     def __init__(
-        self,
-        up_in_c: int,
-        x_in_c: int,
-        # hook: Hook,
-        final_div: bool = True,
-        blur: bool = False,
-        leaky: float = None,
-        self_attention: bool = False,
-        nf_factor: float = 1.0,
-        **kwargs
-    ):
+            self,
+            up_in_c: int,
+            x_in_c: int,
+            # hook: Hook,
+            final_div: bool = True,
+            blur: bool = False,
+            leaky: float = None,
+            self_attention: bool = False,
+            nf_factor: float = 1.0,
+            **kwargs):
         super().__init__()
-        
-        self.shuf = CustomPixelShuffle_ICNR(
-            up_in_c, up_in_c // 2, blur=blur, leaky=leaky, **kwargs
-        )
+
+        self.shuf = CustomPixelShuffle_ICNR(up_in_c,
+                                            up_in_c // 2,
+                                            blur=blur,
+                                            leaky=leaky,
+                                            **kwargs)
         self.bn = nn.BatchNorm(x_in_c)
         ni = up_in_c // 2 + x_in_c
         nf = int((ni if final_div else ni // 2) * nf_factor)
         self.conv1 = custom_conv_layer(ni, nf, leaky=leaky, **kwargs)
-        self.conv2 = custom_conv_layer(
-            nf, nf, leaky=leaky, self_attention=self_attention, **kwargs
-        )
+        self.conv2 = custom_conv_layer(nf,
+                                       nf,
+                                       leaky=leaky,
+                                       self_attention=self_attention,
+                                       **kwargs)
         self.relu = relu(leaky=leaky)
 
     def forward(self, up_in):
@@ -228,34 +255,61 @@ def ifnone(a, b):
 
 class PixelShuffle_ICNR(nn.Layer):
     "Upsample by `scale` from `ni` filters to `nf` (default `ni`), using `nn.PixelShuffle`, `icnr` init, and `weight_norm`."
-    def __init__(self, ni:int, nf:int=None, scale:int=2, blur:bool=False, norm_type='Weight', leaky:float=None):
+
+    def __init__(self,
+                 ni: int,
+                 nf: int = None,
+                 scale: int = 2,
+                 blur: bool = False,
+                 norm_type='Weight',
+                 leaky: float = None):
         super().__init__()
         nf = ifnone(nf, ni)
-        self.conv = conv_layer(ni, nf*(scale**2), ks=1, norm_type=norm_type, use_activ=False)
-        
+        self.conv = conv_layer(ni,
+                               nf * (scale**2),
+                               ks=1,
+                               norm_type=norm_type,
+                               use_activ=False)
+
         self.shuf = PixelShuffle(scale)
-        
-        self.pad = ReplicationPad2d((1,0,1,0))
+
+        self.pad = ReplicationPad2d((1, 0, 1, 0))
         self.blur = nn.Pool2D(2, pool_stride=1, pool_type='avg')
         self.relu = relu(True, leaky=leaky)
 
-    def forward(self,x):
+    def forward(self, x):
         x = self.shuf(self.relu(self.conv(x)))
         return self.blur(self.pad(x)) if self.blur else x
 
-def conv_layer(ni:int, nf:int, ks:int=3, stride:int=1, padding:int=None, bias:bool=None, is_1d:bool=False,
-               norm_type='Batch',  use_activ:bool=True, leaky:float=None,
-               transpose:bool=False, init=None, self_attention:bool=False):
+
+def conv_layer(ni: int,
+               nf: int,
+               ks: int = 3,
+               stride: int = 1,
+               padding: int = None,
+               bias: bool = None,
+               is_1d: bool = False,
+               norm_type='Batch',
+               use_activ: bool = True,
+               leaky: float = None,
+               transpose: bool = False,
+               init=None,
+               self_attention: bool = False):
     "Create a sequence of convolutional (`ni` to `nf`), ReLU (if `use_activ`) and batchnorm (if `bn`) layers."
-    if padding is None: padding = (ks-1)//2 if not transpose else 0
+    if padding is None: padding = (ks - 1) // 2 if not transpose else 0
     bn = norm_type in ('Batch', 'BatchZero')
     if bias is None: bias = not bn
     conv_func = nn.ConvTranspose2d if transpose else nn.Conv1d if is_1d else nn.Conv2d
-    
-    conv = conv_func(ni, nf, kernel_size=ks, bias_attr=bias, stride=stride, padding=padding)
-    if norm_type=='Weight':
+
+    conv = conv_func(ni,
+                     nf,
+                     kernel_size=ks,
+                     bias_attr=bias,
+                     stride=stride,
+                     padding=padding)
+    if norm_type == 'Weight':
         conv = nn.utils.weight_norm(conv)
-    elif norm_type=='Spectral': 
+    elif norm_type == 'Spectral':
         conv = Spectralnorm(conv)
 
     layers = [conv]
@@ -268,26 +322,27 @@ def conv_layer(ni:int, nf:int, ks:int=3, stride:int=1, padding:int=None, bias:bo
 class CustomPixelShuffle_ICNR(paddle.fluid.Layer):
     "Upsample by `scale` from `ni` filters to `nf` (default `ni`), using `nn.PixelShuffle`, `icnr` init, and `weight_norm`."
 
-    def __init__(
-        self,
-        ni: int,
-        nf: int = None,
-        scale: int = 2,
-        blur: bool = False,
-        leaky: float = None,
-        **kwargs
-    ):
+    def __init__(self,
+                 ni: int,
+                 nf: int = None,
+                 scale: int = 2,
+                 blur: bool = False,
+                 leaky: float = None,
+                 **kwargs):
         super().__init__()
         nf = ifnone(nf, ni)
-        self.conv = custom_conv_layer(
-            ni, nf * (scale ** 2), ks=1, use_activ=False, **kwargs
-        )
-        
+        self.conv = custom_conv_layer(ni,
+                                      nf * (scale**2),
+                                      ks=1,
+                                      use_activ=False,
+                                      **kwargs)
+
         self.shuf = PixelShuffle(scale)
-        
+
         self.pad = ReplicationPad2d((1, 0, 1, 0))
         self.blur = nn.Pool2D(2, pool_stride=1, pool_type='avg')
-        self.relu = nn.LeakyReLU(leaky) if leaky is not None else nn.ReLU()#relu(True, leaky=leaky)
+        self.relu = nn.LeakyReLU(
+            leaky) if leaky is not None else nn.ReLU()  #relu(True, leaky=leaky)
 
     def forward(self, x):
         x = self.shuf(self.relu(self.conv(x)))
@@ -296,40 +351,48 @@ class CustomPixelShuffle_ICNR(paddle.fluid.Layer):
 
 class MergeLayer(paddle.fluid.Layer):
     "Merge a shortcut with the result of the module by adding them or concatenating thme if `dense=True`."
-    def __init__(self, dense:bool=False):
+
+    def __init__(self, dense: bool = False):
         super().__init__()
-        self.dense=dense
+        self.dense = dense
         self.orig = None
 
-    def forward(self, x): 
-        out = paddle.concat([x,self.orig], axis=1) if self.dense else (x+self.orig)
+    def forward(self, x):
+        out = paddle.concat([x, self.orig],
+                            axis=1) if self.dense else (x + self.orig)
         self.orig = None
         return out
 
 
-def res_block(nf, dense:bool=False, norm_type='Batch', bottle:bool=False, **conv_kwargs):
+def res_block(nf,
+              dense: bool = False,
+              norm_type='Batch',
+              bottle: bool = False,
+              **conv_kwargs):
     "Resnet block of `nf` features. `conv_kwargs` are passed to `conv_layer`."
     norm2 = norm_type
-    if not dense and (norm_type=='Batch'): norm2 = 'BatchZero'
-    nf_inner = nf//2 if bottle else nf
-    return SequentialEx(conv_layer(nf, nf_inner, norm_type=norm_type, **conv_kwargs),
-                      conv_layer(nf_inner, nf, norm_type=norm2, **conv_kwargs),
-                      MergeLayer(dense))
+    if not dense and (norm_type == 'Batch'): norm2 = 'BatchZero'
+    nf_inner = nf // 2 if bottle else nf
+    return SequentialEx(
+        conv_layer(nf, nf_inner, norm_type=norm_type, **conv_kwargs),
+        conv_layer(nf_inner, nf, norm_type=norm2, **conv_kwargs),
+        MergeLayer(dense))
 
 
 class SigmoidRange(paddle.fluid.Layer):
     "Sigmoid module with range `(low,x_max)`"
+
     def __init__(self, low, high):
         super().__init__()
-        self.low,self.high = low,high
+        self.low, self.high = low, high
 
-    def forward(self, x): return sigmoid_range(x, self.low, self.high)
+    def forward(self, x):
+        return sigmoid_range(x, self.low, self.high)
 
 
 def sigmoid_range(x, low, high):
     "Sigmoid function with range `(low, high)`"
     return F.sigmoid(x) * (high - low) + low
-
 
 
 class PixelShuffle(paddle.fluid.Layer):
@@ -349,7 +412,13 @@ class ReplicationPad2d(nn.Layer):
     def forward(self, x):
         return paddle.fluid.layers.pad2d(x, self.size, mode="edge")
 
-def conv1d(ni:int, no:int, ks:int=1, stride:int=1, padding:int=0, bias:bool=False):
+
+def conv1d(ni: int,
+           no: int,
+           ks: int = 1,
+           stride: int = 1,
+           padding: int = 0,
+           bias: bool = False):
     "Create and initialize a `nn.Conv1d` layer with spectral normalization."
     conv = nn.Conv1d(ni, no, ks, stride=stride, padding=padding, bias_attr=bias)
     return Spectralnorm(conv)
@@ -357,30 +426,35 @@ def conv1d(ni:int, no:int, ks:int=1, stride:int=1, padding:int=0, bias:bool=Fals
 
 class SelfAttention(nn.Layer):
     "Self attention layer for nd."
+
     def __init__(self, n_channels):
         super().__init__()
-        self.query = conv1d(n_channels, n_channels//8)
-        self.key   = conv1d(n_channels, n_channels//8)
+        self.query = conv1d(n_channels, n_channels // 8)
+        self.key = conv1d(n_channels, n_channels // 8)
         self.value = conv1d(n_channels, n_channels)
-        self.gamma = self.create_parameter(shape=[1],
-                            default_initializer=paddle.fluid.initializer.Constant(0.0))#nn.Parameter(tensor([0.]))
+        self.gamma = self.create_parameter(
+            shape=[1],
+            default_initializer=paddle.fluid.initializer.Constant(
+                0.0))  #nn.Parameter(tensor([0.]))
 
     def forward(self, x):
         #Notation from https://arxiv.org/pdf/1805.08318.pdf
         size = x.shape
-        x = paddle.reshape(x,  list(size[:2]) + [-1])
-        f,g,h = self.query(x),self.key(x),self.value(x)
-        
-        beta = paddle.nn.functional.softmax(paddle.bmm(paddle.transpose(f, [0, 2, 1]), g), axis=1)
+        x = paddle.reshape(x, list(size[:2]) + [-1])
+        f, g, h = self.query(x), self.key(x), self.value(x)
+
+        beta = paddle.nn.functional.softmax(paddle.bmm(
+            paddle.transpose(f, [0, 2, 1]), g),
+                                            axis=1)
         o = self.gamma * paddle.bmm(h, beta) + x
         return paddle.reshape(o, size)
+
 
 def _get_sfs_idxs(sizes):
     "Get the indexes of the layers where the size of the activation changes."
     feature_szs = [size[-1] for size in sizes]
     sfs_idxs = list(
-        np.where(np.array(feature_szs[:-1]) != np.array(feature_szs[1:]))[0]
-    )
+        np.where(np.array(feature_szs[:-1]) != np.array(feature_szs[1:]))[0])
     if feature_szs[0] != feature_szs[1]:
         sfs_idxs = [0] + sfs_idxs
     return sfs_idxs
@@ -391,5 +465,11 @@ def build_model():
     cut = -2
     encoder = nn.Sequential(*list(backbone.children())[:cut])
 
-    model = Deoldify(encoder, 3, blur=True, y_range=(-3, 3), norm_type='Spectral', self_attention=True, nf_factor=2)
+    model = Deoldify(encoder,
+                     3,
+                     blur=True,
+                     y_range=(-3, 3),
+                     norm_type='Spectral',
+                     self_attention=True,
+                     nf_factor=2)
     return model
