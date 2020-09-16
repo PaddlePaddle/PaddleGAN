@@ -1,16 +1,11 @@
-# import logging
 from collections import OrderedDict
 import paddle
 import paddle.nn as nn
-# import torch.nn.parallel as P
-# from torch.nn.parallel import DataParallel, DistributedDataParallel
-# import models.networks as networks
-# import models.lr_scheduler as lr_scheduler
+
 from .generators.builder import build_generator
 from .base_model import BaseModel
 from .losses import GANLoss
 from .builder import MODELS
-# logger = logging.getLogger('base')
 
 
 @MODELS.register()
@@ -27,7 +22,6 @@ class SRGANModel(BaseModel):
         # TODO: support srgan train.
         if False:
             # self.netD = build_discriminator(cfg.model.discriminator)
-
             self.netG.train()
             # self.netD.train()
 
