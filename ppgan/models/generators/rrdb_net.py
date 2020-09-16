@@ -3,6 +3,8 @@ import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
 
+from .builder import GENERATORS
+
 
 class ResidualDenseBlock_5C(nn.Layer):
     def __init__(self, nf=64, gc=32, bias=True):
@@ -15,6 +17,7 @@ class ResidualDenseBlock_5C(nn.Layer):
         self.conv5 = nn.Conv2d(nf + 4 * gc, nf, 3, 1, 1, bias_attr=bias)
         self.lrelu = nn.LeakyReLU(negative_slope=0.2)
 
+
     def forward(self, x):
         x1 = self.lrelu(self.conv1(x))
         x2 = self.lrelu(self.conv2(paddle.concat((x, x1), 1)))
@@ -26,6 +29,7 @@ class ResidualDenseBlock_5C(nn.Layer):
 
 class RRDB(nn.Layer):
     '''Residual in Residual Dense Block'''
+
     def __init__(self, nf, gc=32):
         super(RRDB, self).__init__()
         self.RDB1 = ResidualDenseBlock_5C(nf, gc)
@@ -38,7 +42,6 @@ class RRDB(nn.Layer):
         out = self.RDB3(out)
         return out * 0.2 + x
 
-
 def make_layer(block, n_layers):
     layers = []
     for _ in range(n_layers):
@@ -46,6 +49,7 @@ def make_layer(block, n_layers):
     return nn.Sequential(*layers)
 
 
+@GENERATORS.register()
 class RRDBNet(nn.Layer):
     def __init__(self, in_nc, out_nc, nf, nb, gc=32):
         super(RRDBNet, self).__init__()
@@ -67,10 +71,8 @@ class RRDBNet(nn.Layer):
         trunk = self.trunk_conv(self.RRDB_trunk(fea))
         fea = fea + trunk
 
-        fea = self.lrelu(
-            self.upconv1(F.interpolate(fea, scale_factor=2, mode='nearest')))
-        fea = self.lrelu(
-            self.upconv2(F.interpolate(fea, scale_factor=2, mode='nearest')))
+        fea = self.lrelu(self.upconv1(F.interpolate(fea, scale_factor=2, mode='nearest')))
+        fea = self.lrelu(self.upconv2(F.interpolate(fea, scale_factor=2, mode='nearest')))
         out = self.conv_last(self.lrelu(self.HRconv(fea)))
 
         return out

@@ -2,7 +2,7 @@ import numpy as np
 from PIL import Image
 
 
-def tensor2img(input_image, imtype=np.uint8):
+def tensor2img(input_image, min_max=(-1., 1.), imtype=np.uint8):
     """"Converts a Tensor array into a numpy image array.
 
     Parameters:
@@ -15,8 +15,8 @@ def tensor2img(input_image, imtype=np.uint8):
             image_numpy = image_numpy[0]
         if image_numpy.shape[0] == 1:  # grayscale to RGB
             image_numpy = np.tile(image_numpy, (3, 1, 1))
-        # image_numpy = (np.transpose(image_numpy, (1, 2, 0)) + 1) / 2.0 * 255.0  # post-processing: tranpose and scaling
-        image_numpy = image_numpy.clip(0, 1)
+        image_numpy = image_numpy.clip(min_max[0], min_max[1])
+        image_numpy = (image_numpy - min_max[0]) / (min_max[1] - min_max[0])
         image_numpy = (np.transpose(image_numpy, (1, 2, 0))) * 255.0  # post-processing: tranpose and scaling
     else:  # if it is a numpy array, do nothing
         image_numpy = input_image

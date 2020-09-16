@@ -3,10 +3,9 @@ import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
 
-from resnet_backbone import resnet34, resnet101
-from hook import hook_outputs, model_sizes, dummy_eval
-from spectral_norm import Spectralnorm
-from paddle import fluid
+from .hook import hook_outputs, model_sizes, dummy_eval
+from ..backbones import resnet34, resnet101
+from ...modules.nn import Spectralnorm
 
 
 class SequentialEx(nn.Layer):
@@ -206,7 +205,7 @@ class UnetBlockWide(nn.Layer):
         return self.conv(cat_x)
 
 
-class UnetBlockDeep(paddle.fluid.Layer):
+class UnetBlockDeep(nn.Layer):
     "A quasi-UNet block, using `PixelShuffle_ICNR upsampling`."
 
     def __init__(
@@ -319,7 +318,7 @@ def conv_layer(ni: int,
     return nn.Sequential(*layers)
 
 
-class CustomPixelShuffle_ICNR(paddle.fluid.Layer):
+class CustomPixelShuffle_ICNR(nn.Layer):
     "Upsample by `scale` from `ni` filters to `nf` (default `ni`), using `nn.PixelShuffle`, `icnr` init, and `weight_norm`."
 
     def __init__(self,
@@ -349,7 +348,7 @@ class CustomPixelShuffle_ICNR(paddle.fluid.Layer):
         return self.blur(self.pad(x)) if self.blur else x
 
 
-class MergeLayer(paddle.fluid.Layer):
+class MergeLayer(nn.Layer):
     "Merge a shortcut with the result of the module by adding them or concatenating thme if `dense=True`."
 
     def __init__(self, dense: bool = False):
@@ -379,7 +378,7 @@ def res_block(nf,
         MergeLayer(dense))
 
 
-class SigmoidRange(paddle.fluid.Layer):
+class SigmoidRange(nn.Layer):
     "Sigmoid module with range `(low,x_max)`"
 
     def __init__(self, low, high):
@@ -395,13 +394,13 @@ def sigmoid_range(x, low, high):
     return F.sigmoid(x) * (high - low) + low
 
 
-class PixelShuffle(paddle.fluid.Layer):
+class PixelShuffle(nn.Layer):
     def __init__(self, upscale_factor):
         super(PixelShuffle, self).__init__()
         self.upscale_factor = upscale_factor
 
     def forward(self, x):
-        return paddle.fluid.layers.pixel_shuffle(x, self.upscale_factor)
+        return F.pixel_shuffle(x, self.upscale_factor)
 
 
 class ReplicationPad2d(nn.Layer):
@@ -410,7 +409,7 @@ class ReplicationPad2d(nn.Layer):
         self.size = size
 
     def forward(self, x):
-        return paddle.fluid.layers.pad2d(x, self.size, mode="edge")
+        return F.pad2d(x, self.size, mode="edge")
 
 
 def conv1d(ni: int,

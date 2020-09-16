@@ -40,6 +40,9 @@ class Trainer:
         self.weight_interval = cfg.snapshot_config.interval
         self.log_interval = cfg.log_config.interval
         self.visual_interval = cfg.log_config.visiual_interval
+        self.validate_interval = -1
+        if cfg.get('validate', None) is not None:
+            self.validate_interval = cfg.validate.get('interval', -1)
         self.cfg = cfg
 
         self.local_rank = ParallelEnv().local_rank
@@ -81,7 +84,8 @@ class Trainer:
                 step_start_time = time.time()
             self.logger.info('train one epoch time: {}'.format(time.time() -
                                                                start_time))
-            self.validate()
+            if self.validate_interval > -1 and epoch % self.validate_interval:
+                self.validate()
             self.model.lr_scheduler.step()
             if epoch % self.weight_interval == 0:
                 self.save(epoch, 'weight', keep=-1)
@@ -103,26 +107,22 @@ class Trainer:
             current_paths = self.model.get_image_paths()
             current_visuals = self.model.get_current_visuals()
             
-            # print('debug1:', self.cfg.validate.metrics)
             for j in range(len(current_paths)):
                 short_path = os.path.basename(current_paths[j])
                 basename = os.path.splitext(short_path)[0]
                 for k, img_tensor in current_visuals.items():
                     name = '%s_%s' % (basename, k)
                     visual_results.update({name: img_tensor[j]})
-                # print('debug2:', self.cfg.validate.metrics)
                 if 'psnr' in self.cfg.validate.metrics:
-                    # args = copy.deepcopy(self.cfg.validate.metrics.pnsr)
-                    # args.pop('name')
                     if 'psnr' not in metric_result:
-                        metric_result['psnr'] = calculate_psnr(tensor2img(current_visuals['output'][j]), tensor2img(current_visuals['gt'][j]), **self.cfg.validate.metrics.psnr)
+                        metric_result['psnr'] = calculate_psnr(tensor2img(current_visuals['output'][j], (0., 1.)), tensor2img(current_visuals['gt'][j], (0., 1.)), **self.cfg.validate.metrics.psnr)
                     else:
-                        metric_result['psnr'] += calculate_psnr(tensor2img(current_visuals['output'][j]), tensor2img(current_visuals['gt'][j]), **self.cfg.validate.metrics.psnr)
+                        metric_result['psnr'] += calculate_psnr(tensor2img(current_visuals['output'][j], (0., 1.)), tensor2img(current_visuals['gt'][j], (0., 1.)), **self.cfg.validate.metrics.psnr)
                 if 'ssim' in self.cfg.validate.metrics:
                     if 'ssim' not in metric_result:
-                        metric_result['ssim'] = calculate_ssim(tensor2img(current_visuals['output'][j]), tensor2img(current_visuals['gt'][j]), **self.cfg.validate.metrics.ssim)
+                        metric_result['ssim'] = calculate_ssim(tensor2img(current_visuals['output'][j], (0., 1.)), tensor2img(current_visuals['gt'][j], (0., 1.)), **self.cfg.validate.metrics.ssim)
                     else:
-                        metric_result['ssim'] += calculate_ssim(tensor2img(current_visuals['output'][j]), tensor2img(current_visuals['gt'][j]), **self.cfg.validate.metrics.ssim)
+                        metric_result['ssim'] += calculate_ssim(tensor2img(current_visuals['output'][j], (0., 1.)), tensor2img(current_visuals['gt'][j], (0., 1.)), **self.cfg.validate.metrics.ssim)
              
             self.visual('visual_val', visual_results=visual_results)
 
@@ -200,8 +200,11 @@ class Trainer:
             msg = ''
 
         makedirs(os.path.join(self.output_dir, results_dir))
+        min_max = self.cfg.get('min_max', None)
+        if min_max is None:
+            min_max = (-1., 1.)
         for label, image in visual_results.items():
-            image_numpy = tensor2img(image)
+            image_numpy = tensor2img(image, min_max)
             img_path = os.path.join(self.output_dir, results_dir,
                                     msg + '%s.png' % (label))
             save_image(image_numpy, img_path)

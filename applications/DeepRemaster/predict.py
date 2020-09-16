@@ -14,7 +14,7 @@ from tqdm import tqdm
 import argparse
 import subprocess
 import utils
-from remasternet import NetworkR, NetworkC
+from ppgan.models.generators.remaster import NetworkR, NetworkC
 from paddle.utils.download import get_path_from_url
 
 DeepRemaster_weight_url = 'https://paddlegan.bj.bcebos.com/applications/deep_remaster.pdparams'
