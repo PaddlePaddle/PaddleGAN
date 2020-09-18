@@ -13,8 +13,8 @@ import cv2
 
 import paddle.fluid as fluid
 from paddle.utils.download import get_path_from_url
+from ppgan.utils.video import video2frames, frames2video
 
-import networks
 from util import *
 from my_args import parser
 
@@ -129,7 +129,7 @@ class VideoFrameInterp(object):
             r2 = str(int(fps) * times_interp)
             print("New fps (frame rate): ", r2)
 
-            out_path = dump_frames_ffmpeg(vid, frame_path_input)
+            out_path = video2frames(vid, frame_path_input)
 
             vidname = vid.split('/')[-1].split('.')[0]
 
@@ -266,7 +266,7 @@ class VideoFrameInterp(object):
                                                 vidname + '.mp4')
             if os.path.exists(video_pattern_output):
                 os.remove(video_pattern_output)
-            frames_to_video_ffmpeg(frame_pattern_combined, video_pattern_output,
+            frames2video(frame_pattern_combined, video_pattern_output,
                                    r2)
 
         return frame_pattern_combined, video_pattern_output

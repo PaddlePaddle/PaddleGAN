@@ -37,6 +37,11 @@ dataset:
       crop_size: 256
       preprocess: resize_and_crop
       no_flip: False
+      normalize:
+        mean:
+          (127.5, 127.5, 127.5)
+        std:
+          (127.5, 127.5, 127.5)
   test:
     name: PairedDataset
     dataroot: data/cityscapes/
@@ -52,6 +57,11 @@ dataset:
       crop_size: 256
       preprocess: resize_and_crop
       no_flip: True
+      normalize:
+        mean:
+          (127.5, 127.5, 127.5)
+        std:
+          (127.5, 127.5, 127.5)
 
 optimizer:
   name: Adam

@@ -14,8 +14,9 @@ import pickle
 from PIL import Image
 from tqdm import tqdm
 from paddle import fluid
-from model import build_model
 from paddle.utils.download import get_path_from_url
+from ppgan.utils.video import frames2video, video2frames
+from ppgan.models.generators.deoldify import build_model
 
 parser = argparse.ArgumentParser(description='DeOldify')
 parser.add_argument('--input', type=str, default='none', help='Input video')
@@ -29,23 +30,7 @@ parser.add_argument('--weight_path',
                     default=None,
                     help='Path to the reference image directory')
 
-DeOldify_weight_url = 'https://paddlegan.bj.bcebos.com/applications/DeOldify_stable.pdparams'
-
-
-def frames_to_video_ffmpeg(framepath, videopath, r):
-    ffmpeg = ['ffmpeg ', ' -y -loglevel ', ' error ']
-    cmd = ffmpeg + [
-        ' -r ', r, ' -f ', ' image2 ', ' -i ', framepath, ' -vcodec ',
-        ' libx264 ', ' -pix_fmt ', ' yuv420p ', ' -crf ', ' 16 ', videopath
-    ]
-    cmd = ''.join(cmd)
-
-    if os.system(cmd) == 0:
-        pass
-    else:
-        print('ffmpeg process video: {} error'.format(videopath))
-
-    sys.stdout.flush()
+DEOLDIFY_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/applications/DeOldify_stable.pdparams'
 
 
 class DeOldifyPredictor():
@@ -60,7 +45,7 @@ class DeOldifyPredictor():
         self.render_factor = render_factor
         self.model = build_model()
         if weight_path is None:
-            weight_path = get_path_from_url(DeOldify_weight_url, cur_path)
+            weight_path = get_path_from_url(DEOLDIFY_WEIGHT_URL, cur_path)
 
         state_dict, _ = paddle.load(weight_path)
         self.model.load_dict(state_dict)
@@ -127,7 +112,7 @@ class DeOldifyPredictor():
         cap = cv2.VideoCapture(vid)
         fps = cap.get(cv2.CAP_PROP_FPS)
 
-        out_path = dump_frames_ffmpeg(vid, output_path)
+        out_path = video2frames(vid, output_path)
 
         frames = sorted(glob.glob(os.path.join(out_path, '*.png')))
 
@@ -141,40 +126,9 @@ class DeOldifyPredictor():
 
         vid_out_path = os.path.join(output_path,
                                     '{}_deoldify_out.mp4'.format(base_name))
-        frames_to_video_ffmpeg(frame_pattern_combined, vid_out_path,
-                               str(int(fps)))
+        frames2video(frame_pattern_combined, vid_out_path, str(int(fps)))
 
         return frame_pattern_combined, vid_out_path
-
-
-def dump_frames_ffmpeg(vid_path, outpath, r=None, ss=None, t=None):
-    ffmpeg = ['ffmpeg ', ' -y -loglevel ', ' error ']
-    vid_name = vid_path.split('/')[-1].split('.')[0]
-    out_full_path = os.path.join(outpath, 'frames_input')
-
-    if not os.path.exists(out_full_path):
-        os.makedirs(out_full_path)
-
-    # video file name
-    outformat = out_full_path + '/%08d.png'
-
-    if ss is not None and t is not None and r is not None:
-        cmd = ffmpeg + [
-            ' -ss ', ss, ' -t ', t, ' -i ', vid_path, ' -r ', r, ' -qscale:v ',
-            ' 0.1 ', ' -start_number ', ' 0 ', outformat
-        ]
-    else:
-        cmd = ffmpeg + [' -i ', vid_path, ' -start_number ', ' 0 ', outformat]
-
-    cmd = ''.join(cmd)
-
-    if os.system(cmd) == 0:
-        pass
-    else:
-        print('ffmpeg process video: {} error'.format(vid_name))
-
-    sys.stdout.flush()
-    return out_full_path
 
 
 if __name__ == '__main__':

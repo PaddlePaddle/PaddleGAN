@@ -21,66 +21,6 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
 
-def dump_frames_ffmpeg(vid_path, outpath, r=None, ss=None, t=None):
-    ffmpeg = ['ffmpeg ', ' -y -loglevel ', ' error ']
-    vid_name = vid_path.split('/')[-1].split('.')[0]
-    out_full_path = os.path.join(outpath, vid_name)
-
-    if not os.path.exists(out_full_path):
-        os.makedirs(out_full_path)
-
-    # video file name
-    outformat = out_full_path + '/%08d.png'
-
-    if ss is not None and t is not None and r is not None:
-        cmd = ffmpeg + [
-            ' -ss ',
-            ss,
-            ' -t ',
-            t,
-            ' -i ',
-            vid_path,
-            ' -r ',
-            r,
-            # ' -f ', ' image2 ',
-            #                        ' -s ', ' 960*540 ',
-            ' -qscale:v ',
-            ' 0.1 ',
-            ' -start_number ',
-            ' 0 ',
-            # ' -qmax ', ' 1 ',
-            outformat
-        ]
-    else:
-        cmd = ffmpeg + [' -i ', vid_path, ' -start_number ', ' 0 ', outformat]
-
-    cmd = ''.join(cmd)
-
-    if os.system(cmd) == 0:
-        pass
-    else:
-        print('ffmpeg process video: {} error'.format(vid_name))
-
-    sys.stdout.flush()
-    return out_full_path
-
-
-def frames_to_video_ffmpeg(framepath, videopath, r):
-    ffmpeg = ['ffmpeg ', ' -y -loglevel ', ' error ']
-    cmd = ffmpeg + [
-        ' -r ', r, ' -f ', ' image2 ', ' -i ', framepath, ' -vcodec ',
-        ' libx264 ', ' -pix_fmt ', ' yuv420p ', ' -crf ', ' 16 ', videopath
-    ]
-    cmd = ''.join(cmd)
-
-    if os.system(cmd) == 0:
-        pass
-    else:
-        print('ffmpeg process video: {} error'.format(videopath))
-
-    sys.stdout.flush()
-
-
 def combine_frames(input, interpolated, combined, num_frames):
     frames1 = sorted(glob.glob(os.path.join(input, '*.png')))
     frames2 = sorted(glob.glob(os.path.join(interpolated, '*.png')))
