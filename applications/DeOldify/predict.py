@@ -18,7 +18,6 @@ from paddle.utils.download import get_path_from_url
 from ppgan.utils.video import frames2video, video2frames
 from ppgan.models.generators.deoldify import build_model
 
-
 parser = argparse.ArgumentParser(description='DeOldify')
 parser.add_argument('--input', type=str, default='none', help='Input video')
 parser.add_argument('--output', type=str, default='output', help='output dir')
@@ -31,7 +30,7 @@ parser.add_argument('--weight_path',
                     default=None,
                     help='Path to the reference image directory')
 
-DeOldify_weight_url = 'https://paddlegan.bj.bcebos.com/applications/DeOldify_stable.pdparams'
+DEOLDIFY_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/applications/DeOldify_stable.pdparams'
 
 
 class DeOldifyPredictor():
@@ -46,7 +45,7 @@ class DeOldifyPredictor():
         self.render_factor = render_factor
         self.model = build_model()
         if weight_path is None:
-            weight_path = get_path_from_url(DeOldify_weight_url, cur_path)
+            weight_path = get_path_from_url(DEOLDIFY_WEIGHT_URL, cur_path)
 
         state_dict, _ = paddle.load(weight_path)
         self.model.load_dict(state_dict)
@@ -127,8 +126,7 @@ class DeOldifyPredictor():
 
         vid_out_path = os.path.join(output_path,
                                     '{}_deoldify_out.mp4'.format(base_name))
-        frames2video(frame_pattern_combined, vid_out_path,
-                               str(int(fps)))
+        frames2video(frame_pattern_combined, vid_out_path, str(int(fps)))
 
         return frame_pattern_combined, vid_out_path
 

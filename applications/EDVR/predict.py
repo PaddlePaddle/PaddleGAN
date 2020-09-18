@@ -32,7 +32,7 @@ from data import EDVRDataset
 from paddle.utils.download import get_path_from_url
 from ppgan.utils.video import frames2video, video2frames
 
-EDVR_weight_url = 'https://paddlegan.bj.bcebos.com/applications/edvr_infer_model.tar'
+EDVR_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/applications/edvr_infer_model.tar'
 
 
 def parse_args():
@@ -82,7 +82,7 @@ class EDVRPredictor:
         self.exe = fluid.Executor(place)
 
         if weight_path is None:
-            weight_path = get_path_from_url(EDVR_weight_url, cur_path)
+            weight_path = get_path_from_url(EDVR_WEIGHT_URL, cur_path)
 
         model_filename = 'EDVR_model.pdmodel'
         params_filename = 'EDVR_params.pdparams'
@@ -141,8 +141,7 @@ class EDVRPredictor:
         frame_pattern_combined = os.path.join(pred_frame_path, '%08d.png')
         vid_out_path = os.path.join(self.output,
                                     '{}_edvr_out.mp4'.format(base_name))
-        frames2video(frame_pattern_combined, vid_out_path,
-                               str(int(fps)))
+        frames2video(frame_pattern_combined, vid_out_path, str(int(fps)))
 
         return frame_pattern_combined, vid_out_path
 

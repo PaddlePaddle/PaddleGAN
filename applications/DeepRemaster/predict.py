@@ -17,7 +17,7 @@ import utils
 from ppgan.models.generators.remaster import NetworkR, NetworkC
 from paddle.utils.download import get_path_from_url
 
-DeepRemaster_weight_url = 'https://paddlegan.bj.bcebos.com/applications/deep_remaster.pdparams'
+DEEPREMASTER_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/applications/deep_remaster.pdparams'
 
 parser = argparse.ArgumentParser(description='Remastering')
 parser.add_argument('--input', type=str, default=None, help='Input video')
@@ -51,7 +51,7 @@ class DeepReasterPredictor:
         self.mindim = mindim
 
         if weight_path is None:
-            weight_path = get_path_from_url(DeepRemaster_weight_url, cur_path)
+            weight_path = get_path_from_url(DEEPREMASTER_WEIGHT_URL, cur_path)
 
         state_dict, _ = paddle.load(weight_path)
 

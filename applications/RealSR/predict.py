@@ -26,7 +26,7 @@ parser.add_argument('--weight_path',
                     default=None,
                     help='Path to the reference image directory')
 
-RealSR_weight_url = 'https://paddlegan.bj.bcebos.com/applications/DF2K_JPEG.pdparams'
+REALSR_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/applications/DF2K_JPEG.pdparams'
 
 
 class RealSRPredictor():
@@ -35,7 +35,7 @@ class RealSRPredictor():
         self.output = os.path.join(output, 'RealSR')
         self.model = RRDBNet(3, 3, 64, 23)
         if weight_path is None:
-            weight_path = get_path_from_url(RealSR_weight_url, cur_path)
+            weight_path = get_path_from_url(REALSR_WEIGHT_URL, cur_path)
 
         state_dict, _ = paddle.load(weight_path)
         self.model.load_dict(state_dict)
@@ -88,8 +88,7 @@ class RealSRPredictor():
 
         vid_out_path = os.path.join(output_path,
                                     '{}_realsr_out.mp4'.format(base_name))
-        frames2video(frame_pattern_combined, vid_out_path,
-                               str(int(fps)))
+        frames2video(frame_pattern_combined, vid_out_path, str(int(fps)))
 
         return frame_pattern_combined, vid_out_path
 
