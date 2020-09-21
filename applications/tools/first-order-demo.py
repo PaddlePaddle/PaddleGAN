@@ -1,3 +1,17 @@
+# copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import matplotlib
 matplotlib.use('Agg')
 import os
@@ -5,20 +19,20 @@ import sys
 
 import yaml
 import pickle
-from argparse import ArgumentParser
-from tqdm import tqdm
-
 import imageio
 import numpy as np
-from skimage.transform import resize
+
+from tqdm import tqdm
 from skimage import img_as_ubyte
-import paddle
+from argparse import ArgumentParser
+from skimage.transform import resize
+from scipy.spatial import ConvexHull
 
 from ppgan.models.generators.occlusion_aware import OcclusionAwareGenerator
 from ppgan.modules.keypoint_detector import KPDetector
 from ppgan.utils.animate import normalize_kp
-from scipy.spatial import ConvexHull
 
+import paddle
 paddle.disable_static()
 
 if sys.version_info[0] < 3:
@@ -60,8 +74,7 @@ def make_animation(source_image,
         predictions = []
         source = paddle.to_tensor(source_image[np.newaxis].astype(
             np.float32)).transpose([0, 3, 1, 2])
-        # if not cpu:
-        #     source = source.cuda()
+
         driving = paddle.to_tensor(
             np.array(driving_video)[np.newaxis].astype(np.float32)).transpose(
                 [0, 4, 1, 2, 3])

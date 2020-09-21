@@ -1,11 +1,7 @@
-import os
-from tqdm import tqdm
+import numpy as np
+from scipy.spatial import ConvexHull
 
 import paddle
-
-import imageio
-from scipy.spatial import ConvexHull
-import numpy as np
 
 
 def normalize_kp(kp_source,
