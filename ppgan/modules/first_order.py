@@ -2,8 +2,6 @@ import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
 
-# from sync_batchnorm import SynchronizedBatchNorm2d as BatchNorm2d
-
 
 def kp2gaussian(kp, spatial_size, kp_variance):
     """
@@ -44,7 +42,6 @@ def make_coordinate_grid(spatial_size, type):
     xx = paddle.tile(x.reshape([1, -1]), [h, 1])
 
     meshed = paddle.concat([xx.unsqueeze(2), yy.unsqueeze(2)], 2)
-    # meshed = paddle.concat([xx.unsqueeze_(2), yy.unsqueeze_(2)], 2)
 
     return meshed
 
@@ -261,10 +258,7 @@ class AntiAliasInterpolation2d(nn.Layer):
         # Make sure sum of values in gaussian kernel equals 1.
         kernel = kernel / paddle.sum(kernel)
         # Reshape to depthwise convolutional weight
-        # print('debug shape:', kernel.shape)
-        # print('debug shape 1:', kernel.dim())
         kernel = kernel.reshape([1, 1, *kernel.shape])
-        # kernel = kernel.repeat(channels, *[1] * (kernel.dim() - 1))
         kernel = paddle.tile(kernel, [channels, *[1] * (kernel.dim() - 1)])
 
         self.register_buffer('weight', kernel)
