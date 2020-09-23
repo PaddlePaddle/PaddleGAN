@@ -11,6 +11,7 @@ from ..datasets.builder import build_dataloader
 from ..models.builder import build_model
 from ..utils.visual import tensor2img, save_image
 from ..utils.filesystem import save, load, makedirs
+from ..utils.timer import TimeAverager
 from ..metric.psnr_ssim import calculate_psnr, calculate_ssim
 
 
@@ -61,30 +62,37 @@ class Trainer:
                         paddle.DataParallel(net, strategy))
 
     def train(self):
+        reader_cost_averager = TimeAverager()
+        batch_cost_averager = TimeAverager()
 
         for epoch in range(self.start_epoch, self.epochs):
             self.current_epoch = epoch
             start_time = step_start_time = time.time()
             for i, data in enumerate(self.train_dataloader):
-                data_time = time.time()
+                reader_cost_averager.record(time.time() - step_start_time)
+
                 self.batch_id = i
                 # unpack data from dataset and apply preprocessing
                 # data input should be dict
                 self.model.set_input(data)
                 self.model.optimize_parameters()
 
-                self.data_time = data_time - step_start_time
-                self.step_time = time.time() - step_start_time
+                batch_cost_averager.record(time.time() - step_start_time)
                 if i % self.log_interval == 0:
+                    self.data_time = reader_cost_averager.get_average()
+                    self.step_time = batch_cost_averager.get_average()
                     self.print_log()
+
+                    reader_cost_averager.reset()
+                    batch_cost_averager.reset()
 
                 if i % self.visual_interval == 0:
                     self.visual('visual_train')
 
                 step_start_time = time.time()
 
-            self.logger.info('train one epoch time: {}'.format(time.time() -
-                                                               start_time))
+            self.logger.info(
+                'train one epoch time: {}'.format(time.time() - start_time))
             if self.validate_interval > -1 and epoch % self.validate_interval:
                 self.validate()
             self.model.lr_scheduler.step()
@@ -94,8 +102,8 @@ class Trainer:
 
     def validate(self):
         if not hasattr(self, 'val_dataloader'):
-            self.val_dataloader = build_dataloader(self.cfg.dataset.val,
-                                                   is_train=False)
+            self.val_dataloader = build_dataloader(
+                self.cfg.dataset.val, is_train=False)
 
         metric_result = {}
 
@@ -141,8 +149,8 @@ class Trainer:
             self.visual('visual_val', visual_results=visual_results)
 
             if i % self.log_interval == 0:
-                self.logger.info('val iter: [%d/%d]' %
-                                 (i, len(self.val_dataloader)))
+                self.logger.info(
+                    'val iter: [%d/%d]' % (i, len(self.val_dataloader)))
 
         for metric_name in metric_result.keys():
             metric_result[metric_name] /= len(self.val_dataloader.dataset)
@@ -152,8 +160,8 @@ class Trainer:
 
     def test(self):
         if not hasattr(self, 'test_dataloader'):
-            self.test_dataloader = build_dataloader(self.cfg.dataset.test,
-                                                    is_train=False)
+            self.test_dataloader = build_dataloader(
+                self.cfg.dataset.test, is_train=False)
 
         # data[0]: img, data[1]: img path index
         # test batch size must be 1
@@ -177,8 +185,8 @@ class Trainer:
             self.visual('visual_test', visual_results=visual_results)
 
             if i % self.log_interval == 0:
-                self.logger.info('Test iter: [%d/%d]' %
-                                 (i, len(self.test_dataloader)))
+                self.logger.info(
+                    'Test iter: [%d/%d]' % (i, len(self.test_dataloader)))
 
     def print_log(self):
         losses = self.model.get_current_losses()
