@@ -1,17 +1,21 @@
+import functools
 import paddle
 import paddle.nn as nn
-import functools
 
-from ...modules.nn import ReflectionPad2d, LeakyReLU, Tanh, Dropout
 from ...modules.norm import build_norm_layer
 from .builder import GENERATORS
 
 
 @GENERATORS.register()
-class UnetGenerator(paddle.fluid.dygraph.Layer):
+class UnetGenerator(nn.Layer):
     """Create a Unet-based generator"""
-
-    def __init__(self, input_nc, output_nc, num_downs, ngf=64, norm_type='batch', use_dropout=False):
+    def __init__(self,
+                 input_nc,
+                 output_nc,
+                 num_downs,
+                 ngf=64,
+                 norm_type='batch',
+                 use_dropout=False):
         """Construct a Unet generator
         Args:
             input_nc (int)  -- the number of channels in input images
@@ -27,36 +31,64 @@ class UnetGenerator(paddle.fluid.dygraph.Layer):
         super(UnetGenerator, self).__init__()
         norm_layer = build_norm_layer(norm_type)
         # construct unet structure
-        unet_block = UnetSkipConnectionBlock(ngf * 8, ngf * 8, input_nc=None, submodule=None, norm_layer=norm_layer, innermost=True)  # add the innermost layer
-        for i in range(num_downs - 5):          # add intermediate layers with ngf * 8 filters
-            unet_block = UnetSkipConnectionBlock(ngf * 8, ngf * 8, input_nc=None, submodule=unet_block, norm_layer=norm_layer, use_dropout=use_dropout)
+        unet_block = UnetSkipConnectionBlock(
+            ngf * 8,
+            ngf * 8,
+            input_nc=None,
+            submodule=None,
+            norm_layer=norm_layer,
+            innermost=True)  # add the innermost layer
+        for i in range(num_downs -
+                       5):  # add intermediate layers with ngf * 8 filters
+            unet_block = UnetSkipConnectionBlock(ngf * 8,
+                                                 ngf * 8,
+                                                 input_nc=None,
+                                                 submodule=unet_block,
+                                                 norm_layer=norm_layer,
+                                                 use_dropout=use_dropout)
         # gradually reduce the number of filters from ngf * 8 to ngf
-        unet_block = UnetSkipConnectionBlock(ngf * 4, ngf * 8, input_nc=None, submodule=unet_block, norm_layer=norm_layer)
-        unet_block = UnetSkipConnectionBlock(ngf * 2, ngf * 4, input_nc=None, submodule=unet_block, norm_layer=norm_layer)
-        unet_block = UnetSkipConnectionBlock(ngf, ngf * 2, input_nc=None, submodule=unet_block, norm_layer=norm_layer)
-        self.model = UnetSkipConnectionBlock(output_nc, ngf, input_nc=input_nc, submodule=unet_block, outermost=True, norm_layer=norm_layer)  # add the outermost layer
+        unet_block = UnetSkipConnectionBlock(ngf * 4,
+                                             ngf * 8,
+                                             input_nc=None,
+                                             submodule=unet_block,
+                                             norm_layer=norm_layer)
+        unet_block = UnetSkipConnectionBlock(ngf * 2,
+                                             ngf * 4,
+                                             input_nc=None,
+                                             submodule=unet_block,
+                                             norm_layer=norm_layer)
+        unet_block = UnetSkipConnectionBlock(ngf,
+                                             ngf * 2,
+                                             input_nc=None,
+                                             submodule=unet_block,
+                                             norm_layer=norm_layer)
+        self.model = UnetSkipConnectionBlock(
+            output_nc,
+            ngf,
+            input_nc=input_nc,
+            submodule=unet_block,
+            outermost=True,
+            norm_layer=norm_layer)  # add the outermost layer
 
     def forward(self, input):
         """Standard forward"""
-        # tmp = self.model._sub_layers['model'][0](input)
-        # tmp1 = self.model._sub_layers['model'][1](tmp)
-        # tmp2 = self.model._sub_layers['model'][2](tmp1)
-        # import pickle
-        # pickle.dump(tmp2.numpy(), open('/workspace/notebook/align_pix2pix/tmp2-pd.pkl', 'wb'))
-        # tmp3 = self.model._sub_layers['model'][3](tmp2)
-        # pickle.dump(tmp3.numpy(), open('/workspace/notebook/align_pix2pix/tmp3-pd.pkl', 'wb'))
-        # tmp4 = self.model._sub_layers['model'][4](tmp3)
         return self.model(input)
 
 
-class UnetSkipConnectionBlock(paddle.fluid.dygraph.Layer):
+class UnetSkipConnectionBlock(nn.Layer):
     """Defines the Unet submodule with skip connection.
         X -------------------identity----------------------
         |-- downsampling -- |submodule| -- upsampling --|
     """
-
-    def __init__(self, outer_nc, inner_nc, input_nc=None,
-                 submodule=None, outermost=False, innermost=False, norm_layer=nn.BatchNorm, use_dropout=False):
+    def __init__(self,
+                 outer_nc,
+                 inner_nc,
+                 input_nc=None,
+                 submodule=None,
+                 outermost=False,
+                 innermost=False,
+                 norm_layer=nn.BatchNorm,
+                 use_dropout=False):
         """Construct a Unet submodule with skip connections.
 
         Parameters:
@@ -77,36 +109,48 @@ class UnetSkipConnectionBlock(paddle.fluid.dygraph.Layer):
             use_bias = norm_layer == nn.InstanceNorm
         if input_nc is None:
             input_nc = outer_nc
-        downconv = nn.Conv2d(input_nc, inner_nc, kernel_size=4,
-                             stride=2, padding=1, bias_attr=use_bias)
-        downrelu = LeakyReLU(0.2, True)
+        downconv = nn.Conv2d(input_nc,
+                             inner_nc,
+                             kernel_size=4,
+                             stride=2,
+                             padding=1,
+                             bias_attr=use_bias)
+        downrelu = nn.LeakyReLU(0.2)
         downnorm = norm_layer(inner_nc)
-        uprelu = nn.ReLU(True)
+        uprelu = nn.ReLU()
         upnorm = norm_layer(outer_nc)
 
         if outermost:
-            upconv = nn.ConvTranspose2d(inner_nc * 2, outer_nc,
-                                        kernel_size=4, stride=2,
+            upconv = nn.ConvTranspose2d(inner_nc * 2,
+                                        outer_nc,
+                                        kernel_size=4,
+                                        stride=2,
                                         padding=1)
             down = [downconv]
-            up = [uprelu, upconv, Tanh()]
+            up = [uprelu, upconv, nn.Tanh()]
             model = down + [submodule] + up
         elif innermost:
-            upconv = nn.ConvTranspose2d(inner_nc, outer_nc,
-                                        kernel_size=4, stride=2,
-                                        padding=1, bias_attr=use_bias)
+            upconv = nn.ConvTranspose2d(inner_nc,
+                                        outer_nc,
+                                        kernel_size=4,
+                                        stride=2,
+                                        padding=1,
+                                        bias_attr=use_bias)
             down = [downrelu, downconv]
             up = [uprelu, upconv, upnorm]
             model = down + up
         else:
-            upconv = nn.ConvTranspose2d(inner_nc * 2, outer_nc,
-                                        kernel_size=4, stride=2,
-                                        padding=1, bias_attr=use_bias)
+            upconv = nn.ConvTranspose2d(inner_nc * 2,
+                                        outer_nc,
+                                        kernel_size=4,
+                                        stride=2,
+                                        padding=1,
+                                        bias_attr=use_bias)
             down = [downrelu, downconv, downnorm]
             up = [uprelu, upconv, upnorm]
 
             if use_dropout:
-                model = down + [submodule] + up + [Dropout(0.5)]
+                model = down + [submodule] + up + [nn.Dropout(0.5)]
             else:
                 model = down + [submodule] + up
 
@@ -115,5 +159,5 @@ class UnetSkipConnectionBlock(paddle.fluid.dygraph.Layer):
     def forward(self, x):
         if self.outermost:
             return self.model(x)
-        else:   # add skip connections
+        else:  # add skip connections
             return paddle.concat([x, self.model(x)], 1)

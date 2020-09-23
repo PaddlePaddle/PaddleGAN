@@ -2,20 +2,25 @@ import paddle
 import paddle.nn as nn
 import functools
 
-from ...modules.nn import ReflectionPad2d, LeakyReLU, Tanh, Dropout, BCEWithLogitsLoss, Pad2D, MSELoss
 from ...modules.norm import build_norm_layer
 
 from .builder import GENERATORS
 
 
 @GENERATORS.register()
-class ResnetGenerator(paddle.fluid.dygraph.Layer):
+class ResnetGenerator(nn.Layer):
     """Resnet-based generator that consists of Resnet blocks between a few downsampling/upsampling operations.
 
     code and idea from Justin Johnson's neural style transfer project(https://github.com/jcjohnson/fast-neural-style)
     """
-
-    def __init__(self, input_nc, output_nc, ngf=64, norm_type='instance', use_dropout=False, n_blocks=6, padding_type='reflect'):
+    def __init__(self,
+                 input_nc,
+                 output_nc,
+                 ngf=64,
+                 norm_type='instance',
+                 use_dropout=False,
+                 n_blocks=6,
+                 padding_type='reflect'):
         """Construct a Resnet-based generator
 
         Args:
@@ -27,7 +32,7 @@ class ResnetGenerator(paddle.fluid.dygraph.Layer):
             n_blocks (int)      -- the number of ResNet blocks
             padding_type (str)  -- the name of padding layer in conv layers: reflect | replicate | zero
         """
-        assert(n_blocks >= 0)
+        assert (n_blocks >= 0)
         super(ResnetGenerator, self).__init__()
 
         norm_layer = build_norm_layer(norm_type)
@@ -36,35 +41,56 @@ class ResnetGenerator(paddle.fluid.dygraph.Layer):
         else:
             use_bias = norm_layer == nn.InstanceNorm
 
-        model = [ReflectionPad2d(3),
-                 nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0, bias_attr=use_bias),
-                 norm_layer(ngf),
-                 nn.ReLU()]
+        model = [
+            nn.ReflectionPad2d([3, 3, 3, 3]),
+            nn.Conv2d(input_nc,
+                      ngf,
+                      kernel_size=7,
+                      padding=0,
+                      bias_attr=use_bias),
+            norm_layer(ngf),
+            nn.ReLU()
+        ]
 
         n_downsampling = 2
         for i in range(n_downsampling):  # add downsampling layers
-            mult = 2 ** i
+            mult = 2**i
             model += [
-                      nn.Conv2d(ngf * mult, ngf * mult * 2, kernel_size=3, stride=2, padding=1, bias_attr=use_bias),
-                      norm_layer(ngf * mult * 2),
-                      nn.ReLU()]
+                nn.Conv2d(ngf * mult,
+                          ngf * mult * 2,
+                          kernel_size=3,
+                          stride=2,
+                          padding=1,
+                          bias_attr=use_bias),
+                norm_layer(ngf * mult * 2),
+                nn.ReLU()
+            ]
 
-        mult = 2 ** n_downsampling
-        for i in range(n_blocks):       # add ResNet blocks
+        mult = 2**n_downsampling
+        for i in range(n_blocks):  # add ResNet blocks
 
-            model += [ResnetBlock(ngf * mult, padding_type=padding_type, norm_layer=norm_layer, use_dropout=use_dropout, use_bias=use_bias)]
+            model += [
+                ResnetBlock(ngf * mult,
+                            padding_type=padding_type,
+                            norm_layer=norm_layer,
+                            use_dropout=use_dropout,
+                            use_bias=use_bias)
+            ]
 
         for i in range(n_downsampling):  # add upsampling layers
-            mult = 2 ** (n_downsampling - i)
+            mult = 2**(n_downsampling - i)
             model += [
-                      nn.ConvTranspose2d(ngf * mult, int(ngf * mult / 2),
-                                         kernel_size=3, stride=2,
-                                         padding=1,
-                                         output_padding=1,
-                                         bias_attr=use_bias),
-                      norm_layer(int(ngf * mult / 2)),
-                      nn.ReLU()]
-        model += [ReflectionPad2d(3)]
+                nn.ConvTranspose2d(ngf * mult,
+                                   int(ngf * mult / 2),
+                                   kernel_size=3,
+                                   stride=2,
+                                   padding=1,
+                                   output_padding=1,
+                                   bias_attr=use_bias),
+                norm_layer(int(ngf * mult / 2)),
+                nn.ReLU()
+            ]
+        model += [nn.ReflectionPad2d([3, 3, 3, 3])]
         model += [nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0)]
         model += [nn.Tanh()]
 
@@ -75,9 +101,8 @@ class ResnetGenerator(paddle.fluid.dygraph.Layer):
         return self.model(x)
 
 
-class ResnetBlock(paddle.fluid.dygraph.Layer):
+class ResnetBlock(nn.Layer):
     """Define a Resnet block"""
-
     def __init__(self, dim, padding_type, norm_layer, use_dropout, use_bias):
         """Initialize the Resnet block
 
@@ -87,9 +112,11 @@ class ResnetBlock(paddle.fluid.dygraph.Layer):
         Original Resnet paper: https://arxiv.org/pdf/1512.03385.pdf
         """
         super(ResnetBlock, self).__init__()
-        self.conv_block = self.build_conv_block(dim, padding_type, norm_layer, use_dropout, use_bias)
+        self.conv_block = self.build_conv_block(dim, padding_type, norm_layer,
+                                                use_dropout, use_bias)
 
-    def build_conv_block(self, dim, padding_type, norm_layer, use_dropout, use_bias):
+    def build_conv_block(self, dim, padding_type, norm_layer, use_dropout,
+                         use_bias):
         """Construct a convolutional block.
 
         Parameters:
@@ -104,28 +131,37 @@ class ResnetBlock(paddle.fluid.dygraph.Layer):
         conv_block = []
         p = 0
         if padding_type == 'reflect':
-            conv_block += [ReflectionPad2d(1)]
+            conv_block += [nn.ReflectionPad2d([1, 1, 1, 1])]
         elif padding_type == 'replicate':
-            conv_block += [ReplicationPad2d(1)]
+            conv_block += [nn.ReplicationPad2d([1, 1, 1, 1])]
         elif padding_type == 'zero':
             p = 1
         else:
-            raise NotImplementedError('padding [%s] is not implemented' % padding_type)
+            raise NotImplementedError('padding [%s] is not implemented' %
+                                      padding_type)
 
-        conv_block += [nn.Conv2d(dim, dim, kernel_size=3, padding=p, bias_attr=use_bias), norm_layer(dim), nn.ReLU()]
+        conv_block += [
+            nn.Conv2d(dim, dim, kernel_size=3, padding=p, bias_attr=use_bias),
+            norm_layer(dim),
+            nn.ReLU()
+        ]
         if use_dropout:
-            conv_block += [Dropout(0.5)]
-        
+            conv_block += [nn.Dropout(0.5)]
+
         p = 0
         if padding_type == 'reflect':
-            conv_block += [ReflectionPad2d(1)]
+            conv_block += [nn.ReflectionPad2d([1, 1, 1, 1])]
         elif padding_type == 'replicate':
-            conv_block += [ReplicationPad2d(1)]
+            conv_block += [nn.ReplicationPad2d([1, 1, 1, 1])]
         elif padding_type == 'zero':
             p = 1
         else:
-            raise NotImplementedError('padding [%s] is not implemented' % padding_type)
-        conv_block += [nn.Conv2d(dim, dim, kernel_size=3, padding=p, bias_attr=use_bias), norm_layer(dim)]
+            raise NotImplementedError('padding [%s] is not implemented' %
+                                      padding_type)
+        conv_block += [
+            nn.Conv2d(dim, dim, kernel_size=3, padding=p, bias_attr=use_bias),
+            norm_layer(dim)
+        ]
 
         return nn.Sequential(*conv_block)
 

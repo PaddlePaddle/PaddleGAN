@@ -48,6 +48,7 @@ class Pix2PixModel(BaseModel):
             self.netD = build_discriminator(opt.model.discriminator)
 
         if self.isTrain:
+            self.losses = {}
             # define loss functions
             self.criterionGAN = GANLoss(opt.model.gan_mode)
             self.criterionL1 = paddle.nn.L1Loss()
@@ -77,8 +78,9 @@ class Pix2PixModel(BaseModel):
         """
 
         AtoB = self.opt.dataset.train.direction == 'AtoB'
-        self.real_A = paddle.to_tensor(input['A' if AtoB else 'B'])
-        self.real_B = paddle.to_tensor(input['B' if AtoB else 'A'])
+        self.real_A = paddle.to_variable(input['A' if AtoB else 'B'])
+        self.real_B = paddle.to_variable(input['B' if AtoB else 'A'])
+
         self.image_paths = input['A_paths' if AtoB else 'B_paths']
 
     def forward(self):
@@ -118,6 +120,7 @@ class Pix2PixModel(BaseModel):
         # Second, G(A) = B
         self.loss_G_L1 = self.criterionL1(self.fake_B,
                                           self.real_B) * self.opt.lambda_L1
+
         # combine loss and calculate gradients
         self.loss_G = self.loss_G_GAN + self.loss_G_L1
 
