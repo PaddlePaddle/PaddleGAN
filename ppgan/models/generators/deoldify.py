@@ -432,8 +432,7 @@ class SelfAttention(nn.Layer):
         self.key = conv1d(n_channels, n_channels // 8)
         self.value = conv1d(n_channels, n_channels)
         self.gamma = self.create_parameter(
-            shape=[1],
-            default_initializer=paddle.fluid.initializer.Constant(
+            shape=[1], default_initializer=paddle.nn.initializer.Constant(
                 0.0))  #nn.Parameter(tensor([0.]))
 
     def forward(self, x):

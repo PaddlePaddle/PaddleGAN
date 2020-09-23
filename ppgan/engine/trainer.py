@@ -13,6 +13,7 @@ from ..utils.visual import tensor2img, save_image
 from ..utils.filesystem import save, load, makedirs
 from ..metric.psnr_ssim import calculate_psnr, calculate_ssim
 
+
 class Trainer:
     def __init__(self, cfg):
 
@@ -51,7 +52,6 @@ class Trainer:
         self.time_count = {}
         self.best_metric = {}
 
-
     def distributed_data_parallel(self):
         strategy = paddle.distributed.prepare_context()
         for name in self.model.model_names:
@@ -82,6 +82,7 @@ class Trainer:
                     self.visual('visual_train')
 
                 step_start_time = time.time()
+
             self.logger.info('train one epoch time: {}'.format(time.time() -
                                                                start_time))
             if self.validate_interval > -1 and epoch % self.validate_interval:
@@ -93,7 +94,8 @@ class Trainer:
 
     def validate(self):
         if not hasattr(self, 'val_dataloader'):
-            self.val_dataloader = build_dataloader(self.cfg.dataset.val, is_train=False)
+            self.val_dataloader = build_dataloader(self.cfg.dataset.val,
+                                                   is_train=False)
 
         metric_result = {}
 
@@ -106,7 +108,7 @@ class Trainer:
             visual_results = {}
             current_paths = self.model.get_image_paths()
             current_visuals = self.model.get_current_visuals()
-            
+
             for j in range(len(current_paths)):
                 short_path = os.path.basename(current_paths[j])
                 basename = os.path.splitext(short_path)[0]
@@ -115,26 +117,38 @@ class Trainer:
                     visual_results.update({name: img_tensor[j]})
                 if 'psnr' in self.cfg.validate.metrics:
                     if 'psnr' not in metric_result:
-                        metric_result['psnr'] = calculate_psnr(tensor2img(current_visuals['output'][j], (0., 1.)), tensor2img(current_visuals['gt'][j], (0., 1.)), **self.cfg.validate.metrics.psnr)
+                        metric_result['psnr'] = calculate_psnr(
+                            tensor2img(current_visuals['output'][j], (0., 1.)),
+                            tensor2img(current_visuals['gt'][j], (0., 1.)),
+                            **self.cfg.validate.metrics.psnr)
                     else:
-                        metric_result['psnr'] += calculate_psnr(tensor2img(current_visuals['output'][j], (0., 1.)), tensor2img(current_visuals['gt'][j], (0., 1.)), **self.cfg.validate.metrics.psnr)
+                        metric_result['psnr'] += calculate_psnr(
+                            tensor2img(current_visuals['output'][j], (0., 1.)),
+                            tensor2img(current_visuals['gt'][j], (0., 1.)),
+                            **self.cfg.validate.metrics.psnr)
                 if 'ssim' in self.cfg.validate.metrics:
                     if 'ssim' not in metric_result:
-                        metric_result['ssim'] = calculate_ssim(tensor2img(current_visuals['output'][j], (0., 1.)), tensor2img(current_visuals['gt'][j], (0., 1.)), **self.cfg.validate.metrics.ssim)
+                        metric_result['ssim'] = calculate_ssim(
+                            tensor2img(current_visuals['output'][j], (0., 1.)),
+                            tensor2img(current_visuals['gt'][j], (0., 1.)),
+                            **self.cfg.validate.metrics.ssim)
                     else:
-                        metric_result['ssim'] += calculate_ssim(tensor2img(current_visuals['output'][j], (0., 1.)), tensor2img(current_visuals['gt'][j], (0., 1.)), **self.cfg.validate.metrics.ssim)
-             
+                        metric_result['ssim'] += calculate_ssim(
+                            tensor2img(current_visuals['output'][j], (0., 1.)),
+                            tensor2img(current_visuals['gt'][j], (0., 1.)),
+                            **self.cfg.validate.metrics.ssim)
+
             self.visual('visual_val', visual_results=visual_results)
 
             if i % self.log_interval == 0:
                 self.logger.info('val iter: [%d/%d]' %
                                  (i, len(self.val_dataloader)))
-            
+
         for metric_name in metric_result.keys():
             metric_result[metric_name] /= len(self.val_dataloader.dataset)
 
-        self.logger.info('Epoch {} validate end: {}'.format(self.current_epoch, metric_result))
-                 
+        self.logger.info('Epoch {} validate end: {}'.format(
+            self.current_epoch, metric_result))
 
     def test(self):
         if not hasattr(self, 'test_dataloader'):
@@ -266,6 +280,7 @@ class Trainer:
 
         for name in self.model.model_names:
             if isinstance(name, str):
-                self.logger.info('laod model {} {} params!'.format(self.cfg.model.name, 'net' + name))
+                self.logger.info('laod model {} {} params!'.format(
+                    self.cfg.model.name, 'net' + name))
                 net = getattr(self.model, 'net' + name)
                 net.set_dict(state_dicts['net' + name])

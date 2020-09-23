@@ -1,18 +1,22 @@
 import paddle
 import paddle.nn as nn
 
-
-__all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101',
-           'resnet152']
+__all__ = [
+    'ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101', 'resnet152'
+]
 
 
 def conv3x3(in_planes, out_planes, stride=1):
     "3x3 convolution with padding"
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
-                     padding=1, bias_attr=False)
+    return nn.Conv2d(in_planes,
+                     out_planes,
+                     kernel_size=3,
+                     stride=stride,
+                     padding=1,
+                     bias_attr=False)
 
 
-class BasicBlock(paddle.fluid.Layer):
+class BasicBlock(nn.Layer):
     expansion = 1
 
     def __init__(self, inplanes, planes, stride=1, downsample=None):
@@ -44,17 +48,24 @@ class BasicBlock(paddle.fluid.Layer):
         return out
 
 
-class Bottleneck(paddle.fluid.Layer):
+class Bottleneck(nn.Layer):
     expansion = 4
 
     def __init__(self, inplanes, planes, stride=1, downsample=None):
         super(Bottleneck, self).__init__()
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias_attr=False)
         self.bn1 = nn.BatchNorm(planes)
-        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=stride,
-                               padding=1, bias_attr=False)
+        self.conv2 = nn.Conv2d(planes,
+                               planes,
+                               kernel_size=3,
+                               stride=stride,
+                               padding=1,
+                               bias_attr=False)
         self.bn2 = nn.BatchNorm(planes)
-        self.conv3 = nn.Conv2d(planes, planes * 4, kernel_size=1, bias_attr=False)
+        self.conv3 = nn.Conv2d(planes,
+                               planes * 4,
+                               kernel_size=1,
+                               bias_attr=False)
         self.bn3 = nn.BatchNorm(planes * 4)
         self.relu = nn.ReLU()
         self.downsample = downsample
@@ -82,12 +93,15 @@ class Bottleneck(paddle.fluid.Layer):
         return out
 
 
-class ResNet(paddle.fluid.Layer):
-
+class ResNet(nn.Layer):
     def __init__(self, block, layers, num_classes=1000):
         self.inplanes = 64
         super(ResNet, self).__init__()
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
+        self.conv1 = nn.Conv2d(3,
+                               64,
+                               kernel_size=7,
+                               stride=2,
+                               padding=3,
                                bias_attr=False)
         self.bn1 = nn.BatchNorm(64)
         self.relu = nn.ReLU()
@@ -103,8 +117,11 @@ class ResNet(paddle.fluid.Layer):
         downsample = None
         if stride != 1 or self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
-                nn.Conv2d(self.inplanes, planes * block.expansion,
-                          kernel_size=1, stride=stride, bias_attr=False),
+                nn.Conv2d(self.inplanes,
+                          planes * block.expansion,
+                          kernel_size=1,
+                          stride=stride,
+                          bias_attr=False),
                 nn.BatchNorm(planes * block.expansion),
             )
 
