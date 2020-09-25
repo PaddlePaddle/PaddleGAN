@@ -90,4 +90,7 @@ parser.add_argument('--use_cuda',
                     type=bool,
                     help='use cuda or not')
 parser.add_argument('--use_cudnn', default=1, type=int, help='use cudnn or not')
-
+parser.add_argument('--remove_duplicates',
+                    default=True,
+                    type=bool,
+                    help='remove duplicate frames or not')
