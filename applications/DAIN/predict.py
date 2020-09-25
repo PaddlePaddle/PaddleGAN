@@ -202,12 +202,6 @@ class VideoFrameInterp(object):
                 X0 = img_first.astype('float32').transpose((2, 0, 1)) / 255
                 X1 = img_second.astype('float32').transpose((2, 0, 1)) / 255
 
-                #if key_frame:
-                #    y_ = [
-                #        np.transpose(255.0 * X0.clip(0, 1.0), (1, 2, 0))
-                #        for i in range(num_frames)
-                #    ]
-                #else:
                 assert (X0.shape[1] == X1.shape[1])
                 assert (X0.shape[2] == X1.shape[2])
 

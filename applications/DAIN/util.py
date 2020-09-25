@@ -48,24 +48,24 @@ def combine_frames(input, interpolated, combined, num_frames):
 
 
 def remove_duplicates(paths):
-    def dhash(image, hashSize=8):
+    def dhash(image, hash_size=8):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        resized = cv2.resize(gray, (hashSize + 1, hashSize))
+        resized = cv2.resize(gray, (hash_size + 1, hash_size))
         diff = resized[:, 1:] > resized[:, :-1]
         return sum([2**i for (i, v) in enumerate(diff.flatten()) if v])
 
     hashes = {}
-    imagePaths = sorted(glob.glob(os.path.join(paths, '*.png')))
-    for imagePath in imagePaths:
-        image = cv2.imread(imagePath)
+    image_paths = sorted(glob.glob(os.path.join(paths, '*.png')))
+    for image_path in image_paths:
+        image = cv2.imread(image_path)
         h = dhash(image)
         p = hashes.get(h, [])
-        p.append(imagePath)
+        p.append(image_path)
         hashes[h] = p
 
-    for (h, hashedPaths) in hashes.items():
-        if len(hashedPaths) > 1:
-            for p in hashedPaths[1:]:
+    for (h, hashed_paths) in hashes.items():
+        if len(hashed_paths) > 1:
+            for p in hashed_paths[1:]:
                 os.remove(p)
 
     frames = sorted(glob.glob(os.path.join(paths, '*.png')))
