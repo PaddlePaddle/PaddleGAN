@@ -298,15 +298,3 @@ def init_weights(net, init_type='normal', init_gain=0.02):
 
     print('initialize network with %s' % init_type)
     net.apply(init_func)  # apply the initialization function <init_func>
-
-
-# if __name__ == "__main__":
-#     paddle.disable_static()
-#     conv1 = paddle.nn.Conv2d(3, 8, 1)
-#     print('bias before', conv1.bias)
-#     constant_init(conv1, -1., -1.)
-#     print('bias before', conv1.bias)
-#     kaiming_init(conv1)
-#     print('bias after kaiming', conv1.bias)
-#     xavier_init(conv1)
-#     print('bias after xavier', conv1.bias)
