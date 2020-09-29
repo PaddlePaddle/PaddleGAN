@@ -35,8 +35,7 @@ class UnpairedDataset(BaseDataset):
         btoA = self.cfg.direction == 'BtoA'
         input_nc = self.cfg.output_nc if btoA else self.cfg.input_nc  # get the number of channels of input image
         output_nc = self.cfg.input_nc if btoA else self.cfg.output_nc  # get the number of channels of output image
-        # self.transform_A = get_transform(self.cfg.transform, grayscale=(input_nc == 1))
-        # self.transform_B = get_transform(self.cfg.transform, grayscale=(output_nc == 1))
+
         self.transform_A = build_transforms(self.cfg.transforms)
         self.transform_B = build_transforms(self.cfg.transforms)
 

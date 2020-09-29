@@ -23,7 +23,7 @@ class PairedDataset(BaseDataset):
                                    cfg.phase)  # get the image directory
         self.AB_paths = sorted(make_dataset(
             self.dir_AB, cfg.max_dataset_size))  # get image paths
-        # assert(self.cfg.transform.load_size >= self.cfg.transform.crop_size)   # crop_size should be smaller than the size of loaded image
+
         self.input_nc = self.cfg.output_nc if self.cfg.direction == 'BtoA' else self.cfg.input_nc
         self.output_nc = self.cfg.input_nc if self.cfg.direction == 'BtoA' else self.cfg.output_nc
         self.transforms = build_transforms(cfg.transforms)
@@ -53,15 +53,6 @@ class PairedDataset(BaseDataset):
         B = AB[:h, w2:, :]
 
         # apply the same transform to both A and B
-        # transform_params = get_params(self.opt, A.size)
-        # transform_params = get_params(self.cfg.transform, (w2, h))
-
-        # A_transform = get_transform(self.cfg.transform, transform_params, grayscale=(self.input_nc == 1))
-        # B_transform = get_transform(self.cfg.transform, transform_params, grayscale=(self.output_nc == 1))
-
-        # A = A_transform(A)
-        # B = B_transform(B)
-        # A, B = self.transforms((A, B))
         A, B = self.transforms((A, B))
 
         return {'A': A, 'B': B, 'A_paths': AB_path, 'B_paths': AB_path}

@@ -1,15 +1,11 @@
 import sys
-import types
 import random
 import numbers
-import warnings
-import traceback
 import collections
 import numpy as np
 
 from paddle.utils import try_import
 import paddle.vision.transforms.functional as F
-import paddle.vision.transforms.transforms as T
 
 from .builder import TRANSFORMS
 
@@ -31,7 +27,6 @@ class Transform():
         """
         if args:
             for k, v in args.items():
-                # print(k, v)
                 if k != "self" and not k.startswith("_"):
                     setattr(self, k, v)
 
@@ -39,7 +34,6 @@ class Transform():
         raise NotImplementedError
 
     def __call__(self, inputs):
-        # print('debug:', type(inputs), type(inputs[0]))
         if isinstance(inputs, tuple):
             inputs = list(inputs)
         if self.keys is not None:
@@ -177,10 +171,6 @@ class RandomHorizontalFlip(Transform):
         return img
 
 
-# import paddle
-# paddle.vision.transforms.RandomHorizontalFlip
-
-
 @TRANSFORMS.register()
 class PairedRandomHorizontalFlip(RandomHorizontalFlip):
     def __init__(self, prob=0.5, keys=None):
@@ -269,11 +259,6 @@ class Permute(Transform):
         if self.mode == "CHW":
             return img.transpose((2, 0, 1))
         return img
-
-
-# import paddle
-# paddle.vision.transforms.Normalize
-# TRANSFORMS.register(T.Normalize)
 
 
 class Crop():

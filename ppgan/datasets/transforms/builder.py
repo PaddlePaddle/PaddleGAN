@@ -25,11 +25,6 @@ class Compose(object):
     def __call__(self, data):
         for f in self.transforms:
             try:
-                # multi-fileds in a sample
-                # if isinstance(data, Sequence):
-                #     data = f(*data)
-                # # single field in a sample, call transform directly
-                # else:
                 data = f(data)
             except Exception as e:
                 stack_info = traceback.format_exc()
@@ -37,10 +32,6 @@ class Compose(object):
                       "{} and stack:\n{}".format(f, e, str(stack_info)))
                 raise e
         return data
-
-
-def build_transform(cfg):
-    pass
 
 
 def build_transforms(cfg):
