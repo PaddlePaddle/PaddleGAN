@@ -8,6 +8,7 @@ from .discriminators.builder import build_discriminator
 from .losses import GANLoss
 
 from ..solver import build_optimizer
+from ..modules.init import init_weights
 from ..utils.image_pool import ImagePool
 
 
@@ -56,10 +57,14 @@ class CycleGANModel(BaseModel):
         # Code (vs. paper): G_A (G), G_B (F), D_A (D_Y), D_B (D_X)
         self.netG_A = build_generator(opt.model.generator)
         self.netG_B = build_generator(opt.model.generator)
+        init_weights(self.netG_A)
+        init_weights(self.netG_B)
 
         if self.isTrain:  # define discriminators
             self.netD_A = build_discriminator(opt.model.discriminator)
             self.netD_B = build_discriminator(opt.model.discriminator)
+            init_weights(self.netD_A)
+            init_weights(self.netD_B)
 
         if self.isTrain:
             if opt.lambda_identity > 0.0:  # only works when input and output images have the same number of channels

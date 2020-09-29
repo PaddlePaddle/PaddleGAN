@@ -8,6 +8,7 @@ from .discriminators.builder import build_discriminator
 from .losses import GANLoss
 
 from ..solver import build_optimizer
+from ..modules.init import init_weights
 from ..utils.image_pool import ImagePool
 
 
@@ -42,12 +43,15 @@ class Pix2PixModel(BaseModel):
 
         # define networks (both generator and discriminator)
         self.netG = build_generator(opt.model.generator)
+        init_weights(self.netG)
 
         # define a discriminator; conditional GANs need to take both input and output images; Therefore, #channels for D is input_nc + output_nc
         if self.isTrain:
             self.netD = build_discriminator(opt.model.discriminator)
+            init_weights(self.netD)
 
         if self.isTrain:
+            self.losses = {}
             # define loss functions
             self.criterionGAN = GANLoss(opt.model.gan_mode)
             self.criterionL1 = paddle.nn.L1Loss()
@@ -79,6 +83,7 @@ class Pix2PixModel(BaseModel):
         AtoB = self.opt.dataset.train.direction == 'AtoB'
         self.real_A = paddle.to_variable(input['A' if AtoB else 'B'])
         self.real_B = paddle.to_variable(input['B' if AtoB else 'A'])
+
         self.image_paths = input['A_paths' if AtoB else 'B_paths']
 
     def forward(self):
@@ -118,6 +123,7 @@ class Pix2PixModel(BaseModel):
         # Second, G(A) = B
         self.loss_G_L1 = self.criterionL1(self.fake_B,
                                           self.real_B) * self.opt.lambda_L1
+
         # combine loss and calculate gradients
         self.loss_G = self.loss_G_GAN + self.loss_G_L1
 

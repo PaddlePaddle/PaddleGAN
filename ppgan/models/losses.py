@@ -1,17 +1,15 @@
-import paddle
-import paddle.nn as nn
 import numpy as np
 
-from ..modules.nn import BCEWithLogitsLoss
+import paddle
+import paddle.nn as nn
 
 
-class GANLoss(paddle.fluid.dygraph.Layer):
+class GANLoss(nn.Layer):
     """Define different GAN objectives.
 
     The GANLoss class abstracts away the need to create the target label tensor
     that has the same size as the input.
     """
-
     def __init__(self, gan_mode, target_real_label=1.0, target_fake_label=0.0):
         """ Initialize the GANLoss class.
 
@@ -31,7 +29,7 @@ class GANLoss(paddle.fluid.dygraph.Layer):
         if gan_mode == 'lsgan':
             self.loss = nn.MSELoss()
         elif gan_mode == 'vanilla':
-            self.loss = BCEWithLogitsLoss()
+            self.loss = nn.BCEWithLogitsLoss()
         elif gan_mode in ['wgangp']:
             self.loss = None
         else:
@@ -50,11 +48,17 @@ class GANLoss(paddle.fluid.dygraph.Layer):
 
         if target_is_real:
             if not hasattr(self, 'target_real_tensor'):
-                self.target_real_tensor = paddle.fill_constant(shape=paddle.shape(prediction), value=self.target_real_label, dtype='float32')
+                self.target_real_tensor = paddle.fill_constant(
+                    shape=paddle.shape(prediction),
+                    value=self.target_real_label,
+                    dtype='float32')
             target_tensor = self.target_real_tensor
         else:
             if not hasattr(self, 'target_fake_tensor'):
-                self.target_fake_tensor = paddle.fill_constant(shape=paddle.shape(prediction), value=self.target_fake_label, dtype='float32')
+                self.target_fake_tensor = paddle.fill_constant(
+                    shape=paddle.shape(prediction),
+                    value=self.target_fake_label,
+                    dtype='float32')
             target_tensor = self.target_fake_tensor
 
         # target_tensor.stop_gradient = True

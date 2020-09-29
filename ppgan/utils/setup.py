@@ -19,6 +19,6 @@ def setup(args, cfg):
 
     logger.info('Configs: {}'.format(cfg))
 
-    place = paddle.fluid.CUDAPlace(ParallelEnv().dev_id) \
-                    if ParallelEnv().nranks > 1 else paddle.fluid.CUDAPlace(0)
+    place = paddle.CUDAPlace(ParallelEnv().dev_id) \
+                    if ParallelEnv().nranks > 1 else paddle.CUDAPlace(0)
     paddle.disable_static(place)

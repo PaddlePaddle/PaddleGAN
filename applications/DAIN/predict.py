@@ -80,7 +80,8 @@ class VideoFrameInterp(object):
                  video_path,
                  use_gpu=True,
                  key_frame_thread=0.,
-                 output_path='output'):
+                 output_path='output',
+                 remove_duplicates=True):
         self.video_path = video_path
         self.output_path = os.path.join(output_path, 'DAIN')
         if model_path is None:
@@ -138,6 +139,8 @@ class VideoFrameInterp(object):
             end = time.time()
 
             frames = sorted(glob.glob(os.path.join(out_path, '*.png')))
+            if remove_duplicates:
+                frames = remove_duplicates(out_path)
 
             img = imread(frames[0])
 
@@ -199,58 +202,51 @@ class VideoFrameInterp(object):
                 X0 = img_first.astype('float32').transpose((2, 0, 1)) / 255
                 X1 = img_second.astype('float32').transpose((2, 0, 1)) / 255
 
-                if key_frame:
-                    y_ = [
-                        np.transpose(255.0 * X0.clip(0, 1.0), (1, 2, 0))
-                        for i in range(num_frames)
-                    ]
-                else:
-                    assert (X0.shape[1] == X1.shape[1])
-                    assert (X0.shape[2] == X1.shape[2])
+                assert (X0.shape[1] == X1.shape[1])
+                assert (X0.shape[2] == X1.shape[2])
 
-                    X0 = np.pad(X0, ((0,0), (padding_top, padding_bottom), \
-                        (padding_left, padding_right)), mode='edge')
-                    X1 = np.pad(X1, ((0,0), (padding_top, padding_bottom), \
-                        (padding_left, padding_right)), mode='edge')
+                X0 = np.pad(X0, ((0,0), (padding_top, padding_bottom), \
+                    (padding_left, padding_right)), mode='edge')
+                X1 = np.pad(X1, ((0,0), (padding_top, padding_bottom), \
+                    (padding_left, padding_right)), mode='edge')
 
-                    X0 = np.expand_dims(X0, axis=0)
-                    X1 = np.expand_dims(X1, axis=0)
+                X0 = np.expand_dims(X0, axis=0)
+                X1 = np.expand_dims(X1, axis=0)
 
-                    X0 = np.expand_dims(X0, axis=0)
-                    X1 = np.expand_dims(X1, axis=0)
+                X0 = np.expand_dims(X0, axis=0)
+                X1 = np.expand_dims(X1, axis=0)
 
-                    X = np.concatenate((X0, X1), axis=0)
+                X = np.concatenate((X0, X1), axis=0)
 
-                    proc_end = time.time()
-                    o = self.exe.run(self.program,
-                                     fetch_list=self.fetch_targets,
-                                     feed={"image": X})
+                proc_end = time.time()
+                o = self.exe.run(self.program,
+                                 fetch_list=self.fetch_targets,
+                                 feed={"image": X})
 
-                    y_ = o[0]
+                y_ = o[0]
 
-                    proc_timer.update(time.time() - proc_end)
-                    tot_timer.update(time.time() - end)
-                    end = time.time()
+                proc_timer.update(time.time() - proc_end)
+                tot_timer.update(time.time() - end)
+                end = time.time()
 
-                    y_ = [
-                        np.transpose(
-                            255.0 * item.clip(
-                                0, 1.0)[0, :,
-                                        padding_top:padding_top + int_height,
-                                        padding_left:padding_left + int_width],
-                            (1, 2, 0)) for item in y_
-                    ]
-                    time_offsets = [
-                        kk * timestep for kk in range(1, 1 + num_frames, 1)
-                    ]
+                y_ = [
+                    np.transpose(
+                        255.0 * item.clip(
+                            0, 1.0)[0, :, padding_top:padding_top + int_height,
+                                    padding_left:padding_left + int_width],
+                        (1, 2, 0)) for item in y_
+                ]
+                time_offsets = [
+                    kk * timestep for kk in range(1, 1 + num_frames, 1)
+                ]
 
-                    count = 1
-                    for item, time_offset in zip(y_, time_offsets):
-                        out_dir = os.path.join(
-                            frame_path_interpolated, vidname,
-                            "{:0>6d}_{:0>4d}.png".format(i, count))
-                        count = count + 1
-                        imsave(out_dir, np.round(item).astype(np.uint8))
+                count = 1
+                for item, time_offset in zip(y_, time_offsets):
+                    out_dir = os.path.join(
+                        frame_path_interpolated, vidname,
+                        "{:0>6d}_{:0>4d}.png".format(i, count))
+                    count = count + 1
+                    imsave(out_dir, np.round(item).astype(np.uint8))
 
             num_frames = int(1.0 / timestep) - 1
 
@@ -266,14 +262,16 @@ class VideoFrameInterp(object):
                                                 vidname + '.mp4')
             if os.path.exists(video_pattern_output):
                 os.remove(video_pattern_output)
-            frames2video(frame_pattern_combined, video_pattern_output,
-                                   r2)
+            frames2video(frame_pattern_combined, video_pattern_output, r2)
 
         return frame_pattern_combined, video_pattern_output
 
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    predictor = VideoFrameInterp(args.time_step, args.saved_model,
-                                 args.video_path, args.output_path)
+    predictor = VideoFrameInterp(args.time_step,
+                                 args.saved_model,
+                                 args.video_path,
+                                 args.output_path,
+                                 remove_duplicates=args.remove_duplicates)
     predictor.run()
