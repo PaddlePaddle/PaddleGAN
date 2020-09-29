@@ -8,6 +8,7 @@ from .discriminators.builder import build_discriminator
 from .losses import GANLoss
 
 from ..solver import build_optimizer
+from ..modules.init import init_weights
 from ..utils.image_pool import ImagePool
 
 
@@ -42,10 +43,12 @@ class Pix2PixModel(BaseModel):
 
         # define networks (both generator and discriminator)
         self.netG = build_generator(opt.model.generator)
+        init_weights(self.netG)
 
         # define a discriminator; conditional GANs need to take both input and output images; Therefore, #channels for D is input_nc + output_nc
         if self.isTrain:
             self.netD = build_discriminator(opt.model.discriminator)
+            init_weights(self.netD)
 
         if self.isTrain:
             self.losses = {}
