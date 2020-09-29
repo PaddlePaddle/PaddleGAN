@@ -35,16 +35,17 @@ dataset:
     output_nc: 3
     serial_batches: False
     pool_size: 50
-    transform:
-      load_size: 286
-      crop_size: 256
-      preprocess: resize_and_crop
-      no_flip: False
-      normalize:
-        mean:
-          (127.5, 127.5, 127.5)
-        std:
-          (127.5, 127.5, 127.5)
+    transforms:
+      - name: Resize
+        size: [286, 286]
+      - name: RandomCrop
+        output_size: [256, 256]
+      - name: RandomHorizontalFlip
+        prob: 0.5
+      - name: Permute
+      - name: Normalize
+        mean: [127.5, 127.5, 127.5]
+        std: [127.5, 127.5, 127.5]
   test:
     name: SingleDataset
     dataroot: data/horse2zebra/testA
@@ -55,15 +56,13 @@ dataset:
     serial_batches: False
     pool_size: 50
     transform:
-      load_size: 256
-      crop_size: 256
-      preprocess: resize_and_crop
-      no_flip: True
-      normalize:
-        mean:
-          (127.5, 127.5, 127.5)
-        std:
-          (127.5, 127.5, 127.5)
+      transform:
+      - name: Resize
+        size: [256, 256]
+      - name: Permute
+      - name: Normalize
+        mean: [127.5, 127.5, 127.5]
+        std: [127.5, 127.5, 127.5]
 
 optimizer:
   name: Adam

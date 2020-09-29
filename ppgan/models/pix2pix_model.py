@@ -77,8 +77,8 @@ class Pix2PixModel(BaseModel):
         """
 
         AtoB = self.opt.dataset.train.direction == 'AtoB'
-        self.real_A = paddle.to_tensor(input['A' if AtoB else 'B'])
-        self.real_B = paddle.to_tensor(input['B' if AtoB else 'A'])
+        self.real_A = paddle.to_variable(input['A' if AtoB else 'B'])
+        self.real_B = paddle.to_variable(input['B' if AtoB else 'A'])
         self.image_paths = input['A_paths' if AtoB else 'B_paths']
 
     def forward(self):
