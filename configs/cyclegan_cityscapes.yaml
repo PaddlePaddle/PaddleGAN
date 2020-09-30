@@ -39,6 +39,7 @@ dataset:
     transforms:
       - name: Resize
         size: [286, 286]
+        interpolation: 2 #cv2.INTER_CUBIC
       - name: RandomCrop
         output_size: [256, 256]
       - name: RandomHorizontalFlip
@@ -59,6 +60,7 @@ dataset:
     transforms:
       - name: Resize
         size: [256, 256]
+        interpolation: 2 #cv2.INTER_CUBIC
       - name: Permute
       - name: Normalize
         mean: [127.5, 127.5, 127.5]
