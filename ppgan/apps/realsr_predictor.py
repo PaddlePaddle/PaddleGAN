@@ -1,43 +1,43 @@
+#  Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+
 import os
-import sys
-
-cur_path = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(cur_path)
-
 import cv2
 import glob
-import argparse
 import numpy as np
-import paddle
-import pickle
-
 from PIL import Image
 from tqdm import tqdm
 
+import paddle
 from ppgan.models.generators import RRDBNet
 from ppgan.utils.video import frames2video, video2frames
 from paddle.utils.download import get_path_from_url
-
-parser = argparse.ArgumentParser(description='RealSR')
-parser.add_argument('--input', type=str, default='none', help='Input video')
-parser.add_argument('--output', type=str, default='output', help='output dir')
-parser.add_argument('--weight_path',
-                    type=str,
-                    default=None,
-                    help='Path to the reference image directory')
+from .base_predictor import BasePredictor
 
 REALSR_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/applications/DF2K_JPEG.pdparams'
 
 
-class RealSRPredictor():
-    def __init__(self, input, output, batch_size=1, weight_path=None):
+class RealSRPredictor(BasePredictor):
+    def __init__(self, output='output', weight_path=None):
         self.input = input
         self.output = os.path.join(output, 'RealSR')
         self.model = RRDBNet(3, 3, 64, 23)
         if weight_path is None:
+            cur_path = os.path.abspath(os.path.dirname(__file__))
             weight_path = get_path_from_url(REALSR_WEIGHT_URL, cur_path)
 
-        state_dict, _ = paddle.load(weight_path)
+        state_dict = paddle.load(weight_path)
         self.model.load_dict(state_dict)
         self.model.eval()
 
@@ -59,8 +59,8 @@ class RealSRPredictor():
         pred_img = Image.fromarray(pred_img)
         return pred_img
 
-    def run(self):
-        vid = self.input
+    def run(self, video_path):
+        vid = video_path
         base_name = os.path.basename(vid).split('.')[0]
         output_path = os.path.join(self.output, base_name)
         pred_frame_path = os.path.join(output_path, 'frames_pred')
@@ -91,15 +91,3 @@ class RealSRPredictor():
         frames2video(frame_pattern_combined, vid_out_path, str(int(fps)))
 
         return frame_pattern_combined, vid_out_path
-
-
-if __name__ == '__main__':
-    paddle.disable_static()
-    args = parser.parse_args()
-
-    predictor = RealSRPredictor(args.input,
-                                args.output,
-                                weight_path=args.weight_path)
-    frames_path, temp_video_path = predictor.run()
-
-    print('output video path:', temp_video_path)

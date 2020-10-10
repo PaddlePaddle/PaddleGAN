@@ -1,217 +1,69 @@
-import matplotlib
-matplotlib.use('Agg')
-import os
-import sys
+#  Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
 
-import yaml
-import pickle
-from argparse import ArgumentParser
-from tqdm import tqdm
+import argparse
 
-import imageio
-import numpy as np
-from skimage.transform import resize
-from skimage import img_as_ubyte
 import paddle
+from ppgan.apps.first_order_predictor import FirstOrderPredictor
 
-from ppgan.models.generators.occlusion_aware import OcclusionAwareGenerator
-from ppgan.modules.keypoint_detector import KPDetector
-from ppgan.utils.animate import normalize_kp
-from scipy.spatial import ConvexHull
+parser = argparse.ArgumentParser()
+parser.add_argument("--config", default=None, help="path to config")
+parser.add_argument("--weight_path",
+                    default=None,
+                    help="path to checkpoint to restore")
+parser.add_argument("--source_image", type=str, help="path to source image")
+parser.add_argument("--driving_video", type=str, help="path to driving video")
+parser.add_argument("--output", default='output', help="path to output")
+parser.add_argument("--relative",
+                    dest="relative",
+                    action="store_true",
+                    help="use relative or absolute keypoint coordinates")
+parser.add_argument(
+    "--adapt_scale",
+    dest="adapt_scale",
+    action="store_true",
+    help="adapt movement scale based on convex hull of keypoints")
 
-paddle.disable_static()
+parser.add_argument(
+    "--find_best_frame",
+    dest="find_best_frame",
+    action="store_true",
+    help=
+    "Generate from the frame that is the most alligned with source. (Only for faces, requires face_aligment lib)"
+)
 
-if sys.version_info[0] < 3:
-    raise Exception(
-        "You must use Python 3 or higher. Recommended version is Python 3.7")
+parser.add_argument("--best_frame",
+                    dest="best_frame",
+                    type=int,
+                    default=None,
+                    help="Set frame to start from.")
+parser.add_argument("--cpu", dest="cpu", action="store_true", help="cpu mode.")
 
-
-def load_checkpoints(config_path, checkpoint_path, cpu=False):
-
-    with open(config_path) as f:
-        config = yaml.load(f)
-
-    generator = OcclusionAwareGenerator(
-        **config['model_params']['generator_params'],
-        **config['model_params']['common_params'])
-
-    kp_detector = KPDetector(**config['model_params']['kp_detector_params'],
-                             **config['model_params']['common_params'])
-
-    checkpoint = pickle.load(open(checkpoint_path, 'rb'))
-    generator.set_state_dict(checkpoint['generator'])
-
-    kp_detector.set_state_dict(checkpoint['kp_detector'])
-
-    generator.eval()
-    kp_detector.eval()
-
-    return generator, kp_detector
-
-
-def make_animation(source_image,
-                   driving_video,
-                   generator,
-                   kp_detector,
-                   relative=True,
-                   adapt_movement_scale=True,
-                   cpu=False):
-    with paddle.no_grad():
-        predictions = []
-        source = paddle.to_tensor(source_image[np.newaxis].astype(
-            np.float32)).transpose([0, 3, 1, 2])
-        # if not cpu:
-        #     source = source.cuda()
-        driving = paddle.to_tensor(
-            np.array(driving_video)[np.newaxis].astype(np.float32)).transpose(
-                [0, 4, 1, 2, 3])
-        kp_source = kp_detector(source)
-        kp_driving_initial = kp_detector(driving[:, :, 0])
-
-        for frame_idx in tqdm(range(driving.shape[2])):
-            driving_frame = driving[:, :, frame_idx]
-            kp_driving = kp_detector(driving_frame)
-            kp_norm = normalize_kp(kp_source=kp_source,
-                                   kp_driving=kp_driving,
-                                   kp_driving_initial=kp_driving_initial,
-                                   use_relative_movement=relative,
-                                   use_relative_jacobian=relative,
-                                   adapt_movement_scale=adapt_movement_scale)
-            out = generator(source, kp_source=kp_source, kp_driving=kp_norm)
-
-            predictions.append(
-                np.transpose(out['prediction'].numpy(), [0, 2, 3, 1])[0])
-    return predictions
-
-
-def find_best_frame(source, driving, cpu=False):
-    import face_alignment
-
-    def normalize_kp(kp):
-        kp = kp - kp.mean(axis=0, keepdims=True)
-        area = ConvexHull(kp[:, :2]).volume
-        area = np.sqrt(area)
-        kp[:, :2] = kp[:, :2] / area
-        return kp
-
-    fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D,
-                                      flip_input=True,
-                                      device='cpu' if cpu else 'cuda')
-    kp_source = fa.get_landmarks(255 * source)[0]
-    kp_source = normalize_kp(kp_source)
-    norm = float('inf')
-    frame_num = 0
-    for i, image in tqdm(enumerate(driving)):
-        kp_driving = fa.get_landmarks(255 * image)[0]
-        kp_driving = normalize_kp(kp_driving)
-        new_norm = (np.abs(kp_source - kp_driving)**2).sum()
-        if new_norm < norm:
-            norm = new_norm
-            frame_num = i
-    return frame_num
-
+parser.set_defaults(relative=False)
+parser.set_defaults(adapt_scale=False)
 
 if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument("--config", required=True, help="path to config")
-    parser.add_argument("--checkpoint",
-                        default='vox-cpk.pth.tar',
-                        help="path to checkpoint to restore")
+    args = parser.parse_args()
 
-    parser.add_argument("--source_image",
-                        default='sup-mat/source.png',
-                        help="path to source image")
-    parser.add_argument("--driving_video",
-                        default='sup-mat/source.png',
-                        help="path to driving video")
-    parser.add_argument("--result_video",
-                        default='result.mp4',
-                        help="path to output")
+    if args.cpu:
+        paddle.set_device('cpu')
 
-    parser.add_argument("--relative",
-                        dest="relative",
-                        action="store_true",
-                        help="use relative or absolute keypoint coordinates")
-    parser.add_argument(
-        "--adapt_scale",
-        dest="adapt_scale",
-        action="store_true",
-        help="adapt movement scale based on convex hull of keypoints")
-
-    parser.add_argument(
-        "--find_best_frame",
-        dest="find_best_frame",
-        action="store_true",
-        help=
-        "Generate from the frame that is the most alligned with source. (Only for faces, requires face_aligment lib)"
-    )
-
-    parser.add_argument("--best_frame",
-                        dest="best_frame",
-                        type=int,
-                        default=None,
-                        help="Set frame to start from.")
-
-    parser.add_argument("--cpu",
-                        dest="cpu",
-                        action="store_true",
-                        help="cpu mode.")
-
-    parser.set_defaults(relative=False)
-    parser.set_defaults(adapt_scale=False)
-
-    opt = parser.parse_args()
-
-    source_image = imageio.imread(opt.source_image)
-    reader = imageio.get_reader(opt.driving_video)
-    fps = reader.get_meta_data()['fps']
-    driving_video = []
-    try:
-        for im in reader:
-            driving_video.append(im)
-    except RuntimeError:
-        pass
-    reader.close()
-
-    source_image = resize(source_image, (256, 256))[..., :3]
-    driving_video = [
-        resize(frame, (256, 256))[..., :3] for frame in driving_video
-    ]
-    generator, kp_detector = load_checkpoints(config_path=opt.config,
-                                              checkpoint_path=opt.checkpoint,
-                                              cpu=opt.cpu)
-
-    if opt.find_best_frame or opt.best_frame is not None:
-        i = opt.best_frame if opt.best_frame is not None else find_best_frame(
-            source_image, driving_video, cpu=opt.cpu)
-        print("Best frame: " + str(i))
-        driving_forward = driving_video[i:]
-        driving_backward = driving_video[:(i + 1)][::-1]
-        predictions_forward = make_animation(
-            source_image,
-            driving_forward,
-            generator,
-            kp_detector,
-            relative=opt.relative,
-            adapt_movement_scale=opt.adapt_scale,
-            cpu=opt.cpu)
-        predictions_backward = make_animation(
-            source_image,
-            driving_backward,
-            generator,
-            kp_detector,
-            relative=opt.relative,
-            adapt_movement_scale=opt.adapt_scale,
-            cpu=opt.cpu)
-        predictions = predictions_backward[::-1] + predictions_forward[1:]
-    else:
-        predictions = make_animation(source_image,
-                                     driving_video,
-                                     generator,
-                                     kp_detector,
-                                     relative=opt.relative,
-                                     adapt_movement_scale=opt.adapt_scale,
-                                     cpu=opt.cpu)
-    imageio.mimsave(opt.result_video,
-                    [img_as_ubyte(frame) for frame in predictions],
-                    fps=fps)
+    predictor = FirstOrderPredictor(output=args.output,
+                                    weight_path=args.weight_path,
+                                    config=args.config,
+                                    relative=args.relative,
+                                    adapt_scale=args.adapt_scale,
+                                    find_best_frame=args.find_best_frame,
+                                    best_frame=args.best_frame)
+    predictor.run(args.source_image, args.driving_video)
