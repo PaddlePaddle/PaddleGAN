@@ -50,8 +50,8 @@ parser.add_argument('--time_step',
                     default=0.5,
                     help='choose the time steps')
 parser.add_argument('--remove_duplicates',
+                    action='store_true',
                     default=False,
-                    type=bool,
                     help='remove duplicate frames or not')
 # DeepRemaster args
 parser.add_argument('--reference_dir',
