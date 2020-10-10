@@ -36,7 +36,8 @@ class DAINPredictor(BasePredictor):
                  weight_path=None,
                  time_step=None,
                  use_gpu=True,
-                 key_frame_thread=0.):
+                 key_frame_thread=0.,
+                 remove_duplicates=False):
         self.output_path = os.path.join(output_path, 'DAIN')
         if weight_path is None:
             cur_path = os.path.abspath(os.path.dirname(__file__))
@@ -45,6 +46,7 @@ class DAINPredictor(BasePredictor):
         self.weight_path = weight_path
         self.time_step = time_step
         self.key_frame_thread = key_frame_thread
+        self.remove_duplicates = remove_duplicates
 
         self.build_inference_model()
 
@@ -83,6 +85,9 @@ class DAINPredictor(BasePredictor):
 
         frames = sorted(glob.glob(os.path.join(out_path, '*.png')))
 
+        if self.remove_duplicates:
+            frames = self.remove_duplicate_frames(out_path)
+
         img = imread(frames[0])
 
         int_width = img.shape[1]
@@ -111,8 +116,6 @@ class DAINPredictor(BasePredictor):
             padding_bottom = 32
 
         frame_num = len(frames)
-        print('processing {} frames, from video: {}'.format(
-            frame_num, video_path))
 
         if not os.path.exists(os.path.join(frame_path_interpolated, vidname)):
             os.makedirs(os.path.join(frame_path_interpolated, vidname))
@@ -140,50 +143,41 @@ class DAINPredictor(BasePredictor):
             X0 = img_first.astype('float32').transpose((2, 0, 1)) / 255
             X1 = img_second.astype('float32').transpose((2, 0, 1)) / 255
 
-            if key_frame:
-                y_ = [
-                    np.transpose(255.0 * X0.clip(0, 1.0), (1, 2, 0))
-                    for i in range(num_frames)
-                ]
-            else:
-                assert (X0.shape[1] == X1.shape[1])
-                assert (X0.shape[2] == X1.shape[2])
+            assert (X0.shape[1] == X1.shape[1])
+            assert (X0.shape[2] == X1.shape[2])
 
-                X0 = np.pad(X0, ((0,0), (padding_top, padding_bottom), \
-                    (padding_left, padding_right)), mode='edge')
-                X1 = np.pad(X1, ((0,0), (padding_top, padding_bottom), \
-                    (padding_left, padding_right)), mode='edge')
+            X0 = np.pad(X0, ((0,0), (padding_top, padding_bottom), \
+                (padding_left, padding_right)), mode='edge')
+            X1 = np.pad(X1, ((0,0), (padding_top, padding_bottom), \
+                (padding_left, padding_right)), mode='edge')
 
-                X0 = np.expand_dims(X0, axis=0)
-                X1 = np.expand_dims(X1, axis=0)
+            X0 = np.expand_dims(X0, axis=0)
+            X1 = np.expand_dims(X1, axis=0)
 
-                X0 = np.expand_dims(X0, axis=0)
-                X1 = np.expand_dims(X1, axis=0)
+            X0 = np.expand_dims(X0, axis=0)
+            X1 = np.expand_dims(X1, axis=0)
 
-                X = np.concatenate((X0, X1), axis=0)
+            X = np.concatenate((X0, X1), axis=0)
 
-                o = self.base_forward(X)
+            o = self.base_forward(X)
 
-                y_ = o[0]
+            y_ = o[0]
 
-                y_ = [
-                    np.transpose(
-                        255.0 * item.clip(
-                            0, 1.0)[0, :, padding_top:padding_top + int_height,
-                                    padding_left:padding_left + int_width],
-                        (1, 2, 0)) for item in y_
-                ]
-                time_offsets = [
-                    kk * timestep for kk in range(1, 1 + num_frames, 1)
-                ]
+            y_ = [
+                np.transpose(
+                    255.0 * item.clip(
+                        0, 1.0)[0, :, padding_top:padding_top + int_height,
+                                padding_left:padding_left + int_width],
+                    (1, 2, 0)) for item in y_
+            ]
+            time_offsets = [kk * timestep for kk in range(1, 1 + num_frames, 1)]
 
-                count = 1
-                for item, time_offset in zip(y_, time_offsets):
-                    out_dir = os.path.join(
-                        frame_path_interpolated, vidname,
-                        "{:0>6d}_{:0>4d}.png".format(i, count))
-                    count = count + 1
-                    imsave(out_dir, np.round(item).astype(np.uint8))
+            count = 1
+            for item, time_offset in zip(y_, time_offsets):
+                out_dir = os.path.join(frame_path_interpolated, vidname,
+                                       "{:0>6d}_{:0>4d}.png".format(i, count))
+                count = count + 1
+                imsave(out_dir, np.round(item).astype(np.uint8))
 
         num_frames = int(1.0 / timestep) - 1
 
@@ -225,3 +219,33 @@ class DAINPredictor(BasePredictor):
                         shutil.copy2(src, dst)
                 except Exception as e:
                     print(e)
+
+    def remove_duplicate_frames(self, paths):
+        def dhash(image, hash_size=8):
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            resized = cv2.resize(gray, (hash_size + 1, hash_size))
+            diff = resized[:, 1:] > resized[:, :-1]
+            return sum([2**i for (i, v) in enumerate(diff.flatten()) if v])
+
+        hashes = {}
+        image_paths = sorted(glob.glob(os.path.join(paths, '*.png')))
+        for image_path in image_paths:
+            image = cv2.imread(image_path)
+            h = dhash(image)
+            p = hashes.get(h, [])
+            p.append(image_path)
+            hashes[h] = p
+
+        for (h, hashed_paths) in hashes.items():
+            if len(hashed_paths) > 1:
+                for p in hashed_paths[1:]:
+                    os.remove(p)
+
+        frames = sorted(glob.glob(os.path.join(paths, '*.png')))
+        for fid, frame in enumerate(frames):
+            new_name = '{:08d}'.format(fid) + '.png'
+            new_name = os.path.join(paths, new_name)
+            os.rename(frame, new_name)
+
+        frames = sorted(glob.glob(os.path.join(paths, '*.png')))
+        return frames

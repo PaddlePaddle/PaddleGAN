@@ -49,6 +49,10 @@ parser.add_argument('--time_step',
                     type=float,
                     default=0.5,
                     help='choose the time steps')
+parser.add_argument('--remove_duplicates',
+                    default=False,
+                    type=bool,
+                    help='remove duplicate frames or not')
 # DeepRemaster args
 parser.add_argument('--reference_dir',
                     type=str,
@@ -88,7 +92,8 @@ if __name__ == "__main__":
             paddle.enable_static()
             predictor = DAINPredictor(args.output,
                                       weight_path=args.DAIN_weight,
-                                      time_step=args.time_step)
+                                      time_step=args.time_step,
+                                      remove_duplicates=args.remove_duplicates)
             frames_path, temp_video_path = predictor.run(temp_video_path)
             paddle.disable_static()
         elif order == 'DeepRemaster':
