@@ -1,32 +1,54 @@
-English | [简体中文](./README.md)
+English | [简体中文](./README_cn.md)
 
 # PaddleGAN
 
-still under development!!
+PaddleGAN is an development kit of Generative Adversarial Network based on PaddlePaddle.
 
-## Download Dataset
-This script could download several dataset for paired images for image2image translation task.
+![](./docs/imgs/color_sr_peking.gif)
+
+Features:
+
+- Highly Flexible:
+
+  Components are designed to be modular. Model architectures, as well as data
+preprocess pipelines, can be easily customized with simple configuration
+changes.
+
+- Rich applications:
+
+  PaddleGAN provides rich of applications, such as image generation, image restore, image colorization, video interpolate, makeup shifter.
+
+## Install
+
+### 1. install paddlepaddle
+
+PaddleGAN work with:
+* PaddlePaddle >= 2.0.0-rc
+* Python >= 3.5+
 
 ```
-cd PaddleGAN/script/
-bash pix2pix_download.sh [cityscapes|facades|edges2handbags|edges2shoes|maps]
-```
-## Train
-```
-python -u tools/main.py --config-file configs/cyclegan-cityscapes.yaml
+pip install -U paddlepaddle-gpu
 ```
 
-continue train from last checkpoint
+### 2. install ppgan
 ```
-python -u tools/main.py --config-file configs/cyclegan-cityscapes.yaml --resume your_checkpoint_path
+git clone https://github.com/PaddlePaddle/PaddleGAN
+cd PaddleGAN
+
+pip install -v -e .  # or "python setup.py develop"
 ```
 
-multiple gpus train:
-```
-CUDA_VISIBLE_DEVICES=0,1 python -m paddle.distributed.launch tools/main.py --config-file configs/pix2pix-cityscapes.yaml
-```
+## Data Prepare
+Please refer to [data prepare](./docs/data_prepare.md) for dataset preparation.
 
-## Evaluate
-```
-python tools/main.py --config-file configs/cyclegan-cityscapes.yaml --evaluate-only --load your_weight_path
-```
+## Get Start
+Please refer [get stated](./docs/get_started.md) for the basic usage of PaddleGAN.
+
+
+## License
+PaddleGAN is released under the [Apache 2.0 license](LICENSE).
+
+
+## Contributing
+
+Contributions are highly welcomed and we would really appreciate your feedback!!
