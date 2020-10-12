@@ -77,8 +77,14 @@ class DeOldifyPredictor(BasePredictor):
         final = Image.fromarray(final)
         return final
 
-    def run_single(self, img_path):
-        ori_img = Image.open(img_path).convert('LA').convert('RGB')
+    def run_image(self, img):
+        if isinstance(img, str):
+            ori_img = Image.open(img).convert('LA').convert('RGB')
+        elif isinstance(img, np.ndarray):
+            ori_img = Image.fromarray(img).convert('LA').convert('RGB')
+        elif isinstance(img, Image.Image):
+            ori_img = img
+
         img = self.norm(ori_img, self.render_factor)
         x = paddle.to_tensor(img[np.newaxis, ...])
         out = self.model(x)
@@ -89,8 +95,8 @@ class DeOldifyPredictor(BasePredictor):
         pred_img = self.post_process(pred_img, ori_img)
         return pred_img
 
-    def run(self, video_path):
-        base_name = os.path.basename(video_path).split('.')[0]
+    def run_video(self, video):
+        base_name = os.path.basename(video).split('.')[0]
         output_path = os.path.join(self.output, base_name)
         pred_frame_path = os.path.join(output_path, 'frames_pred')
 
@@ -100,15 +106,15 @@ class DeOldifyPredictor(BasePredictor):
         if not os.path.exists(pred_frame_path):
             os.makedirs(pred_frame_path)
 
-        cap = cv2.VideoCapture(video_path)
+        cap = cv2.VideoCapture(video)
         fps = cap.get(cv2.CAP_PROP_FPS)
 
-        out_path = video2frames(video_path, output_path)
+        out_path = video2frames(video, output_path)
 
         frames = sorted(glob.glob(os.path.join(out_path, '*.png')))
 
         for frame in tqdm(frames):
-            pred_img = self.run_single(frame)
+            pred_img = self.run_image(frame)
 
             frame_name = os.path.basename(frame)
             pred_img.save(os.path.join(pred_frame_path, frame_name))
@@ -120,3 +126,15 @@ class DeOldifyPredictor(BasePredictor):
         frames2video(frame_pattern_combined, vid_out_path, str(int(fps)))
 
         return frame_pattern_combined, vid_out_path
+
+    def run(self, input):
+        if self.is_video(input):
+            return self.run_video(input)
+        else:
+            pred_img = self.run_image(input)
+
+            if self.output:
+                base_name = os.path.basename(input)
+                pred_img.save(os.path.join(self.output, base_name + '.png'))
+
+            return pred_img

@@ -13,6 +13,7 @@
 #limitations under the License.
 
 import os
+import cv2
 import paddle
 
 
@@ -60,11 +61,12 @@ class BasePredictor(object):
 
         return out
 
-    def preprocess(self, inputs):
-        pass
-
-    def postprocess(self, inputs):
-        pass
+    def is_video(self, input):
+        try:
+            cv2.VideoCapture(input)
+            return True
+        except:
+            return False
 
     def run(self):
-        pass
+        raise NotImplementedError
