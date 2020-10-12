@@ -1,0 +1,184 @@
+import cv2
+import os.path
+from .base_dataset import BaseDataset, get_transform
+from .transforms.makeup_transforms import get_makeup_transform
+import paddle.vision.transforms as T
+from .image_folder import make_dataset
+from PIL import Image
+import random
+import numpy as np
+from ..utils.preprocess import *
+
+from .builder import DATASETS
+
+
+@DATASETS.register()
+class MakeupDataset(BaseDataset):
+    """
+    This dataset class can load unaligned/unpaired datasets.
+
+    It requires two directories to host training images from domain A '/path/to/data/trainA'
+    and from domain B '/path/to/data/trainB' respectively.
+    You can train the model with the dataset flag '--dataroot /path/to/data'.
+    Similarly, you need to prepare two directories:
+    '/path/to/data/testA' and '/path/to/data/testB' during test time.
+    """
+    def __init__(self, cfg):
+        """Initialize this dataset class.
+
+        Parameters:
+            opt (Option class) -- stores all the experiment flags; needs to be a subclass of BaseOptions
+        """
+        BaseDataset.__init__(self, cfg)
+        self.image_path = cfg.dataroot
+        self.mode = cfg.phase
+        self.transform = get_makeup_transform(cfg)
+
+        self.norm = T.Normalize([127.5, 127.5, 127.5], [127.5, 127.5, 127.5])
+        self.transform_mask = get_makeup_transform(cfg, pic="mask")
+        self.trans_size = cfg.trans_size
+        self.cls_list = cfg.cls_list
+        self.cls_A = self.cls_list[0]
+        self.cls_B = self.cls_list[1]
+        for cls in self.cls_list:
+            setattr(
+                self, cls + "_list_path",
+                os.path.join(self.image_path, self.mode + '_' + cls + ".txt"))
+            setattr(self, cls + "_lines",
+                    open(getattr(self, cls + "_list_path"), 'r').readlines())
+            setattr(self, "num_of_" + cls + "_data",
+                    len(getattr(self, cls + "_lines")))
+        print('Start preprocessing dataset..!')
+        self.preprocess()
+        print('Finished preprocessing dataset..!')
+
+    def preprocess(self):
+        """preprocess image"""
+        for cls in self.cls_list:
+            setattr(self, cls + "_filenames", [])
+            setattr(self, cls + "_mask_filenames", [])
+            setattr(self, cls + "_lmks_filenames", [])
+
+            lines = getattr(self, cls + "_lines")
+            random.shuffle(lines)
+
+            for i, line in enumerate(lines):
+                splits = line.split()
+                getattr(self, cls + "_filenames").append(splits[0])
+                getattr(self, cls + "_mask_filenames").append(splits[1])
+                getattr(self, cls + "_lmks_filenames").append(splits[2])
+
+    def __getitem__(self, index):
+        """Return a data point and its metadata information.
+
+        Parameters:
+            index (int)      -- a random integer for data indexing
+
+        Returns a dictionary that contains A, B, A_paths and B_paths
+            A (tensor)       -- an image in the input domain
+            B (tensor)       -- its corresponding image in the target domain
+            A_paths (str)    -- image paths
+            B_paths (str)    -- image paths
+        """
+        try:
+            index_A = random.randint(
+                0, getattr(self, "num_of_" + self.cls_A + "_data"))
+            index_B = random.randint(
+                0, getattr(self, "num_of_" + self.cls_B + "_data"))
+
+            if self.mode == 'test':
+                num_b = getattr(self, 'num_of_' + self.cls_list[1] + '_data')
+                index_A = int(index / num_b)
+                index_B = int(index % num_b)
+            image_A = Image.open(
+                os.path.join(self.image_path,
+                             getattr(self, self.cls_A +
+                                     "_filenames")[index_A])).convert("RGB")
+
+            image_B = Image.open(
+                os.path.join(self.image_path,
+                             getattr(self, self.cls_B +
+                                     "_filenames")[index_B])).convert("RGB")
+            mask_A = np.array(
+                Image.open(
+                    os.path.join(
+                        self.image_path,
+                        getattr(self,
+                                self.cls_A + "_mask_filenames")[index_A])))
+            mask_B = np.array(
+                Image.open(
+                    os.path.join(
+                        self.image_path,
+                        getattr(self, self.cls_B +
+                                "_mask_filenames")[index_B])).convert('L'))
+            #image_A.paste((200,200,200), (0,0), Image.fromarray(np.uint8(255*(np.array(mask_A)==0))))
+            #image_B.paste((200,200,200), (0,0), Image.fromarray(np.uint8(255*(np.array(mask_B)==0))))
+            image_A = np.array(image_A)
+            image_B = np.array(image_B)
+
+            print('image shape: ', image_A.shape)
+            image_A = self.transform(image_A)
+            image_B = self.transform(image_B)
+            print('image shape: ', image_A.shape)
+
+            mask_A = cv2.resize(mask_A, (256, 256),
+                                interpolation=cv2.INTER_NEAREST)
+            mask_B = cv2.resize(mask_B, (256, 256),
+                                interpolation=cv2.INTER_NEAREST)
+
+            lmks_A = np.loadtxt(
+                os.path.join(
+                    self.image_path,
+                    getattr(self, self.cls_A + "_lmks_filenames")[index_A]))
+            lmks_B = np.loadtxt(
+                os.path.join(
+                    self.image_path,
+                    getattr(self, self.cls_B + "_lmks_filenames")[index_B]))
+            lmks_A = lmks_A / image_A.shape[:2] * self.trans_size
+            lmks_B = lmks_B / image_B.shape[:2] * self.trans_size
+
+            P_A = generate_P_from_lmks(lmks_A, self.trans_size,
+                                       image_A.shape[0], image_A.shape[1])
+
+            P_B = generate_P_from_lmks(lmks_B, self.trans_size,
+                                       image_B.shape[0], image_B.shape[1])
+
+            mask_A_aug = generate_mask_aug(mask_A, lmks_A)
+            mask_B_aug = generate_mask_aug(mask_B, lmks_B)
+
+            consis_mask = calculate_consis_mask(mask_A_aug, mask_B_aug)
+            consis_mask_idt_A = calculate_consis_mask(mask_A_aug, mask_A_aug)
+            consis_mask_idt_B = calculate_consis_mask(mask_A_aug, mask_B_aug)
+
+        except Exception as e:
+            print(e)
+            return self.__getitem__(index + 1)
+        return {
+            'image_A': self.norm(image_A),
+            'image_B': self.norm(image_B),
+            'mask_A': np.float32(mask_A),
+            'mask_B': np.float32(mask_B),
+            'consis_mask': np.float32(consis_mask),
+            'P_A': np.float32(P_A),
+            'P_B': np.float32(P_B),
+            'consis_mask_idt_A': np.float32(consis_mask_idt_A),
+            'consis_mask_idt_B': np.float32(consis_mask_idt_B),
+            'mask_A_aug': np.float32(mask_A_aug),
+            'mask_B_aug': np.float32(mask_B_aug)
+        }
+
+    def __len__(self):
+        """Return the total number of images in the dataset.
+
+        As we have two datasets with potentially different number of images,
+        we take a maximum of
+        """
+        if self.mode == 'train':
+            num_A = getattr(self, 'num_of_' + self.cls_list[0] + '_data')
+            num_B = getattr(self, 'num_of_' + self.cls_list[1] + '_data')
+            return max(num_A, num_B)
+        elif self.mode == "test":
+            num_A = getattr(self, 'num_of_' + self.cls_list[0] + '_data')
+            num_B = getattr(self, 'num_of_' + self.cls_list[1] + '_data')
+            return num_A * num_B
+        return max(self.A_size, self.B_size)

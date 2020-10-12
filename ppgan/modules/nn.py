@@ -1,5 +1,6 @@
 import paddle
 import paddle.nn as nn
+import math
 
 
 class _SpectralNorm(nn.SpectralNorm):
@@ -50,3 +51,123 @@ class Spectralnorm(paddle.nn.Layer):
         self.layer.weight = weight
         out = self.layer(x)
         return out
+
+
+def initial_type(input,
+                 op_type,
+                 fan_out,
+                 init="normal",
+                 use_bias=False,
+                 kernel_size=0,
+                 stddev=0.02,
+                 name=None):
+    if init == "kaiming":
+        if op_type == 'conv':
+            fan_in = input.shape[1] * kernel_size * kernel_size
+        elif op_type == 'deconv':
+            fan_in = fan_out * kernel_size * kernel_size
+        else:
+            if len(input.shape) > 2:
+                fan_in = input.shape[1] * input.shape[2] * input.shape[3]
+            else:
+                fan_in = input.shape[1]
+        bound = 1 / math.sqrt(fan_in)
+        param_attr = paddle.ParamAttr(
+            # name=name + "_w",
+            initializer=paddle.nn.initializer.Uniform(low=-bound, high=bound))
+        if use_bias == True:
+            bias_attr = paddle.ParamAttr(
+                # name=name + '_b',
+                initializer=paddle.nn.initializer.Uniform(low=-bound,
+                                                          high=bound))
+        else:
+            bias_attr = False
+    elif init == 'xavier':
+        param_attr = paddle.ParamAttr(
+            # name=name + "_w",
+            initializer=paddle.nn.initializer.Xavier(uniform=False))
+        if use_bias == True:
+            bias_attr = paddle.ParamAttr(
+                # name=name + "_b",
+                initializer=paddle.nn.initializer.Constant(0.0))
+        else:
+            bias_attr = False
+    else:
+        param_attr = paddle.ParamAttr(
+            # name=name + "_w",
+            initializer=paddle.nn.initializer.NormalInitializer(loc=0.0,
+                                                                scale=stddev))
+        if use_bias == True:
+            bias_attr = paddle.ParamAttr(
+                # name=name + "_b",
+                initializer=paddle.nn.initializer.Constant(0.0))
+        else:
+            bias_attr = False
+    return param_attr, bias_attr
+
+
+class Conv2d(paddle.nn.Conv2d):
+    def __init__(self,
+                 num_channels,
+                 num_filters,
+                 kernel_size,
+                 padding=0,
+                 stride=1,
+                 dilation=1,
+                 groups=1,
+                 weight_attr=None,
+                 bias_attr=None,
+                 data_format="NCHW",
+                 init_type='xavier'):
+        param_attr, bias_attr = initial_type(
+            input=input,
+            op_type='conv',
+            fan_out=num_filters,
+            init=init_type,
+            use_bias=True if bias_attr != False else False,
+            kernel_size=kernel_size)
+
+        super(Conv2d, self).__init__(in_channels=num_channels,
+                                     out_channels=num_filters,
+                                     kernel_size=kernel_size,
+                                     stride=stride,
+                                     padding=padding,
+                                     dilation=dilation,
+                                     groups=groups,
+                                     weight_attr=param_attr,
+                                     bias_attr=bias_attr,
+                                     data_format=data_format)
+
+
+class ConvTranspose2d(paddle.nn.ConvTranspose2d):
+    def __init__(self,
+                 num_channels,
+                 num_filters,
+                 kernel_size,
+                 padding=0,
+                 stride=1,
+                 dilation=1,
+                 groups=1,
+                 weight_attr=None,
+                 bias_attr=None,
+                 data_format="NCHW",
+                 init_type='normal'):
+
+        param_attr, bias_attr = initial_type(
+            input=input,
+            op_type='deconv',
+            fan_out=num_filters,
+            init=init_type,
+            use_bias=True if bias_attr != False else False,
+            kernel_size=kernel_size)
+
+        super(ConvTranspose2d, self).__init__(in_channels=num_channels,
+                                              out_channels=num_filters,
+                                              kernel_size=kernel_size,
+                                              padding=padding,
+                                              stride=stride,
+                                              dilation=dilation,
+                                              groups=groups,
+                                              weight_attr=weight_attr,
+                                              bias_attr=bias_attr,
+                                              data_format=data_format)
