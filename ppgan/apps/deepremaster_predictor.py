@@ -64,7 +64,7 @@ def addMergin(img, target_w, target_h, background_color=(0, 0, 0)):
     return result
 
 
-class DeepReasterPredictor(BasePredictor):
+class DeepRemasterPredictor(BasePredictor):
     def __init__(self,
                  output='output',
                  weight_path=None,

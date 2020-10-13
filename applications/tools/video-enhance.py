@@ -15,11 +15,7 @@
 import argparse
 import paddle
 
-from ppgan.apps.dain_predictor import DAINPredictor
-from ppgan.apps.deepremaster_predictor import DeepReasterPredictor
-from ppgan.apps.deoldify_predictor import DeOldifyPredictor
-from ppgan.apps.realsr_predictor import RealSRPredictor
-from ppgan.apps.edvr_predictor import EDVRPredictor
+from ppgan.apps import DAINPredictor, DeepRemasterPredictor, DeOldifyPredictor, RealSRPredictor, EDVRPredictor
 
 parser = argparse.ArgumentParser(description='Fix video')
 parser.add_argument('--input', type=str, default=None, help='Input video')
@@ -97,7 +93,7 @@ if __name__ == "__main__":
             frames_path, temp_video_path = predictor.run(temp_video_path)
             paddle.disable_static()
         elif order == 'DeepRemaster':
-            predictor = DeepReasterPredictor(
+            predictor = DeepRemasterPredictor(
                 args.output,
                 weight_path=args.DeepRemaster_weight,
                 colorization=args.colorization,
