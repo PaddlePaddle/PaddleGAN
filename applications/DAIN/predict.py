@@ -139,8 +139,14 @@ class VideoFrameInterp(object):
             end = time.time()
 
             frames = sorted(glob.glob(os.path.join(out_path, '*.png')))
+            orig_frames = len(frames)
+            need_frames = orig_frames * times_interp
+
             if remove_duplicates:
                 frames = remove_duplicates(out_path)
+                left_frames = len(frames)
+                timestep = left_frames / need_frames
+                num_frames = int(1.0 / timestep) - 1
 
             img = imread(frames[0])
 
