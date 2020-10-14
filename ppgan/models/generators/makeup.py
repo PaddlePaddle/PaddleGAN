@@ -151,8 +151,6 @@ class MDNet(paddle.nn.Layer):
         # Bottleneck
         for i in range(repeat_num):
             layers.append(ResidualBlock(dim_in=curr_dim, dim_out=curr_dim))
-        #layers.append(nn.InstanceNorm2d(curr_dim, weight_attr=None, bias_attr=None))
-        #layers.append(PONO())
 
         self.main = nn.Sequential(*layers)
 
@@ -201,7 +199,6 @@ class TNetDown(paddle.nn.Layer):
         for i in range(repeat_num):
             layers.append(
                 ResidualBlock(dim_in=curr_dim, dim_out=curr_dim, mode='t'))
-        #layers.append(nn.InstanceNorm2d(curr_dim, weight_attr=False, bias_attr=False))
 
         self.main = nn.Sequential(*layers)
 
@@ -268,7 +265,6 @@ class MANet(paddle.nn.Layer):
                                   bias_attr=False))
 
             setattr(self, "up_acts_" + str(i), nn.ReLU())
-            #setattr(self, "up_betas_" + str(i), Conv2d(y_dim, curr_dim//2, kernel_size=3, padding=1))
             setattr(
                 self, "up_betas_" + str(i),
                 nn.ConvTranspose2d(y_dim,
@@ -276,7 +272,6 @@ class MANet(paddle.nn.Layer):
                                    kernel_size=4,
                                    stride=2,
                                    padding=1))
-            #setattr(self, "up_gammas_" + str(i), Conv2d(y_dim, curr_dim//2, kernel_size=3, padding=1))
             setattr(
                 self, "up_gammas_" + str(i),
                 nn.ConvTranspose2d(y_dim,
@@ -317,9 +312,7 @@ class MANet(paddle.nn.Layer):
         # mask softmax
         if consistency_mask is not None:
             a_ = a_ - 100.0 * (1 - consistency_mask)
-        #a_ = a_ * consistency_mask
         a = F.softmax(a_, axis=-1)
-        #a = a * consistency_mask
 
         gamma, beta = self.simple_spade(y)
 
