@@ -34,7 +34,7 @@ class NLayerDiscriminator(nn.Layer):
             input_nc (int)  -- the number of channels in input images
             ndf (int)       -- the number of filters in the last conv layer
             n_layers (int)  -- the number of conv layers in the discriminator
-            norm_layer      -- normalization layer
+            norm_type (str)      -- normalization layer type
         """
         super(NLayerDiscriminator, self).__init__()
         norm_layer = build_norm_layer(norm_type)
