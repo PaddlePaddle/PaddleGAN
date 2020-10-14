@@ -67,9 +67,5 @@ class FaceParser:
             for j in range(w):
                 result[i][j] = self.mapper[parse_np[i][j]]
 
-        with open('/workspace/PaddleGAN/mapper_out.pkl', 'rb') as f:
-            torch_out = pickle.load(f)
-            cm = np.allclose(torch_out, result)
-            print('cm out: ', cm)
         result = paddle.to_tensor(result).astype('float32')
         return result

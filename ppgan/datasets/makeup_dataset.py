@@ -17,7 +17,6 @@ import os.path
 from .base_dataset import BaseDataset, get_transform
 from .transforms.makeup_transforms import get_makeup_transform
 import paddle.vision.transforms as T
-from .image_folder import make_dataset
 from PIL import Image
 import random
 import numpy as np
@@ -28,15 +27,6 @@ from .builder import DATASETS
 
 @DATASETS.register()
 class MakeupDataset(BaseDataset):
-    """
-    This dataset class can load unaligned/unpaired datasets.
-
-    It requires two directories to host training images from domain A '/path/to/data/trainA'
-    and from domain B '/path/to/data/trainB' respectively.
-    You can train the model with the dataset flag '--dataroot /path/to/data'.
-    Similarly, you need to prepare two directories:
-    '/path/to/data/testA' and '/path/to/data/testB' during test time.
-    """
     def __init__(self, cfg):
         """Initialize this dataset class.
 
@@ -83,16 +73,12 @@ class MakeupDataset(BaseDataset):
                 getattr(self, cls + "_lmks_filenames").append(splits[2])
 
     def __getitem__(self, index):
-        """Return a data point and its metadata information.
+        """Return MANet and MDNet needed params.
 
         Parameters:
             index (int)      -- a random integer for data indexing
 
-        Returns a dictionary that contains A, B, A_paths and B_paths
-            A (tensor)       -- an image in the input domain
-            B (tensor)       -- its corresponding image in the target domain
-            A_paths (str)    -- image paths
-            B_paths (str)    -- image paths
+        Returns a dictionary that contains needed params.
         """
         try:
             index_A = random.randint(
@@ -125,15 +111,11 @@ class MakeupDataset(BaseDataset):
                         self.image_path,
                         getattr(self, self.cls_B +
                                 "_mask_filenames")[index_B])).convert('L'))
-            #image_A.paste((200,200,200), (0,0), Image.fromarray(np.uint8(255*(np.array(mask_A)==0))))
-            #image_B.paste((200,200,200), (0,0), Image.fromarray(np.uint8(255*(np.array(mask_B)==0))))
             image_A = np.array(image_A)
             image_B = np.array(image_B)
 
-            print('image shape: ', image_A.shape)
             image_A = self.transform(image_A)
             image_B = self.transform(image_B)
-            print('image shape: ', image_A.shape)
 
             mask_A = cv2.resize(mask_A, (256, 256),
                                 interpolation=cv2.INTER_NEAREST)

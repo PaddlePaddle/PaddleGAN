@@ -61,7 +61,6 @@ def crop(image: Image, face, up_ratio, down_ratio, width_ratio):
     face_expand = dlib.rectangle(img_left, img_top, img_right, img_bottom)
     center = face_expand.center()
     width, height = image.size
-    # import ipdb; ipdb.set_trace()
     crop_left = img_left
     crop_top = img_top
     crop_right = img_right

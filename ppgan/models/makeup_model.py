@@ -132,7 +132,6 @@ class MakeupModel(BaseModel):
         The option 'direction' can be used to swap domain A and domain B.
         """
         self.real_A = paddle.to_tensor(input['image_A'])
-        print('real_a shape: ', self.real_A.shape)
         self.real_B = paddle.to_tensor(input['image_B'])
         self.c_m = paddle.to_tensor(input['consis_mask'])
         self.P_A = paddle.to_tensor(input['P_A'])
@@ -338,9 +337,9 @@ class MakeupModel(BaseModel):
         g_B_eye_loss_his = self.criterionL1(fake_B_eye_masked, fake_match_eye_B)
 
         self.loss_G_A_his = (g_A_eye_loss_his + g_A_lip_loss_his +
-                             g_A_skin_loss_his * 0.1) * 0.1
+                             g_A_skin_loss_his * 0.1) * 0.01
         self.loss_G_B_his = (g_B_eye_loss_his + g_B_lip_loss_his +
-                             g_B_skin_loss_his * 0.1) * 0.1
+                             g_B_skin_loss_his * 0.1) * 0.01
 
         #self.loss_G_A_his = self.criterionL1(tmp_1, tmp_2) * 2048 * 255
         #tmp_3 = self.hm_gt_B*self.hm_mask_weight_B
@@ -361,8 +360,8 @@ class MakeupModel(BaseModel):
                                            vgg_r) * lambda_B * lambda_vgg
 
         self.loss_rec = (self.loss_cycle_A + self.loss_cycle_B +
-                         self.loss_A_vgg + self.loss_B_vgg) * 0.1
-        self.loss_idt = (self.loss_idt_A + self.loss_idt_B) * 0.1
+                         self.loss_A_vgg + self.loss_B_vgg) * 0.2
+        self.loss_idt = (self.loss_idt_A + self.loss_idt_B) * 0.2
 
         # bg consistency loss
         mask_A_consis = paddle.cast(
@@ -370,8 +369,8 @@ class MakeupModel(BaseModel):
                 (self.mask_A == 10), dtype='float32') + paddle.cast(
                     (self.mask_A == 8), dtype='float32')
         mask_A_consis = paddle.unsqueeze(paddle.clip(mask_A_consis, 0, 1), 1)
-        self.loss_G_bg_consis = self.criterionL1(self.real_A * mask_A_consis,
-                                                 self.fake_A * mask_A_consis)
+        self.loss_G_bg_consis = self.criterionL1(
+            self.real_A * mask_A_consis, self.fake_A * mask_A_consis) * 0.1
 
         # combined loss and calculate gradients
 
