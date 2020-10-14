@@ -27,7 +27,6 @@ sys.path.append(root_path)
 
 import paddle
 import ppgan.faceutils as futils
-#from psgan import PostProcess
 from ppgan.utils.options import parse_args
 from ppgan.utils.config import get_config
 from ppgan.utils.setup import setup
