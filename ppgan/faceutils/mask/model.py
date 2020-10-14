@@ -190,25 +190,3 @@ class BiSeNet(paddle.nn.Layer):
         feat_out16 = F.interpolate(feat_out16, size=(H, W))
         feat_out32 = F.interpolate(feat_out32, size=(H, W))
         return feat_out, feat_out16, feat_out32
-
-
-if __name__ == "__main__":
-    import pickle
-    paddle.disable_static()
-    net = BiSeNet(19)
-    param, _ = paddle.load('./resnet.pdparams')
-    net.set_dict(param)
-    net.eval()
-    #print(net.state_dict().keys())
-    #np.random.seed(2)
-    #x = np.random.randn(16,3,640,480).astype(np.float32)
-    with open('./x.pickle', 'rb') as f:
-        x = pickle.load(f)
-    in_ten = paddle.to_tensor(x)
-    out, out16, out32 = net(in_ten)
-    print(out.numpy().sum())
-    with open('./out.pickle', 'wb') as f:
-        pickle.dump(out.numpy(), f)
-    print(out.shape)
-    print(out16.shape)
-    print(out32.shape)
