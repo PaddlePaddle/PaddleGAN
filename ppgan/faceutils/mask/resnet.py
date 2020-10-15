@@ -22,7 +22,6 @@ from paddle.utils.download import get_weights_path_from_url
 import numpy as np
 import math
 
-#resnet18_url = 'https://download.pytorch.org/models/resnet18-5c106cde.pth'
 model_urls = {
     'resnet18': ('https://paddle-hapi.bj.bcebos.com/models/resnet18.pdparams',
                  '0ba53eea9bc970962d0ef96f7b94057e'),
@@ -96,7 +95,6 @@ class Resnet18(paddle.nn.Layer):
         self.layer2 = create_layer_basic(64, 128, bnum=2, stride=2)
         self.layer3 = create_layer_basic(128, 256, bnum=2, stride=2)
         self.layer4 = create_layer_basic(256, 512, bnum=2, stride=2)
-        # self.init_weight()
 
     def forward(self, x):
         x = self.conv1(x)
@@ -114,23 +112,8 @@ def resnet18(pretrained=False, **kwargs):
     model = Resnet18()
     arch = 'resnet18'
     if pretrained:
-        #weight_path = get_weights_path_from_url(model_urls[arch][0],
-        #                                        model_urls[arch][1])
-        #assert weight_path.endswith(
-        #    '.pdparams'), "suffix of weight must be .pdparams"
         weight_path = './resnet.pdparams'
         param, _ = paddle.load(weight_path)
         model.set_dict(param)
 
     return model
-
-
-if __name__ == "__main__":
-    paddle.disable_static()
-    net = resnet18(pretrained=True)
-    x = paddle.to_tensor(
-        np.random.uniform(0, 1, (16, 3, 224, 224)).astype(np.float32))
-    out = net(x)
-    print(out[0].shape)
-    print(out[1].shape)
-    print(out[2].shape)
