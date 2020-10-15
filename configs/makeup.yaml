@@ -1,6 +1,6 @@
 epochs: 100
 isTrain: True
-output_dir: degrade_match
+output_dir: tmp
 checkpoints_dir: checkpoints
 lambda_A: 10.0
 lambda_B: 10.0
