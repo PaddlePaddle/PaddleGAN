@@ -18,7 +18,7 @@ import numpy as np
 import paddle.nn as nn
 import paddle.nn.functional as F
 
-from ...modules.nn import Conv2d, Spectralnorm
+from ...modules.nn import Spectralnorm
 from ...modules.norm import build_norm_layer
 
 from .builder import DISCRIMINATORS
@@ -51,21 +51,21 @@ class NLayerDiscriminator(nn.Layer):
         if norm_type == 'spectral':
             sequence = [
                 Spectralnorm(
-                    Conv2d(input_nc,
-                           ndf,
-                           kernel_size=kw,
-                           stride=2,
-                           padding=padw)),
+                    nn.Conv2d(input_nc,
+                              ndf,
+                              kernel_size=kw,
+                              stride=2,
+                              padding=padw)),
                 nn.LeakyReLU(0.01)
             ]
         else:
             sequence = [
-                Conv2d(input_nc,
-                       ndf,
-                       kernel_size=kw,
-                       stride=2,
-                       padding=padw,
-                       bias_attr=use_bias),
+                nn.Conv2d(input_nc,
+                          ndf,
+                          kernel_size=kw,
+                          stride=2,
+                          padding=padw,
+                          bias_attr=use_bias),
                 nn.LeakyReLU(0.2)
             ]
         nf_mult = 1
@@ -76,21 +76,21 @@ class NLayerDiscriminator(nn.Layer):
             if norm_type == 'spectral':
                 sequence += [
                     Spectralnorm(
-                        Conv2d(ndf * nf_mult_prev,
-                               ndf * nf_mult,
-                               kernel_size=kw,
-                               stride=2,
-                               padding=padw)),
+                        nn.Conv2d(ndf * nf_mult_prev,
+                                  ndf * nf_mult,
+                                  kernel_size=kw,
+                                  stride=2,
+                                  padding=padw)),
                     nn.LeakyReLU(0.01)
                 ]
             else:
                 sequence += [
-                    Conv2d(ndf * nf_mult_prev,
-                           ndf * nf_mult,
-                           kernel_size=kw,
-                           stride=2,
-                           padding=padw,
-                           bias_attr=use_bias),
+                    nn.Conv2d(ndf * nf_mult_prev,
+                              ndf * nf_mult,
+                              kernel_size=kw,
+                              stride=2,
+                              padding=padw,
+                              bias_attr=use_bias),
                     norm_layer(ndf * nf_mult),
                     nn.LeakyReLU(0.2)
                 ]
@@ -100,21 +100,21 @@ class NLayerDiscriminator(nn.Layer):
         if norm_type == 'spectral':
             sequence += [
                 Spectralnorm(
-                    Conv2d(ndf * nf_mult_prev,
-                           ndf * nf_mult,
-                           kernel_size=kw,
-                           stride=1,
-                           padding=padw)),
+                    nn.Conv2d(ndf * nf_mult_prev,
+                              ndf * nf_mult,
+                              kernel_size=kw,
+                              stride=1,
+                              padding=padw)),
                 nn.LeakyReLU(0.01)
             ]
         else:
             sequence += [
-                Conv2d(ndf * nf_mult_prev,
-                       ndf * nf_mult,
-                       kernel_size=kw,
-                       stride=1,
-                       padding=padw,
-                       bias_attr=use_bias),
+                nn.Conv2d(ndf * nf_mult_prev,
+                          ndf * nf_mult,
+                          kernel_size=kw,
+                          stride=1,
+                          padding=padw,
+                          bias_attr=use_bias),
                 norm_layer(ndf * nf_mult),
                 nn.LeakyReLU(0.2)
             ]
@@ -122,21 +122,21 @@ class NLayerDiscriminator(nn.Layer):
         if norm_type == 'spectral':
             sequence += [
                 Spectralnorm(
-                    Conv2d(ndf * nf_mult,
-                           1,
-                           kernel_size=kw,
-                           stride=1,
-                           padding=padw,
-                           bias_attr=False))
+                    nn.Conv2d(ndf * nf_mult,
+                              1,
+                              kernel_size=kw,
+                              stride=1,
+                              padding=padw,
+                              bias_attr=False))
             ]  # output 1 channel prediction map
         else:
             sequence += [
-                Conv2d(ndf * nf_mult,
-                       1,
-                       kernel_size=kw,
-                       stride=1,
-                       padding=padw,
-                       bias_attr=False)
+                nn.Conv2d(ndf * nf_mult,
+                          1,
+                          kernel_size=kw,
+                          stride=1,
+                          padding=padw,
+                          bias_attr=False)
             ]  # output 1 channel prediction map
 
         self.model = nn.Sequential(*sequence)

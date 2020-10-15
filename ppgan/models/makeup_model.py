@@ -21,7 +21,7 @@ from .builder import MODELS
 from .generators.builder import build_generator
 from .discriminators.builder import build_discriminator
 from .losses import GANLoss
-# from ..modules.nn import L1Loss
+from ..modules.init import init_weights
 from ..solver import build_optimizer
 from ..utils.image_pool import ImagePool
 from ..utils.preprocess import *
@@ -82,10 +82,13 @@ class MakeupModel(BaseModel):
         # The naming is different from those used in the paper.
         # Code (vs. paper): G_A (G), G_B (F), D_A (D_Y), D_B (D_X)
         self.netG = build_generator(opt.model.generator)
+        init_weights(self.netG, init_type='xavier', init_gain=1.0)
 
         if self.isTrain:  # define discriminators
             self.netD_A = build_discriminator(opt.model.discriminator)
             self.netD_B = build_discriminator(opt.model.discriminator)
+            init_weights(self.netD_A, init_type='xavier', init_gain=1.0)
+            init_weights(self.netD_B, init_type='xavier', init_gain=1.0)
 
         if self.isTrain:
             self.fake_A_pool = ImagePool(
