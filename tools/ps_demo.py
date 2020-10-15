@@ -207,3 +207,9 @@ def main(args, cfg, save_path='transferred_image.png'):
             (face.left(), face.top(), face.right(), face.bottom()))
         image = postprocess(source_crop, image)
         image.save(save_path)
+
+
+if __name__ == '__main__':
+    args = parse_args()
+    cfg = get_config(args.config_file)
+    main(args, cfg)
