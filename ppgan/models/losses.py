@@ -45,7 +45,6 @@ class GANLoss(nn.Layer):
         Returns:
             A label tensor filled with ground truth label, and with the size of the input
         """
-
         if target_is_real:
             if not hasattr(self, 'target_real_tensor'):
                 self.target_real_tensor = paddle.fill_constant(
