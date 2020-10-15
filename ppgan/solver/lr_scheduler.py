@@ -12,8 +12,8 @@ def build_lr_scheduler(cfg):
                 0, epoch + 1 - cfg.start_epoch) / float(cfg.decay_epochs + 1)
             return lr_l
 
-        scheduler = paddle.optimizer.lr.LambdaLR(cfg.learning_rate,
-                                                 lr_lambda=lambda_rule)
+        scheduler = paddle.optimizer.lr.LambdaDecay(cfg.learning_rate,
+                                                    lr_lambda=lambda_rule)
         return scheduler
     else:
         raise NotImplementedError
