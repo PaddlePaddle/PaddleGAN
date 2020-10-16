@@ -84,9 +84,14 @@ class DAINPredictor(BasePredictor):
         vidname = video_path.split('/')[-1].split('.')[0]
 
         frames = sorted(glob.glob(os.path.join(out_path, '*.png')))
+        orig_frames = len(frames)
+        need_frames = orig_frames * times_interp
 
         if self.remove_duplicates:
             frames = self.remove_duplicate_frames(out_path)
+            left_frames = len(frames)
+            timestep = left_frames / need_frames
+            num_frames = int(1.0 / timestep) - 1
 
         img = imread(frames[0])
 

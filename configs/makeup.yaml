@@ -1,0 +1,54 @@
+epochs: 100
+isTrain: True
+output_dir: tmp
+checkpoints_dir: checkpoints
+lambda_A: 10.0
+lambda_B: 10.0
+lambda_identity: 0.5
+
+model:
+  name: MakeupModel
+  generator:
+    name: GeneratorPSGANAttention
+    conv_dim: 64
+    repeat_num: 6
+  discriminator:
+    name: NLayerDiscriminator
+    ndf: 64
+    n_layers: 3
+    input_nc: 3
+    norm_type: spectral
+  gan_mode: lsgan
+
+dataset:
+  train:
+    name: MakeupDataset
+    trans_size: 256
+    dataroot: MT-Dataset
+    cls_list: [non-makeup, makeup]
+    phase: train
+    pool_size: 16
+  test:
+    name: MakeupDataset
+    trans_size: 256
+    dataroot: MT-Dataset
+    cls_list: [non-makeup, makeup]
+    phase: test
+    pool_size: 16
+
+optimizer:
+  name: Adam
+  beta1: 0.5
+
+lr_scheduler:
+  name: linear
+  learning_rate: 0.0002
+  start_epoch: 100
+  decay_epochs: 100
+
+log_config:
+  interval: 10
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 1

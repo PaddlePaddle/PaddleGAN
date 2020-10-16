@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import os
 import sys
 
@@ -30,7 +31,7 @@ def main(args, cfg):
 
     # build trainer
     trainer = Trainer(cfg)
-    
+
     # continue train or evaluate, checkpoint need contain epoch and optimizer info
     if args.resume:
         trainer.resume(args.resume)
@@ -50,4 +51,3 @@ if __name__ == '__main__':
     cfg = get_config(args.config_file)
 
     main(args, cfg)
-    
