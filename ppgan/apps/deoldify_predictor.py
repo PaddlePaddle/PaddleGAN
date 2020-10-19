@@ -1,53 +1,45 @@
+#  Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+
 import os
-import sys
-
-cur_path = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(cur_path)
-
 import cv2
 import glob
-import argparse
 import numpy as np
-import paddle
-import pickle
-
 from PIL import Image
 from tqdm import tqdm
-from paddle import fluid
+
+import paddle
 from paddle.utils.download import get_path_from_url
 from ppgan.utils.video import frames2video, video2frames
 from ppgan.models.generators.deoldify import build_model
 
-parser = argparse.ArgumentParser(description='DeOldify')
-parser.add_argument('--input', type=str, default='none', help='Input video')
-parser.add_argument('--output', type=str, default='output', help='output dir')
-parser.add_argument('--render_factor',
-                    type=int,
-                    default=32,
-                    help='model inputsize=render_factor*16')
-parser.add_argument('--weight_path',
-                    type=str,
-                    default=None,
-                    help='Path to the reference image directory')
+from .base_predictor import BasePredictor
 
 DEOLDIFY_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/applications/DeOldify_stable.pdparams'
 
 
-class DeOldifyPredictor():
-    def __init__(self,
-                 input,
-                 output,
-                 batch_size=1,
-                 weight_path=None,
-                 render_factor=32):
-        self.input = input
+class DeOldifyPredictor(BasePredictor):
+    def __init__(self, output='output', weight_path=None, render_factor=32):
+        # self.input = input
         self.output = os.path.join(output, 'DeOldify')
         self.render_factor = render_factor
         self.model = build_model()
         if weight_path is None:
+            cur_path = os.path.abspath(os.path.dirname(__file__))
             weight_path = get_path_from_url(DEOLDIFY_WEIGHT_URL, cur_path)
 
-        state_dict, _ = paddle.load(weight_path)
+        state_dict = paddle.load(weight_path)
         self.model.load_dict(state_dict)
         self.model.eval()
 
@@ -85,8 +77,14 @@ class DeOldifyPredictor():
         final = Image.fromarray(final)
         return final
 
-    def run_single(self, img_path):
-        ori_img = Image.open(img_path).convert('LA').convert('RGB')
+    def run_image(self, img):
+        if isinstance(img, str):
+            ori_img = Image.open(img).convert('LA').convert('RGB')
+        elif isinstance(img, np.ndarray):
+            ori_img = Image.fromarray(img).convert('LA').convert('RGB')
+        elif isinstance(img, Image.Image):
+            ori_img = img
+
         img = self.norm(ori_img, self.render_factor)
         x = paddle.to_tensor(img[np.newaxis, ...])
         out = self.model(x)
@@ -97,9 +95,8 @@ class DeOldifyPredictor():
         pred_img = self.post_process(pred_img, ori_img)
         return pred_img
 
-    def run(self):
-        vid = self.input
-        base_name = os.path.basename(vid).split('.')[0]
+    def run_video(self, video):
+        base_name = os.path.basename(video).split('.')[0]
         output_path = os.path.join(self.output, base_name)
         pred_frame_path = os.path.join(output_path, 'frames_pred')
 
@@ -109,15 +106,15 @@ class DeOldifyPredictor():
         if not os.path.exists(pred_frame_path):
             os.makedirs(pred_frame_path)
 
-        cap = cv2.VideoCapture(vid)
+        cap = cv2.VideoCapture(video)
         fps = cap.get(cv2.CAP_PROP_FPS)
 
-        out_path = video2frames(vid, output_path)
+        out_path = video2frames(video, output_path)
 
         frames = sorted(glob.glob(os.path.join(out_path, '*.png')))
 
         for frame in tqdm(frames):
-            pred_img = self.run_single(frame)
+            pred_img = self.run_image(frame)
 
             frame_name = os.path.basename(frame)
             pred_img.save(os.path.join(pred_frame_path, frame_name))
@@ -130,15 +127,14 @@ class DeOldifyPredictor():
 
         return frame_pattern_combined, vid_out_path
 
+    def run(self, input):
+        if self.is_video(input):
+            return self.run_video(input)
+        else:
+            pred_img = self.run_image(input)
 
-if __name__ == '__main__':
-    paddle.disable_static()
-    args = parser.parse_args()
+            if self.output:
+                base_name = os.path.basename(input)
+                pred_img.save(os.path.join(self.output, base_name + '.png'))
 
-    predictor = DeOldifyPredictor(args.input,
-                                  args.output,
-                                  weight_path=args.weight_path,
-                                  render_factor=args.render_factor)
-    frames_path, temp_video_path = predictor.run()
-
-    print('output video path:', temp_video_path)
+            return pred_img
