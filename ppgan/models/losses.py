@@ -48,13 +48,17 @@ class GANLoss(nn.Layer):
         """
         if target_is_real:
             if not hasattr(self, 'target_real_tensor'):
-                self.target_real_tensor = self.target_real_label * paddle.ones(
-                    paddle.shape(prediction), dtype='float32')
+                self.target_real_tensor = paddle.fill_constant(
+                    shape=paddle.shape(prediction),
+                    value=self.target_real_label,
+                    dtype='float32')
             target_tensor = self.target_real_tensor
         else:
             if not hasattr(self, 'target_fake_tensor'):
-                self.target_fake_tensor = self.target_fake_label * paddle.ones(
-                    paddle.shape(prediction), dtype='float32')
+                self.target_fake_tensor = paddle.fill_constant(
+                    shape=paddle.shape(prediction),
+                    value=self.target_fake_label,
+                    dtype='float32')
             target_tensor = self.target_fake_tensor
 
         # target_tensor.stop_gradient = True

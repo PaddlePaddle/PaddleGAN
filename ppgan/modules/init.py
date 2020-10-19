@@ -80,7 +80,7 @@ def calculate_gain(nonlinearity, param=None):
 
 @paddle.no_grad()
 def constant_(x, value):
-    temp_value = value * paddle.ones(x.shape, x.dtype)
+    temp_value = paddle.full(shape=x.shape, fill_value=value, dtype=x.dtype)
     x.set_value(temp_value)
     return x
 
