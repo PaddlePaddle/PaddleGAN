@@ -45,7 +45,7 @@ def vgg16(pretrained=False):
     if pretrained:
         weight_path = get_weights_path_from_url(model_urls['vgg16'][0],
                                                 model_urls['vgg16'][1])
-        param, _ = paddle.load(weight_path)
+        param = paddle.load(weight_path)
         model.load_dict(param)
 
     return model

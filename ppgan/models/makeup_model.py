@@ -50,19 +50,6 @@ class MakeupModel(BaseModel):
         """
         BaseModel.__init__(self, opt)
         # specify the training losses you want to print out. The training/test scripts will call <BaseModel.get_current_losses>
-        self.loss_names = [
-            'D_A',
-            'G_A',
-            'rec',
-            'idt',
-            'D_B',
-            'G_B',
-            'G_A_his',
-            'G_B_his',
-            'G_bg_consis',
-            'A_vgg',
-            'B_vgg',
-        ]
         # specify the images you want to save/display. The training/test scripts will call <BaseModel.get_current_visuals>
         visual_names_A = ['real_A', 'fake_A', 'rec_A']
         visual_names_B = ['real_B', 'fake_B', 'rec_B']
@@ -209,11 +196,13 @@ class MakeupModel(BaseModel):
         """Calculate GAN loss for discriminator D_A"""
         fake_B = self.fake_B_pool.query(self.fake_B)
         self.loss_D_A = self.backward_D_basic(self.netD_A, self.real_B, fake_B)
+        self.loss['D_A_loss'] = self.loss_D_A
 
     def backward_D_B(self):
         """Calculate GAN loss for discriminator D_B"""
         fake_A = self.fake_A_pool.query(self.fake_A)
         self.loss_D_B = self.backward_D_basic(self.netD_B, self.real_A, fake_A)
+        self.loss['D_B_loss'] = self.loss_D_B
 
     def backward_G(self):
         """Calculate the loss for generators G_A and G_B"""
@@ -257,6 +246,9 @@ class MakeupModel(BaseModel):
         # Backward cycle loss || G_A(G_B(B)) - B||
         self.loss_cycle_B = self.criterionCycle(self.rec_B,
                                                 self.real_B) * lambda_B
+
+        self.loss['G_A_adv_loss'] = self.loss_G_A
+        self.loss['G_B_adv_loss'] = self.loss_G_B
 
         mask_A_lip = self.mask_A_aug[:, 0].unsqueeze(1)
         mask_B_lip = self.mask_B_aug[:, 0].unsqueeze(1)
@@ -344,10 +336,8 @@ class MakeupModel(BaseModel):
         self.loss_G_B_his = (g_B_eye_loss_his + g_B_lip_loss_his +
                              g_B_skin_loss_his * 0.1) * 0.01
 
-        #self.loss_G_A_his = self.criterionL1(tmp_1, tmp_2) * 2048 * 255
-        #tmp_3 = self.hm_gt_B*self.hm_mask_weight_B
-        #tmp_4 = self.fake_B*self.hm_mask_weight_B
-        #self.loss_G_B_his = self.criterionL1(tmp_3, tmp_4) * 2048 * 255
+        self.loss['G_A_his_loss'] = self.loss_G_A_his
+        self.loss['G_B_his_loss'] = self.loss_G_A_his
 
         #vgg loss
         vgg_s = self.vgg(self.real_A)
@@ -365,6 +355,11 @@ class MakeupModel(BaseModel):
         self.loss_rec = (self.loss_cycle_A + self.loss_cycle_B +
                          self.loss_A_vgg + self.loss_B_vgg) * 0.2
         self.loss_idt = (self.loss_idt_A + self.loss_idt_B) * 0.2
+
+        self.loss['G_A_vgg_loss'] = self.loss_A_vgg
+        self.loss['G_B_vgg_loss'] = self.loss_B_vgg
+        self.loss['G_rec_loss'] = self.loss_rec
+        self.loss['G_idt_loss'] = self.loss_idt
 
         # bg consistency loss
         mask_A_consis = paddle.cast(

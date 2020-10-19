@@ -31,7 +31,6 @@ class Pix2PixModel(BaseModel):
         """
         BaseModel.__init__(self, opt)
         # specify the training losses you want to print out. The training/test scripts will call <BaseModel.get_current_losses>
-        self.loss_names = ['G_GAN', 'G_L1', 'D_real', 'D_fake']
         # specify the images you want to save/display. The training/test scripts will call <BaseModel.get_current_visuals>
         self.visual_names = ['real_A', 'fake_B', 'real_B']
         # specify the models you want to save to the disk.
@@ -114,6 +113,9 @@ class Pix2PixModel(BaseModel):
         else:
             self.loss_D.backward()
 
+        self.loss['D_fake_loss'] = self.loss_D_fake
+        self.loss['D_real_loss'] = self.loss_D_real
+
     def backward_G(self):
         """Calculate GAN and L1 loss for the generator"""
         # First, G(A) should fake the discriminator
@@ -133,6 +135,9 @@ class Pix2PixModel(BaseModel):
             self.netG.apply_collective_grads()
         else:
             self.loss_G.backward()
+
+        self.loss['G_adv_loss'] = self.loss_G_GAN
+        self.loss['G_L1_loss'] = self.loss_G_L1
 
     def optimize_parameters(self):
         # compute fake images: G(A)
