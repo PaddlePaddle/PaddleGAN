@@ -59,15 +59,17 @@ class DictDataLoader():
         place = paddle.CUDAPlace(ParallelEnv().dev_id) \
                     if ParallelEnv().nranks > 1 else paddle.CUDAPlace(0)
 
-        sampler = DistributedBatchSampler(self.dataset,
-                                          batch_size=batch_size,
-                                          shuffle=True if is_train else False,
-                                          drop_last=True if is_train else False)
+        sampler = DistributedBatchSampler(
+            self.dataset,
+            batch_size=batch_size,
+            shuffle=True if is_train else False,
+            drop_last=True if is_train else False)
 
-        self.dataloader = paddle.io.DataLoader(self.dataset,
-                                               batch_sampler=sampler,
-                                               places=place,
-                                               num_workers=num_workers)
+        self.dataloader = paddle.io.DataLoader(
+            self.dataset,
+            batch_sampler=sampler,
+            places=place,
+            num_workers=num_workers)
 
         self.batch_size = batch_size
 
@@ -92,7 +94,7 @@ class DictDataLoader():
         return len(self.dataloader)
 
     def get_items_by_indexs(self, key, indexs):
-        if isinstance(indexs, paddle.Variable):
+        if isinstance(indexs, paddle.Tensor):
             indexs = indexs.numpy()
         current_items = []
         items = getattr(self.dataset, key)
