@@ -17,8 +17,6 @@ PaddleGAN 是一个基于飞桨的生成对抗网络开发工具包.
 ### 超分辨率
 ![](./docs/imgs/sr_demo.png)
 
-### 动作驱动
-![](./docs/imgs/first_order.gif)
 
 特性:
 

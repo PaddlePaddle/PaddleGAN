@@ -18,8 +18,6 @@ PaddleGAN is an development kit of Generative Adversarial Network based on Paddl
 
 ![](./docs/imgs/sr_demo.png)
 
-### Motion driving
-![](./docs/imgs/first_order.gif)
 
 Features:
 
