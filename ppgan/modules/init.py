@@ -256,10 +256,8 @@ def kaiming_init(layer,
                  distribution='normal'):
     assert distribution in ['uniform', 'normal']
     if distribution == 'uniform':
-        kaiming_uniform_(layer.weight,
-                         a=a,
-                         mode=mode,
-                         nonlinearity=nonlinearity)
+        kaiming_uniform_(
+            layer.weight, a=a, mode=mode, nonlinearity=nonlinearity)
     else:
         kaiming_normal_(layer.weight, a=a, mode=mode, nonlinearity=nonlinearity)
     if hasattr(layer, 'bias') and layer.bias is not None:
@@ -275,6 +273,7 @@ def init_weights(net, init_type='normal', init_gain=0.02):
     We use 'normal' in the original pix2pix and CycleGAN paper. But xavier and kaiming might
     work better for some applications. Feel free to try yourself.
     """
+
     def init_func(m):  # define the initialization function
         classname = m.__class__.__name__
         if hasattr(m, 'weight') and (classname.find('Conv') != -1
