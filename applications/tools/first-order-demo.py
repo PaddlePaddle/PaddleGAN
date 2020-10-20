@@ -15,7 +15,7 @@
 import argparse
 
 import paddle
-from ppgan.first_order_predictor import FirstOrderPredictor
+from ppgan.apps.first_order_predictor import FirstOrderPredictor
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", default=None, help="path to config")
