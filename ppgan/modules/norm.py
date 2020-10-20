@@ -1,6 +1,7 @@
 import paddle
 import functools
 import paddle.nn as nn
+from .nn import Spectralnorm
 
 
 class Identity(nn.Layer):
@@ -35,6 +36,8 @@ def build_norm_layer(norm_type='instance'):
             bias_attr=paddle.ParamAttr(initializer=nn.initializer.Constant(0.0),
                                        learning_rate=0.0,
                                        trainable=False))
+    elif norm_type == 'spectral':
+        norm_layer = functools.partial(Spectralnorm)
     elif norm_type == 'none':
 
         def norm_layer(x):

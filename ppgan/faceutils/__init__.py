@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .resnet import ResnetGenerator
-from .unet import UnetGenerator
-from .rrdb_net import RRDBNet
-from .makeup import GeneratorPSGANAttention
+from . import dlibutils as dlib
+from . import mask
+from . import image
