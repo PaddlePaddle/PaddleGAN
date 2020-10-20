@@ -44,11 +44,15 @@ Please refer to [data prepare](./docs/data_prepare.md) for dataset preparation.
 ## Get Start
 Please refer [get stated](./docs/get_started.md) for the basic usage of PaddleGAN.
 
-
 ## License
 PaddleGAN is released under the [Apache 2.0 license](LICENSE).
-
 
 ## Contributing
 
 Contributions are highly welcomed and we would really appreciate your feedback!!
+
+## External Projects
+
+External gan projects in the community that base on PaddlePaddle:
+
++ [PaddleGAN](https://github.com/PaddlePaddle/PaddleGAN)

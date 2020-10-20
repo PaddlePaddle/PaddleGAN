@@ -51,3 +51,9 @@ pip install -v -e .  # or "python setup.py develop"
 ## 贡献代码
 
 我们非常欢迎你可以为PaddleGAN提供代码，也十分感谢你的反馈。
+
+## 外部项目
+
+外部基于飞桨的生成对抗网络模型
+
++ [PaddleGAN](https://github.com/PaddlePaddle/PaddleGAN)
