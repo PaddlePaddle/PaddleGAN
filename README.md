@@ -4,7 +4,13 @@ English | [简体中文](./README_cn.md)
 
 PaddleGAN is an development kit of Generative Adversarial Network based on PaddlePaddle.
 
+
+### old video restore
 ![](./docs/imgs/color_sr_peking.gif)
+
+### super resolution
+
+![](./docs/imgs/sr_demo.png)
 
 Features:
 
@@ -31,6 +37,12 @@ pip install -U paddlepaddle-gpu
 ```
 
 ### 2. install ppgan
+
+```
+python -m pip install 'git+https://github.com/PaddlePaddle/PaddleGAN.git'
+```
+
+Or install it from a local clone
 ```
 git clone https://github.com/PaddlePaddle/PaddleGAN
 cd PaddleGAN

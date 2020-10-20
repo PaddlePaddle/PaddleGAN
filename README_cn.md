@@ -4,7 +4,12 @@
 
 PaddleGAN 是一个基于飞桨的生成对抗网络开发工具包.
 
+
+### 老视频修复
 ![](./docs/imgs/color_sr_peking.gif)
+
+### 超分辨率
+![](./docs/imgs/sr_demo.png)
 
 特性:
 
@@ -29,6 +34,11 @@ pip install -U paddlepaddle-gpu
 ```
 
 ### 2. 安装ppgan
+```
+python -m pip install 'git+https://github.com/PaddlePaddle/PaddleGAN.git'
+```
+
+或者通过将项目克隆到本地
 ```
 git clone https://github.com/PaddlePaddle/PaddleGAN
 cd PaddleGAN
