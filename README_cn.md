@@ -4,12 +4,21 @@
 
 PaddleGAN 是一个基于飞桨的生成对抗网络开发工具包.
 
+### 图片变换
+![](./docs/imgs/A2B.png)
+![](./docs/imgs/B2A.png)
+
+### 妆容迁移
+![](./docs/imgs/makeup_shifter.png)
 
 ### 老视频修复
 ![](./docs/imgs/color_sr_peking.gif)
 
 ### 超分辨率
 ![](./docs/imgs/sr_demo.png)
+
+### 动作驱动
+![](./docs/imgs/first_order.gif)
 
 特性:
 
@@ -53,6 +62,11 @@ pip install -v -e .  # or "python setup.py develop"
 ## 快速开始
 训练，预测，推理等请参考 [快速开始](./docs/get_started.md).
 
+## 模型教程
+* [Pixel2Pixel and CycleGAN](./docs/tutorals/pix2pix_cyclegan.md)
+* [PSGAN](./docs/tutorals/psgan.md)
+* [视频修复](./docs/tutorails/video_restore.md)
+* [动作驱动](./docs/tutorials/motion_driving.md)
 
 ## 许可证书
 本项目的发布受[Apache 2.0 license](LICENSE)许可认证。

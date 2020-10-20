@@ -4,13 +4,22 @@ English | [简体中文](./README_cn.md)
 
 PaddleGAN is an development kit of Generative Adversarial Network based on PaddlePaddle.
 
+### Image Translation
+![](./docs/imgs/A2B.png)
+![](./docs/imgs/B2A.png)
 
-### old video restore
+### Makeup shifter
+![](./docs/imgs/makeup_shifter.png)
+
+### Old video restore
 ![](./docs/imgs/color_sr_peking.gif)
 
-### super resolution
+### Super resolution
 
 ![](./docs/imgs/sr_demo.png)
+
+### Motion driving
+![](./docs/imgs/first_order.gif)
 
 Features:
 
@@ -55,6 +64,12 @@ Please refer to [data prepare](./docs/data_prepare.md) for dataset preparation.
 
 ## Get Start
 Please refer [get stated](./docs/get_started.md) for the basic usage of PaddleGAN.
+
+## Model tutorial
+* [Pixel2Pixel and CycleGAN](./docs/tutorials/pix2pix_cyclegan.md)
+* [PSGAN](./docs/tutorials/psgan.md)
+* [Video restore](./docs/tutorails/video_restore.md)
+* [Motion driving](./docs/tutorials/motion_driving.md)
 
 ## License
 PaddleGAN is released under the [Apache 2.0 license](LICENSE).
