@@ -161,13 +161,13 @@ class CycleGANModel(BaseModel):
         """Calculate GAN loss for discriminator D_A"""
         fake_B = self.fake_B_pool.query(self.fake_B)
         self.loss_D_A = self.backward_D_basic(self.netD_A, self.real_B, fake_B)
-        self.loss['D_A_loss'] = self.loss_D_A
+        self.losses['D_A_loss'] = self.loss_D_A
 
     def backward_D_B(self):
         """Calculate GAN loss for discriminator D_B"""
         fake_A = self.fake_A_pool.query(self.fake_A)
         self.loss_D_B = self.backward_D_basic(self.netD_B, self.real_A, fake_A)
-        self.loss['D_B_loss'] = self.loss_D_B
+        self.losses['D_B_loss'] = self.loss_D_B
 
     def backward_G(self):
         """Calculate the loss for generators G_A and G_B"""
@@ -199,12 +199,12 @@ class CycleGANModel(BaseModel):
         self.loss_cycle_B = self.criterionCycle(self.rec_B,
                                                 self.real_B) * lambda_B
 
-        self.loss['G_idt_A_loss'] = self.loss_idt_A
-        self.loss['G_idt_B_loss'] = self.loss_idt_B
-        self.loss['G_A_adv_loss'] = self.loss_G_A
-        self.loss['G_B_adv_loss'] = self.loss_G_B
-        self.loss['G_A_cycle_loss'] = self.loss_cycle_A
-        self.loss['G_B_cycle_loss'] = self.loss_cycle_B
+        self.losses['G_idt_A_loss'] = self.loss_idt_A
+        self.losses['G_idt_B_loss'] = self.loss_idt_B
+        self.losses['G_A_adv_loss'] = self.loss_G_A
+        self.losses['G_B_adv_loss'] = self.loss_G_B
+        self.losses['G_A_cycle_loss'] = self.loss_cycle_A
+        self.losses['G_B_cycle_loss'] = self.loss_cycle_B
         # combined loss and calculate gradients
         self.loss_G = self.loss_G_A + self.loss_G_B + self.loss_cycle_A + self.loss_cycle_B + self.loss_idt_A + self.loss_idt_B
 

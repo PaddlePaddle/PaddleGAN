@@ -196,13 +196,13 @@ class MakeupModel(BaseModel):
         """Calculate GAN loss for discriminator D_A"""
         fake_B = self.fake_B_pool.query(self.fake_B)
         self.loss_D_A = self.backward_D_basic(self.netD_A, self.real_B, fake_B)
-        self.loss['D_A_loss'] = self.loss_D_A
+        self.losses['D_A_loss'] = self.loss_D_A
 
     def backward_D_B(self):
         """Calculate GAN loss for discriminator D_B"""
         fake_A = self.fake_A_pool.query(self.fake_A)
         self.loss_D_B = self.backward_D_basic(self.netD_B, self.real_A, fake_A)
-        self.loss['D_B_loss'] = self.loss_D_B
+        self.losses['D_B_loss'] = self.loss_D_B
 
     def backward_G(self):
         """Calculate the loss for generators G_A and G_B"""
@@ -247,8 +247,8 @@ class MakeupModel(BaseModel):
         self.loss_cycle_B = self.criterionCycle(self.rec_B,
                                                 self.real_B) * lambda_B
 
-        self.loss['G_A_adv_loss'] = self.loss_G_A
-        self.loss['G_B_adv_loss'] = self.loss_G_B
+        self.losses['G_A_adv_loss'] = self.loss_G_A
+        self.losses['G_B_adv_loss'] = self.loss_G_B
 
         mask_A_lip = self.mask_A_aug[:, 0].unsqueeze(1)
         mask_B_lip = self.mask_B_aug[:, 0].unsqueeze(1)
@@ -336,8 +336,8 @@ class MakeupModel(BaseModel):
         self.loss_G_B_his = (g_B_eye_loss_his + g_B_lip_loss_his +
                              g_B_skin_loss_his * 0.1) * 0.01
 
-        self.loss['G_A_his_loss'] = self.loss_G_A_his
-        self.loss['G_B_his_loss'] = self.loss_G_A_his
+        self.losses['G_A_his_loss'] = self.loss_G_A_his
+        self.losses['G_B_his_loss'] = self.loss_G_A_his
 
         #vgg loss
         vgg_s = self.vgg(self.real_A)
@@ -356,10 +356,10 @@ class MakeupModel(BaseModel):
                          self.loss_A_vgg + self.loss_B_vgg) * 0.2
         self.loss_idt = (self.loss_idt_A + self.loss_idt_B) * 0.2
 
-        self.loss['G_A_vgg_loss'] = self.loss_A_vgg
-        self.loss['G_B_vgg_loss'] = self.loss_B_vgg
-        self.loss['G_rec_loss'] = self.loss_rec
-        self.loss['G_idt_loss'] = self.loss_idt
+        self.losses['G_A_vgg_loss'] = self.loss_A_vgg
+        self.losses['G_B_vgg_loss'] = self.loss_B_vgg
+        self.losses['G_rec_loss'] = self.loss_rec
+        self.losses['G_idt_loss'] = self.loss_idt
 
         # bg consistency loss
         mask_A_consis = paddle.cast(

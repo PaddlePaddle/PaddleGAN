@@ -113,8 +113,8 @@ class Pix2PixModel(BaseModel):
         else:
             self.loss_D.backward()
 
-        self.loss['D_fake_loss'] = self.loss_D_fake
-        self.loss['D_real_loss'] = self.loss_D_real
+        self.losses['D_fake_loss'] = self.loss_D_fake
+        self.losses['D_real_loss'] = self.loss_D_real
 
     def backward_G(self):
         """Calculate GAN and L1 loss for the generator"""
@@ -136,8 +136,8 @@ class Pix2PixModel(BaseModel):
         else:
             self.loss_G.backward()
 
-        self.loss['G_adv_loss'] = self.loss_G_GAN
-        self.loss['G_L1_loss'] = self.loss_G_L1
+        self.losses['G_adv_loss'] = self.loss_G_GAN
+        self.losses['G_L1_loss'] = self.loss_G_L1
 
     def optimize_parameters(self):
         # compute fake images: G(A)
