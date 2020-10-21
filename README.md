@@ -74,7 +74,10 @@ PaddleGAN is released under the [Apache 2.0 license](LICENSE).
 
 ## Contributing
 
-Contributions are highly welcomed and we would really appreciate your feedback!!
+Contributions and suggestions are highly welcomed. Most contributions require you to agree to a [Contributor License Agreement (CLA)](https://cla-assistant.io/PaddlePaddle/PaddleGAN) declaring.
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA. Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
+For more, please reference [contribution guidelines](docs/CONTRIBUTE.md).
+
 
 ## External Projects
 
