@@ -62,13 +62,13 @@ class BasePredictor(object):
 
         return out
 
-    def is_video(self, input):
+    def is_image(self, input):
         try:
             img = Image.open(input)
             _ = img.size
-            return False
-        except:
             return True
+        except:
+            return False
 
     def run(self):
         raise NotImplementedError

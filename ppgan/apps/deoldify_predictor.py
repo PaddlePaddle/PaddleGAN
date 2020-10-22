@@ -128,7 +128,7 @@ class DeOldifyPredictor(BasePredictor):
         return frame_pattern_combined, vid_out_path
 
     def run(self, input):
-        if self.is_video(input):
+        if not self.is_image(input):
             return self.run_video(input)
         else:
             pred_img = self.run_image(input)

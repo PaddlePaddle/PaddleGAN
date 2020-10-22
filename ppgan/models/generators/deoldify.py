@@ -2,10 +2,9 @@ import numpy as np
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
+from paddle.vision.models import resnet101
 
 from .hook import hook_outputs, model_sizes, dummy_eval
-from ..backbones import resnet34, resnet101
-# from paddle.vision.models import resnet101
 from ...modules.nn import Spectralnorm
 
 
@@ -273,7 +272,7 @@ class PixelShuffle_ICNR(nn.Layer):
 
         self.shuf = PixelShuffle(scale)
 
-        self.pad = ReplicationPad2d((1, 0, 1, 0))
+        self.pad = ReplicationPad2d([1, 0, 1, 0])
         self.blur = nn.Pool2D(2, pool_stride=1, pool_type='avg')
         self.relu = relu(True, leaky=leaky)
 
@@ -339,7 +338,7 @@ class CustomPixelShuffle_ICNR(nn.Layer):
 
         self.shuf = PixelShuffle(scale)
 
-        self.pad = ReplicationPad2d((1, 0, 1, 0))
+        self.pad = ReplicationPad2d([1, 0, 1, 0])
         self.blur = nn.Pool2D(2, pool_stride=1, pool_type='avg')
         self.relu = nn.LeakyReLU(
             leaky) if leaky is not None else nn.ReLU()  #relu(True, leaky=leaky)
@@ -410,7 +409,7 @@ class ReplicationPad2d(nn.Layer):
         self.size = size
 
     def forward(self, x):
-        return F.pad2d(x, self.size, mode="edge")
+        return F.pad(x, self.size, mode="replicate")
 
 
 def conv1d(ni: int,
@@ -420,7 +419,7 @@ def conv1d(ni: int,
            padding: int = 0,
            bias: bool = False):
     "Create and initialize a `nn.Conv1d` layer with spectral normalization."
-    conv = nn.Conv1d(ni, no, ks, stride=stride, padding=padding, bias_attr=bias)
+    conv = nn.Conv1D(ni, no, ks, stride=stride, padding=padding, bias_attr=bias)
     return Spectralnorm(conv)
 
 

@@ -101,7 +101,7 @@ class RealSRPredictor(BasePredictor):
         if not os.path.exists(self.output):
             os.makedirs(self.output)
 
-        if self.is_video(input):
+        if not self.is_image(input):
             return self.run_video(input)
         else:
             pred_img = self.run_image(input)

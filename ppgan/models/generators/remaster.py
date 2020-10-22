@@ -128,7 +128,7 @@ class NetworkR(nn.Layer):
         super(NetworkR, self).__init__()
 
         self.layers = nn.Sequential(
-            nn.ReplicationPad3d((1, 1, 1, 1, 1, 1)),
+            nn.Pad3D((1, 1, 1, 1, 1, 1), mode='replicate'),
             TempConv(1,
                      64,
                      kernel_size=(3, 3, 3),
@@ -165,7 +165,7 @@ class NetworkC(nn.Layer):
         super(NetworkC, self).__init__()
 
         self.down1 = nn.Sequential(
-            nn.ReplicationPad3d((1, 1, 1, 1, 0, 0)),
+            nn.Pad3D((1, 1, 1, 1, 0, 0), mode='replicate'),
             TempConv(1, 64, stride=(1, 2, 2), padding=(0, 0, 0)),
             TempConv(64, 128), TempConv(128, 128),
             TempConv(128, 256, stride=(1, 2, 2)), TempConv(256, 256),

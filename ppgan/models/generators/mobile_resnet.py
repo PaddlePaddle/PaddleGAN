@@ -109,9 +109,9 @@ class MobileResnetBlock(nn.Layer):
 
         p = 0
         if self.padding_type == 'reflect':
-            self.conv_block.extend([nn.ReflectionPad2d([1, 1, 1, 1])])
+            self.conv_block.extend([nn.Pad2D([1, 1, 1, 1], mode='reflect')])
         elif self.padding_type == 'replicate':
-            self.conv_block.extend([nn.ReplicationPad2d([1, 1, 1, 1])])
+            self.conv_block.extend([nn.Pad2D([1, 1, 1, 1], mode='replicate')])
         elif self.padding_type == 'zero':
             p = 1
         else:
