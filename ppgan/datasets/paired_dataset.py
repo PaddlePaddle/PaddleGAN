@@ -16,7 +16,7 @@ class PairedDataset(BaseDataset):
         """Initialize this dataset class.
 
         Args:
-            cfg (dict) -- stores all the experiment flags
+            cfg (dict): configs of datasets.
         """
         BaseDataset.__init__(self, cfg)
         self.dir_AB = os.path.join(cfg.dataroot,
@@ -42,7 +42,7 @@ class PairedDataset(BaseDataset):
         """
         # read a image given a random integer index
         AB_path = self.AB_paths[index]
-        AB = cv2.imread(AB_path)
+        AB = cv2.cvtColor(cv2.imread(AB_path), cv2.COLOR_BGR2RGB)
 
         # split AB image into A and B
         h, w = AB.shape[:2]

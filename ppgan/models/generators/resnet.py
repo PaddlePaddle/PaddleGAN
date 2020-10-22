@@ -13,7 +13,6 @@ class ResnetGenerator(nn.Layer):
 
     code and idea from Justin Johnson's neural style transfer project(https://github.com/jcjohnson/fast-neural-style)
     """
-
     def __init__(self,
                  input_nc,
                  output_nc,
@@ -38,14 +37,17 @@ class ResnetGenerator(nn.Layer):
 
         norm_layer = build_norm_layer(norm_type)
         if type(norm_layer) == functools.partial:
-            use_bias = norm_layer.func == nn.InstanceNorm2d
+            use_bias = norm_layer.func == nn.InstanceNorm2D
         else:
-            use_bias = norm_layer == nn.InstanceNorm2d
+            use_bias = norm_layer == nn.InstanceNorm2D
 
         model = [
             nn.Pad2D(padding=[3, 3, 3, 3], mode="reflect"),
-            nn.Conv2d(
-                input_nc, ngf, kernel_size=7, padding=0, bias_attr=use_bias),
+            nn.Conv2D(input_nc,
+                      ngf,
+                      kernel_size=7,
+                      padding=0,
+                      bias_attr=use_bias),
             norm_layer(ngf),
             nn.ReLU()
         ]
@@ -54,13 +56,12 @@ class ResnetGenerator(nn.Layer):
         for i in range(n_downsampling):  # add downsampling layers
             mult = 2**i
             model += [
-                nn.Conv2d(
-                    ngf * mult,
-                    ngf * mult * 2,
-                    kernel_size=3,
-                    stride=2,
-                    padding=1,
-                    bias_attr=use_bias),
+                nn.Conv2D(ngf * mult,
+                          ngf * mult * 2,
+                          kernel_size=3,
+                          stride=2,
+                          padding=1,
+                          bias_attr=use_bias),
                 norm_layer(ngf * mult * 2),
                 nn.ReLU()
             ]
@@ -69,30 +70,28 @@ class ResnetGenerator(nn.Layer):
         for i in range(n_blocks):  # add ResNet blocks
 
             model += [
-                ResnetBlock(
-                    ngf * mult,
-                    padding_type=padding_type,
-                    norm_layer=norm_layer,
-                    use_dropout=use_dropout,
-                    use_bias=use_bias)
+                ResnetBlock(ngf * mult,
+                            padding_type=padding_type,
+                            norm_layer=norm_layer,
+                            use_dropout=use_dropout,
+                            use_bias=use_bias)
             ]
 
         for i in range(n_downsampling):  # add upsampling layers
             mult = 2**(n_downsampling - i)
             model += [
-                nn.ConvTranspose2d(
-                    ngf * mult,
-                    int(ngf * mult / 2),
-                    kernel_size=3,
-                    stride=2,
-                    padding=1,
-                    output_padding=1,
-                    bias_attr=use_bias),
+                nn.Conv2DTranspose(ngf * mult,
+                                   int(ngf * mult / 2),
+                                   kernel_size=3,
+                                   stride=2,
+                                   padding=1,
+                                   output_padding=1,
+                                   bias_attr=use_bias),
                 norm_layer(int(ngf * mult / 2)),
                 nn.ReLU()
             ]
         model += [nn.Pad2D(padding=[3, 3, 3, 3], mode="reflect")]
-        model += [nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0)]
+        model += [nn.Conv2D(ngf, output_nc, kernel_size=7, padding=0)]
         model += [nn.Tanh()]
 
         self.model = nn.Sequential(*model)
@@ -104,7 +103,6 @@ class ResnetGenerator(nn.Layer):
 
 class ResnetBlock(nn.Layer):
     """Define a Resnet block"""
-
     def __init__(self, dim, padding_type, norm_layer, use_dropout, use_bias):
         """Initialize the Resnet block
 
@@ -137,11 +135,11 @@ class ResnetBlock(nn.Layer):
         elif padding_type == 'zero':
             p = 1
         else:
-            raise NotImplementedError(
-                'padding [%s] is not implemented' % padding_type)
+            raise NotImplementedError('padding [%s] is not implemented' %
+                                      padding_type)
 
         conv_block += [
-            nn.Conv2d(dim, dim, kernel_size=3, padding=p, bias_attr=use_bias),
+            nn.Conv2D(dim, dim, kernel_size=3, padding=p, bias_attr=use_bias),
             norm_layer(dim),
             nn.ReLU()
         ]
@@ -154,10 +152,10 @@ class ResnetBlock(nn.Layer):
         elif padding_type == 'zero':
             p = 1
         else:
-            raise NotImplementedError(
-                'padding [%s] is not implemented' % padding_type)
+            raise NotImplementedError('padding [%s] is not implemented' %
+                                      padding_type)
         conv_block += [
-            nn.Conv2d(dim, dim, kernel_size=3, padding=p, bias_attr=use_bias),
+            nn.Conv2D(dim, dim, kernel_size=3, padding=p, bias_attr=use_bias),
             norm_layer(dim)
         ]
 

@@ -27,6 +27,7 @@ class Compose(object):
             try:
                 data = f(data)
             except Exception as e:
+                print(f)
                 stack_info = traceback.format_exc()
                 print("fail to perform transform [{}] with error: "
                       "{} and stack:\n{}".format(f, e, str(stack_info)))

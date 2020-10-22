@@ -15,7 +15,8 @@ def save(state_dicts, file_name):
 
         for k, v in state_dict.items():
             if isinstance(
-                    v, (paddle.framework.Variable, paddle.fluid.core.VarBase)):
+                    v,
+                (paddle.fluid.framework.Variable, paddle.fluid.core.VarBase)):
                 model_dict[k] = v.numpy()
             else:
                 model_dict[k] = v
@@ -24,8 +25,9 @@ def save(state_dicts, file_name):
 
     final_dict = {}
     for k, v in state_dicts.items():
-        if isinstance(v,
-                      (paddle.framework.Variable, paddle.fluid.core.VarBase)):
+        if isinstance(
+                v,
+            (paddle.fluid.framework.Variable, paddle.fluid.core.VarBase)):
             final_dict = convert(state_dicts)
             break
         elif isinstance(v, dict):

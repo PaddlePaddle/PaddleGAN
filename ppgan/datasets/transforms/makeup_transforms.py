@@ -20,7 +20,7 @@ def get_makeup_transform(cfg, pic="image"):
     if pic == "image":
         transform = T.Compose([
             T.Resize(size=cfg.trans_size),
-            T.Permute(to_rgb=False),
+            T.Transpose(),
         ])
     else:
         transform = T.Resize(size=cfg.trans_size,

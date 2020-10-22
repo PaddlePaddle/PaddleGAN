@@ -104,12 +104,12 @@ class UnetSkipConnectionBlock(nn.Layer):
         super(UnetSkipConnectionBlock, self).__init__()
         self.outermost = outermost
         if type(norm_layer) == functools.partial:
-            use_bias = norm_layer.func == nn.InstanceNorm
+            use_bias = norm_layer.func == nn.InstanceNorm2D
         else:
-            use_bias = norm_layer == nn.InstanceNorm
+            use_bias = norm_layer == nn.InstanceNorm2D
         if input_nc is None:
             input_nc = outer_nc
-        downconv = nn.Conv2d(input_nc,
+        downconv = nn.Conv2D(input_nc,
                              inner_nc,
                              kernel_size=4,
                              stride=2,
@@ -121,7 +121,7 @@ class UnetSkipConnectionBlock(nn.Layer):
         upnorm = norm_layer(outer_nc)
 
         if outermost:
-            upconv = nn.ConvTranspose2d(inner_nc * 2,
+            upconv = nn.Conv2DTranspose(inner_nc * 2,
                                         outer_nc,
                                         kernel_size=4,
                                         stride=2,
@@ -130,7 +130,7 @@ class UnetSkipConnectionBlock(nn.Layer):
             up = [uprelu, upconv, nn.Tanh()]
             model = down + [submodule] + up
         elif innermost:
-            upconv = nn.ConvTranspose2d(inner_nc,
+            upconv = nn.Conv2DTranspose(inner_nc,
                                         outer_nc,
                                         kernel_size=4,
                                         stride=2,
@@ -140,7 +140,7 @@ class UnetSkipConnectionBlock(nn.Layer):
             up = [uprelu, upconv, upnorm]
             model = down + up
         else:
-            upconv = nn.ConvTranspose2d(inner_nc * 2,
+            upconv = nn.Conv2DTranspose(inner_nc * 2,
                                         outer_nc,
                                         kernel_size=4,
                                         stride=2,

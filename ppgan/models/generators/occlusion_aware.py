@@ -67,7 +67,7 @@ class OcclusionAwareGenerator(nn.Layer):
                 'r' + str(i),
                 ResBlock2d(in_features, kernel_size=(3, 3), padding=(1, 1)))
 
-        self.final = nn.Conv2d(block_expansion,
+        self.final = nn.Conv2D(block_expansion,
                                num_channels,
                                kernel_size=(7, 7),
                                padding=(3, 3))

@@ -61,7 +61,7 @@ pip install -v -e .  # or "python setup.py develop"
 Please refer to [data prepare](./docs/data_prepare.md) for dataset preparation.
 
 ## Get Start
-Please refer [get stated](./docs/get_started.md) for the basic usage of PaddleGAN.
+Please refer [get started](./docs/get_started.md) for the basic usage of PaddleGAN.
 
 ## Model tutorial
 * [Pixel2Pixel and CycleGAN](./docs/tutorials/pix2pix_cyclegan.md)

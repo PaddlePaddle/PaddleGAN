@@ -26,14 +26,14 @@ class KPDetector(nn.Layer):
                                    max_features=max_features,
                                    num_blocks=num_blocks)
 
-        self.kp = nn.Conv2d(in_channels=self.predictor.out_filters,
+        self.kp = nn.Conv2D(in_channels=self.predictor.out_filters,
                             out_channels=num_kp,
                             kernel_size=(7, 7),
                             padding=pad)
 
         if estimate_jacobian:
             self.num_jacobian_maps = 1 if single_jacobian_map else num_kp
-            self.jacobian = nn.Conv2d(in_channels=self.predictor.out_filters,
+            self.jacobian = nn.Conv2D(in_channels=self.predictor.out_filters,
                                       out_channels=4 * self.num_jacobian_maps,
                                       kernel_size=(7, 7),
                                       padding=pad)

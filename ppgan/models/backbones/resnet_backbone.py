@@ -8,7 +8,7 @@ __all__ = [
 
 def conv3x3(in_planes, out_planes, stride=1):
     "3x3 convolution with padding"
-    return nn.Conv2d(in_planes,
+    return nn.Conv2D(in_planes,
                      out_planes,
                      kernel_size=3,
                      stride=stride,
@@ -53,16 +53,16 @@ class Bottleneck(nn.Layer):
 
     def __init__(self, inplanes, planes, stride=1, downsample=None):
         super(Bottleneck, self).__init__()
-        self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias_attr=False)
+        self.conv1 = nn.Conv2D(inplanes, planes, kernel_size=1, bias_attr=False)
         self.bn1 = nn.BatchNorm(planes)
-        self.conv2 = nn.Conv2d(planes,
+        self.conv2 = nn.Conv2D(planes,
                                planes,
                                kernel_size=3,
                                stride=stride,
                                padding=1,
                                bias_attr=False)
         self.bn2 = nn.BatchNorm(planes)
-        self.conv3 = nn.Conv2d(planes,
+        self.conv3 = nn.Conv2D(planes,
                                planes * 4,
                                kernel_size=1,
                                bias_attr=False)
@@ -97,7 +97,7 @@ class ResNet(nn.Layer):
     def __init__(self, block, layers, num_classes=1000):
         self.inplanes = 64
         super(ResNet, self).__init__()
-        self.conv1 = nn.Conv2d(3,
+        self.conv1 = nn.Conv2D(3,
                                64,
                                kernel_size=7,
                                stride=2,
@@ -117,7 +117,7 @@ class ResNet(nn.Layer):
         downsample = None
         if stride != 1 or self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
-                nn.Conv2d(self.inplanes,
+                nn.Conv2D(self.inplanes,
                           planes * block.expansion,
                           kernel_size=1,
                           stride=stride,

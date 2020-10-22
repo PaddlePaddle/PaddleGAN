@@ -52,16 +52,16 @@ class ResBlock2d(nn.Layer):
     """
     def __init__(self, in_features, kernel_size, padding):
         super(ResBlock2d, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=in_features,
+        self.conv1 = nn.Conv2D(in_channels=in_features,
                                out_channels=in_features,
                                kernel_size=kernel_size,
                                padding=padding)
-        self.conv2 = nn.Conv2d(in_channels=in_features,
+        self.conv2 = nn.Conv2D(in_channels=in_features,
                                out_channels=in_features,
                                kernel_size=kernel_size,
                                padding=padding)
-        self.norm1 = nn.BatchNorm2d(in_features)
-        self.norm2 = nn.BatchNorm2d(in_features)
+        self.norm1 = nn.BatchNorm2D(in_features)
+        self.norm2 = nn.BatchNorm2D(in_features)
 
     def forward(self, x):
         out = self.norm1(x)
@@ -86,12 +86,12 @@ class UpBlock2d(nn.Layer):
                  groups=1):
         super(UpBlock2d, self).__init__()
 
-        self.conv = nn.Conv2d(in_channels=in_features,
+        self.conv = nn.Conv2D(in_channels=in_features,
                               out_channels=out_features,
                               kernel_size=kernel_size,
                               padding=padding,
                               groups=groups)
-        self.norm = nn.BatchNorm2d(out_features)
+        self.norm = nn.BatchNorm2D(out_features)
 
     def forward(self, x):
         out = F.interpolate(x, scale_factor=2)
@@ -112,13 +112,13 @@ class DownBlock2d(nn.Layer):
                  padding=1,
                  groups=1):
         super(DownBlock2d, self).__init__()
-        self.conv = nn.Conv2d(in_channels=in_features,
+        self.conv = nn.Conv2D(in_channels=in_features,
                               out_channels=out_features,
                               kernel_size=kernel_size,
                               padding=padding,
                               groups=groups)
-        self.norm = nn.BatchNorm2d(out_features)
-        self.pool = nn.AvgPool2d(kernel_size=(2, 2))
+        self.norm = nn.BatchNorm2D(out_features)
+        self.pool = nn.AvgPool2D(kernel_size=(2, 2))
 
     def forward(self, x):
         out = self.conv(x)
@@ -139,12 +139,12 @@ class SameBlock2d(nn.Layer):
                  kernel_size=3,
                  padding=1):
         super(SameBlock2d, self).__init__()
-        self.conv = nn.Conv2d(in_channels=in_features,
+        self.conv = nn.Conv2D(in_channels=in_features,
                               out_channels=out_features,
                               kernel_size=kernel_size,
                               padding=padding,
                               groups=groups)
-        self.norm = nn.BatchNorm2d(out_features)
+        self.norm = nn.BatchNorm2D(out_features)
 
     def forward(self, x):
         out = self.conv(x)

@@ -2,14 +2,14 @@ import os
 import time
 import paddle
 
-from paddle.distributed import ParallelEnv
-
 from .logger import setup_logger
 
 
 def setup(args, cfg):
     if args.evaluate_only:
-        cfg.isTrain = False
+        cfg.is_train = False
+    else:
+        cfg.is_train = True
 
     cfg.timestamp = time.strftime('-%Y-%m-%d-%H-%M', time.localtime())
     cfg.output_dir = os.path.join(cfg.output_dir,
@@ -19,6 +19,7 @@ def setup(args, cfg):
 
     logger.info('Configs: {}'.format(cfg))
 
-    place = paddle.CUDAPlace(ParallelEnv().dev_id) \
-                    if ParallelEnv().nranks > 1 else paddle.CUDAPlace(0)
-    paddle.disable_static(place)
+    if paddle.is_compiled_with_cuda():
+        paddle.set_device('gpu')
+    else:
+        paddle.set_device('cpu')
