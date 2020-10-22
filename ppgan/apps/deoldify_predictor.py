@@ -133,8 +133,10 @@ class DeOldifyPredictor(BasePredictor):
         else:
             pred_img = self.run_image(input)
 
+            out_path = None
             if self.output:
-                base_name = os.path.basename(input)
-                pred_img.save(os.path.join(self.output, base_name + '.png'))
+                base_name = os.path.splitext(os.path.basename(input))[0]
+                out_path = os.path.join(self.output, base_name + '.png')
+                pred_img.save(out_path)
 
-            return pred_img
+            return pred_img, out_path
