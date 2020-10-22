@@ -32,19 +32,6 @@ class CycleGANModel(BaseModel):
         """
         super(CycleGANModel, self).__init__(cfg)
 
-        # if identity loss is used, we also visualize idt_B=G_A(B) ad idt_A=G_A(B)
-        # if self.is_train and self.cfg.lambda_identity > 0.0:
-        #     visual_names_A.append('idt_B')
-        #     visual_names_B.append('idt_A')
-
-        # combine visualizations for A and B
-        # self.visual_names = visual_names_A + visual_names_B
-        # specify the models you want to save to the disk.
-        # if self.is_train:
-        #     self.model_names = ['G_A', 'G_B', 'D_A', 'D_B']
-        # else:  # during test time, only load Gs
-        #     self.model_names = ['G_A', 'G_B']
-
         # define networks (both Generators and discriminators)
         # The naming is different from those used in the paper.
         # Code (vs. paper): G_A (G), G_B (F), D_A (D_Y), D_B (D_X)
@@ -83,11 +70,6 @@ class CycleGANModel(BaseModel):
                 self.lr_scheduler,
                 parameter_list=self.nets['netD_A'].parameters() +
                 self.nets['netD_B'].parameters())
-
-            # self.optimizers.append(self.optimizer_G)
-            # self.optimizers.append(self.optimizer_D)
-
-            # self.optimizer_names.extend(['optimizer_G', 'optimizer_D'])
 
     def set_input(self, input):
         """Unpack input data from the dataloader and perform necessary pre-processing steps.

@@ -95,11 +95,6 @@ class BaseModel(ABC):
 
     def get_current_visuals(self):
         """Return visualization images."""
-        # visual_ret = OrderedDict()
-        # for name in self.visual_names:
-        #     if isinstance(name, str) and hasattr(self, name):
-        #         visual_ret[name] = getattr(self, name)
-        # return visual_ret
         return self.visual_items
 
     def get_current_losses(self):
@@ -117,6 +112,4 @@ class BaseModel(ABC):
         for net in nets:
             if net is not None:
                 for param in net.parameters():
-                    # print('trainable:', param.trainable)
                     param.trainable = requires_grad
-                    # param.stop_gradient = not requires_grad
