@@ -118,7 +118,7 @@ class DownBlock2d(nn.Layer):
                               padding=padding,
                               groups=groups)
         self.norm = nn.BatchNorm2D(out_features)
-        self.pool = nn.AvgPool2d(kernel_size=(2, 2))
+        self.pool = nn.AvgPool2D(kernel_size=(2, 2))
 
     def forward(self, x):
         out = self.conv(x)

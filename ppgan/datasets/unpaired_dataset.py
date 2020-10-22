@@ -64,8 +64,8 @@ class UnpairedDataset(BaseDataset):
             index_B = random.randint(0, self.B_size - 1)
         B_path = self.B_paths[index_B]
 
-        A_img = cv2.imread(A_path)
-        B_img = cv2.imread(B_path)
+        A_img = cv2.cvtColor(cv2.imread(A_path), cv2.COLOR_BGR2RGB)
+        B_img = cv2.cvtColor(cv2.imread(B_path), cv2.COLOR_BGR2RGB)
         # apply image transformation
         A = self.transform_A(A_img)
         B = self.transform_B(B_img)
