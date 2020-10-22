@@ -49,22 +49,22 @@ class ResidualBlock(paddle.nn.Layer):
             bias_attr = None
 
         self.main = nn.Sequential(
-            nn.Conv2d(dim_in,
+            nn.Conv2D(dim_in,
                       dim_out,
                       kernel_size=3,
                       stride=1,
                       padding=1,
                       bias_attr=False),
-            nn.InstanceNorm2d(dim_out,
+            nn.InstanceNorm2D(dim_out,
                               weight_attr=weight_attr,
                               bias_attr=bias_attr), nn.ReLU(),
-            nn.Conv2d(dim_out,
+            nn.Conv2D(dim_out,
                       dim_out,
                       kernel_size=3,
                       stride=1,
                       padding=1,
                       bias_attr=False),
-            nn.InstanceNorm2d(dim_out,
+            nn.InstanceNorm2D(dim_out,
                               weight_attr=weight_attr,
                               bias_attr=bias_attr))
 
@@ -78,7 +78,7 @@ class StyleResidualBlock(paddle.nn.Layer):
     def __init__(self, dim_in, dim_out):
         super(StyleResidualBlock, self).__init__()
         self.block1 = nn.Sequential(
-            nn.Conv2d(dim_in,
+            nn.Conv2D(dim_in,
                       dim_out,
                       kernel_size=3,
                       stride=1,
@@ -86,18 +86,18 @@ class StyleResidualBlock(paddle.nn.Layer):
                       bias_attr=False), PONO())
         ks = 3
         pw = ks // 2
-        self.beta1 = nn.Conv2d(dim_in, dim_out, kernel_size=ks, padding=pw)
-        self.gamma1 = nn.Conv2d(dim_in, dim_out, kernel_size=ks, padding=pw)
+        self.beta1 = nn.Conv2D(dim_in, dim_out, kernel_size=ks, padding=pw)
+        self.gamma1 = nn.Conv2D(dim_in, dim_out, kernel_size=ks, padding=pw)
         self.block2 = nn.Sequential(
             nn.ReLU(),
-            nn.Conv2d(dim_out,
+            nn.Conv2D(dim_out,
                       dim_out,
                       kernel_size=3,
                       stride=1,
                       padding=1,
                       bias_attr=False), PONO())
-        self.beta2 = nn.Conv2d(dim_in, dim_out, kernel_size=ks, padding=pw)
-        self.gamma2 = nn.Conv2d(dim_in, dim_out, kernel_size=ks, padding=pw)
+        self.beta2 = nn.Conv2D(dim_in, dim_out, kernel_size=ks, padding=pw)
+        self.gamma2 = nn.Conv2D(dim_in, dim_out, kernel_size=ks, padding=pw)
 
     def forward(self, x, y):
         """forward"""
@@ -119,14 +119,14 @@ class MDNet(paddle.nn.Layer):
 
         layers = []
         layers.append(
-            nn.Conv2d(3,
+            nn.Conv2D(3,
                       conv_dim,
                       kernel_size=7,
                       stride=1,
                       padding=3,
                       bias_attr=False))
         layers.append(
-            nn.InstanceNorm2d(conv_dim, weight_attr=None, bias_attr=None))
+            nn.InstanceNorm2D(conv_dim, weight_attr=None, bias_attr=None))
 
         layers.append(nn.ReLU())
 
@@ -134,14 +134,14 @@ class MDNet(paddle.nn.Layer):
         curr_dim = conv_dim
         for i in range(2):
             layers.append(
-                nn.Conv2d(curr_dim,
+                nn.Conv2D(curr_dim,
                           curr_dim * 2,
                           kernel_size=4,
                           stride=2,
                           padding=1,
                           bias_attr=False))
             layers.append(
-                nn.InstanceNorm2d(curr_dim * 2,
+                nn.InstanceNorm2D(curr_dim * 2,
                                   weight_attr=None,
                                   bias_attr=None))
             layers.append(nn.ReLU())
@@ -166,14 +166,14 @@ class TNetDown(paddle.nn.Layer):
 
         layers = []
         layers.append(
-            nn.Conv2d(3,
+            nn.Conv2D(3,
                       conv_dim,
                       kernel_size=7,
                       stride=1,
                       padding=3,
                       bias_attr=False))
         layers.append(
-            nn.InstanceNorm2d(conv_dim, weight_attr=False, bias_attr=False))
+            nn.InstanceNorm2D(conv_dim, weight_attr=False, bias_attr=False))
 
         layers.append(nn.ReLU())
 
@@ -181,14 +181,14 @@ class TNetDown(paddle.nn.Layer):
         curr_dim = conv_dim
         for i in range(2):
             layers.append(
-                nn.Conv2d(curr_dim,
+                nn.Conv2D(curr_dim,
                           curr_dim * 2,
                           kernel_size=4,
                           stride=2,
                           padding=1,
                           bias_attr=False))
             layers.append(
-                nn.InstanceNorm2d(curr_dim * 2,
+                nn.InstanceNorm2D(curr_dim * 2,
                                   weight_attr=False,
                                   bias_attr=False))
             layers.append(nn.ReLU())
@@ -210,13 +210,13 @@ class TNetDown(paddle.nn.Layer):
 class GetMatrix(paddle.fluid.dygraph.Layer):
     def __init__(self, dim_in, dim_out):
         super(GetMatrix, self).__init__()
-        self.get_gamma = nn.Conv2d(dim_in,
+        self.get_gamma = nn.Conv2D(dim_in,
                                    dim_out,
                                    kernel_size=1,
                                    stride=1,
                                    padding=0,
                                    bias_attr=False)
-        self.get_beta = nn.Conv2d(dim_in,
+        self.get_beta = nn.Conv2D(dim_in,
                                   dim_out,
                                   kernel_size=1,
                                   stride=1,
@@ -236,8 +236,8 @@ class MANet(paddle.nn.Layer):
         self.encoder = TNetDown(conv_dim=conv_dim, repeat_num=repeat_num)
         curr_dim = conv_dim * 4
         self.w = w
-        self.beta = nn.Conv2d(curr_dim, curr_dim, kernel_size=3, padding=1)
-        self.gamma = nn.Conv2d(curr_dim, curr_dim, kernel_size=3, padding=1)
+        self.beta = nn.Conv2D(curr_dim, curr_dim, kernel_size=3, padding=1)
+        self.gamma = nn.Conv2D(curr_dim, curr_dim, kernel_size=3, padding=1)
         self.simple_spade = GetMatrix(curr_dim, 1)  # get the makeup matrix
         self.repeat_num = repeat_num
         for i in range(repeat_num):
@@ -252,28 +252,28 @@ class MANet(paddle.nn.Layer):
         for i in range(2):
             layers = []
             layers.append(
-                nn.ConvTranspose2d(curr_dim,
+                nn.Conv2DTranspose(curr_dim,
                                    curr_dim // 2,
                                    kernel_size=4,
                                    stride=2,
                                    padding=1,
                                    bias_attr=False))
             layers.append(
-                nn.InstanceNorm2d(curr_dim // 2,
+                nn.InstanceNorm2D(curr_dim // 2,
                                   weight_attr=False,
                                   bias_attr=False))
 
             setattr(self, "up_acts_" + str(i), nn.ReLU())
             setattr(
                 self, "up_betas_" + str(i),
-                nn.ConvTranspose2d(y_dim,
+                nn.Conv2DTranspose(y_dim,
                                    curr_dim // 2,
                                    kernel_size=4,
                                    stride=2,
                                    padding=1))
             setattr(
                 self, "up_gammas_" + str(i),
-                nn.ConvTranspose2d(y_dim,
+                nn.Conv2DTranspose(y_dim,
                                    curr_dim // 2,
                                    kernel_size=4,
                                    stride=2,
@@ -281,7 +281,7 @@ class MANet(paddle.nn.Layer):
             setattr(self, "up_samplers_" + str(i), nn.Sequential(*layers))
             curr_dim = curr_dim // 2
         self.img_reg = [
-            nn.Conv2d(curr_dim,
+            nn.Conv2D(curr_dim,
                       3,
                       kernel_size=7,
                       stride=1,

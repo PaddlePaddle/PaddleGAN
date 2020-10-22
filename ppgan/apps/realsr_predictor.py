@@ -98,13 +98,18 @@ class RealSRPredictor(BasePredictor):
         return frame_pattern_combined, vid_out_path
 
     def run(self, input):
+        if not os.path.exists(self.output):
+            os.makedirs(self.output)
+
         if self.is_video(input):
             return self.run_video(input)
         else:
             pred_img = self.run_image(input)
 
+            out_path = None
             if self.output:
-                base_name = os.path.basename(input)
-                pred_img.save(os.path.join(self.output, base_name + '.png'))
+                base_name = os.path.splitext(os.path.basename(input))[0]
+                out_path = os.path.join(self.output, base_name + '.png')
+                pred_img.save(out_path)
 
-            return pred_img
+            return pred_img, out_path

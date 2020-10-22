@@ -10,13 +10,12 @@ class ResidualDenseBlock_5C(nn.Layer):
     def __init__(self, nf=64, gc=32, bias=True):
         super(ResidualDenseBlock_5C, self).__init__()
         # gc: growth channel, i.e. intermediate channels
-        self.conv1 = nn.Conv2d(nf, gc, 3, 1, 1, bias_attr=bias)
-        self.conv2 = nn.Conv2d(nf + gc, gc, 3, 1, 1, bias_attr=bias)
-        self.conv3 = nn.Conv2d(nf + 2 * gc, gc, 3, 1, 1, bias_attr=bias)
-        self.conv4 = nn.Conv2d(nf + 3 * gc, gc, 3, 1, 1, bias_attr=bias)
-        self.conv5 = nn.Conv2d(nf + 4 * gc, nf, 3, 1, 1, bias_attr=bias)
+        self.conv1 = nn.Conv2D(nf, gc, 3, 1, 1, bias_attr=bias)
+        self.conv2 = nn.Conv2D(nf + gc, gc, 3, 1, 1, bias_attr=bias)
+        self.conv3 = nn.Conv2D(nf + 2 * gc, gc, 3, 1, 1, bias_attr=bias)
+        self.conv4 = nn.Conv2D(nf + 3 * gc, gc, 3, 1, 1, bias_attr=bias)
+        self.conv5 = nn.Conv2D(nf + 4 * gc, nf, 3, 1, 1, bias_attr=bias)
         self.lrelu = nn.LeakyReLU(negative_slope=0.2)
-
 
     def forward(self, x):
         x1 = self.lrelu(self.conv1(x))
@@ -29,7 +28,6 @@ class ResidualDenseBlock_5C(nn.Layer):
 
 class RRDB(nn.Layer):
     '''Residual in Residual Dense Block'''
-
     def __init__(self, nf, gc=32):
         super(RRDB, self).__init__()
         self.RDB1 = ResidualDenseBlock_5C(nf, gc)
@@ -41,6 +39,7 @@ class RRDB(nn.Layer):
         out = self.RDB2(out)
         out = self.RDB3(out)
         return out * 0.2 + x
+
 
 def make_layer(block, n_layers):
     layers = []
@@ -55,14 +54,14 @@ class RRDBNet(nn.Layer):
         super(RRDBNet, self).__init__()
         RRDB_block_f = functools.partial(RRDB, nf=nf, gc=gc)
 
-        self.conv_first = nn.Conv2d(in_nc, nf, 3, 1, 1, bias_attr=True)
+        self.conv_first = nn.Conv2D(in_nc, nf, 3, 1, 1, bias_attr=True)
         self.RRDB_trunk = make_layer(RRDB_block_f, nb)
-        self.trunk_conv = nn.Conv2d(nf, nf, 3, 1, 1, bias_attr=True)
+        self.trunk_conv = nn.Conv2D(nf, nf, 3, 1, 1, bias_attr=True)
         #### upsampling
-        self.upconv1 = nn.Conv2d(nf, nf, 3, 1, 1, bias_attr=True)
-        self.upconv2 = nn.Conv2d(nf, nf, 3, 1, 1, bias_attr=True)
-        self.HRconv = nn.Conv2d(nf, nf, 3, 1, 1, bias_attr=True)
-        self.conv_last = nn.Conv2d(nf, out_nc, 3, 1, 1, bias_attr=True)
+        self.upconv1 = nn.Conv2D(nf, nf, 3, 1, 1, bias_attr=True)
+        self.upconv2 = nn.Conv2D(nf, nf, 3, 1, 1, bias_attr=True)
+        self.HRconv = nn.Conv2D(nf, nf, 3, 1, 1, bias_attr=True)
+        self.conv_last = nn.Conv2D(nf, out_nc, 3, 1, 1, bias_attr=True)
 
         self.lrelu = nn.LeakyReLU(negative_slope=0.2)
 
@@ -71,8 +70,10 @@ class RRDBNet(nn.Layer):
         trunk = self.trunk_conv(self.RRDB_trunk(fea))
         fea = fea + trunk
 
-        fea = self.lrelu(self.upconv1(F.interpolate(fea, scale_factor=2, mode='nearest')))
-        fea = self.lrelu(self.upconv2(F.interpolate(fea, scale_factor=2, mode='nearest')))
+        fea = self.lrelu(
+            self.upconv1(F.interpolate(fea, scale_factor=2, mode='nearest')))
+        fea = self.lrelu(
+            self.upconv2(F.interpolate(fea, scale_factor=2, mode='nearest')))
         out = self.conv_last(self.lrelu(self.HRconv(fea)))
 
         return out

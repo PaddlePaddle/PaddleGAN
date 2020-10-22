@@ -14,6 +14,7 @@
 
 import os
 import cv2
+from PIL import Image
 import paddle
 
 
@@ -63,10 +64,11 @@ class BasePredictor(object):
 
     def is_video(self, input):
         try:
-            cv2.VideoCapture(input)
-            return True
-        except:
+            img = Image.open(input)
+            _ = img.size
             return False
+        except:
+            return True
 
     def run(self):
         raise NotImplementedError

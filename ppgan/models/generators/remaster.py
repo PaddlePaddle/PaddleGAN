@@ -11,7 +11,7 @@ class TempConv(nn.Layer):
                  stride=(1, 1, 1),
                  padding=(0, 1, 1)):
         super(TempConv, self).__init__()
-        self.conv3d = nn.Conv3d(in_planes,
+        self.conv3d = nn.Conv3D(in_planes,
                                 out_planes,
                                 kernel_size=kernel_size,
                                 stride=stride,
@@ -26,7 +26,7 @@ class Upsample(nn.Layer):
     def __init__(self, in_planes, out_planes, scale_factor=(1, 2, 2)):
         super(Upsample, self).__init__()
         self.scale_factor = scale_factor
-        self.conv3d = nn.Conv3d(in_planes,
+        self.conv3d = nn.Conv3D(in_planes,
                                 out_planes,
                                 kernel_size=(3, 3, 3),
                                 stride=(1, 1, 1),
@@ -88,13 +88,13 @@ class SourceReferenceAttention(nn.Layer):
                 Number of input reference feature vector channels.
         """
         super(SourceReferenceAttention, self).__init__()
-        self.query_conv = nn.Conv3d(in_channels=in_planes_s,
+        self.query_conv = nn.Conv3D(in_channels=in_planes_s,
                                     out_channels=in_planes_s // 8,
                                     kernel_size=1)
-        self.key_conv = nn.Conv3d(in_channels=in_planes_r,
+        self.key_conv = nn.Conv3D(in_channels=in_planes_r,
                                   out_channels=in_planes_r // 8,
                                   kernel_size=1)
-        self.value_conv = nn.Conv3d(in_channels=in_planes_r,
+        self.value_conv = nn.Conv3D(in_channels=in_planes_r,
                                     out_channels=in_planes_r,
                                     kernel_size=1)
         self.gamma = self.create_parameter(
@@ -149,7 +149,7 @@ class NetworkR(nn.Layer):
             TempConv(128, 64, kernel_size=(3, 3, 3), padding=(1, 1, 1)),
             TempConv(64, 64, kernel_size=(3, 3, 3), padding=(1, 1, 1)),
             Upsample(64, 16),
-            nn.Conv3d(16,
+            nn.Conv3D(16,
                       1,
                       kernel_size=(3, 3, 3),
                       stride=(1, 1, 1),
@@ -205,7 +205,7 @@ class NetworkC(nn.Layer):
                      padding=(1, 1, 1)))
         self.up4 = nn.Sequential(
             Upsample(16, 8),  # 1/1
-            nn.Conv3d(8,
+            nn.Conv3D(8,
                       2,
                       kernel_size=(3, 3, 3),
                       stride=(1, 1, 1),

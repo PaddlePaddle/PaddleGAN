@@ -17,46 +17,34 @@ class BaseModel(ABC):
         -- <optimize_parameters>:           calculate losses, gradients, and update network weights.
         -- <modify_commandline_options>:    (optionally) add model-specific options and set default options.
     """
-    def __init__(self, opt):
+    def __init__(self, cfg):
         """Initialize the BaseModel class.
 
-        Parameters:
-            opt (Option class)-- stores all the experiment flags; needs to be a subclass of BaseOptions
+        Args:
+            cfg (Dict)-- configs of Model.
 
         When creating your custom class, you need to implement your own initialization.
-        In this function, you should first call <BaseModel.__init__(self, opt)>
+        In this function, you should first call <super(YourClass, self).__init__(self, cfg)>
         Then, you need to define four lists:
-            -- self.losses (str list):          specify the training losses that you want to plot and save.
-            -- self.model_names (str list):         define networks used in our training.
+            -- self.losses (dict):          specify the training losses that you want to plot and save.
+            -- self.nets (dict):         define networks used in our training.
             -- self.visual_names (str list):        specify the images that you want to display and save.
-            -- self.optimizers (optimizer list):    define and initialize optimizers. You can define one optimizer for each network. If two networks are updated at the same time, you can use itertools.chain to group them. See cycle_gan_model.py for an example.
+            -- self.optimizers (dict):    define and initialize optimizers. You can define one optimizer for each network.
+                                          If two networks are updated at the same time, you can use itertools.chain to group them.
+                                          See cycle_gan_model.py for an example.
         """
-        self.opt = opt
-        self.isTrain = opt.isTrain
+        self.cfg = cfg
+        self.is_train = cfg.is_train
         self.save_dir = os.path.join(
-            opt.output_dir,
-            opt.model.name)  # save all the checkpoints to save_dir
+            cfg.output_dir,
+            cfg.model.name)  # save all the checkpoints to save_dir
 
         self.losses = OrderedDict()
-        self.model_names = []
-        self.visual_names = []
-        self.optimizers = []
-        self.optimizer_names = []
+        self.nets = OrderedDict()
+        self.visual_items = OrderedDict()
+        self.optimizers = OrderedDict()
         self.image_paths = []
         self.metric = 0  # used for learning rate policy 'plateau'
-
-    @staticmethod
-    def modify_commandline_options(parser, is_train):
-        """Add new model-specific options, and rewrite default values for existing options.
-
-        Parameters:
-            parser          -- original option parser
-            is_train (bool) -- whether training phase or test phase. You can use this flag to add training-specific or test-specific options.
-
-        Returns:
-            the modified parser.
-        """
-        return parser
 
     @abstractmethod
     def set_input(self, input):
@@ -78,7 +66,7 @@ class BaseModel(ABC):
         pass
 
     def build_lr_scheduler(self):
-        self.lr_scheduler = build_lr_scheduler(self.opt.lr_scheduler)
+        self.lr_scheduler = build_lr_scheduler(self.cfg.lr_scheduler)
 
     def eval(self):
         """Make models eval mode during test time"""
@@ -106,12 +94,13 @@ class BaseModel(ABC):
         return self.image_paths
 
     def get_current_visuals(self):
-        """Return visualization images. train.py will display these images with visdom, and save the images to a HTML"""
-        visual_ret = OrderedDict()
-        for name in self.visual_names:
-            if isinstance(name, str) and hasattr(self, name):
-                visual_ret[name] = getattr(self, name)
-        return visual_ret
+        """Return visualization images."""
+        # visual_ret = OrderedDict()
+        # for name in self.visual_names:
+        #     if isinstance(name, str) and hasattr(self, name):
+        #         visual_ret[name] = getattr(self, name)
+        # return visual_ret
+        return self.visual_items
 
     def get_current_losses(self):
         """Return traning losses / errors. train.py will print out these errors on console, and save them to a file"""
@@ -119,7 +108,7 @@ class BaseModel(ABC):
 
     def set_requires_grad(self, nets, requires_grad=False):
         """Set requies_grad=Fasle for all the networks to avoid unnecessary computations
-        Parameters:
+        Args:
             nets (network list)   -- a list of networks
             requires_grad (bool)  -- whether the networks require gradients or not
         """

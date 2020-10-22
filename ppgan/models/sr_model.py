@@ -30,7 +30,7 @@ class SRModel(BaseModel):
         self.loss_names = ['l_total']
 
         self.optimizers = []
-        if self.isTrain:
+        if self.is_train:
             self.criterionL1 = paddle.nn.L1Loss()
 
             self.build_lr_scheduler()

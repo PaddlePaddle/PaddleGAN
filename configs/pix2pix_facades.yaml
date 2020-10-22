@@ -1,5 +1,4 @@
 epochs: 200
-isTrain: True
 output_dir: output_dir
 lambda_L1: 100
 
@@ -35,15 +34,15 @@ dataset:
     transforms:
       - name: Resize
         size: [286, 286]
-        interpolation: 2 #cv2.INTER_CUBIC
+        interpolation: 'bicubic' #cv2.INTER_CUBIC
         keys: [image, image]
       - name: PairedRandomCrop
-        output_size: [256, 256]
+        size: [256, 256]
         keys: [image, image]
       - name: PairedRandomHorizontalFlip
         prob: 0.5
         keys: [image, image]
-      - name: Permute
+      - name: Transpose
         keys: [image, image]
       - name: Normalize
         mean: [127.5, 127.5, 127.5]
@@ -62,9 +61,9 @@ dataset:
     transforms:
       - name: Resize
         size: [256, 256]
-        interpolation: 2 #cv2.INTER_CUBIC
+        interpolation: 'bicubic' #cv2.INTER_CUBIC
         keys: [image, image]
-      - name: Permute
+      - name: Transpose
         keys: [image, image]
       - name: Normalize
         mean: [127.5, 127.5, 127.5]

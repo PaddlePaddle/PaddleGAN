@@ -41,9 +41,9 @@ class NLayerDiscriminator(nn.Layer):
         if type(
                 norm_layer
         ) == functools.partial:  # no need to use bias as BatchNorm2d has affine parameters
-            use_bias = norm_layer.func == nn.InstanceNorm2d
+            use_bias = norm_layer.func == nn.InstanceNorm2D
         else:
-            use_bias = norm_layer == nn.InstanceNorm2d
+            use_bias = norm_layer == nn.InstanceNorm2D
 
         kw = 4
         padw = 1
@@ -51,7 +51,7 @@ class NLayerDiscriminator(nn.Layer):
         if norm_type == 'spectral':
             sequence = [
                 Spectralnorm(
-                    nn.Conv2d(input_nc,
+                    nn.Conv2D(input_nc,
                               ndf,
                               kernel_size=kw,
                               stride=2,
@@ -60,7 +60,7 @@ class NLayerDiscriminator(nn.Layer):
             ]
         else:
             sequence = [
-                nn.Conv2d(input_nc,
+                nn.Conv2D(input_nc,
                           ndf,
                           kernel_size=kw,
                           stride=2,
@@ -76,7 +76,7 @@ class NLayerDiscriminator(nn.Layer):
             if norm_type == 'spectral':
                 sequence += [
                     Spectralnorm(
-                        nn.Conv2d(ndf * nf_mult_prev,
+                        nn.Conv2D(ndf * nf_mult_prev,
                                   ndf * nf_mult,
                                   kernel_size=kw,
                                   stride=2,
@@ -85,7 +85,7 @@ class NLayerDiscriminator(nn.Layer):
                 ]
             else:
                 sequence += [
-                    nn.Conv2d(ndf * nf_mult_prev,
+                    nn.Conv2D(ndf * nf_mult_prev,
                               ndf * nf_mult,
                               kernel_size=kw,
                               stride=2,
@@ -100,7 +100,7 @@ class NLayerDiscriminator(nn.Layer):
         if norm_type == 'spectral':
             sequence += [
                 Spectralnorm(
-                    nn.Conv2d(ndf * nf_mult_prev,
+                    nn.Conv2D(ndf * nf_mult_prev,
                               ndf * nf_mult,
                               kernel_size=kw,
                               stride=1,
@@ -109,7 +109,7 @@ class NLayerDiscriminator(nn.Layer):
             ]
         else:
             sequence += [
-                nn.Conv2d(ndf * nf_mult_prev,
+                nn.Conv2D(ndf * nf_mult_prev,
                           ndf * nf_mult,
                           kernel_size=kw,
                           stride=1,
@@ -122,7 +122,7 @@ class NLayerDiscriminator(nn.Layer):
         if norm_type == 'spectral':
             sequence += [
                 Spectralnorm(
-                    nn.Conv2d(ndf * nf_mult,
+                    nn.Conv2D(ndf * nf_mult,
                               1,
                               kernel_size=kw,
                               stride=1,
@@ -131,7 +131,7 @@ class NLayerDiscriminator(nn.Layer):
             ]  # output 1 channel prediction map
         else:
             sequence += [
-                nn.Conv2d(ndf * nf_mult,
+                nn.Conv2D(ndf * nf_mult,
                           1,
                           kernel_size=kw,
                           stride=1,

@@ -11,10 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import numpy as np
 
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
+from paddle.vision.models import vgg16
 from .base_model import BaseModel
 
 from .builder import MODELS
@@ -26,92 +28,62 @@ from ..solver import build_optimizer
 from ..utils.image_pool import ImagePool
 from ..utils.preprocess import *
 from ..datasets.makeup_dataset import MakeupDataset
-import numpy as np
-from .vgg import vgg16
 
 
 @MODELS.register()
 class MakeupModel(BaseModel):
     """
-    This class implements the CycleGAN model, for learning image-to-image translation without paired data.
-
-    The model training requires '--dataset_mode unaligned' dataset.
-    By default, it uses a '--netG resnet_9blocks' ResNet generator,
-    a '--netD basic' discriminator (PatchGAN introduced by pix2pix),
-    and a least-square GANs objective ('--gan_mode lsgan').
-
-    CycleGAN paper: https://arxiv.org/pdf/1703.10593.pdf
+    PSGAN paper: https://arxiv.org/pdf/1909.06956.pdf
     """
-    def __init__(self, opt):
-        """Initialize the CycleGAN class.
+    def __init__(self, cfg):
+        """Initialize the PSGAN class.
 
         Parameters:
-            opt (Option class)-- stores all the experiment flags; needs to be a subclass of BaseOptions
+            cfg (dict)-- config of model.
         """
-        BaseModel.__init__(self, opt)
-        # specify the training losses you want to print out. The training/test scripts will call <BaseModel.get_current_losses>
-        # specify the images you want to save/display. The training/test scripts will call <BaseModel.get_current_visuals>
-        visual_names_A = ['real_A', 'fake_A', 'rec_A']
-        visual_names_B = ['real_B', 'fake_B', 'rec_B']
-        if self.isTrain and self.opt.lambda_identity > 0.0:  # if identity loss is used, we also visualize idt_B=G_A(B) ad idt_A=G_A(B)
-            visual_names_A.append('idt_B')
-            visual_names_B.append('idt_A')
-
-        self.visual_names = visual_names_A + visual_names_B  # combine visualizations for A and B
-        self.vgg = vgg16(pretrained=True)
-        # specify the models you want to save to the disk. The training/test scripts will call <BaseModel.save_networks> and <BaseModel.load_networks>.
-        if self.isTrain:
-            self.model_names = ['G', 'D_A', 'D_B']
-        else:  # during test time, only load Gs
-            self.model_names = ['G']
+        super(MakeupModel, self).__init__(cfg)
 
         # define networks (both Generators and discriminators)
         # The naming is different from those used in the paper.
         # Code (vs. paper): G_A (G), G_B (F), D_A (D_Y), D_B (D_X)
-        self.netG = build_generator(opt.model.generator)
-        init_weights(self.netG, init_type='xavier', init_gain=1.0)
+        self.nets['netG'] = build_generator(cfg.model.generator)
+        init_weights(self.nets['netG'], init_type='xavier', init_gain=1.0)
 
-        if self.isTrain:  # define discriminators
-            self.netD_A = build_discriminator(opt.model.discriminator)
-            self.netD_B = build_discriminator(opt.model.discriminator)
-            init_weights(self.netD_A, init_type='xavier', init_gain=1.0)
-            init_weights(self.netD_B, init_type='xavier', init_gain=1.0)
+        if self.is_train:  # define discriminators
+            vgg = vgg16(pretrained=True)
+            self.vgg = vgg.features
+            self.nets['netD_A'] = build_discriminator(cfg.model.discriminator)
+            self.nets['netD_B'] = build_discriminator(cfg.model.discriminator)
+            init_weights(self.nets['netD_A'], init_type='xavier', init_gain=1.0)
+            init_weights(self.nets['netD_B'], init_type='xavier', init_gain=1.0)
 
-        if self.isTrain:
             self.fake_A_pool = ImagePool(
-                opt.dataset.train.pool_size
+                cfg.dataset.train.pool_size
             )  # create image buffer to store previously generated images
             self.fake_B_pool = ImagePool(
-                opt.dataset.train.pool_size
+                cfg.dataset.train.pool_size
             )  # create image buffer to store previously generated images
             # define loss functions
             self.criterionGAN = GANLoss(
-                opt.model.gan_mode)  #.to(self.device)  # define GAN loss.
+                cfg.model.gan_mode)  #.to(self.device)  # define GAN loss.
             self.criterionCycle = paddle.nn.L1Loss()
             self.criterionIdt = paddle.nn.L1Loss()
             self.criterionL1 = paddle.nn.L1Loss()
             self.criterionL2 = paddle.nn.MSELoss()
 
             self.build_lr_scheduler()
-            self.optimizer_G = build_optimizer(
-                opt.optimizer,
+            self.optimizers['optimizer_G'] = build_optimizer(
+                cfg.optimizer,
                 self.lr_scheduler,
-                parameter_list=self.netG.parameters())
-            # self.optimizer_D = paddle.optimizer.Adam(learning_rate=lr_scheduler_d, parameter_list=self.netD_A.parameters() + self.netD_B.parameters(), beta1=opt.beta1)
-            self.optimizer_DA = build_optimizer(
-                opt.optimizer,
+                parameter_list=self.nets['netG'].parameters())
+            self.optimizers['optimizer_DA'] = build_optimizer(
+                cfg.optimizer,
                 self.lr_scheduler,
-                parameter_list=self.netD_A.parameters())
-            self.optimizer_DB = build_optimizer(
-                opt.optimizer,
+                parameter_list=self.nets['netD_A'].parameters())
+            self.optimizers['optimizer_DB'] = build_optimizer(
+                cfg.optimizer,
                 self.lr_scheduler,
-                parameter_list=self.netD_B.parameters())
-            self.optimizers.append(self.optimizer_G)
-            # self.optimizers.append(self.optimizer_D)
-            self.optimizers.append(self.optimizer_DA)
-            self.optimizers.append(self.optimizer_DB)
-            self.optimizer_names.extend(
-                ['optimizer_G', 'optimizer_DA', 'optimizer_DB'])
+                parameter_list=self.nets['netD_B'].parameters())
 
     def set_input(self, input):
         """Unpack input data from the dataloader and perform necessary pre-processing steps.
@@ -129,37 +101,47 @@ class MakeupModel(BaseModel):
         self.mask_A_aug = paddle.to_tensor(input['mask_A_aug'])
         self.mask_B_aug = paddle.to_tensor(input['mask_B_aug'])
         self.c_m_t = paddle.transpose(self.c_m, perm=[0, 2, 1])
-        if self.isTrain:
+        if self.is_train:
             self.mask_A = paddle.to_tensor(input['mask_A'])
             self.mask_B = paddle.to_tensor(input['mask_B'])
             self.c_m_idt_a = paddle.to_tensor(input['consis_mask_idt_A'])
             self.c_m_idt_b = paddle.to_tensor(input['consis_mask_idt_B'])
 
-        #self.hm_gt_A = self.hm_gt_A_lip + self.hm_gt_A_skin + self.hm_gt_A_eye
-        #self.hm_gt_B = self.hm_gt_B_lip + self.hm_gt_B_skin + self.hm_gt_B_eye
-
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
-        self.fake_A, amm = self.netG(self.real_A, self.real_B, self.P_A,
-                                     self.P_B, self.c_m, self.mask_A_aug,
-                                     self.mask_B_aug)  # G_A(A)
-        self.fake_B, _ = self.netG(self.real_B, self.real_A, self.P_B, self.P_A,
-                                   self.c_m_t, self.mask_A_aug,
-                                   self.mask_B_aug)  # G_A(A)
-        self.rec_A, _ = self.netG(self.fake_A, self.real_A, self.P_A, self.P_A,
-                                  self.c_m_idt_a, self.mask_A_aug,
-                                  self.mask_B_aug)  # G_A(A)
-        self.rec_B, _ = self.netG(self.fake_B, self.real_B, self.P_B, self.P_B,
-                                  self.c_m_idt_b, self.mask_A_aug,
-                                  self.mask_B_aug)  # G_A(A)
+        self.fake_A, amm = self.nets['netG'](self.real_A, self.real_B, self.P_A,
+                                             self.P_B, self.c_m,
+                                             self.mask_A_aug,
+                                             self.mask_B_aug)  # G_A(A)
+        self.fake_B, _ = self.nets['netG'](self.real_B, self.real_A, self.P_B,
+                                           self.P_A, self.c_m_t,
+                                           self.mask_A_aug,
+                                           self.mask_B_aug)  # G_A(A)
+        self.rec_A, _ = self.nets['netG'](self.fake_A, self.real_A, self.P_A,
+                                          self.P_A, self.c_m_idt_a,
+                                          self.mask_A_aug,
+                                          self.mask_B_aug)  # G_A(A)
+        self.rec_B, _ = self.nets['netG'](self.fake_B, self.real_B, self.P_B,
+                                          self.P_B, self.c_m_idt_b,
+                                          self.mask_A_aug,
+                                          self.mask_B_aug)  # G_A(A)
+
+        # visual
+        self.visual_items['real_A'] = self.real_A
+        self.visual_items['fake_B'] = self.fake_B
+        self.visual_items['rec_A'] = self.rec_A
+        self.visual_items['real_B'] = self.real_B
+        self.visual_items['fake_A'] = self.fake_A
+        self.visual_items['rec_B'] = self.rec_B
 
     def forward_test(self, input):
         '''
         not implement now
         '''
-        return self.netG(input['image_A'], input['image_B'], input['P_A'],
-                         input['P_B'], input['consis_mask'],
-                         input['mask_A_aug'], input['mask_B_aug'])
+        return self.nets['netG'](input['image_A'], input['image_B'],
+                                 input['P_A'], input['P_B'],
+                                 input['consis_mask'], input['mask_A_aug'],
+                                 input['mask_B_aug'])
 
     def test(self, input):
         """Forward function used in test time.
@@ -195,51 +177,52 @@ class MakeupModel(BaseModel):
     def backward_D_A(self):
         """Calculate GAN loss for discriminator D_A"""
         fake_B = self.fake_B_pool.query(self.fake_B)
-        self.loss_D_A = self.backward_D_basic(self.netD_A, self.real_B, fake_B)
+        self.loss_D_A = self.backward_D_basic(self.nets['netD_A'], self.real_B,
+                                              fake_B)
         self.losses['D_A_loss'] = self.loss_D_A
 
     def backward_D_B(self):
         """Calculate GAN loss for discriminator D_B"""
         fake_A = self.fake_A_pool.query(self.fake_A)
-        self.loss_D_B = self.backward_D_basic(self.netD_B, self.real_A, fake_A)
+        self.loss_D_B = self.backward_D_basic(self.nets['netD_B'], self.real_A,
+                                              fake_A)
         self.losses['D_B_loss'] = self.loss_D_B
 
     def backward_G(self):
         """Calculate the loss for generators G_A and G_B"""
-        '''
-        self.loss_names = [
-                'G_A_vgg',
-                'G_B_vgg',
-                'G_bg_consis'
-                ]
-        # specify the images you want to save/display. The training/test scripts will call <BaseModel.get_current_visuals>
-        visual_names_A = ['real_A', 'fake_B', 'rec_A', 'amm_a']
-        visual_names_B = ['real_B', 'fake_A', 'rec_B', 'amm_b']
-        '''
-        lambda_idt = self.opt.lambda_identity
-        lambda_A = self.opt.lambda_A
-        lambda_B = self.opt.lambda_B
+
+        lambda_idt = self.cfg.lambda_identity
+        lambda_A = self.cfg.lambda_A
+        lambda_B = self.cfg.lambda_B
         lambda_vgg = 5e-3
         # Identity loss
         if lambda_idt > 0:
-            self.idt_A, _ = self.netG(self.real_A, self.real_A, self.P_A,
-                                      self.P_A, self.c_m_idt_a, self.mask_A_aug,
-                                      self.mask_B_aug)  # G_A(A)
+            self.idt_A, _ = self.nets['netG'](self.real_A, self.real_A,
+                                              self.P_A, self.P_A,
+                                              self.c_m_idt_a, self.mask_A_aug,
+                                              self.mask_B_aug)  # G_A(A)
             self.loss_idt_A = self.criterionIdt(
                 self.idt_A, self.real_A) * lambda_A * lambda_idt
-            self.idt_B, _ = self.netG(self.real_B, self.real_B, self.P_B,
-                                      self.P_B, self.c_m_idt_b, self.mask_A_aug,
-                                      self.mask_B_aug)  # G_A(A)
+            self.idt_B, _ = self.nets['netG'](self.real_B, self.real_B,
+                                              self.P_B, self.P_B,
+                                              self.c_m_idt_b, self.mask_A_aug,
+                                              self.mask_B_aug)  # G_A(A)
             self.loss_idt_B = self.criterionIdt(
                 self.idt_B, self.real_B) * lambda_B * lambda_idt
+
+            # visual
+            self.visual_items['idt_A'] = self.idt_A
+            self.visual_items['idt_B'] = self.idt_B
         else:
             self.loss_idt_A = 0
             self.loss_idt_B = 0
 
         # GAN loss D_A(G_A(A))
-        self.loss_G_A = self.criterionGAN(self.netD_A(self.fake_A), True)
+        self.loss_G_A = self.criterionGAN(self.nets['netD_A'](self.fake_A),
+                                          True)
         # GAN loss D_B(G_B(B))
-        self.loss_G_B = self.criterionGAN(self.netD_B(self.fake_B), True)
+        self.loss_G_B = self.criterionGAN(self.nets['netD_B'](self.fake_B),
+                                          True)
         # Forward cycle loss || G_B(G_A(A)) - A||
         self.loss_cycle_A = self.criterionCycle(self.rec_A,
                                                 self.real_A) * lambda_A
@@ -381,27 +364,24 @@ class MakeupModel(BaseModel):
         self.forward()  # compute fake images and reconstruction images.
         # G_A and G_B
         self.set_requires_grad(
-            [self.netD_A, self.netD_B],
+            [self.nets['netD_A'], self.nets['netD_B']],
             False)  # Ds require no gradients when optimizing Gs
         # self.optimizer_G.clear_gradients() #zero_grad()  # set G_A and G_B's gradients to zero
         self.backward_G()  # calculate gradients for G_A and G_B
-        self.optimizer_G.minimize(
+        self.optimizers['optimizer_G'].minimize(
             self.loss_G)  #step()       # update G_A and G_B's weights
-        self.optimizer_G.clear_gradients()
-        # self.optimizer_G.clear_gradients()
+        self.optimizers['optimizer_G'].clear_gradients()
         # D_A and D_B
-        # self.set_requires_grad([self.netD_A, self.netD_B], True)
-        self.set_requires_grad(self.netD_A, True)
+        self.set_requires_grad(self.nets['netD_A'], True)
         # self.optimizer_D.clear_gradients() #zero_grad()   # set D_A and D_B's gradients to zero
         self.backward_D_A()  # calculate gradients for D_A
-        self.optimizer_DA.minimize(
+        self.optimizers['optimizer_DA'].minimize(
             self.loss_D_A)  #step()  # update D_A and D_B's weights
-        self.optimizer_DA.clear_gradients()  #zero_g
-        self.set_requires_grad(self.netD_B, True)
-        # self.optimizer_DB.clear_gradients() #zero_grad()   # set D_A and D_B's gradients to zero
+        self.optimizers['optimizer_DA'].clear_gradients()  #zero_g
+        self.set_requires_grad(self.nets['netD_B'], True)
 
         self.backward_D_B()  # calculate graidents for D_B
-        self.optimizer_DB.minimize(
+        self.optimizers['optimizer_DB'].minimize(
             self.loss_D_B)  #step()  # update D_A and D_B's weights
-        self.optimizer_DB.clear_gradients(
+        self.optimizers['optimizer_DB'].clear_gradients(
         )  #zero_grad()   # set D_A and D_B's gradients to zero

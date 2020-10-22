@@ -13,13 +13,10 @@
 # limitations under the License.
 
 import paddle
-from paddle import nn
+import paddle.nn as nn
 import paddle.nn.functional as F
 
-from paddle.utils.download import get_weights_path_from_url
-import numpy as np
-
-from .resnet import resnet18
+from paddle.vision.models import resnet18
 
 
 class ConvBNReLU(paddle.nn.Layer):
@@ -32,13 +29,13 @@ class ConvBNReLU(paddle.nn.Layer):
                  *args,
                  **kwargs):
         super(ConvBNReLU, self).__init__()
-        self.conv = nn.Conv2d(in_chan,
+        self.conv = nn.Conv2D(in_chan,
                               out_chan,
                               kernel_size=ks,
                               stride=stride,
                               padding=padding,
                               bias_attr=False)
-        self.bn = nn.BatchNorm2d(out_chan)
+        self.bn = nn.BatchNorm2D(out_chan)
         self.relu = nn.ReLU()
 
     def forward(self, x):
@@ -52,7 +49,7 @@ class BiSeNetOutput(paddle.nn.Layer):
     def __init__(self, in_chan, mid_chan, n_classes, *args, **kwargs):
         super(BiSeNetOutput, self).__init__()
         self.conv = ConvBNReLU(in_chan, mid_chan, ks=3, stride=1, padding=1)
-        self.conv_out = nn.Conv2d(mid_chan,
+        self.conv_out = nn.Conv2D(mid_chan,
                                   n_classes,
                                   kernel_size=1,
                                   bias_attr=False)
@@ -67,7 +64,7 @@ class AttentionRefinementModule(paddle.nn.Layer):
     def __init__(self, in_chan, out_chan, *args, **kwargs):
         super(AttentionRefinementModule, self).__init__()
         self.conv = ConvBNReLU(in_chan, out_chan, ks=3, stride=1, padding=1)
-        self.conv_atten = nn.Conv2d(out_chan,
+        self.conv_atten = nn.Conv2D(out_chan,
                                     out_chan,
                                     kernel_size=1,
                                     bias_attr=False)
@@ -87,16 +84,27 @@ class AttentionRefinementModule(paddle.nn.Layer):
 class ContextPath(paddle.nn.Layer):
     def __init__(self, *args, **kwargs):
         super(ContextPath, self).__init__()
-        self.resnet = resnet18()
+        self.backbone = resnet18(pretrained=True)
         self.arm16 = AttentionRefinementModule(256, 128)
         self.arm32 = AttentionRefinementModule(512, 128)
         self.conv_head32 = ConvBNReLU(128, 128, ks=3, stride=1, padding=1)
         self.conv_head16 = ConvBNReLU(128, 128, ks=3, stride=1, padding=1)
         self.conv_avg = ConvBNReLU(512, 128, ks=1, stride=1, padding=0)
 
+    def backbone_forward(self, x):
+        x = self.backbone.conv1(x)
+        x = self.backbone.bn1(x)
+        x = self.backbone.relu(x)
+        x = self.backbone.maxpool(x)
+        x = self.backbone.layer1(x)
+        c2 = self.backbone.layer2(x)
+        c3 = self.backbone.layer3(c2)
+        c4 = self.backbone.layer4(c3)
+        return c2, c3, c4
+
     def forward(self, x):
         H0, W0 = x.shape[2:]
-        feat8, feat16, feat32 = self.resnet(x)
+        feat8, feat16, feat32 = self.backbone_forward(x)
         H8, W8 = feat8.shape[2:]
         H16, W16 = feat16.shape[2:]
         H32, W32 = feat32.shape[2:]
@@ -138,13 +146,13 @@ class FeatureFusionModule(paddle.nn.Layer):
     def __init__(self, in_chan, out_chan, *args, **kwargs):
         super(FeatureFusionModule, self).__init__()
         self.convblk = ConvBNReLU(in_chan, out_chan, ks=1, stride=1, padding=0)
-        self.conv1 = nn.Conv2d(out_chan,
+        self.conv1 = nn.Conv2D(out_chan,
                                out_chan // 4,
                                kernel_size=1,
                                stride=1,
                                padding=0,
                                bias_attr=False)
-        self.conv2 = nn.Conv2d(out_chan // 4,
+        self.conv2 = nn.Conv2D(out_chan // 4,
                                out_chan,
                                kernel_size=1,
                                stride=1,

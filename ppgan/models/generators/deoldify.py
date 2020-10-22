@@ -137,7 +137,7 @@ def custom_conv_layer(ni: int,
     bn = norm_type in ('Batch', 'Batchzero') or extra_bn == True
     if bias is None:
         bias = not bn
-    conv_func = nn.ConvTranspose2d if transpose else nn.Conv1d if is_1d else nn.Conv2d
+    conv_func = nn.Conv2DTranspose if transpose else nn.Conv1d if is_1d else nn.Conv2D
 
     conv = conv_func(ni,
                      nf,
@@ -298,7 +298,7 @@ def conv_layer(ni: int,
     if padding is None: padding = (ks - 1) // 2 if not transpose else 0
     bn = norm_type in ('Batch', 'BatchZero')
     if bias is None: bias = not bn
-    conv_func = nn.ConvTranspose2d if transpose else nn.Conv1d if is_1d else nn.Conv2d
+    conv_func = nn.Conv2DTranspose if transpose else nn.Conv1d if is_1d else nn.Conv2D
 
     conv = conv_func(ni,
                      nf,

@@ -122,11 +122,7 @@ def cal_hist(image):
     hists = []
     for i in range(0, 3):
         channel = image[i]
-        # channel = image[i, :, :]
-        #channel = torch.from_numpy(channel)
         hist, _ = np.histogram(channel, bins=256, range=(0, 255))
-        #hist = torch.histc(channel, bins=256, min=0, max=256)
-        # refHist=hist.view(256,1)
         sum = hist.sum()
         pdf = [v / sum for v in hist]
         for i in range(1, 256):

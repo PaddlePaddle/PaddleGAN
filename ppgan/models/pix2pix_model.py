@@ -23,52 +23,38 @@ class Pix2PixModel(BaseModel):
 
     pix2pix paper: https://arxiv.org/pdf/1611.07004.pdf
     """
-    def __init__(self, opt):
+    def __init__(self, cfg):
         """Initialize the pix2pix class.
 
         Parameters:
             opt (config dict)-- stores all the experiment flags; needs to be a subclass of Dict
         """
-        BaseModel.__init__(self, opt)
-        # specify the training losses you want to print out. The training/test scripts will call <BaseModel.get_current_losses>
-        # specify the images you want to save/display. The training/test scripts will call <BaseModel.get_current_visuals>
-        self.visual_names = ['real_A', 'fake_B', 'real_B']
-        # specify the models you want to save to the disk.
-        if self.isTrain:
-            self.model_names = ['G', 'D']
-        else:
-            # during test time, only load G
-            self.model_names = ['G']
-
+        super(Pix2PixModel, self).__init__(cfg)
         # define networks (both generator and discriminator)
-        self.netG = build_generator(opt.model.generator)
-        init_weights(self.netG)
+        self.nets['netG'] = build_generator(cfg.model.generator)
+        init_weights(self.nets['netG'])
 
         # define a discriminator; conditional GANs need to take both input and output images; Therefore, #channels for D is input_nc + output_nc
-        if self.isTrain:
-            self.netD = build_discriminator(opt.model.discriminator)
-            init_weights(self.netD)
+        if self.is_train:
+            self.nets['netD'] = build_discriminator(cfg.model.discriminator)
+            init_weights(self.nets['netD'])
 
-        if self.isTrain:
+        if self.is_train:
             self.losses = {}
             # define loss functions
-            self.criterionGAN = GANLoss(opt.model.gan_mode)
+            self.criterionGAN = GANLoss(cfg.model.gan_mode)
             self.criterionL1 = paddle.nn.L1Loss()
 
             # build optimizers
             self.build_lr_scheduler()
-            self.optimizer_G = build_optimizer(
-                opt.optimizer,
+            self.optimizers['optimizer_G'] = build_optimizer(
+                cfg.optimizer,
                 self.lr_scheduler,
-                parameter_list=self.netG.parameters())
-            self.optimizer_D = build_optimizer(
-                opt.optimizer,
+                parameter_list=self.nets['netG'].parameters())
+            self.optimizers['optimizer_D'] = build_optimizer(
+                cfg.optimizer,
                 self.lr_scheduler,
-                parameter_list=self.netD.parameters())
-
-            self.optimizers.append(self.optimizer_G)
-            self.optimizers.append(self.optimizer_D)
-            self.optimizer_names.extend(['optimizer_G', 'optimizer_D'])
+                parameter_list=self.nets['netD'].parameters())
 
     def set_input(self, input):
         """Unpack input data from the dataloader and perform necessary pre-processing steps.
@@ -79,39 +65,40 @@ class Pix2PixModel(BaseModel):
         The option 'direction' can be used to swap images in domain A and domain B.
         """
 
-        AtoB = self.opt.dataset.train.direction == 'AtoB'
-        self.real_A = paddle.to_tensor(input['A' if AtoB else 'B'])
-        self.real_B = paddle.to_tensor(input['B' if AtoB else 'A'])
+        AtoB = self.cfg.dataset.train.direction == 'AtoB'
+
+        # TODO: replace to_varialbe with to_tensor
+        self.real_A = paddle.fluid.dygraph.to_variable(
+            input['A' if AtoB else 'B'])
+        self.real_B = paddle.fluid.dygraph.to_variable(
+            input['B' if AtoB else 'A'])
 
         self.image_paths = input['A_paths' if AtoB else 'B_paths']
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
-        self.fake_B = self.netG(self.real_A)  # G(A)
+        self.fake_B = self.nets['netG'](self.real_A)  # G(A)
 
-    def forward_test(self, input):
-        input = paddle.to_tensor(input)
-        return self.netG(input)
+        # put items to visual dict
+        self.visual_items['fake_B'] = self.fake_B
+        self.visual_items['real_A'] = self.real_A
+        self.visual_items['real_B'] = self.real_B
 
     def backward_D(self):
         """Calculate GAN loss for the discriminator"""
         # Fake; stop backprop to the generator by detaching fake_B
         # use conditional GANs; we need to feed both input and output to the discriminator
         fake_AB = paddle.concat((self.real_A, self.fake_B), 1)
-        pred_fake = self.netD(fake_AB.detach())
+        pred_fake = self.nets['netD'](fake_AB.detach())
         self.loss_D_fake = self.criterionGAN(pred_fake, False)
         # Real
         real_AB = paddle.concat((self.real_A, self.real_B), 1)
-        pred_real = self.netD(real_AB)
+        pred_real = self.nets['netD'](real_AB)
         self.loss_D_real = self.criterionGAN(pred_real, True)
         # combine loss and calculate gradients
         self.loss_D = (self.loss_D_fake + self.loss_D_real) * 0.5
-        if ParallelEnv().nranks > 1:
-            self.loss_D = self.netD.scale_loss(self.loss_D)
-            self.loss_D.backward()
-            self.netD.apply_collective_grads()
-        else:
-            self.loss_D.backward()
+
+        self.loss_D.backward()
 
         self.losses['D_fake_loss'] = self.loss_D_fake
         self.losses['D_real_loss'] = self.loss_D_real
@@ -120,21 +107,16 @@ class Pix2PixModel(BaseModel):
         """Calculate GAN and L1 loss for the generator"""
         # First, G(A) should fake the discriminator
         fake_AB = paddle.concat((self.real_A, self.fake_B), 1)
-        pred_fake = self.netD(fake_AB)
+        pred_fake = self.nets['netD'](fake_AB)
         self.loss_G_GAN = self.criterionGAN(pred_fake, True)
         # Second, G(A) = B
         self.loss_G_L1 = self.criterionL1(self.fake_B,
-                                          self.real_B) * self.opt.lambda_L1
+                                          self.real_B) * self.cfg.lambda_L1
 
         # combine loss and calculate gradients
         self.loss_G = self.loss_G_GAN + self.loss_G_L1
 
-        if ParallelEnv().nranks > 1:
-            self.loss_G = self.netG.scale_loss(self.loss_G)
-            self.loss_G.backward()
-            self.netG.apply_collective_grads()
-        else:
-            self.loss_G.backward()
+        self.loss_G.backward()
 
         self.losses['G_adv_loss'] = self.loss_G_GAN
         self.losses['G_L1_loss'] = self.loss_G_L1
@@ -144,13 +126,13 @@ class Pix2PixModel(BaseModel):
         self.forward()
 
         # update D
-        self.set_requires_grad(self.netD, True)
-        self.optimizer_D.clear_gradients()
+        self.set_requires_grad(self.nets['netD'], True)
+        self.optimizers['optimizer_D'].clear_grad()
         self.backward_D()
-        self.optimizer_D.minimize(self.loss_D)
+        self.optimizers['optimizer_D'].step()
 
         # update G
-        self.set_requires_grad(self.netD, False)
-        self.optimizer_G.clear_gradients()
+        self.set_requires_grad(self.nets['netD'], False)
+        self.optimizers['optimizer_G'].clear_grad()
         self.backward_G()
-        self.optimizer_G.minimize(self.loss_G)
+        self.optimizers['optimizer_G'].step()

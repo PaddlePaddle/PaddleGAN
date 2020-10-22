@@ -25,13 +25,13 @@ class DenseMotionNetwork(nn.Layer):
                                    max_features=max_features,
                                    num_blocks=num_blocks)
 
-        self.mask = nn.Conv2d(self.hourglass.out_filters,
+        self.mask = nn.Conv2D(self.hourglass.out_filters,
                               num_kp + 1,
                               kernel_size=(7, 7),
                               padding=(3, 3))
 
         if estimate_occlusion_map:
-            self.occlusion = nn.Conv2d(self.hourglass.out_filters,
+            self.occlusion = nn.Conv2D(self.hourglass.out_filters,
                                        1,
                                        kernel_size=(7, 7),
                                        padding=(3, 3))
