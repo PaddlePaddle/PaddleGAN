@@ -5,6 +5,7 @@ import paddle.nn.functional as F
 
 from .hook import hook_outputs, model_sizes, dummy_eval
 from ..backbones import resnet34, resnet101
+# from paddle.vision.models import resnet101
 from ...modules.nn import Spectralnorm
 
 
