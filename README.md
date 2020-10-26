@@ -1,43 +1,40 @@
-English | [简体中文](./README_cn.md)
+简体中文 | [English](./README_en.md)
 
 # PaddleGAN
 
-PaddleGAN is an development kit of Generative Adversarial Network based on PaddlePaddle.
+PaddleGAN 是一个基于飞桨的生成对抗网络开发工具包.
 
-### Image Translation
+### 图片变换
 ![](./docs/imgs/A2B.png)
 ![](./docs/imgs/B2A.png)
 
-### Makeup shifter
+### 妆容迁移
 ![](./docs/imgs/makeup_shifter.png)
 
-### Old video restore
+### 老视频修复
 ![](./docs/imgs/color_sr_peking.gif)
 
-### Super resolution
-
+### 超分辨率
 ![](./docs/imgs/sr_demo.png)
 
-### Motion driving
+### 动作驱动
 ![](./docs/imgs/first_order.gif)
 
-Features:
+特性:
 
-- Highly Flexible:
+- 高度的灵活性:
 
-  Components are designed to be modular. Model architectures, as well as data
-preprocess pipelines, can be easily customized with simple configuration
-changes.
+  模块化设计，解耦各个网络组件，开发者轻松搭建、试用各种检测模型及优化策略，快速得到高性能、定制化的算法。
 
-- Rich applications:
+- 丰富的应用:
 
-  PaddleGAN provides rich of applications, such as image generation, image restore, image colorization, video interpolate, makeup shifter.
+  PaddleGAN 提供了非常多的应用，比如说图像生成，图像修复，图像上色，视频补帧，人脸妆容迁移等.
 
-## Install
+## 安装
 
-### 1. install paddlepaddle
+### 1. 安装 paddlepaddle
 
-PaddleGAN work with:
+PaddleGAN 所需的版本:
 * PaddlePaddle >= 2.0.0-rc
 * Python >= 3.5+
 
@@ -45,13 +42,12 @@ PaddleGAN work with:
 pip install -U paddlepaddle-gpu
 ```
 
-### 2. install ppgan
-
+### 2. 安装ppgan
 ```
 python -m pip install 'git+https://github.com/PaddlePaddle/PaddleGAN.git'
 ```
 
-Or install it from a local clone
+或者通过将项目克隆到本地
 ```
 git clone https://github.com/PaddlePaddle/PaddleGAN
 cd PaddleGAN
@@ -59,30 +55,30 @@ cd PaddleGAN
 pip install -v -e .  # or "python setup.py develop"
 ```
 
-## Data Prepare
-Please refer to [data prepare](./docs/data_prepare.md) for dataset preparation.
-
-## Get Start
-Please refer [get started](./docs/get_started.md) for the basic usage of PaddleGAN.
-
-## Model tutorial
-* [Pixel2Pixel and CycleGAN](./docs/tutorials/pix2pix_cyclegan.md)
-* [PSGAN](./docs/tutorials/psgan.md)
-* [Video restore](./docs/tutorails/video_restore.md)
-* [Motion driving](./docs/tutorials/motion_driving.md)
-
-## License
-PaddleGAN is released under the [Apache 2.0 license](LICENSE).
-
-## Contributing
-
-Contributions and suggestions are highly welcomed. Most contributions require you to agree to a [Contributor License Agreement (CLA)](https://cla-assistant.io/PaddlePaddle/PaddleGAN) declaring.
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA. Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
-For more, please reference [contribution guidelines](docs/CONTRIBUTE.md).
+## 数据准备
+请参考 [数据准备](./docs/data_prepare_cn.md) 来准备对应的数据.
 
 
-## External Projects
+## 快速开始
+训练，预测，推理等请参考 [快速开始](./docs/get_started_cn.md).
 
-External gan projects in the community that base on PaddlePaddle:
+## 模型教程
+* [Pixel2Pixel and CycleGAN](./docs/tutorals/pix2pix_cyclegan.md)
+* [PSGAN](./docs/tutorals/psgan.md)
+* [视频修复](./docs/tutorails/video_restore.md)
+* [动作驱动](./docs/tutorials/motion_driving.md)
+
+## 许可证书
+本项目的发布受[Apache 2.0 license](LICENSE)许可认证。
+
+
+## 贡献代码
+
+我们非常欢迎你可以为PaddleGAN提供任何贡献和建议。大多数贡献都需要你同意参与者许可协议（CLA）。当你提交拉取请求时，CLA机器人会自动检查你是否需要提供CLA。 只需要按照机器人提供的说明进行操作即可。CLA只需要同意一次，就能应用到所有的代码仓库上。关于更多的流程请参考[贡献指南](docs/CONTRIBUTE.md)。
+
+
+## 外部项目
+
+外部基于飞桨的生成对抗网络模型
 
 + [PaddleGAN](https://github.com/PaddlePaddle/PaddleGAN)
