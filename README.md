@@ -63,10 +63,10 @@ pip install -v -e .  # or "python setup.py develop"
 训练，预测，推理等请参考 [快速开始](./docs/get_started.md).
 
 ## 模型教程
-* [Pixel2Pixel and CycleGAN](./docs/tutorials/pix2pix_cyclegan.md)
-* [PSGAN](./docs/tutorials/psgan.md)
-* [视频修复](./docs/tutorials/video_restore.md)
-* [动作驱动](./docs/tutorials/motion_driving.md)
+* [Pixel2Pixel and CycleGAN](./docs/tutorals/pix2pix_cyclegan.md)
+* [PSGAN](./docs/tutorals/psgan_cn.md)
+* [视频修复](./docs/tutorails/video_restore.md)
+* [动作驱动](./docs/tutorials/motion_driving_cn.md)
 
 ## 许可证书
 本项目的发布受[Apache 2.0 license](LICENSE)许可认证。
