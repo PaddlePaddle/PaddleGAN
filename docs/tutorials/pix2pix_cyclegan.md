@@ -1,17 +1,27 @@
-# Pix2pix
+# 1 Pix2pix
 
-[Image-to-Image Translation with Conditional Adversarial Networks](https://arxiv.org/abs/1611.07004)
+## 1.1 Principle
 
-## Prepare Datasets
+  Pix2pix uses paired images for image translation, which has two different styles of the same image as input, can be used for style transfer. Pix2pix is encouraged by cGAN, cGAN inputs a noisy image and a condition as the supervision information to the generation network, pix2pix uses another style of image as the supervision information input into the generation network, so the fake image is related to another style of image which is input as supervision information, thus realizing the process of image translation.
+  
+## 1.2 How to use  
+
+### 1.2.1 Prepare Datasets
 
   Paired datasets used by Pix2pix can be download from [here](http://efrosgans.eecs.berkeley.edu/pix2pix/datasets/)
   For example, the structure of facades is as following:
+  ```
     facades
        ├── test
        ├── train
        └── val
+  ```
+  You can download from wget, download facades from wget for example:
+  ```
+    wget https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/facades.zip --no-check-certificate
+  ```
 
-## Train/Test
+### 1.2.2 Train/Test
 
   Datasets used in example is facades, you can change it to your own dataset in the config file.
 
@@ -25,25 +35,29 @@
      python tools/main.py --config-file configs/pix2pix_facades.yaml --evaluate-only --load ${PATH_OF_WEIGHT}
   ```
 
-## Results
+## 1.3 Results
 
 ![](../imgs/horse2zebra.png)
 
-## Principle
-
-  Pix2pix is a general-purpose solution to image-to-image translation problems, these networks not only learn the mapping from input image to output image, but also learn a loss function to train this mapping. 
-
-    
+[model download](TODO)
 
 
-# CycleGAN
 
-[Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks](https://arxiv.org/abs/1703.10593)
+# 2 CycleGAN
 
-## Prepare Datasets
+## 2.1 Principle
+
+   CycleGAN uses unpaired pictures for image translation, input two different images with different styles, and automatically perform style transfer. CycleGAN consists of two generators and two discriminators, generator A is inputting images of style A and outputting images of style B, generator B is inputting images of style B and outputting images of style A. The biggest difference between CycleGAN and pix2pix is that CycleGAN can realize image translation without establishing a one-to-one mapping between the source domain and the target domain.
+
+![](../imgs/cyclegan.png)
+
+## 2.2 How to use
+
+### 2.2.1 Prepare Datasets
 
   Unpair datasets used by CycleGAN can be download from [here](https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/)
   For example, the structure of cityscapes is as following:
+  ```
     cityscapes
         ├── test
         ├── testA
@@ -51,8 +65,13 @@
         ├── train
         ├── trainA
         └── trainB
+  ```
+  You can download from wget, download facades from wget for example:
+  ```
+    wget http://efrosgans.eecs.berkeley.edu/pix2pix/datasets/facades.tar.gz --no-check-certificate
+  ```
 
-## Train/Test
+### 2.2.2 Train/Test
 
   Datasets used in example is cityscapes, you can change it to your own dataset in the config file.
 
@@ -66,10 +85,14 @@
      python tools/main.py --config-file configs/cyclegan_cityscapes.yaml --evaluate-only --load ${PATH_OF_WEIGHT}
   ```
 
-## Results
+## 2.3 Results
 
 ![](../imgs/A2B.png)
 
-## Principle
+[model download](TODO)
 
-  CycleGAN learns a mapping G : X → Y such that the distribution of images from G(X) is indistinguishable from the distribution Y using an adversarial loss.
+
+# References
+
+  1. [Image-to-Image Translation with Conditional Adversarial Networks](https://arxiv.org/abs/1611.07004)
+  2. [Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks](https://arxiv.org/abs/1703.10593)
