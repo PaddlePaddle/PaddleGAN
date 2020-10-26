@@ -77,10 +77,13 @@ class Trainer:
                 self.model.set_input(data)
                 self.model.optimize_parameters()
 
-                batch_cost_averager.record(time.time() - step_start_time)
+                batch_cost_averager.record(
+                    time.time() - step_start_time,
+                    num_samples=self.cfg.get('batch_size', 1))
                 if i % self.log_interval == 0:
                     self.data_time = reader_cost_averager.get_average()
                     self.step_time = batch_cost_averager.get_average()
+                    self.ips = batch_cost_averager.get_ips_average()
                     self.print_log()
 
                     reader_cost_averager.reset()
@@ -197,11 +200,14 @@ class Trainer:
         for k, v in losses.items():
             message += '%s: %.3f ' % (k, v)
 
-        if hasattr(self, 'data_time'):
-            message += 'reader cost: %.5fs ' % self.data_time
-
         if hasattr(self, 'step_time'):
-            message += 'batch cost: %.5fs' % self.step_time
+            message += 'batch_cost: %.5f sec ' % self.step_time
+
+        if hasattr(self, 'data_time'):
+            message += 'reader_cost: %.5f sec ' % self.data_time
+
+        if hasattr(self, 'ips'):
+            message += 'ips: %.5f images/s' % self.ips
 
         # print the message
         self.logger.info(message)
