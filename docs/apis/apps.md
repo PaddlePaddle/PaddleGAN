@@ -1,6 +1,23 @@
 # Applications接口说明
 
+ppgan.apps包含超分、插针、上色、换妆、图像动画生成等应用，接口使用简洁，并内置了已训练好的模型，可以直接用来做应用。
 
+## 公共用法
+
+### CPU和GPU的切换
+
+默认情况下，如果是GPU设备、并且安装了PaddlePaddle的GPU环境包，则默认使用GPU进行推理。否则，如果安装的是CPU环境包，则使用CPU进行推理。如果需要手动切换CPU、GPU，可以通过以下方式:
+
+
+```
+import paddle
+paddle.set_device('cpu')
+#paddle.set_device('gpu')
+
+# from ppgan.apps import DeOldifyPredictor
+# deoldify = DeOldifyPredictor()
+# deoldify.run("docs/imgs/test_old.jpeg")
+```
 
 ## ppgan.apps.DeOldifyPredictor
 
@@ -8,7 +25,7 @@
 ppgan.apps.DeOldifyPredictor(output='output', weight_path=None, render_factor=32)
 ```
 
-> 构建DeOldify实例。DeOldify是一个基于GAN的老照片上色模型。该接口可以对图片或视频做上色。视频需要是mp4格式。
+> 构建DeOldify实例。DeOldify是一个基于GAN的老照片上色模型。该接口可以对图片或视频做上色。建议视频使用mp4格式。
 >
 > **示例**
 >
@@ -83,7 +100,7 @@ run_video(video)
 ppgan.apps.DeepRemasterPredictor(output='output', weight_path=None, colorization=False, reference_dir=None, mindim=360)
 ```
 
-> 构建DeepRemasterPredictor实例。DeepRemaster是一个基于GAN的老照片/视频修复、上色模型，该模型可以提供一个参考色的图片作为输入。该接口目前只支持视频输入，需要是mp4格式。
+> 构建DeepRemasterPredictor实例。DeepRemaster是一个基于GAN的老照片/视频修复、上色模型，该模型可以提供一个参考色的图片作为输入。该接口目前只支持视频输入，建议使用mp4格式。
 >
 > **示例**
 >
@@ -127,7 +144,7 @@ run(video_path)
 ppgan.apps.RealSRPredictor(output='output', weight_path=None)
 ```
 
-> 构建RealSR实例。RealSR: Real-World Super-Resolution via Kernel Estimation and Noise Injection发表于CVPR 2020 Workshops的基于真实世界图像训练的超分辨率模型。此接口对输入图片或视频做4倍的超分辨率。视频需要是mp4格式。
+> 构建RealSR实例。RealSR: Real-World Super-Resolution via Kernel Estimation and Noise Injection发表于CVPR 2020 Workshops的基于真实世界图像训练的超分辨率模型。此接口对输入图片或视频做4倍的超分辨率。建议视频使用mp4格式。
 >
 > **用例**
 >
@@ -198,7 +215,7 @@ run_video(video)
 ppgan.apps.EDVRPredictor(output='output', weight_path=None)
 ```
 
-> 构建RealSR实例。EDVR: Video Restoration with Enhanced Deformable Convolutional Networks，论文链接: https://arxiv.org/abs/1905.02716  ，是一个针对视频超分的模型。该接口，对视频做2倍的超分。视频需要mp4格式。
+> 构建RealSR实例。EDVR: Video Restoration with Enhanced Deformable Convolutional Networks，论文链接: https://arxiv.org/abs/1905.02716  ，是一个针对视频超分的模型。该接口，对视频做2倍的超分。建议视频使用mp4格式。
 >
 > **示例**
 >
