@@ -27,5 +27,10 @@ python tools/ps_demo.py \
 
 注意：训练时makeup.yaml文件中`isTrain`参数值为`True`, 测试时修改该参数值为`False`.
 
+### 2.3 模型
+---|:--:|:--:|:--:|:--:|:--:
+Model|Dataset|BatchSize|Inference speed|Download
+PSGAN|MT-Dataset| 1 | -- | [model]()
+
 ## 3. 妆容迁移结果展示
 ![](../imgs/makeup_shifter.png)

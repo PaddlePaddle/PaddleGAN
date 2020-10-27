@@ -26,5 +26,9 @@ python tools/ps_demo.py \
 
 Notation: In train phase, the `isTrain` value in makeup.yaml file is `True`, but in test phase, its value should be modified as `False`.
 
+### 2.3 Model
+---|:--:|:--:|:--:|:--:|:--:
+Model|Dataset|BatchSize|Inference speed|Download
+PSGAN|MT-Dataset| 1 | -- | [model]()
 ## 3. Result
 ![](../imgs/makeup_shifter.png)
