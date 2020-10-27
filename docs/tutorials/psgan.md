@@ -5,7 +5,7 @@ This paper is to address the makeup transfer task, which aims to transfer the ma
 
 ## 2. How to use
 ### 2.1 Test
-Running the following command to complete the makeup transfer task. It will geneate the transfered image in the current path when the program running sucessfully. We have provided two sample image file for the demo display.
+Running the following command to complete the makeup transfer task. It will geneate the transfered image in the current path when the program running sucessfully.
 
 ```
 python tools/ps_demo.py \  
@@ -21,8 +21,10 @@ python tools/ps_demo.py \
 - reference_dir: Path of the make_up iamge file, don't including the image file name
 
 ### 2.2 Training
-1. Downloading [data]() to the PaddleGAN folder, and uncompress it
+1. Downloading the original makeup transfer [data](https://pan.baidu.com/s/1ZF-DN9PvbBteOSfQodWnyw)(Password:rtdd) to the PaddleGAN folder, and uncompress it. Then downloading the landmarks [data](), and substituting the `landmarks` folder for the orinal `landmarks` folder. In addition, sustituting the `train_makeup.txt` file for the original `makeup.txt` file, and sustituting the `train_non-makeup.txt` file for the original `non-makeup.txt` file.
 2. `python tools/main.py --config-file configs/makeup.yaml`
+
+Notation: In train phase, the `isTrain` value in makeup.yaml file is `True`, but in test phase, its value should be modified as `False`.
 
 ## 3. Result
 ![](../imgs/makeup_shifter.png)

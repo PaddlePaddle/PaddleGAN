@@ -22,8 +22,10 @@ python tools/ps_demo.py \
 - reference_dir: 化妆的参考图片文件路径，不包含图片文件名字
 
 ### 2.2 训练
-1. 下载[data]()到PaddleGANw文件夹, 并解压
+1. 从百度网盘下载原始换妆数据[data](https://pan.baidu.com/s/1ZF-DN9PvbBteOSfQodWnyw)(密码:rtdd)到PaddleGAN文件夹, 并解压。然后下载landmarks数据[lmks]()，解压后的landmarks文件夹替换原始换妆数据中的landmarks文件夹, train_makeup.txt文件替换原始换妆数据集中的makeup.txt文件, train_non-makeup.txt文件替换原始换妆数据集中的non-makeup.txt文件
 2. `python tools/main.py --config-file configs/makeup.yaml`
+
+注意：训练时makeup.yaml文件中`isTrain`参数值为`True`, 测试时修改该参数值为`False`.
 
 ## 3. 妆容迁移结果展示
 ![](../imgs/makeup_shifter.png)
