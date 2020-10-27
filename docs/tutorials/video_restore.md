@@ -2,6 +2,37 @@
 
 老视频往往具有帧数少，无色彩，分辨率低等特点。于是针对这些特点，我们使用补帧，上色，超分等模型对视频进行修复。
 
+### 使用applications中的video-enhance.py工具进行快速开始视频修复
+```
+cd applications
+python tools/video-enhance.py --input you_video_path.mp4 --proccess_order DAIN DeOldify EDVR --output output_dir
+```
+#### 参数
+
+- `--input (str)`: 输入的视频路径。
+- `--output (str)`: 输出的视频路径。
+- `--proccess_order`: 调用的模型名字和顺序，比如输入为 `DAIN DeOldify EDVR`，则会顺序调用 `DAINPredictor` `DeOldifyPredictor` `EDVRPredictor` 。
+
+#### 效果展示
+![](../imgs/color_sr_peking.gif)
+
+
+### 快速体验
+我们在ai studio制作了一个[ai studio 老北京视频修复教程](https://aistudio.baidu.com/aistudio/projectdetail/1161285)
+
+### 注意事项
+
+* 在使用本教程前，请确保您已经[安装完paddle和ppgan]()。
+
+* 本教程的所有命令都基于PaddleGAN/applications主目录进行执行。
+
+* 各个模型耗时较长，尤其使超分辨率模型，建议输入的视频分辨率低一些，时长短一些。
+
+* 需要运行在gpu环境上
+
+### ppgan提供的可用于视频修复的预测api简介
+可以根据要修复的视频的特点，使用不同的模型与参数
+
 ### 补帧模型DAIN
 DAIN 模型通过探索深度的信息来显式检测遮挡。并且开发了一个深度感知的流投影层来合成中间流。在视频补帧方面有较好的效果。
 ![](./imgs/dain_network.png)
@@ -70,6 +101,9 @@ ppgan.apps.RealSRPredictor(output='output', weight_path=None)
 -
 ### 超分辨率模型EDVRPredictor
 EDVR模型提出了一个新颖的视频具有增强可变形卷积的还原框架：第一，为了处理大动作而设计的一个金字塔，级联和可变形（PCD）对齐模块，使用可变形卷积以从粗到精的方式在特征级别完成对齐；第二，提出时空注意力机制（TSA）融合模块，在时间和空间上都融合了注意机制，用以增强复原的功能。
+
+EDVR模型是一个基于连续帧的超分模型，能够有效利用帧间的信息，速度比RealSR模型快。
+
 ![](./imgs/edvr_network.png)
 
 ```
@@ -79,18 +113,3 @@ ppgan.apps.EDVRPredictor(output='output', weight_path=None)
 
 - `output_path (str，可选的)`: 输出的文件夹路径，默认值：`output`.
 - `weight_path (None，可选的)`: 载入的权重路径，如果没有设置，则从云端下载默认的权重到本地。默认值：`None`。
-
-
-### 使用applications中的video-enhance.py工具进行视频修复
-```
-cd applications
-python tools/video-enhance.py --input you_video_path.mp4 --proccess_order DAIN DeOldify EDVR --output output_dir
-```
-#### 参数
-
-- `--input (str)`: 输入的视频路径。
-- `--output (str)`: 输出的视频路径。
-- `--proccess_order`: 调用的模型名字和顺序，比如输入为 `DAIN DeOldify EDVR`，则会顺序调用 `DAINPredictor` `DeOldifyPredictor` `EDVRPredictor` 。
-
-#### 效果展示
-![](../imgs/color_sr_peking.gif)
