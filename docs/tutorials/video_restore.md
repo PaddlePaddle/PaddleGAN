@@ -84,7 +84,7 @@ ppgan.apps.EDVRPredictor(output='output', weight_path=None)
 ### 使用applications中的video-enhance.py工具进行视频修复
 ```
 cd applications
-python tools/video-enhance.py --input /workspace/codes/colorization_paddle_net_weights/video/Peking_input360p_clip_10_11.mp4 --proccess_order DAIN DeOldify EDVR --output output_dir
+python tools/video-enhance.py --input you_video_path.mp4 --proccess_order DAIN DeOldify EDVR --output output_dir
 ```
 #### 参数
 
