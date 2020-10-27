@@ -38,7 +38,7 @@ dataset:
         size: [286, 286]
         interpolation: 'bicubic' #cv2.INTER_CUBIC
       - name: RandomCrop
-        output_size: [256, 256]
+        size: [256, 256]
       - name: RandomHorizontalFlip
         prob: 0.5
       - name: Transpose

@@ -36,7 +36,6 @@ class DAINPredictor(BasePredictor):
                  weight_path=None,
                  time_step=None,
                  use_gpu=True,
-                 key_frame_thread=0.,
                  remove_duplicates=False):
         self.output_path = os.path.join(output_path, 'DAIN')
         if weight_path is None:
@@ -45,7 +44,6 @@ class DAINPredictor(BasePredictor):
 
         self.weight_path = weight_path
         self.time_step = time_step
-        self.key_frame_thread = key_frame_thread
         self.remove_duplicates = remove_duplicates
 
         self.build_inference_model()
@@ -140,9 +138,6 @@ class DAINPredictor(BasePredictor):
             img_first_gray = img_first_gray.flatten(order='C')
             img_second_gray = img_second_gray.flatten(order='C')
             corr = np.corrcoef(img_first_gray, img_second_gray)[0, 1]
-            key_frame = False
-            if corr < self.key_frame_thread:
-                key_frame = True
             '''-------------------------------------------------------'''
 
             X0 = img_first.astype('float32').transpose((2, 0, 1)) / 255

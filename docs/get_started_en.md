@@ -1,7 +1,7 @@
 
-## 快速开始使用PaddleGAN
+## Getting started with PaddleGAN
 
-### 训练
+### Train
 ```
 python -u tools/main.py --config-file configs/cyclegan_cityscapes.yaml
 ```
@@ -16,7 +16,7 @@ multiple gpus train:
 CUDA_VISIBLE_DEVICES=0,1 python -m paddle.distributed.launch tools/main.py --config-file configs/pix2pix_cityscapes.yaml
 ```
 
-### 预测
+### Evaluate
 ```
 python tools/main.py --config-file configs/cyclegan_cityscapes.yaml --evaluate-only --load your_weight_path
 ```

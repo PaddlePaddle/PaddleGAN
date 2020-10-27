@@ -56,17 +56,17 @@ pip install -v -e .  # or "python setup.py develop"
 ```
 
 ## 数据准备
-请参考 [数据准备](./docs/data_prepare_cn.md) 来准备对应的数据.
+请参考 [数据准备](./docs/data_prepare.md) 来准备对应的数据.
 
 
 ## 快速开始
-训练，预测，推理等请参考 [快速开始](./docs/get_started_cn.md).
+训练，预测，推理等请参考 [快速开始](./docs/get_started.md).
 
 ## 模型教程
 * [Pixel2Pixel and CycleGAN](./docs/tutorals/pix2pix_cyclegan.md)
 * [PSGAN](./docs/tutorals/psgan.md)
 * [视频修复](./docs/tutorails/video_restore.md)
-* [动作驱动](./docs/tutorials/motion_driving.md)
+* [动作驱动](./docs/tutorails/motion_driving.md)
 
 ## 许可证书
 本项目的发布受[Apache 2.0 license](LICENSE)许可认证。
