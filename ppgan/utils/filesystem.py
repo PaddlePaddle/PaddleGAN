@@ -6,7 +6,11 @@ import paddle
 
 def makedirs(dir):
     if not os.path.exists(dir):
-        os.makedirs(dir)
+        # avoid error when train with multiple gpus
+        try:
+            os.makedirs(dir)
+        except:
+            pass
 
 
 def save(state_dicts, file_name):
