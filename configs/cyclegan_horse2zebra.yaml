@@ -6,21 +6,20 @@ lambda_identity: 0.5
 
 model:
   name: CycleGANModel
-  defaults: &defaults
-    norm_type: instance
-    input_nc: 3
   generator:
     name: ResnetGenerator
     output_nc: 3
     n_blocks: 9
     ngf: 64
     use_dropout: False
-    <<: *defaults
+    norm_type: instance
+    input_nc: 3
   discriminator:
     name: NLayerDiscriminator
     ndf: 64
     n_layers: 3
-    <<: *defaults
+    norm_type: instance
+    input_nc: 3
   gan_mode: lsgan
 
 dataset:
@@ -39,7 +38,7 @@ dataset:
         size: [286, 286]
         interpolation: 'bicubic' #cv2.INTER_CUBIC
       - name: RandomCrop
-        output_size: [256, 256]
+        size: [256, 256]
       - name: RandomHorizontalFlip
         prob: 0.5
       - name: Transpose
@@ -55,8 +54,7 @@ dataset:
     output_nc: 3
     serial_batches: False
     pool_size: 50
-    transform:
-      transform:
+    transforms:
       - name: Resize
         size: [256, 256]
         interpolation: 'bicubic' #cv2.INTER_CUBIC

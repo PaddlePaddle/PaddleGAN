@@ -4,13 +4,13 @@ from .base_dataset import BaseDataset, get_transform
 from .image_folder import make_dataset
 
 from .builder import DATASETS
+from .transforms.builder import build_transforms
 
 
 @DATASETS.register()
 class SingleDataset(BaseDataset):
     """
     """
-
     def __init__(self, cfg):
         """Initialize this dataset class.
 
@@ -20,7 +20,7 @@ class SingleDataset(BaseDataset):
         BaseDataset.__init__(self, cfg)
         self.A_paths = sorted(make_dataset(cfg.dataroot, cfg.max_dataset_size))
         input_nc = self.cfg.output_nc if self.cfg.direction == 'BtoA' else self.cfg.input_nc
-        self.transform = get_transform(cfg.transform, grayscale=(input_nc == 1))
+        self.transform = build_transforms(self.cfg.transforms)
 
     def __getitem__(self, index):
         """Return a data point and its metadata information.

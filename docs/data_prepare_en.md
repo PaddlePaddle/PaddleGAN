@@ -1,6 +1,6 @@
-## 数据准备
+## data prepare
 
-推荐把数据集软链接到 `$PaddleGAN/data`. 软链接后的目录结构如下图所示：
+It is recommended to symlink the dataset root to `$PaddleGAN/data`.
 
 ```
 PaddleGAN
@@ -28,8 +28,8 @@ PaddleGAN
 
 ```
 
-### cyclegan 相关的数据集下载
-cyclgan模型相关的数据集可以在[这里](https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/)下载
+### cyclegan datasets
+more dataset for cyclegan you can download from [here](https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/)
 
-### pix2pix 相关的数据集下载
-pixel2pixel模型相关的数据集可以在[这里](hhttps://people.eecs.berkeley.edu/~tinghuiz/projects/pix2pix/datasets/)下载
+### pix2pix datasets
+more dataset for pix2pix you can download from [here](hhttps://people.eecs.berkeley.edu/~tinghuiz/projects/pix2pix/datasets/)
