@@ -47,7 +47,7 @@ dataset:
         std: [127.5, 127.5, 127.5]
   test:
     name: SingleDataset
-    dataroot: /workspace/notebooks/horses_frames/
+    dataroot: data/horse2zebra/testA
     max_dataset_size: inf
     direction: AtoB
     input_nc: 3
