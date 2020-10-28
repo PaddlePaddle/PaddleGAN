@@ -273,7 +273,7 @@ class PixelShuffle_ICNR(nn.Layer):
         self.shuf = PixelShuffle(scale)
 
         self.pad = ReplicationPad2d([1, 0, 1, 0])
-        self.blur = nn.Pool2D(2, pool_stride=1, pool_type='avg')
+        self.blur = nn.AvgPool2D(2, stride=1)
         self.relu = relu(True, leaky=leaky)
 
     def forward(self, x):
@@ -339,7 +339,7 @@ class CustomPixelShuffle_ICNR(nn.Layer):
         self.shuf = PixelShuffle(scale)
 
         self.pad = ReplicationPad2d([1, 0, 1, 0])
-        self.blur = nn.Pool2D(2, pool_stride=1, pool_type='avg')
+        self.blur = nn.AvgPool2D(2, stride=1)
         self.relu = nn.LeakyReLU(
             leaky) if leaky is not None else nn.ReLU()  #relu(True, leaky=leaky)
 

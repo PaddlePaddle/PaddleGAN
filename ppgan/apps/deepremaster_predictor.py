@@ -79,6 +79,7 @@ class DeepRemasterPredictor(BasePredictor):
         if weight_path is None:
             cur_path = os.path.abspath(os.path.dirname(__file__))
             weight_path = get_path_from_url(DEEPREMASTER_WEIGHT_URL, cur_path)
+            print(weight_path)
 
         self.weight_path = weight_path
 

@@ -1,5 +1,4 @@
 import paddle
-from paddle.distributed import ParallelEnv
 from .base_model import BaseModel
 
 from .builder import MODELS
