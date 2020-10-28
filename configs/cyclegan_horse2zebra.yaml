@@ -47,15 +47,14 @@ dataset:
         std: [127.5, 127.5, 127.5]
   test:
     name: SingleDataset
-    dataroot: data/horse2zebra/testA
+    dataroot: /workspace/notebooks/horses_frames/
     max_dataset_size: inf
     direction: AtoB
     input_nc: 3
     output_nc: 3
     serial_batches: False
     pool_size: 50
-    transform:
-      transform:
+    transforms:
       - name: Resize
         size: [256, 256]
         interpolation: 'bicubic' #cv2.INTER_CUBIC
