@@ -1,6 +1,6 @@
 ## data prepare
 
-It is recommended to symlink the dataset root to `$PaddleGAN/data`.
+The config will suppose your data put in `$PaddleGAN/data`. You can symlink your datasets to `$PaddleGAN/data`.
 
 ```
 PaddleGAN
@@ -29,7 +29,7 @@ PaddleGAN
 ```
 
 if you put your datasets on other place，for example ```your/data/path```,
-you can change ```dataroot``` in config file:
+you can also change ```dataroot``` in config file:
 
 ```
 dataset:
@@ -54,7 +54,7 @@ run following command. Dataset will be downloaded to ```~/.cache/ppgan``` and sy
 python data/download_cyclegan_data.py --name horse2zebra
 ```
 
-#### Custom dataset
+#### custom dataset
 Data should be arranged in following way if you use custom dataset.
 ```
 custom_datasets

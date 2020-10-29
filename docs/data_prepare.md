@@ -1,6 +1,6 @@
 ## 数据准备
 
-推荐把数据集软链接到 `$PaddleGAN/data`. 软链接后的目录结构如下图所示：
+现有的配置默认数据集的路径是在`$PaddleGAN/data`下，目录结构如下图所示。如果你已经下载好数据集了，建议将数据集软链接到 `$PaddleGAN/data`。
 
 ```
 PaddleGAN
@@ -28,7 +28,7 @@ PaddleGAN
 
 ```
 
-如果数据集放在其他位置，比如 ```your/data/path```，
+如果将数据集放在其他位置，比如 ```your/data/path```，
 你可以修改配置文件中的 ```dataroot``` 参数:
 
 ```
