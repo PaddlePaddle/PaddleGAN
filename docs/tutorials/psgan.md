@@ -71,6 +71,6 @@ Notation: In train phase, the `isTrain` value in makeup.yaml file is `True`, but
 ### 2.3 Model
 Model|Dataset|BatchSize|Inference speed|Download
 ---|:--:|:--:|:--:|:--:
-PSGAN|MT-Dataset| 1 | 1.9s | [model]()
+PSGAN|MT-Dataset| 1 | 1.9s(GPU:P40) | [model]()
 ## 3. Result
 ![](../imgs/makeup_shifter.png)

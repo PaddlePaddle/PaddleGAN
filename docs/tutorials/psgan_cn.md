@@ -69,7 +69,7 @@ data
 ### 2.3 模型
 Model|Dataset|BatchSize|Inference speed|Download
 ---|:--:|:--:|:--:|:--:
-PSGAN|MT-Dataset| 1 | 1.9s | [model]()
+PSGAN|MT-Dataset| 1 | 1.9s(GPU:P40) | [model]()
 
 ## 3. 妆容迁移结果展示
 ![](../imgs/makeup_shifter.png)
