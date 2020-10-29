@@ -17,6 +17,7 @@ import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
 from paddle.vision.models import vgg16
+from paddle.utils.download import get_path_from_url
 from .base_model import BaseModel
 
 from .builder import MODELS
@@ -28,6 +29,8 @@ from ..solver import build_optimizer
 from ..utils.image_pool import ImagePool
 from ..utils.preprocess import *
 from ..datasets.makeup_dataset import MakeupDataset
+
+VGGFACE_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/vggface.pdparams'
 
 
 @MODELS.register()
@@ -50,8 +53,13 @@ class MakeupModel(BaseModel):
         init_weights(self.nets['netG'], init_type='xavier', init_gain=1.0)
 
         if self.is_train:  # define discriminators
-            vgg = vgg16(pretrained=True)
+            vgg = vgg16(pretrained=False)
             self.vgg = vgg.features
+            cur_path = os.path.abspath(os.path.dirname(__file__))
+            vgg_weight_path = get_path_from_url(VGGFACE_WEIGHT_URL, cur_path)
+            param = paddle.load(vgg_weight_path)
+            vgg.load_dict(param)
+
             self.nets['netD_A'] = build_discriminator(cfg.model.discriminator)
             self.nets['netD_B'] = build_discriminator(cfg.model.discriminator)
             init_weights(self.nets['netD_A'], init_type='xavier', init_gain=1.0)
