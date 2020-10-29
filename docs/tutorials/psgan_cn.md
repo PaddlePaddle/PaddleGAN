@@ -32,20 +32,21 @@ mv landmarks/non-makeup MT-Dataset/landmarks/non-makeup
 mv landmarks/train_makeup.txt MT-Dataset/makeup.txt
 mv tlandmarks/train_non-makeup.txt MT-Dataset/non-makeup.txt
 
-```
 最后数据集目录如下所示：
+```
 data
 ├── images
-│   ├── makeup
-│   └── non-makeup
+│   ├── makeup
+│   └── non-makeup
 ├── landmarks
-│   ├── makeup
-│   └── non-makeup
-├── train_makeup.txt
-├── train_non-makeup.txt
+│   ├── makeup
+│   └── non-makeup
+├── makeup.txt
+├── non-makeup.txt
 ├── segs
-│   ├── makeup
-│   └── non-makeup
+│   ├── makeup
+│   └── non-makeup
+```
 
 4. `python tools/main.py --config-file configs/makeup.yaml` ，训练参数设置参考makeup.yaml.
 单卡batch_size=1训练部分log如下所示：
@@ -65,8 +66,8 @@ data
 注意：训练时makeup.yaml文件中`isTrain`参数值为`True`, 测试时修改该参数值为`False` .
 
 ### 2.3 模型
----|:--:|:--:|:--:|:--:
 Model|Dataset|BatchSize|Inference speed|Download
+---|:--:|:--:|:--:|:--:
 PSGAN|MT-Dataset| 1 | 1.9s | [model]()
 
 ## 3. 妆容迁移结果展示

@@ -31,8 +31,9 @@ mv landmarks/non-makeup MT-Dataset/landmarks/non-makeup
 mv landmarks/train_makeup.txt MT-Dataset/makeup.txt
 mv tlandmarks/train_non-makeup.txt MT-Dataset/non-makeup.txt
 
-```
 The final data directory should be looked like:
+
+```
 data
 ├── images
 │   ├── makeup
@@ -45,6 +46,8 @@ data
 ├── segs
 │   ├── makeup
 │   └── non-makeup
+```
+
 2. `python tools/main.py --config-file configs/makeup.yaml`
 
 The training log looks like:
@@ -65,8 +68,8 @@ The training log looks like:
 Notation: In train phase, the `isTrain` value in makeup.yaml file is `True`, but in test phase, its value should be modified as `False`.
 
 ### 2.3 Model
----|:--:|:--:|:--:|:--:|:--:
 Model|Dataset|BatchSize|Inference speed|Download
-PSGAN|MT-Dataset| 1 | -- | [model]()
+---|:--:|:--:|:--:|:--:
+PSGAN|MT-Dataset| 1 | 1.9s | [model]()
 ## 3. Result
 ![](../imgs/makeup_shifter.png)
