@@ -39,7 +39,7 @@ dataset:
     num_workers: 4
 ```
 
-### cyclegan 模型相关的数据集下载
+### CycleGAN模型相关的数据集下载
 
 #### 已有的数据集下载
 
@@ -47,7 +47,7 @@ dataset:
 cyclgan模型相关的数据集可以在[这里](https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/)下载
 
 ##### 使用脚本下载
-我们在 ```PaddleGAN/data``` 文件夹下提供了一个脚本 ```download_cyclegan_data.py``` 方便下载cyclegan相关的
+我们在 ```PaddleGAN/data``` 文件夹下提供了一个脚本 ```download_cyclegan_data.py``` 方便下载CycleGAN相关的
 数据集。执行如下命令可以下载相关的数据集，目前支持的数据集名称有：apple2orange, summer2winter_yosemite,horse2zebra, monet2photo, cezanne2photo, ukiyoe2photo, vangogh2photo, maps, cityscapes, facades, iphone2dslr_flower, ae_photos, cityscapes。
 
 执行如下命令，可以下载对应的数据集到 ```~/.cache/ppgan``` 并软连接到 ```PaddleGAN/data/``` 下。
@@ -64,7 +64,7 @@ custom_datasets
 └── trainB
 ```
 
-### pix2pix 相关的数据集下载
+### Pix2Pix相关的数据集下载
 
 #### 已有的数据集下载
 

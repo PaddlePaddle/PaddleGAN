@@ -39,12 +39,12 @@ dataset:
     num_workers: 4
 ```
 
-### datasets of cityscape
+### Datasets of CycleGAN
 
 #### download existed datasets
 
 ##### download form website
-datasets for cyclegan you can download from [here](https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/)
+datasets for CycleGAN you can download from [here](https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/)
 
 ##### download by script
 You can use ```download_cyclegan_data.py``` in ```PaddleGAN/data``` to download datasets you wanted. Supported datasets are: apple2orange, summer2winter_yosemite,horse2zebra, monet2photo, cezanne2photo, ukiyoe2photo, vangogh2photo, maps, cityscapes, facades, iphone2dslr_flower, ae_photos, cityscapes。
@@ -64,7 +64,7 @@ custom_datasets
 └── trainB
 ```
 
-### datasets of pix2pix
+### Datasets of Pix2Pix
 
 #### download existed datasets
 

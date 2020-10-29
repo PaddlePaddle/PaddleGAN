@@ -6,7 +6,7 @@
 * Python >= 3.5+
 * CUDA >= 9.0
 
-### 1. 安装paddle
+### 1. 安装PaddlePaddle
 ```
 pip install -U paddlepaddle-gpu==2.0.0rc0
 ```

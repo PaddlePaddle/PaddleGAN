@@ -6,7 +6,7 @@
 * Python >= 3.5+
 * CUDA >= 9.0
 
-### 1. install paddle
+### 1. Install PaddlePaddle
 ```
 pip install -U paddlepaddle-gpu==2.0.0rc0
 ```
@@ -25,7 +25,7 @@ Note: command above will install paddle with cuda10.2，if your installed cuda i
 </code></pre> </details> </td> </tr></tbody></table>
 
 
-### 2. install ppgan
+### 2. Install ppgan
 
 ```
 git clone https://github.com/PaddlePaddle/PaddleGAN
