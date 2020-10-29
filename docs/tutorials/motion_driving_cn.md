@@ -16,7 +16,7 @@ First order motion model的任务是image animation，给定一张源图片，�
 
 `python -u tools/first-order-demo.py  --driving_video ./ravel_10.mp4  --source_image ./sudaqiang.png --relative --adapt_scale`
 
-** 参数说明: **
+**参数说明:**
 - driving_video: 驱动视频，视频中人物的表情动作作为待迁移的对象
 - source_image: 原始图片，视频中人物的表情动作将迁移到该原始图片中的人物上
 - relative: 指示程序中使用视频和图片中人物关键点的相对坐标还是绝对坐标，建议使用相对坐标，若使用绝对坐标，会导致迁移后人物扭曲变形

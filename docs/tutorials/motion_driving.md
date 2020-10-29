@@ -11,7 +11,7 @@ Users can upload the prepared source image and driving video, then substitute th
 
 `python -u tools/first-order-demo.py  --driving_video ./ravel_10.mp4  --source_image ./sudaqiang.png --relative --adapt_scale`
 
-** params: **
+**params:**
 - driving_video: driving video, the motion of the driving video is to be migrated.
 - source_image: source_image, the image will be animated according to the motion of the driving video.
 - relative: indicate whether the relative or absolute coordinates of the key points in the video are used in the program. It is recommended to use relative coordinates. If absolute coordinates are used, the characters will be distorted after animation.
