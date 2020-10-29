@@ -67,9 +67,9 @@ Please refer [get started](./docs/get_started.md) for the basic usage of PaddleG
 
 ## Model tutorial
 * [Pixel2Pixel and CycleGAN](./docs/tutorials/pix2pix_cyclegan.md)
-* [PSGAN](./docs/tutorials/psgan.md)
+* [PSGAN](./docs/tutorials/psgan_en.md)
 * [Video restore](./docs/tutorails/video_restore.md)
-* [Motion driving](./docs/tutorials/motion_driving.md)
+* [Motion driving](./docs/tutorials/motion_driving_en.md)
 
 ## License
 PaddleGAN is released under the [Apache 2.0 license](LICENSE).

@@ -1,21 +1,27 @@
-# Fist order motion model
+# First order motion model
 
-## 1. First order motion model introduction
+## 1. First order motion model原理
 
-First order motion model is to complete the Image animation task, which consists of generating a video sequence so that an object in a source image is animated according to the motion of a driving video. The first order motion framework addresses this problem without using any annotation or prior information about the specific object to animate. Once trained on a set of videos depicting objects of the same category (e.g. faces, human bodies), this method can be applied to any object of this class. To achieve this, the innovative method decouple appearance and motion information using a self-supervised formulation. In addition, to support complex motions, it use a representation consisting of a set of learned keypoints along with their local affine transformations. A generator network models occlusions arising during target motions and combines the appearance extracted from the source image and the motion derived from the driving video.
+First order motion model的任务是image animation，给定一张源图片，给定一个驱动视频，生成一段视频，其中主角是源图片，动作是驱动视频中的动作。如下图所示，源图像通常包含一个主体，驱动视频包含一系列动作。
+
 ![](../imgs/fom_demo.png)
 
-## How to use
+以左上角的人脸表情迁移为例，给定一个源人物，给定一个驱动视频，可以生成一个视频，其中主体是源人物，视频中源人物的表情是由驱动视频中的表情所确定的。通常情况下，我们需要对源人物进行人脸关键点标注、进行表情迁移的模型训练。
 
-Users can upload the prepared source image and driving video, then substitute the path of source image and driving video for the `source_image` and `driving_video` parameter in the following running command. It will geneate a video file named `result.mp4` in the `output` folder, which is the animated video file.
+但是这篇文章提出的方法只需要在同类别物体的数据集上进行训练即可，比如实现太极动作迁移就用太极视频数据集进行训练，想要达到表情迁移的效果就使用人脸视频数据集voxceleb进行训练。训练好后，我们使用对应的预训练模型就可以达到前言中实时image animation的操作。
+
+## 2. 使用方法
+
+用户可以上传自己准备的视频和图片，并在如下命令中的source_image参数和driving_video参数分别换成自己的图片和视频路径，然后运行如下命令，就可以完成动作表情迁移，程序运行成功后，会在ouput文件夹生成名为result.mp4的视频文件，该文件即为动作迁移后的视频。本项目中提供了原始图片和驱动视频供展示使用。运行的命令如下所示：
 
 `python -u tools/first-order-demo.py  --driving_video ./ravel_10.mp4  --source_image ./sudaqiang.png --relative --adapt_scale`
 
-**params:**
-- driving_video: driving video, the motion of the driving video is to be migrated.
-- source_image: source_image, the image will be animated according to the motion of the driving video.
-- relative: indicate whether the relative or absolute coordinates of the key points in the video are used in the program. It is recommended to use relative coordinates. If absolute coordinates are used, the characters will be distorted after animation.
-- adapt_scale: adapt movement scale based on convex hull of keypoints.
+**参数说明:**
+- driving_video: 驱动视频，视频中人物的表情动作作为待迁移的对象
+- source_image: 原始图片，视频中人物的表情动作将迁移到该原始图片中的人物上
+- relative: 指示程序中使用视频和图片中人物关键点的相对坐标还是绝对坐标，建议使用相对坐标，若使用绝对坐标，会导致迁移后人物扭曲变形
+- adapt_scale: 根据关键点凸包自适应运动尺度
 
-## 3. Animation results
+
+## 3. 生成结果展示
 ![](../imgs/first_order.gif)
