@@ -26,6 +26,7 @@ from paddle.fluid.dygraph.base import to_variable
 try:
     from tqdm import tqdm
 except:
+
     def tqdm(x):
         return x
 
@@ -131,7 +132,13 @@ def calculate_fid_given_img(img_fake,
     return fid_value
 
 
-def _get_activations(files, model, batch_size, dims, use_gpu, premodel_path, style=None):
+def _get_activations(files,
+                     model,
+                     batch_size,
+                     dims,
+                     use_gpu,
+                     premodel_path,
+                     style=None):
     if len(files) % batch_size != 0:
         print(('Warning: number of images is not a multiple of the '
                'batch size. Some samples are going to be ignored.'))
@@ -159,8 +166,7 @@ def _get_activations(files, model, batch_size, dims, use_gpu, premodel_path, sty
 
                 img_list.append(np.array(im).astype('float32'))
 
-            images = np.array(
-                img_list)
+            images = np.array(img_list)
         else:
             images = np.array(
                 [imread(str(f)).astype(np.float32) for f in files[start:end]])
@@ -179,7 +185,7 @@ def _get_activations(files, model, batch_size, dims, use_gpu, premodel_path, sty
             std = np.array([0.229, 0.224, 0.225]).astype('float32')
             images[:] = (images[:] - mean[:, None, None]) / std[:, None, None]
 
-        if style=='stargan':
+        if style == 'stargan':
             pred_arr[start:end] = inception_infer(images, premodel_path)
         else:
             with fluid.dygraph.guard():
@@ -197,10 +203,11 @@ def _get_activations(files, model, batch_size, dims, use_gpu, premodel_path, sty
 
 def inception_infer(x, model_path):
     exe = fluid.Executor()
-    [inference_program, feed_target_names, fetch_targets] = fluid.io.load_inference_model(model_path, exe)
+    [inference_program, feed_target_names,
+     fetch_targets] = fluid.io.load_inference_model(model_path, exe)
     results = exe.run(inference_program,
-                  feed={feed_target_names[0]: x},
-                  fetch_list=fetch_targets)
+                      feed={feed_target_names[0]: x},
+                      fetch_list=fetch_targets)
     return results[0]
 
 
@@ -210,7 +217,7 @@ def _calculate_activation_statistics(files,
                                      batch_size=50,
                                      dims=2048,
                                      use_gpu=False,
-                                     style = None):
+                                     style=None):
     act = _get_activations(files, model, batch_size, dims, use_gpu,
                            premodel_path, style)
     mu = np.mean(act, axis=0)
@@ -218,8 +225,13 @@ def _calculate_activation_statistics(files,
     return mu, sigma
 
 
-def _compute_statistics_of_path(path, model, batch_size, dims, use_gpu,
-                                premodel_path, style=None):
+def _compute_statistics_of_path(path,
+                                model,
+                                batch_size,
+                                dims,
+                                use_gpu,
+                                premodel_path,
+                                style=None):
     if path.endswith('.npz'):
         f = np.load(path)
         m, s = f['mu'][:], f['sigma'][:]
@@ -231,7 +243,8 @@ def _compute_statistics_of_path(path, model, batch_size, dims, use_gpu,
                     filenames, '*.jpg') or fnmatch.filter(filenames, '*.png'):
                 files.append(os.path.join(root, filename))
         m, s = _calculate_activation_statistics(files, model, premodel_path,
-                                                batch_size, dims, use_gpu, style)
+                                                batch_size, dims, use_gpu,
+                                                style)
     return m, s
 
 
@@ -241,7 +254,7 @@ def calculate_fid_given_paths(paths,
                               use_gpu,
                               dims,
                               model=None,
-                              style = None):
+                              style=None):
     assert os.path.exists(
         premodel_path
     ), 'pretrain_model path {} is not exists! Please download it first'.format(

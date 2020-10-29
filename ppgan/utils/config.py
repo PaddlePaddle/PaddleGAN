@@ -14,7 +14,6 @@
 import os
 import yaml
 
-
 __all__ = ['get_config']
 
 
@@ -65,7 +64,6 @@ def override(dl, ks, v):
         ks(list): list of keys
         v(str): value to be replaced
     """
-
     def str2num(v):
         try:
             return eval(v)
@@ -104,8 +102,8 @@ def override_config(config, options=None):
     """
     if options is not None:
         for opt in options:
-            assert isinstance(opt, str), (
-                "option({}) should be a str".format(opt))
+            assert isinstance(opt,
+                              str), ("option({}) should be a str".format(opt))
             assert "=" in opt, (
                 "option({}) should contain a ="
                 "to distinguish between key and value".format(opt))
@@ -122,8 +120,7 @@ def get_config(fname, overrides=None, show=True):
     """
     Read config from file
     """
-    assert os.path.exists(fname), (
-        'config file({}) is not exist'.format(fname))
+    assert os.path.exists(fname), ('config file({}) is not exist'.format(fname))
     config = parse_config(fname)
     override_config(config, overrides)
 

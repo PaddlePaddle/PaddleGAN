@@ -38,9 +38,10 @@ def parse_args():
                         type=int,
                         default=1,
                         help='sample number in a batch for inference.')
-    parser.add_argument('--style',
-                        type=str,
-                        help='calculation style: stargan or default (gan-compression style)')
+    parser.add_argument(
+        '--style',
+        type=str,
+        help='calculation style: stargan or default (gan-compression style)')
     args = parser.parse_args()
     return args
 
@@ -53,8 +54,12 @@ def main():
     inference_model_path = args.inference_model
     batch_size = args.batch_size
 
-    fid_value = calculate_fid_given_paths(paths, inference_model_path,
-                                          batch_size, args.use_gpu, 2048, style=args.style)
+    fid_value = calculate_fid_given_paths(paths,
+                                          inference_model_path,
+                                          batch_size,
+                                          args.use_gpu,
+                                          2048,
+                                          style=args.style)
     print('FID: ', fid_value)
 
 

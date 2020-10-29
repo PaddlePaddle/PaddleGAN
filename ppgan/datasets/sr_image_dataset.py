@@ -1,4 +1,17 @@
-# import mmcv
+#  Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+
 import os
 import cv2
 import random
@@ -33,12 +46,14 @@ def scandir(dir_path, suffix=None, recursive=False):
                     yield rel_path
             else:
                 if recursive:
-                    yield from _scandir(
-                        entry.path, suffix=suffix, recursive=recursive)
+                    yield from _scandir(entry.path,
+                                        suffix=suffix,
+                                        recursive=recursive)
                 else:
                     continue
 
     return _scandir(dir_path, suffix=suffix, recursive=recursive)
+
 
 def paired_paths_from_folder(folders, keys, filename_tmpl):
     """Generate paired paths from folders.
@@ -69,6 +84,7 @@ def paired_paths_from_folder(folders, keys, filename_tmpl):
             dict([(f'{input_key}_path', input_path),
                   (f'{gt_key}_path', gt_path)]))
     return paths
+
 
 def paired_random_crop(img_gts, img_lqs, gt_patch_size, scale, gt_path):
     """Paired random crop.
@@ -180,7 +196,6 @@ def augment(imgs, hflip=True, rotation=True, flows=None):
 @DATASETS.register()
 class SRImageDataset(Dataset):
     """Paired image dataset for image restoration."""
-
     def __init__(self, cfg):
         super(SRImageDataset, self).__init__()
         self.cfg = cfg
