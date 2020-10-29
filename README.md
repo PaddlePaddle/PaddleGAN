@@ -32,7 +32,7 @@ PaddleGAN 是一个基于飞桨的生成对抗网络开发工具包.
 
 ## 安装
 
-请参考[安装文档](./docs/install.md)来进行paddle和ppgan的安装
+请参考[安装文档](./docs/install.md)来进行PaddlePaddle和ppgan的安装
 
 ## 数据准备
 请参考[数据准备](./docs/data_prepare.md) 来准备对应的数据.

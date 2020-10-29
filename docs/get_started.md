@@ -3,7 +3,7 @@
 
 注意：
 * 开始使用PaddleGAN前请确保已经阅读过[安装文档](./install.md)，并根据[数据准备文档](./data_prepare.md)准备好数据集。
-* 以下教程以cyclegan模型在cityscapes数据集上的训练预测作为示例。
+* 以下教程以CycleGAN模型在Cityscapes数据集上的训练预测作为示例。
 
 
 ### 训练
