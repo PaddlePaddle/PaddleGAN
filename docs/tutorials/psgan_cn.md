@@ -31,6 +31,7 @@ mv landmarks/makeup MT-Dataset/landmarks/makeup
 mv landmarks/non-makeup MT-Dataset/landmarks/non-makeup
 mv landmarks/train_makeup.txt MT-Dataset/makeup.txt
 mv tlandmarks/train_non-makeup.txt MT-Dataset/non-makeup.txt
+```
 
 最后数据集目录如下所示：
 ```
