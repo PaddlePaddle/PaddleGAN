@@ -47,8 +47,8 @@ data
 │   ├── makeup
 │   └── non-makeup
 
-4. `python tools/main.py --config-file configs/makeup.yaml`
-训练部分log如下所示：
+4. `python tools/main.py --config-file configs/makeup.yaml` ，训练参数设置参考makeup.yaml.
+单卡batch_size=1训练部分log如下所示：
 ```
 [10/29 05:39:40] ppgan.engine.trainer INFO: Epoch: 0, iters: 0 lr: 0.000200 D_A: 0.448 G_A: 0.973 rec: 1.258 idt: 0.624 D_B: 0.436 G_B: 0.889 G_A_his: 0.402 G_B_his: 0.472 G_bg_consis: 0.030 A_vgg: 0.027 B_vgg: 0.040 reader cost: 2.45463s batch cost: 4.20075s
 [10/29 05:40:00] ppgan.engine.trainer INFO: Epoch: 0, iters: 10 lr: 0.000200 D_A: 0.200 G_A: 0.488 rec: 0.954 idt: 0.539 D_B: 0.179 G_B: 0.767 G_A_his: 0.224 G_B_his: 0.266 G_bg_consis: 0.033 A_vgg: 0.019 B_vgg: 0.026 reader cost: 0.55506s batch cost: 1.95968s
@@ -62,7 +62,7 @@ data
 [10/29 05:42:43] ppgan.engine.trainer INFO: Epoch: 0, iters: 90 lr: 0.000200 D_A: 0.177 G_A: 0.308 rec: 0.970 idt: 0.494 D_B: 0.199 G_B: 0.813 G_A_his: 0.116 G_B_his: 0.153 G_bg_consis: 0.036 A_vgg: 0.019 B_vgg: 0.042 reader cost: 0.62142s batch cost: 1.96606s
 [10/29 05:43:03] ppgan.engine.trainer INFO: Epoch: 0, iters: 100 lr: 0.000200 D_A: 0.178 G_A: 0.382 rec: 1.358 idt: 0.607 D_B: 0.265 G_B: 0.405 G_A_his: 0.086 G_B_his: 0.161 G_bg_consis: 0.060 A_vgg: 0.025 B_vgg: 0.047 reader cost: 0.63939s batch cost: 2.00111s
 ```
-注意：训练时makeup.yaml文件中`isTrain`参数值为`True`, 测试时修改该参数值为`False` 。目前只支持单卡训练。
+注意：训练时makeup.yaml文件中`isTrain`参数值为`True`, 测试时修改该参数值为`False` .
 
 ### 2.3 模型
 ---|:--:|:--:|:--:|:--:
