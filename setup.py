@@ -36,9 +36,7 @@ setup(
     description='Awesome GAN toolkits based on PaddlePaddle',
     url='https://github.com/PaddlePaddle/PaddleGAN',
     download_url='https://github.com/PaddlePaddle/PaddleGAN.git',
-    keywords=[
-        'gan paddlegan'
-    ],
+    keywords=['gan paddlegan'],
     classifiers=[
         'Intended Audience :: Developers', 'Operating System :: OS Independent',
         'Natural Language :: Chinese (Simplified)',
@@ -46,4 +44,5 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7', 'Topic :: Utilities'
-    ], )
+    ],
+)

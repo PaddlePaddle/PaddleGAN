@@ -1,3 +1,17 @@
+#   Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import random
 import paddle
 
@@ -8,7 +22,6 @@ class ImagePool():
     This buffer enables us to update discriminators using a history of generated images
     rather than the ones produced by the latest generators.
     """
-
     def __init__(self, pool_size):
         """Initialize the ImagePool class
 
@@ -37,20 +50,22 @@ class ImagePool():
         return_images = []
         for image in images:
             image = paddle.unsqueeze(image, 0)
-            if self.num_imgs < self.pool_size:   # if the buffer is not full; keep inserting current images to the buffer
+            if self.num_imgs < self.pool_size:  # if the buffer is not full; keep inserting current images to the buffer
                 self.num_imgs = self.num_imgs + 1
                 self.images.append(image)
                 return_images.append(image)
             else:
                 p = random.uniform(0, 1)
                 if p > 0.5:  # by 50% chance, the buffer will return a previously stored image, and insert the current image into the buffer
-                    random_id = random.randint(0, self.pool_size - 1)  # randint is inclusive
+                    random_id = random.randint(0, self.pool_size -
+                                               1)  # randint is inclusive
                     # FIXME: clone
                     # tmp = (self.images[random_id]).detach() #.clone()
-                    tmp = self.images[random_id] #.clone()
+                    tmp = self.images[random_id]  #.clone()
                     self.images[random_id] = image
                     return_images.append(tmp)
-                else:       # by another 50% chance, the buffer will return the current image
+                else:  # by another 50% chance, the buffer will return the current image
                     return_images.append(image)
-        return_images = paddle.concat(return_images, 0)   # collect all the images and return
+        return_images = paddle.concat(return_images,
+                                      0)  # collect all the images and return
         return return_images
