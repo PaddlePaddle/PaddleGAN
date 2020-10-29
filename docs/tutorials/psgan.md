@@ -15,7 +15,7 @@ python tools/ps_demo.py \
   --source_path  /your/source/image/path  \
   --reference_dir /your/ref/image/path
 ```
-** params: **
+**params:**
 - config-file: PSGAN network configuration file, yaml format
 - model_path: Saved model weight path
 - source_path: Full path of the non-makeup image file, including the image file name

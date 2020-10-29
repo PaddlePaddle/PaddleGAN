@@ -16,7 +16,7 @@ python tools/ps_demo.py \
   --source_path  /your/source/image/path  \
   --reference_dir /your/ref/image/path
 ```
-** 参数说明: **
+**参数说明:**
 - config-file: PSGAN网络到参数配置文件，格式为yaml
 - model_path: 训练完成保存下来网络权重文件的路径
 - source_path: 未化妆的原始图片文件全路径，包含图片文件名字
