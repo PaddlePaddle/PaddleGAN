@@ -19,8 +19,11 @@ import cv2
 from PIL import Image
 import paddle
 import paddle.vision.transforms as T
+from paddle.utils.download import get_path_from_url
 import pickle
 from .model import BiSeNet
+
+BISENET_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/bisnet.pdparams'
 
 
 class FaceParser:
@@ -47,8 +50,8 @@ class FaceParser:
             18: 0
         }
         #self.dict = paddle.to_tensor(mapper)
-        self.save_pth = osp.split(
-            osp.realpath(__file__))[0] + '/resnet.pdparams'
+        self.save_pth = get_path_from_url(BISENET_WEIGHT_URL,
+                                          osp.split(osp.realpath(__file__))[0])
 
         self.net = BiSeNet(n_classes=19)
 
