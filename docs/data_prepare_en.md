@@ -28,8 +28,65 @@ PaddleGAN
 
 ```
 
-### cyclegan datasets
-more dataset for cyclegan you can download from [here](https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/)
+if you put your datasets on other place，for example ```your/data/path```,
+you can change ```dataroot``` in config file:
 
-### pix2pix datasets
-more dataset for pix2pix you can download from [here](hhttps://people.eecs.berkeley.edu/~tinghuiz/projects/pix2pix/datasets/)
+```
+dataset:
+  train:
+    name: PairedDataset
+    dataroot: your/data/path
+    num_workers: 4
+```
+
+### datasets of cityscape
+
+#### download existed datasets
+
+##### download form website
+datasets for cyclegan you can download from [here](https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/)
+
+##### download by script
+You can use ```download_cyclegan_data.py``` in ```PaddleGAN/data``` to download datasets you wanted. Supported datasets are: apple2orange, summer2winter_yosemite,horse2zebra, monet2photo, cezanne2photo, ukiyoe2photo, vangogh2photo, maps, cityscapes, facades, iphone2dslr_flower, ae_photos, cityscapes。
+
+run following command. Dataset will be downloaded to ```~/.cache/ppgan``` and symlink to ```PaddleGAN/data/``` .
+```
+python data/download_cyclegan_data.py --name horse2zebra
+```
+
+#### Custom dataset
+Data should be arranged in following way if you use custom dataset.
+```
+custom_datasets
+├── testA
+├── testB
+├── trainA
+└── trainB
+```
+
+### datasets of pix2pix
+
+#### download existed datasets
+
+##### download from website
+dataset for pix2pix you can download from [here](hhttps://people.eecs.berkeley.edu/~tinghuiz/projects/pix2pix/datasets/)
+
+##### download by script
+You can use ```download_pix2pix_data.py``` in ```PaddleGAN/data``` to download datasets you wanted. Supported datasets are: apple2orange, summer2winter_yosemite,horse2zebra, monet2photo, cezanne2photo, ukiyoe2photo, vangogh2photo, maps, cityscapes, facades, iphone2dslr_flower, ae_photos, cityscapes.
+
+run following command. Dataset will be downloaded to ```~/.cache/ppgan``` and symlink to ```PaddleGAN/data/``` .
+```
+python data/download_pix2pix_data.py --name cityscapes
+```
+
+#### custom datasets
+Data should be arranged in following way if you use custom dataset. And image content shoubld be same with example image.
+
+```
+facades
+├── test
+├── train
+└── val
+```
+
+![](./imgs/1.jpg)

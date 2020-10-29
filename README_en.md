@@ -1,4 +1,4 @@
-English | [简体中文](./README_cn.md)
+English | [简体中文](./README.md)
 
 # PaddleGAN
 
@@ -35,35 +35,13 @@ changes.
 
 ## Install
 
-### 1. install paddlepaddle
-
-PaddleGAN work with:
-* PaddlePaddle >= 2.0.0-rc
-* Python >= 3.5+
-
-```
-pip install -U paddlepaddle-gpu
-```
-
-### 2. install ppgan
-
-```
-python -m pip install 'git+https://github.com/PaddlePaddle/PaddleGAN.git'
-```
-
-Or install it from a local clone
-```
-git clone https://github.com/PaddlePaddle/PaddleGAN
-cd PaddleGAN
-
-pip install -v -e .  # or "python setup.py develop"
-```
+Please refer to [install](./docs/install_en.md).
 
 ## Data Prepare
-Please refer to [data prepare](./docs/data_prepare.md) for dataset preparation.
+Please refer to [data prepare](./docs/data_prepare_en.md) for dataset preparation.
 
 ## Get Start
-Please refer [get started](./docs/get_started.md) for the basic usage of PaddleGAN.
+Please refer [get started](./docs/get_started_en.md) for the basic usage of PaddleGAN.
 
 ## Model tutorial
 * [Pixel2Pixel and CycleGAN](./docs/tutorials/pix2pix_cyclegan.md)

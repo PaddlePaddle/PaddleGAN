@@ -4,6 +4,8 @@ import sys
 
 from paddle.distributed import ParallelEnv
 
+logger_initialized = {}
+
 
 def setup_logger(output=None, name="ppgan"):
     """
@@ -53,3 +55,11 @@ def setup_logger(output=None, name="ppgan"):
         logger.addHandler(fh)
 
     return logger
+
+
+def get_logger(name, output=None):
+    logger = logging.getLogger(name)
+    if name in logger_initialized:
+        return logger
+
+    return setup_logger(name=name, output=name)
