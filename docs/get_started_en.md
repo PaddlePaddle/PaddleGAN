@@ -3,7 +3,7 @@
 
 Note:
 * Before starting to use PaddleGAN, please make sure you have read the [install document](./install_en.md), and prepare the dataset according to the [data preparation document](./data_prepare_en.md)
-* The following tutorial uses the train and evalute of the CycleGAN model on the Cityscapes dataset as an example
+* The following tutorial uses the train and evaluate of the CycleGAN model on the Cityscapes dataset as an example
 
 ### Train
 
