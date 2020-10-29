@@ -42,8 +42,8 @@ data
 ├── landmarks
 │   ├── makeup
 │   └── non-makeup
-├── makeup.txt
-├── non-makeup.txt
+├── train_makeup.txt
+├── train_non-makeup.txt
 ├── segs
 │   ├── makeup
 │   └── non-makeup
