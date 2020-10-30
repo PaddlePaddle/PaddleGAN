@@ -19,7 +19,7 @@ import glob
 import numpy as np
 from tqdm import tqdm
 
-from paddle.utils.download import get_path_from_url
+from ppgan.utils.download import get_path_from_url
 from ppgan.utils.video import frames2video, video2frames
 
 from .base_predictor import BasePredictor
@@ -138,8 +138,7 @@ class EDVRPredictor(BasePredictor):
         self.output = os.path.join(output, 'EDVR')
 
         if weight_path is None:
-            cur_path = os.path.abspath(os.path.dirname(__file__))
-            weight_path = get_path_from_url(EDVR_WEIGHT_URL, cur_path)
+            weight_path = get_path_from_url(EDVR_WEIGHT_URL)
 
         self.weight_path = weight_path
 

@@ -39,7 +39,7 @@ DAIN 模型通过探索深度的信息来显式检测遮挡。并且开发了一
 
 ```
 ppgan.apps.DAINPredictor(
-                        output_path='output',
+                        output='output',
                         weight_path=None,
                         time_step=None,
                         use_gpu=True,
@@ -47,7 +47,7 @@ ppgan.apps.DAINPredictor(
 ```
 #### 参数
 
-- `output_path (str，可选的)`: 输出的文件夹路径，默认值：`output`.
+- `output (str，可选的)`: 输出的文件夹路径，默认值：`output`.
 - `weight_path (None，可选的)`: 载入的权重路径，如果没有设置，则从云端下载默认的权重到本地。默认值：`None`。
 - `time_step (int)`: 补帧的时间系数，如果设置为0.5，则原先为每秒30帧的视频，补帧后变为每秒60帧。
 - `remove_duplicates (bool，可选的)`: 是否删除重复帧，默认值：`False`.
@@ -61,7 +61,7 @@ ppgan.apps.DeOldifyPredictor(output='output', weight_path=None, render_factor=32
 ```
 #### 参数
 
-- `output_path (str，可选的)`: 输出的文件夹路径，默认值：`output`.
+- `output (str，可选的)`: 输出的文件夹路径，默认值：`output`.
 - `weight_path (None，可选的)`: 载入的权重路径，如果没有设置，则从云端下载默认的权重到本地。默认值：`None`。
 - `render_factor (int)`: 会将该参数乘以16后作为输入帧的resize的值，如果该值设置为32，
                          则输入帧会resize到(32 * 16, 32 * 16)的尺寸再输入到网络中。
@@ -80,7 +80,7 @@ ppgan.apps.DeepRemasterPredictor(
 ```
 #### 参数
 
-- `output_path (str，可选的)`: 输出的文件夹路径，默认值：`output`.
+- `output (str，可选的)`: 输出的文件夹路径，默认值：`output`.
 - `weight_path (None，可选的)`: 载入的权重路径，如果没有设置，则从云端下载默认的权重到本地。默认值：`None`。
 - `colorization (bool)`: 是否对输入视频上色，如果选项设置为 `True` ，则参考帧的文件夹路径也必须要设置。默认值：`False`。
 - `reference_dir (bool)`: 参考帧的文件夹路径。默认值：`None`。
@@ -96,7 +96,7 @@ ppgan.apps.RealSRPredictor(output='output', weight_path=None)
 ```
 #### 参数
 
-- `output_path (str，可选的)`: 输出的文件夹路径，默认值：`output`.
+- `output (str，可选的)`: 输出的文件夹路径，默认值：`output`.
 - `weight_path (None，可选的)`: 载入的权重路径，如果没有设置，则从云端下载默认的权重到本地。默认值：`None`。
 -
 ### 超分辨率模型EDVRPredictor
@@ -111,5 +111,5 @@ ppgan.apps.EDVRPredictor(output='output', weight_path=None)
 ```
 #### 参数
 
-- `output_path (str，可选的)`: 输出的文件夹路径，默认值：`output`.
+- `output (str，可选的)`: 输出的文件夹路径，默认值：`output`.
 - `weight_path (None，可选的)`: 载入的权重路径，如果没有设置，则从云端下载默认的权重到本地。默认值：`None`。

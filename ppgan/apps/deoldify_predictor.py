@@ -20,7 +20,7 @@ from PIL import Image
 from tqdm import tqdm
 
 import paddle
-from paddle.utils.download import get_path_from_url
+from ppgan.utils.download import get_path_from_url
 from ppgan.utils.video import frames2video, video2frames
 from ppgan.models.generators.deoldify import build_model
 
@@ -36,8 +36,7 @@ class DeOldifyPredictor(BasePredictor):
         self.render_factor = render_factor
         self.model = build_model()
         if weight_path is None:
-            cur_path = os.path.abspath(os.path.dirname(__file__))
-            weight_path = get_path_from_url(DEOLDIFY_WEIGHT_URL, cur_path)
+            weight_path = get_path_from_url(DEOLDIFY_WEIGHT_URL)
 
         state_dict = paddle.load(weight_path)
         self.model.load_dict(state_dict)
