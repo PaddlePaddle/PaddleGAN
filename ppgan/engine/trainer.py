@@ -1,3 +1,17 @@
+#   Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
 import time
 import copy
@@ -55,11 +69,8 @@ class Trainer:
 
     def distributed_data_parallel(self):
         strategy = paddle.distributed.prepare_context()
-        for name in self.model.model_names:
-            if isinstance(name, str):
-                net = getattr(self.model, 'net' + name)
-                setattr(self.model, 'net' + name,
-                        paddle.DataParallel(net, strategy))
+        for net_name, net in self.model.nets.items():
+            self.model.nets[net_name] = paddle.DataParallel(net, strategy)
 
     def train(self):
         reader_cost_averager = TimeAverager()
@@ -77,9 +88,9 @@ class Trainer:
                 self.model.set_input(data)
                 self.model.optimize_parameters()
 
-                batch_cost_averager.record(
-                    time.time() - step_start_time,
-                    num_samples=self.cfg.get('batch_size', 1))
+                batch_cost_averager.record(time.time() - step_start_time,
+                                           num_samples=self.cfg.get(
+                                               'batch_size', 1))
                 if i % self.log_interval == 0:
                     self.data_time = reader_cost_averager.get_average()
                     self.step_time = batch_cost_averager.get_average()
@@ -277,13 +288,13 @@ class Trainer:
             self.start_epoch = state_dicts['epoch'] + 1
 
         for net_name, net in self.model.nets.items():
-            net.set_dict(state_dicts[net_name])
+            net.set_state_dict(state_dicts[net_name])
 
         for opt_name, opt in self.model.optimizers.items():
-            opt.set_dict(state_dicts[opt_name])
+            opt.set_state_dict(state_dicts[opt_name])
 
     def load(self, weight_path):
         state_dicts = load(weight_path)
 
         for net_name, net in self.model.nets.items():
-            net.set_dict(state_dicts[net_name])
+            net.set_state_dict(state_dicts[net_name])

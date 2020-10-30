@@ -22,7 +22,7 @@ from tqdm import tqdm
 import paddle
 from ppgan.models.generators import RRDBNet
 from ppgan.utils.video import frames2video, video2frames
-from paddle.utils.download import get_path_from_url
+from ppgan.utils.download import get_path_from_url
 from .base_predictor import BasePredictor
 
 REALSR_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/applications/DF2K_JPEG.pdparams'
@@ -34,8 +34,7 @@ class RealSRPredictor(BasePredictor):
         self.output = os.path.join(output, 'RealSR')
         self.model = RRDBNet(3, 3, 64, 23)
         if weight_path is None:
-            cur_path = os.path.abspath(os.path.dirname(__file__))
-            weight_path = get_path_from_url(REALSR_WEIGHT_URL, cur_path)
+            weight_path = get_path_from_url(REALSR_WEIGHT_URL)
 
         state_dict = paddle.load(weight_path)
         self.model.load_dict(state_dict)

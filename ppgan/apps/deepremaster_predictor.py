@@ -22,7 +22,7 @@ from skimage import color
 
 import paddle
 from ppgan.models.generators.remaster import NetworkR, NetworkC
-from paddle.utils.download import get_path_from_url
+from ppgan.utils.download import get_path_from_url
 from .base_predictor import BasePredictor
 
 DEEPREMASTER_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/applications/deep_remaster.pdparams'
@@ -77,8 +77,7 @@ class DeepRemasterPredictor(BasePredictor):
         self.mindim = mindim
 
         if weight_path is None:
-            cur_path = os.path.abspath(os.path.dirname(__file__))
-            weight_path = get_path_from_url(DEEPREMASTER_WEIGHT_URL, cur_path)
+            weight_path = get_path_from_url(DEEPREMASTER_WEIGHT_URL)
 
         self.weight_path = weight_path
 

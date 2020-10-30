@@ -22,7 +22,7 @@ from imageio import imread, imsave
 
 import paddle
 import paddle.fluid as fluid
-from paddle.utils.download import get_path_from_url
+from ppgan.utils.download import get_path_from_url
 from ppgan.utils.video import video2frames, frames2video
 
 from .base_predictor import BasePredictor
@@ -32,20 +32,18 @@ DAIN_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/applications/DAIN_weight.tar'
 
 class DAINPredictor(BasePredictor):
     def __init__(self,
-                 output_path='output',
+                 output='output',
                  weight_path=None,
                  time_step=None,
                  use_gpu=True,
-                 key_frame_thread=0.,
                  remove_duplicates=False):
-        self.output_path = os.path.join(output_path, 'DAIN')
+        self.output_path = os.path.join(output, 'DAIN')
         if weight_path is None:
-            cur_path = os.path.abspath(os.path.dirname(__file__))
-            weight_path = get_path_from_url(DAIN_WEIGHT_URL, cur_path)
+            weight_path = get_path_from_url(DAIN_WEIGHT_URL)
 
         self.weight_path = weight_path
         self.time_step = time_step
-        self.key_frame_thread = key_frame_thread
+        self.key_frame_thread = 0
         self.remove_duplicates = remove_duplicates
 
         self.build_inference_model()
@@ -134,15 +132,15 @@ class DAINPredictor(BasePredictor):
             img_first = imread(first)
             img_second = imread(second)
             '''--------------Frame change test------------------------'''
-            img_first_gray = np.dot(img_first[..., :3], [0.299, 0.587, 0.114])
-            img_second_gray = np.dot(img_second[..., :3], [0.299, 0.587, 0.114])
+            #img_first_gray = np.dot(img_first[..., :3], [0.299, 0.587, 0.114])
+            #img_second_gray = np.dot(img_second[..., :3], [0.299, 0.587, 0.114])
 
-            img_first_gray = img_first_gray.flatten(order='C')
-            img_second_gray = img_second_gray.flatten(order='C')
-            corr = np.corrcoef(img_first_gray, img_second_gray)[0, 1]
-            key_frame = False
-            if corr < self.key_frame_thread:
-                key_frame = True
+            #img_first_gray = img_first_gray.flatten(order='C')
+            #img_second_gray = img_second_gray.flatten(order='C')
+            #corr = np.corrcoef(img_first_gray, img_second_gray)[0, 1]
+            #key_frame = False
+            #if corr < self.key_frame_thread:
+            #    key_frame = True
             '''-------------------------------------------------------'''
 
             X0 = img_first.astype('float32').transpose((2, 0, 1)) / 255

@@ -6,21 +6,20 @@ lambda_identity: 0.5
 
 model:
   name: CycleGANModel
-  defaults: &defaults
-    norm_type: instance
-    input_nc: 3
   generator:
     name: ResnetGenerator
     output_nc: 3
     n_blocks: 9
     ngf: 64
     use_dropout: False
-    <<: *defaults
+    norm_type: instance
+    input_nc: 3
   discriminator:
     name: NLayerDiscriminator
     ndf: 64
     n_layers: 3
-    <<: *defaults
+    norm_type: instance
+    input_nc: 3
   gan_mode: lsgan
 
 dataset:
