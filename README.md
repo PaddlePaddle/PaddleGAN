@@ -5,20 +5,20 @@
 PaddleGAN 是一个基于飞桨的生成对抗网络开发工具包.
 
 ### 图片变换
-![](./docs/zh_CN/imgs/A2B.png)
-![](./docs/zh_CN/imgs/B2A.png)
+![](./docs/imgs/A2B.png)
+![](./docs/imgs/B2A.png)
 
 ### 妆容迁移
-![](./docs/zh_CN/imgs/makeup_shifter.png)
+![](./docs/imgs/makeup_shifter.png)
 
 ### 老视频修复
-![](./docs/zh_CN/imgs/color_sr_peking.gif)
+![](./docs/imgs/color_sr_peking.gif)
 
 ### 超分辨率
-![](./docs/zh_CN/imgs/sr_demo.png)
+![](./docs/imgs/sr_demo.png)
 
 ### 动作驱动
-![](./docs/zh_CN/imgs/first_order.gif)
+![](./docs/imgs/first_order.gif)
 
 特性:
 
@@ -45,8 +45,8 @@ PaddleGAN 是一个基于飞桨的生成对抗网络开发工具包.
 * [Pixel2Pixel](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
 * [CycleGAN](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
 * [PSGAN](./docs/zh_CN/tutorials/psgan.md)
+* [First Order Motion Model](./docs/zh_CN/tutorials/motion_driving.md)
 * [视频修复](./docs/zh_CN/tutorials/video_restore.md)
-* [动作驱动](./docs/zh_CN/tutorials/motion_driving.md)
 
 ## 许可证书
 本项目的发布受[Apache 2.0 license](LICENSE)许可认证。

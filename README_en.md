@@ -5,21 +5,21 @@ English | [简体中文](./README.md)
 PaddleGAN is an development kit of Generative Adversarial Network based on PaddlePaddle.
 
 ### Image Translation
-![](./docs/en_US/imgs/A2B.png)
-![](./docs/en_US/imgs/B2A.png)
+![](./docs/imgs/A2B.png)
+![](./docs/imgs/B2A.png)
 
 ### Makeup shifter
-![](./docs/en_US/imgs/makeup_shifter.png)
+![](./docs/imgs/makeup_shifter.png)
 
 ### Old video restore
-![](./docs/en_US/imgs/color_sr_peking.gif)
+![](./docs/imgs/color_sr_peking.gif)
 
 ### Super resolution
 
-![](./docs/en_US/imgs/sr_demo.png)
+![](./docs/imgs/sr_demo.png)
 
 ### Motion driving
-![](./docs/en_US/imgs/first_order.gif)
+![](./docs/imgs/first_order.gif)
 
 Features:
 
@@ -47,8 +47,8 @@ Please refer [get started](./docs/en_US/get_started.md) for the basic usage of P
 * [Pixel2Pixel](./docs/en_US/tutorials/pix2pix_cyclegan.md)
 * [CycleGAN](./docs/en_US/tutorials/pix2pix_cyclegan.md)
 * [PSGAN](./docs/en_US/tutorials/psgan.md)
+* [First Order Motion Model](./docs/en_US/tutorials/motion_driving.md)
 * [Video restore](./docs/zh_CN/tutorials/video_restore.md)
-* [Motion driving](./docs/en_US/tutorials/motion_driving.md)
 
 ## License
 PaddleGAN is released under the [Apache 2.0 license](LICENSE).
