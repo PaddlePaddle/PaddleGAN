@@ -47,7 +47,7 @@ Please refer [get started](./docs/en_US/get_started.md) for the basic usage of P
 * [Pixel2Pixel](./docs/en_US/tutorials/pix2pix_cyclegan.md)
 * [CycleGAN](./docs/en_US/tutorials/pix2pix_cyclegan.md)
 * [PSGAN](./docs/en_US/tutorials/psgan.md)
-* [Video restore](./docs/zh_CN/tutorails/video_restore.md)
+* [Video restore](./docs/zh_CN/tutorials/video_restore.md)
 * [Motion driving](./docs/en_US/tutorials/motion_driving.md)
 
 ## License
