@@ -9,20 +9,32 @@
 PaddleGAN 是一个基于飞桨的生成对抗网络开发工具包.
 
 ### 图片变换
-![](./docs/imgs/A2B.png)
-![](./docs/imgs/B2A.png)
+<div align='center'>
+  <img src='./docs/imgs/A2B.png'>
+</div>
+<div align='center'>
+  <img src='./docs/imgs/B2A.png'>
+</div>
 
 ### 妆容迁移
-![](./docs/imgs/makeup_shifter.png)
+<div align='center'>
+  <img src='./docs/imgs/makeup_shifter.png'>
+</div>
 
 ### 老视频修复
-![](./docs/imgs/color_sr_peking.gif)
+<div align='center'>
+  <img src='./docs/imgs/color_sr_peking.gif'>
+</div>
 
 ### 超分辨率
-![](./docs/imgs/sr_demo.png)
+<div align='center'>
+  <img src='./docs/imgs/sr_demo.png'>
+</div>
 
 ### 动作驱动
-![](./docs/imgs/first_order.gif)
+<div align='center'>
+  <img src='./docs/imgs/first_order.gif'>
+</div>
 
 特性:
 

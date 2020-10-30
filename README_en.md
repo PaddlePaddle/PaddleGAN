@@ -9,21 +9,35 @@ English | [简体中文](./README.md)
 PaddleGAN is an development kit of Generative Adversarial Network based on PaddlePaddle.
 
 ### Image Translation
-![](./docs/imgs/A2B.png)
-![](./docs/imgs/B2A.png)
+<div align='center'>
+  <img src='./docs/imgs/A2B.png'>
+</div>
+<div align='center'>
+  <img src='./docs/imgs/B2A.png'>
+</div>
+
 
 ### Makeup shifter
-![](./docs/imgs/makeup_shifter.png)
+<div align='center'>
+  <img src='./docs/imgs/makeup_shifter.png'>
+</div>
+
 
 ### Old video restore
-![](./docs/imgs/color_sr_peking.gif)
+<div align='center'>
+  <img src='./docs/imgs/color_sr_peking.gif'>
+</div>
 
 ### Super resolution
 
-![](./docs/imgs/sr_demo.png)
+<div align='center'>
+  <img src='./docs/imgs/sr_demo.png'>
+</div>
 
 ### Motion driving
-![](./docs/imgs/first_order.gif)
+<div align='center'>
+  <img src='./docs/imgs/first_order.gif'>
+</div>
 
 Features:
 
