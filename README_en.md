@@ -66,7 +66,8 @@ Please refer to [data prepare](./docs/data_prepare.md) for dataset preparation.
 Please refer [get started](./docs/get_started.md) for the basic usage of PaddleGAN.
 
 ## Model tutorial
-* [Pixel2Pixel and CycleGAN](./docs/tutorials/pix2pix_cyclegan.md)
+* [Pixel2Pixel](./docs/tutorials/pix2pix_cyclegan.md)
+* [CycleGAN](./docs/tutorials/pix2pix_cyclegan.md)
 * [PSGAN](./docs/tutorials/psgan.md)
 * [Video restore](./docs/tutorails/video_restore.md)
 * [Motion driving](./docs/tutorials/motion_driving.md)
@@ -79,10 +80,3 @@ PaddleGAN is released under the [Apache 2.0 license](LICENSE).
 Contributions and suggestions are highly welcomed. Most contributions require you to agree to a [Contributor License Agreement (CLA)](https://cla-assistant.io/PaddlePaddle/PaddleGAN) declaring.
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA. Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 For more, please reference [contribution guidelines](docs/CONTRIBUTE.md).
-
-
-## External Projects
-
-External gan projects in the community that base on PaddlePaddle:
-
-+ [PaddleGAN](https://github.com/PaddlePaddle/PaddleGAN)

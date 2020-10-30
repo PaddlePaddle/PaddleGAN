@@ -63,7 +63,8 @@ pip install -v -e .  # or "python setup.py develop"
 训练，预测，推理等请参考 [快速开始](./docs/get_started.md).
 
 ## 模型教程
-* [Pixel2Pixel and CycleGAN](./docs/tutorials/pix2pix_cyclegan.md)
+* [Pixel2Pixel](./docs/tutorials/pix2pix_cyclegan.md)
+* [CycleGAN](./docs/tutorials/pix2pix_cyclegan.md)
 * [PSGAN](./docs/tutorials/psgan.md)
 * [视频修复](./docs/tutorials/video_restore.md)
 * [动作驱动](./docs/tutorials/motion_driving.md)
@@ -74,11 +75,4 @@ pip install -v -e .  # or "python setup.py develop"
 
 ## 贡献代码
 
-我们非常欢迎你可以为PaddleGAN提供任何贡献和建议。大多数贡献都需要你同意参与者许可协议（CLA）。当你提交拉取请求时，CLA机器人会自动检查你是否需要提供CLA。 只需要按照机器人提供的说明进行操作即可。CLA只需要同意一次，就能应用到所有的代码仓库上。关于更多的流程请参考[贡献指南](docs/CONTRIBUTE.md)。
-
-
-## 外部项目
-
-外部基于飞桨的生成对抗网络模型
-
-+ [PaddleGAN](https://github.com/PaddlePaddle/PaddleGAN)
+我们非常欢迎您可以为PaddleGAN提供任何贡献和建议。大多数贡献都需要同意参与者许可协议（CLA）。当提交拉取请求时，CLA机器人会自动检查您是否需要提供CLA。 只需要按照机器人提供的说明进行操作即可。CLA只需要同意一次，就能应用到所有的代码仓库上。关于更多的流程请参考[贡献指南](docs/CONTRIBUTE.md)。
