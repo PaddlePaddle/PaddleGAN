@@ -23,8 +23,21 @@ pip install -U paddlepaddle-gpu==2.0.0rc0
 </code></pre> </details> </td> <td align="left"><details><summary> install </summary><pre><code>python -m pip install https://paddle-wheel.bj.bcebos.com/2.0.0-rc0-gpu-cuda9-cudnn7-mkl%2Fpaddlepaddle_gpu-2.0.0rc0.post90-cp36-cp36m-linux_x86_64.whl
 </code></pre> </details> </td> </tr></tbody></table>
 
+### 2. 通过Pip安装
 
-### 2. 安装ppgan
+```
+# only support Python3
+python3 -m pip install --upgrade ppgan
+```
+
+下载示例和配置文件:
+
+```
+git clone https://github.com/PaddlePaddle/PaddleGAN
+cd PaddleGAN
+```
+
+### 3. 通过源码安装PaddleGAN
 
 ```
 git clone https://github.com/PaddlePaddle/PaddleGAN
