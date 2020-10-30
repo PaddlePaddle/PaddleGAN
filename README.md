@@ -1,3 +1,7 @@
+<div align='center'>
+  <img src='./docs/imgs/ppgan.jpg'>
+</div>
+
 简体中文 | [English](./README_en.md)
 
 # PaddleGAN
