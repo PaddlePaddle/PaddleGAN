@@ -37,24 +37,41 @@ changes.
 
 Please refer to [install](./docs/en_US/install.md).
 
-## Data Prepare
-Please refer to [data prepare](./docs/en_US/data_prepare.md) for dataset preparation.
+## Quick Start
 
-## Get Start
-Please refer [get started](./docs/en_US/get_started.md) for the basic usage of PaddleGAN.
+Get started through ppgan.app interface:
 
-## Model tutorial
+ ```python
+ from ppgan.apps import RealSRPredictor
+ sr = RealSRPredictor()
+ sr.run("docs/imgs/monarch.png")
+ ```
+
+More tutorials:
+
+- [Data preparation](./docs/en_US/data_prepare.md)
+- [Traning/Evaluating/Testing basic usage](./docs/zh_CN/get_started.md)
+
+## Model Tutorial
+
 * [Pixel2Pixel](./docs/en_US/tutorials/pix2pix_cyclegan.md)
 * [CycleGAN](./docs/en_US/tutorials/pix2pix_cyclegan.md)
 * [PSGAN](./docs/en_US/tutorials/psgan.md)
 * [First Order Motion Model](./docs/en_US/tutorials/motion_driving.md)
 * [Video restore](./docs/zh_CN/tutorials/video_restore.md)
 
-## License
-PaddleGAN is released under the [Apache 2.0 license](LICENSE).
+
+## Changelog
+
+- v0.1.0 (2020.11.02)
+  - Realse first version, supported models include Pixel2Pixel, CycleGAN, PSGAN. Supported applications include video frame interpolation, super resolution, colorize images and videos, image animation.
+  - Modular design and friendly interface.
 
 ## Contributing
 
 Contributions and suggestions are highly welcomed. Most contributions require you to agree to a [Contributor License Agreement (CLA)](https://cla-assistant.io/PaddlePaddle/PaddleGAN) declaring.
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA. Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 For more, please reference [contribution guidelines](docs/en_US/contribute.md).
+
+## License
+PaddleGAN is released under the [Apache 2.0 license](LICENSE).

@@ -35,7 +35,7 @@ def setup_logger(output=None, name="ppgan"):
         logging.Logger: a logger
     """
     logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
     logger.propagate = False
 
     plain_formatter = logging.Formatter(

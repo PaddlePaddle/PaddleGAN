@@ -13,7 +13,10 @@
 Users can upload the prepared source image and driving video, then substitute the path of source image and driving video for the `source_image` and `driving_video` parameter in the following running command. It will geneate a video file named `result.mp4` in the `output` folder, which is the animated video file.
 
 ```
-python -u tools/first-order-demo.py  --driving_video ./ravel_10.mp4  --source_image ./sudaqiang.png --relative --adapt_scale
+python -u tools/first-order-demo.py \
+     --driving_video ./ravel_10.mp4  \
+     --source_image ./sudaqiang.png \
+     --relative --adapt_scale
 ```
 
 **params:**
@@ -29,6 +32,7 @@ python -u tools/first-order-demo.py  --driving_video ./ravel_10.mp4  --source_im
 
 ## Reference
 
+```
 @InProceedings{Siarohin_2019_NeurIPS,
   author={Siarohin, Aliaksandr and Lathuilière, Stéphane and Tulyakov, Sergey and Ricci, Elisa and Sebe, Nicu},
   title={First Order Motion Model for Image Animation},
@@ -36,3 +40,4 @@ python -u tools/first-order-demo.py  --driving_video ./ravel_10.mp4  --source_im
   month = {December},
   year = {2019}
 }
+```
