@@ -47,7 +47,7 @@ class SingleDataset(BaseDataset):
             A_paths(str) - - the path of the image
         """
         A_path = self.A_paths[index]
-        A_img = cv2.imread(A_path)
+        A_img = cv2.cvtColor(cv2.imread(A_path), cv2.COLOR_BGR2RGB)
         A = self.transform(A_img)
 
         return {'A': A, 'A_paths': A_path}
