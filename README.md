@@ -32,31 +32,10 @@ PaddleGAN 是一个基于飞桨的生成对抗网络开发工具包.
 
 ## 安装
 
-### 1. 安装 paddlepaddle
-
-PaddleGAN 所需的版本:
-* PaddlePaddle >= 2.0.0-rc
-* Python >= 3.5+
-
-```
-pip install -U paddlepaddle-gpu
-```
-
-### 2. 安装ppgan
-```
-python -m pip install 'git+https://github.com/PaddlePaddle/PaddleGAN.git'
-```
-
-或者通过将项目克隆到本地
-```
-git clone https://github.com/PaddlePaddle/PaddleGAN
-cd PaddleGAN
-
-pip install -v -e .  # or "python setup.py develop"
-```
+请参考[安装文档](./docs/install.md)来进行PaddlePaddle和ppgan的安装
 
 ## 数据准备
-请参考 [数据准备](./docs/data_prepare.md) 来准备对应的数据.
+请参考[数据准备](./docs/data_prepare.md) 来准备对应的数据.
 
 
 ## 快速开始

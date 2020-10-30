@@ -22,7 +22,7 @@ from imageio import imread, imsave
 
 import paddle
 import paddle.fluid as fluid
-from paddle.utils.download import get_path_from_url
+from ppgan.utils.download import get_path_from_url
 from ppgan.utils.video import video2frames, frames2video
 
 from .base_predictor import BasePredictor
@@ -39,8 +39,7 @@ class DAINPredictor(BasePredictor):
                  remove_duplicates=False):
         self.output_path = os.path.join(output, 'DAIN')
         if weight_path is None:
-            cur_path = os.path.abspath(os.path.dirname(__file__))
-            weight_path = get_path_from_url(DAIN_WEIGHT_URL, cur_path)
+            weight_path = get_path_from_url(DAIN_WEIGHT_URL)
 
         self.weight_path = weight_path
         self.time_step = time_step

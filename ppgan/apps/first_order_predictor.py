@@ -25,7 +25,7 @@ from skimage.transform import resize
 from scipy.spatial import ConvexHull
 
 import paddle
-from paddle.utils.download import get_path_from_url
+from ppgan.utils.download import get_path_from_url
 from ppgan.utils.animate import normalize_kp
 from ppgan.modules.keypoint_detector import KPDetector
 from ppgan.models.generators.occlusion_aware import OcclusionAwareGenerator
@@ -78,10 +78,11 @@ class FirstOrderPredictor(BasePredictor):
             }
             if weight_path is None:
                 vox_cpk_weight_url = 'https://paddlegan.bj.bcebos.com/applications/first_order_model/vox-cpk.pdparams'
-                cur_path = os.path.abspath(os.path.dirname(__file__))
-                weight_path = get_path_from_url(vox_cpk_weight_url, cur_path)
+                weight_path = get_path_from_url(vox_cpk_weight_url)
 
         self.weight_path = weight_path
+        if not os.path.exists(output):
+            os.makedirs(output)
         self.output = output
         self.relative = relative
         self.adapt_scale = adapt_scale

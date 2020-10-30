@@ -1,3 +1,17 @@
+#   Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import numpy as np
 
 
@@ -29,6 +43,7 @@ def reorder_image(img, input_order='HWC'):
         img = img.transpose(1, 2, 0)
     return img
 
+
 def bgr2ycbcr(img, y_only=False):
     """Convert a BGR image to YCbCr image.
 
@@ -52,15 +67,16 @@ def bgr2ycbcr(img, y_only=False):
             and range as input image.
     """
     img_type = img.dtype
-    img = _convert_input_type_range(img)
+    #img = _convert_input_type_range(img)
     if y_only:
         out_img = np.dot(img, [24.966, 128.553, 65.481]) + 16.0
     else:
         out_img = np.matmul(
             img, [[24.966, 112.0, -18.214], [128.553, -74.203, -93.786],
                   [65.481, -37.797, 112.0]]) + [16, 128, 128]
-    out_img = _convert_output_type_range(out_img, img_type)
+    #out_img = _convert_output_type_range(out_img, img_type)
     return out_img
+
 
 def to_y_channel(img):
     """Change to Y channel of YCbCr.
