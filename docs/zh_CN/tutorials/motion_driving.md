@@ -4,7 +4,7 @@
 
 First order motion model的任务是image animation，给定一张源图片，给定一个驱动视频，生成一段视频，其中主角是源图片，动作是驱动视频中的动作。如下图所示，源图像通常包含一个主体，驱动视频包含一系列动作。
 
-![](../imgs/fom_demo.png)
+![](../../imgs/fom_demo.png)
 
 以左上角的人脸表情迁移为例，给定一个源人物，给定一个驱动视频，可以生成一个视频，其中主体是源人物，视频中源人物的表情是由驱动视频中的表情所确定的。通常情况下，我们需要对源人物进行人脸关键点标注、进行表情迁移的模型训练。
 
@@ -24,4 +24,4 @@ First order motion model的任务是image animation，给定一张源图片，�
 
 
 ## 3. 生成结果展示
-![](../imgs/first_order.gif)
+![](../../imgs/first_order.gif)

@@ -1,7 +1,7 @@
 # PSGAN
 ## 1. PSGAN introduction
 This paper is to address the makeup transfer task, which aims to transfer the makeup from a reference image to a source image. Existing methods have achieved promising progress in constrained scenarios, but transferring between images with large pose and expression differences is still challenging. To address these issues, we propose Pose and expression robust Spatial-aware GAN (PSGAN). It first utilizes Makeup Distill Network to disentangle the makeup of the reference image as two spatial-aware makeup matrices. Then, Attentive Makeup Morphing module is introduced to specify how the makeup of a pixel in the source image is morphed from the reference image. With the makeup matrices and the source image, Makeup Apply Network is used to perform makeup transfer.
-![](../imgs/psgan_arc.png)
+![](../../imgs/psgan_arc.png)
 
 ## 2. How to use
 ### 2.1 Test
@@ -73,4 +73,4 @@ Model|Dataset|BatchSize|Inference speed|Download
 ---|:--:|:--:|:--:|:--:
 PSGAN|MT-Dataset| 1 | 1.9s(GPU:P40) | [model]()
 ## 3. Result
-![](../imgs/makeup_shifter.png)
+![](../../imgs/makeup_shifter.png)

@@ -3,7 +3,7 @@
 ## 1.1 Principle
 
   Pix2pix uses paired images for image translation, which has two different styles of the same image as input, can be used for style transfer. Pix2pix is encouraged by cGAN, cGAN inputs a noisy image and a condition as the supervision information to the generation network, pix2pix uses another style of image as the supervision information input into the generation network, so the fake image is related to another style of image which is input as supervision information, thus realizing the process of image translation.
-  
+
 ## 1.2 How to use  
 
 ### 1.2.1 Prepare Datasets

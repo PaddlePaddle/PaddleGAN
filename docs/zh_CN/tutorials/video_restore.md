@@ -14,7 +14,7 @@ python tools/video-enhance.py --input you_video_path.mp4 --proccess_order DAIN D
 - `--proccess_order`: 调用的模型名字和顺序，比如输入为 `DAIN DeOldify EDVR`，则会顺序调用 `DAINPredictor` `DeOldifyPredictor` `EDVRPredictor` 。
 
 #### 效果展示
-![](../imgs/color_sr_peking.gif)
+![](../../imgs/color_sr_peking.gif)
 
 
 ### 快速体验
@@ -35,7 +35,7 @@ python tools/video-enhance.py --input you_video_path.mp4 --proccess_order DAIN D
 
 ### 补帧模型DAIN
 DAIN 模型通过探索深度的信息来显式检测遮挡。并且开发了一个深度感知的流投影层来合成中间流。在视频补帧方面有较好的效果。
-![](./imgs/dain_network.png)
+![](../../imgs/dain_network.png)
 
 ```
 ppgan.apps.DAINPredictor(
@@ -54,7 +54,7 @@ ppgan.apps.DAINPredictor(
 
 ### 上色模型DeOldifyPredictor
 DeOldify 采用自注意力机制的生成对抗网络，生成器是一个U-NET结构的网络。在图像的上色方面有着较好的效果。
-![](./imgs/deoldify_network.png)
+![](../../imgs/deoldify_network.png)
 
 ```
 ppgan.apps.DeOldifyPredictor(output='output', weight_path=None, render_factor=32)
@@ -68,7 +68,7 @@ ppgan.apps.DeOldifyPredictor(output='output', weight_path=None, render_factor=32
 
 ### 上色模型DeepRemasterPredictor
 DeepRemaster 模型基于时空卷积神经网络和自注意力机制。并且能够根据输入的任意数量的参考帧对图片进行上色。
-![](./imgs/remaster_network.png)
+![](../../imgs/remaster_network.png)
 
 ```
 ppgan.apps.DeepRemasterPredictor(
@@ -89,7 +89,7 @@ ppgan.apps.DeepRemasterPredictor(
 ### 超分辨率模型RealSRPredictor
 RealSR模型通过估计各种模糊内核以及实际噪声分布，为现实世界的图像设计一种新颖的真实图片降采样框架。基于该降采样框架，可以获取与真实世界图像共享同一域的低分辨率图像。并且提出了一个旨在提高感知度的真实世界超分辨率模型。对合成噪声数据和真实世界图像进行的大量实验表明，该模型能够有效降低了噪声并提高了视觉质量。
 
-![](./imgs/realsr_network.png)
+![](../../imgs/realsr_network.png)
 
 ```
 ppgan.apps.RealSRPredictor(output='output', weight_path=None)
@@ -104,7 +104,7 @@ EDVR模型提出了一个新颖的视频具有增强可变形卷积的还原框�
 
 EDVR模型是一个基于连续帧的超分模型，能够有效利用帧间的信息，速度比RealSR模型快。
 
-![](./imgs/edvr_network.png)
+![](../../imgs/edvr_network.png)
 
 ```
 ppgan.apps.EDVRPredictor(output='output', weight_path=None)

@@ -2,7 +2,7 @@
 
 ## 1. PSGAN原理
 PSGAN模型的任务是妆容迁移， 即将任意参照图像上的妆容迁移到不带妆容的源图像上。很多人像美化应用都需要这种技术。近来的一些妆容迁移方法大都基于生成对抗网络（GAN）。它们通常采用 CycleGAN 的框架，并在两个数据集上进行训练，即无妆容图像和有妆容图像。但是，现有的方法存在一个局限性：只在正面人脸图像上表现良好，没有为处理源图像和参照图像之间的姿态和表情差异专门设计模块。PSGAN是一种全新的姿态稳健可感知空间的生生成对抗网络。PSGAN 主要分为三部分：妆容提炼网络（MDNet）、注意式妆容变形（AMM）模块和卸妆-再化妆网络（DRNet）。这三种新提出的模块能让 PSGAN 具备上述的完美妆容迁移模型所应具备的能力。
-![](../imgs/psgan_arc.png)
+![](../../imgs/psgan_arc.png)
 
 ## 2. 使用方法
 ### 2.1 测试
@@ -72,4 +72,5 @@ Model|Dataset|BatchSize|Inference speed|Download
 PSGAN|MT-Dataset| 1 | 1.9s(GPU:P40) | [model]()
 
 ## 3. 妆容迁移结果展示
-![](../imgs/makeup_shifter.png)
+
+![](../../imgs/makeup_shifter.png)

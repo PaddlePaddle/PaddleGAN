@@ -3,7 +3,7 @@
 ## 1. First order motion model introduction
 
 First order motion model is to complete the Image animation task, which consists of generating a video sequence so that an object in a source image is animated according to the motion of a driving video. The first order motion framework addresses this problem without using any annotation or prior information about the specific object to animate. Once trained on a set of videos depicting objects of the same category (e.g. faces, human bodies), this method can be applied to any object of this class. To achieve this, the innovative method decouple appearance and motion information using a self-supervised formulation. In addition, to support complex motions, it use a representation consisting of a set of learned keypoints along with their local affine transformations. A generator network models occlusions arising during target motions and combines the appearance extracted from the source image and the motion derived from the driving video.
-![](../imgs/fom_demo.png)
+![](../../imgs/fom_demo.png)
 
 ## How to use
 
@@ -18,4 +18,4 @@ Users can upload the prepared source image and driving video, then substitute th
 - adapt_scale: adapt movement scale based on convex hull of keypoints.
 
 ## 3. Animation results
-![](../imgs/first_order.gif)
+![](../../imgs/first_order.gif)
