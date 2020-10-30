@@ -35,19 +35,20 @@ changes.
 
 ## Install
 
-Please refer to [install](./docs/install_en.md).
+Please refer to [install](./docs/en_US/install.md).
 
 ## Data Prepare
-Please refer to [data prepare](./docs/data_prepare_en.md) for dataset preparation.
+Please refer to [data prepare](./docs/en_US/data_prepare.md) for dataset preparation.
 
 ## Get Start
-Please refer [get started](./docs/get_started_en.md) for the basic usage of PaddleGAN.
+Please refer [get started](./docs/en_US/get_started.md) for the basic usage of PaddleGAN.
 
 ## Model tutorial
-* [Pixel2Pixel and CycleGAN](./docs/tutorials/pix2pix_cyclegan.md)
-* [PSGAN](./docs/tutorials/psgan_en.md)
-* [Video restore](./docs/tutorails/video_restore.md)
-* [Motion driving](./docs/tutorials/motion_driving_en.md)
+* [Pixel2Pixel](./docs/en_US/tutorials/pix2pix_cyclegan.md)
+* [CycleGAN](./docs/en_US/tutorials/pix2pix_cyclegan.md)
+* [PSGAN](./docs/en_US/tutorials/psgan.md)
+* [First Order Motion Model](./docs/en_US/tutorials/motion_driving.md)
+* [Video restore](./docs/zh_CN/tutorials/video_restore.md)
 
 ## License
 PaddleGAN is released under the [Apache 2.0 license](LICENSE).
@@ -56,11 +57,4 @@ PaddleGAN is released under the [Apache 2.0 license](LICENSE).
 
 Contributions and suggestions are highly welcomed. Most contributions require you to agree to a [Contributor License Agreement (CLA)](https://cla-assistant.io/PaddlePaddle/PaddleGAN) declaring.
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA. Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
-For more, please reference [contribution guidelines](docs/CONTRIBUTE.md).
-
-
-## External Projects
-
-External gan projects in the community that base on PaddlePaddle:
-
-+ [PaddleGAN](https://github.com/PaddlePaddle/PaddleGAN)
+For more, please reference [contribution guidelines](docs/en_US/contribute.md).
