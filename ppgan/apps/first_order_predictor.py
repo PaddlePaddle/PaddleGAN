@@ -81,6 +81,8 @@ class FirstOrderPredictor(BasePredictor):
                 weight_path = get_path_from_url(vox_cpk_weight_url)
 
         self.weight_path = weight_path
+        if not os.path.exists(output):
+            os.makedirs(output)
         self.output = output
         self.relative = relative
         self.adapt_scale = adapt_scale

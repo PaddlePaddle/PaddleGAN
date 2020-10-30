@@ -111,7 +111,7 @@ def _download(url, path, md5sum=None):
             raise RuntimeError("Download from {} failed. "
                                "Retry limit reached".format(url))
 
-        logger.info("Downloading {} from {}".format(fname, url))
+        logger.info("Downloading {} from {} to {}".format(fname, url, fullname))
 
         req = requests.get(url, stream=True)
         if req.status_code != 200:
