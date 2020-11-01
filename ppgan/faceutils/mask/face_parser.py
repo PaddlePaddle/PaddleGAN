@@ -52,6 +52,7 @@ class FaceParser:
         #self.dict = paddle.to_tensor(mapper)
         self.save_pth = get_path_from_url(BISENET_WEIGHT_URL,
                                           osp.split(osp.realpath(__file__))[0])
+        self.save_pth = '/workspace/pr-ppgan/PaddleGAN/ppgan/faceutils/mask/bisenet.pdparams'
 
         self.net = BiSeNet(n_classes=19)
 
@@ -65,7 +66,7 @@ class FaceParser:
         image = image.transpose((2, 0, 1))
         image = self.transforms(image)
 
-        state_dict, _ = paddle.load(self.save_pth)
+        state_dict = paddle.load(self.save_pth)
         self.net.set_dict(state_dict)
         self.net.eval()
 
@@ -74,8 +75,6 @@ class FaceParser:
             image = image.unsqueeze(0)
             out = self.net(image)[0]
             parsing = out.squeeze(0).argmax(0)  #argmax(0).astype('float32')
-
-        #parsing = paddle.nn.functional.embedding(x=self.dict, weight=parsing)
 
         parse_np = parsing.numpy()
         h, w = parse_np.shape

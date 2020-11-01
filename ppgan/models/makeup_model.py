@@ -323,9 +323,9 @@ class MakeupModel(BaseModel):
         g_B_eye_loss_his = self.criterionL1(fake_B_eye_masked, fake_match_eye_B)
 
         self.loss_G_A_his = (g_A_eye_loss_his + g_A_lip_loss_his +
-                             g_A_skin_loss_his * 0.1) * 0.01
+                             g_A_skin_loss_his * 0.1) * 0.1
         self.loss_G_B_his = (g_B_eye_loss_his + g_B_lip_loss_his +
-                             g_B_skin_loss_his * 0.1) * 0.01
+                             g_B_skin_loss_his * 0.1) * 0.1
 
         self.losses['G_A_his_loss'] = self.loss_G_A_his
         self.losses['G_B_his_loss'] = self.loss_G_A_his
@@ -343,9 +343,9 @@ class MakeupModel(BaseModel):
         self.loss_B_vgg = self.criterionL2(vgg_fake_B,
                                            vgg_r) * lambda_B * lambda_vgg
 
-        self.loss_rec = (self.loss_cycle_A + self.loss_cycle_B +
-                         self.loss_A_vgg + self.loss_B_vgg) * 0.2
-        self.loss_idt = (self.loss_idt_A + self.loss_idt_B) * 0.2
+        self.loss_rec = (self.loss_cycle_A * 0.2 + self.loss_cycle_B * 0.2 +
+                         self.loss_A_vgg + self.loss_B_vgg) * 0.5
+        self.loss_idt = (self.loss_idt_A + self.loss_idt_B) * 0.1
 
         self.losses['G_A_vgg_loss'] = self.loss_A_vgg
         self.losses['G_B_vgg_loss'] = self.loss_B_vgg
