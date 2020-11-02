@@ -53,6 +53,9 @@ def mask2image(mask: np.array, format="HWC"):
     return canvas
 
 
+PS_WEIGHT_URL = " "
+
+
 class PreProcess:
     def __init__(self, config, need_parser=True):
         self.img_size = 256
@@ -184,7 +187,7 @@ class PSGANPredictor(BasePredictor):
         self.weight_path = self.args.model_path
         if self.weight_path is None:
             cur_path = os.path.abspath(os.path.dirname(__file__))
-            self.weight_path = get_path_from_url(DAIN_WEIGHT_URL, cur_path)
+            self.weight_path = get_path_from_url(PS_WEIGHT_URL, cur_path)
         self.output_path = output_path
 
     def run(self):
