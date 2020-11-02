@@ -3,7 +3,7 @@
 ## 1.1 原理介绍
 
   Pix2pix利用成对的图片进行图像翻译，即输入为同一张图片的两种不同风格，可用于进行风格迁移。Pix2pix是在cGAN的基础上进行改进的，cGAN的生成网络不仅会输入一个噪声图片，同时还会输入一个条件作为监督信息，pix2pix则是把另外一种风格的图像作为监督信息输入生成网络中，这样生成的fake图像就会和作为监督信息的另一种风格的图像相关，从而实现了图像翻译的过程。
-  ![](../imgs/pix2pix.png)
+  ![](../../imgs/pix2pix.png)
 
 ## 1.2 如何使用
 
@@ -38,7 +38,7 @@
 
 ## 1.3 结果展示
 
-![](../imgs/horse2zebra.png)
+![](../../imgs/horse2zebra.png)
 
 [模型下载](TODO)
 
@@ -86,12 +86,32 @@
 
 ## 2.3 结果展示
 
-![](../imgs/A2B.png) 
+![](../../imgs/A2B.png)
 
 [模型下载](TODO)
 
 
 # 参考：
-  1. [Image-to-Image Translation with Conditional Adversarial Networks](https://arxiv.org/abs/1611.07004)
-  2. [Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks](https://arxiv.org/abs/1703.10593)
-[Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks](https://arxiv.org/abs/1703.10593)
+
+- 1. [Image-to-Image Translation with Conditional Adversarial Networks](https://arxiv.org/abs/1611.07004)
+
+  ```
+  @inproceedings{isola2017image,
+    title={Image-to-Image Translation with Conditional Adversarial Networks},
+    author={Isola, Phillip and Zhu, Jun-Yan and Zhou, Tinghui and Efros, Alexei A},
+    booktitle={Computer Vision and Pattern Recognition (CVPR), 2017 IEEE Conference on},
+    year={2017}
+  }
+  ```
+
+
+- 2. [Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks](https://arxiv.org/abs/1703.10593)
+
+  ```
+  @inproceedings{CycleGAN2017,
+  title={Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networkss},
+  author={Zhu, Jun-Yan and Park, Taesung and Isola, Phillip and Efros, Alexei A},
+  booktitle={Computer Vision (ICCV), 2017 IEEE International Conference on},
+  year={2017}
+  }
+  ```

@@ -135,8 +135,7 @@ class NLayerDiscriminator(nn.Layer):
                           1,
                           kernel_size=kw,
                           stride=1,
-                          padding=padw,
-                          bias_attr=False)
+                          padding=padw)
             ]  # output 1 channel prediction map
 
         self.model = nn.Sequential(*sequence)

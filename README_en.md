@@ -1,3 +1,7 @@
+<div align='center'>
+  <img src='./docs/imgs/ppgan.jpg'>
+</div>
+
 English | [简体中文](./README.md)
 
 # PaddleGAN
@@ -5,21 +9,35 @@ English | [简体中文](./README.md)
 PaddleGAN is an development kit of Generative Adversarial Network based on PaddlePaddle.
 
 ### Image Translation
-![](./docs/imgs/A2B.png)
-![](./docs/imgs/B2A.png)
+<div align='center'>
+  <img src='./docs/imgs/A2B.png'>
+</div>
+<div align='center'>
+  <img src='./docs/imgs/B2A.png'>
+</div>
+
 
 ### Makeup shifter
-![](./docs/imgs/makeup_shifter.png)
+<div align='center'>
+  <img src='./docs/imgs/makeup_shifter.png'>
+</div>
+
 
 ### Old video restore
-![](./docs/imgs/color_sr_peking.gif)
+<div align='center'>
+  <img src='./docs/imgs/color_sr_peking.gif'>
+</div>
 
 ### Super resolution
 
-![](./docs/imgs/sr_demo.png)
+<div align='center'>
+  <img src='./docs/imgs/sr_demo.png'>
+</div>
 
 ### Motion driving
-![](./docs/imgs/first_order.gif)
+<div align='center'>
+  <img src='./docs/imgs/first_order.gif'>
+</div>
 
 Features:
 
@@ -35,32 +53,43 @@ changes.
 
 ## Install
 
-Please refer to [install](./docs/install_en.md).
+Please refer to [install](./docs/en_US/install.md).
 
-## Data Prepare
-Please refer to [data prepare](./docs/data_prepare_en.md) for dataset preparation.
+## Quick Start
 
-## Get Start
-Please refer [get started](./docs/get_started_en.md) for the basic usage of PaddleGAN.
+Get started through ppgan.app interface:
 
-## Model tutorial
-* [Pixel2Pixel and CycleGAN](./docs/tutorials/pix2pix_cyclegan.md)
-* [PSGAN](./docs/tutorials/psgan_en.md)
-* [Video restore](./docs/tutorails/video_restore.md)
-* [Motion driving](./docs/tutorials/motion_driving_en.md)
+ ```python
+ from ppgan.apps import RealSRPredictor
+ sr = RealSRPredictor()
+ sr.run("docs/imgs/monarch.png")
+ ```
 
-## License
-PaddleGAN is released under the [Apache 2.0 license](LICENSE).
+More tutorials:
+
+- [Data preparation](./docs/en_US/data_prepare.md)
+- [Traning/Evaluating/Testing basic usage](./docs/zh_CN/get_started.md)
+
+## Model Tutorial
+
+* [Pixel2Pixel](./docs/en_US/tutorials/pix2pix_cyclegan.md)
+* [CycleGAN](./docs/en_US/tutorials/pix2pix_cyclegan.md)
+* [PSGAN](./docs/en_US/tutorials/psgan.md)
+* [First Order Motion Model](./docs/en_US/tutorials/motion_driving.md)
+* [Video restore](./docs/zh_CN/tutorials/video_restore.md)
+
+
+## Changelog
+
+- v0.1.0 (2020.11.02)
+  - Realse first version, supported models include Pixel2Pixel, CycleGAN, PSGAN. Supported applications include video frame interpolation, super resolution, colorize images and videos, image animation.
+  - Modular design and friendly interface.
 
 ## Contributing
 
 Contributions and suggestions are highly welcomed. Most contributions require you to agree to a [Contributor License Agreement (CLA)](https://cla-assistant.io/PaddlePaddle/PaddleGAN) declaring.
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA. Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
-For more, please reference [contribution guidelines](docs/CONTRIBUTE.md).
+For more, please reference [contribution guidelines](docs/en_US/contribute.md).
 
-
-## External Projects
-
-External gan projects in the community that base on PaddlePaddle:
-
-+ [PaddleGAN](https://github.com/PaddlePaddle/PaddleGAN)
+## License
+PaddleGAN is released under the [Apache 2.0 license](LICENSE).

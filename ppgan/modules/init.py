@@ -17,6 +17,10 @@ import numpy as np
 
 import paddle
 
+from ..utils.logger import get_logger
+
+logger = get_logger('init')
+
 
 def _calculate_fan_in_and_fan_out(tensor):
     dimensions = len(tensor.shape)
@@ -65,7 +69,6 @@ def calculate_gain(nonlinearity, param=None):
     Args:
         nonlinearity: the non-linear function (`nn.functional` name)
         param: optional parameter for the non-linear function
-
     """
     linear_fns = [
         'linear', 'conv1d', 'conv2d', 'conv3d', 'conv_transpose1d',
@@ -310,5 +313,5 @@ def init_weights(net, init_type='normal', init_gain=0.02):
             normal_(m.weight, 1.0, init_gain)
             constant_(m.bias, 0.0)
 
-    print('initialize network with %s' % init_type)
+    logger.debug('initialize network with %s' % init_type)
     net.apply(init_func)  # apply the initialization function <init_func>
