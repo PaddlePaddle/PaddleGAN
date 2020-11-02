@@ -13,12 +13,11 @@
 运行如下命令，就可以完成妆容迁移，程序运行成功后，会在当前文件夹生成妆容迁移后的图片文件。本项目中提供了原始图片和参考供展示使用，具体命令如下所示：
 
 ```
-cd applications/
-python tools/ps_demo.py \  
+python tools/psgan_infer.py \  
   --config-file configs/makeup.yaml \
   --model_path /your/model/path \
-  --source_path  /your/source/image/path  \
-  --reference_dir /your/ref/image/path
+  --source_path  docs/imgs/ps_source.png  \
+  --reference_dir docs/imgs/ref/ps_ref
 ```
 **参数说明:**
 - config-file: PSGAN网络到参数配置文件，格式为yaml

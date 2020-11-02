@@ -13,12 +13,11 @@ This paper is to address the makeup transfer task, which aims to transfer the ma
 Running the following command to complete the makeup transfer task. It will geneate the transfered image in the current path when the program running sucessfully.
 
 ```
-cd applications
-python tools/ps_demo.py \  
+python tools/psgan_infer.py \  
   --config-file configs/makeup.yaml \
   --model_path /your/model/path \
-  --source_path  /your/source/image/path  \
-  --reference_dir /your/ref/image/path
+  --source_path  docs/imgs/ps_source.png  \
+  --reference_dir docs/imgs/ref/ps_ref
 ```
 **params:**
 - config-file: PSGAN network configuration file, yaml format
