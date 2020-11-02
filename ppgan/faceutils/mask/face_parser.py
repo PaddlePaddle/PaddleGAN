@@ -23,7 +23,7 @@ from paddle.utils.download import get_path_from_url
 import pickle
 from .model import BiSeNet
 
-BISENET_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models%2Fbisenet.pdparams'
+BISENET_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/bisenet.pdparams'
 
 
 class FaceParser:
