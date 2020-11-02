@@ -10,6 +10,7 @@ This paper is to address the makeup transfer task, which aims to transfer the ma
 
 ## 2. How to use
 ### 2.1 Test
+Pretrained model can be downloaded under following link: [psgan_weight](https://paddlegan.bj.bcebos.com/models/psgan_weight.pkl)
 Running the following command to complete the makeup transfer task. It will geneate the transfered image in the current path when the program running sucessfully.
 
 ```
