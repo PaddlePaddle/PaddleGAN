@@ -57,7 +57,7 @@ def parse_args():
     parser.add_argument("--reference_dir",
                         default="",
                         help="path to reference images")
-    parser.add_argument("--model_path", default="", help="model for loading")
+    parser.add_argument("--model_path", default=None, help="model for loading")
 
     args = parser.parse_args()
 

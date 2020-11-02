@@ -30,11 +30,9 @@ def generate_P_from_lmks(lmks, resize, w, h):
     diff = fix - lmks
     diff = diff.transpose(1, 2, 0)
     diff = cv2.resize(diff, diff_size, interpolation=cv2.INTER_NEAREST)
-    diff = diff.transpose(2, 0, 1).reshape(136, -1)
-    norm = np.linalg.norm(diff, axis=0)
-    P_np = diff / norm
+    diff = diff.transpose(2, 0, 1)
 
-    return P_np
+    return diff
 
 
 def copy_area(tar, src, lms):

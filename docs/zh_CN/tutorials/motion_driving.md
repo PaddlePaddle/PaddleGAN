@@ -17,9 +17,10 @@ First order motion model的任务是image animation，给定一张源图片，�
 用户可以上传自己准备的视频和图片，并在如下命令中的source_image参数和driving_video参数分别换成自己的图片和视频路径，然后运行如下命令，就可以完成动作表情迁移，程序运行成功后，会在ouput文件夹生成名为result.mp4的视频文件，该文件即为动作迁移后的视频。本项目中提供了原始图片和驱动视频供展示使用。运行的命令如下所示：
 
 ```
+cd applications/
 python -u tools/first-order-demo.py  \
-     --driving_video ./ravel_10.mp4 \
-     --source_image ./sudaqiang.png \
+     --driving_video ../docs/imgs/fom_dv.mp4 \
+     --source_image ../docs/imgs/fom_source_image.png \
      --relative --adapt_scale
 ```
 
