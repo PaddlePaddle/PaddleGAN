@@ -39,7 +39,10 @@
 
 ![](../imgs/horse2zebra.png)
 
-[model download](TODO)
+## 1.4 模型下载
+| 模型 | 数据集 | 下载地址 |
+|---|---|---|
+| Pix2Pix_cityscapes  | cityscapes | [Pix2Pix_cityscapes](https://paddlegan.bj.bcebos.com/models/Pix2Pix_cityscapes.pdparams)
 
 
 
@@ -89,7 +92,11 @@
 
 ![](../imgs/A2B.png)
 
-[model download](TODO)
+## 2.4 模型下载
+| 模型 | 数据集 | 下载地址 |
+|---|---|---|
+| CycleGAN_cityscapes  | cityscapes | [CycleGAN_cityscapes](https://paddlegan.bj.bcebos.com/models/CycleGAN_cityscapes.pdparams) |
+| CycleGAN_horse2zebra | horse2zebra | [CycleGAN_horse2zebra](https://paddlegan.bj.bcebos.com/models/CycleGAN_horse2zebra.pdparams)
 
 
 # References

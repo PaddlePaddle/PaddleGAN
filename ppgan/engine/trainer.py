@@ -256,7 +256,7 @@ class Trainer:
         assert name in ['checkpoint', 'weight']
 
         state_dicts = {}
-        save_filename = 'epoch_%s_%s.pkl' % (epoch, name)
+        save_filename = 'epoch_%s_%s.pdparams' % (epoch, name)
         save_path = os.path.join(self.output_dir, save_filename)
         for net_name, net in self.model.nets.items():
             state_dicts[net_name] = net.state_dict()
@@ -275,7 +275,8 @@ class Trainer:
         if keep > 0:
             try:
                 checkpoint_name_to_be_removed = os.path.join(
-                    self.output_dir, 'epoch_%s_%s.pkl' % (epoch - keep, name))
+                    self.output_dir,
+                    'epoch_%s_%s.pdparams' % (epoch - keep, name))
                 if os.path.exists(checkpoint_name_to_be_removed):
                     os.remove(checkpoint_name_to_be_removed)
 
