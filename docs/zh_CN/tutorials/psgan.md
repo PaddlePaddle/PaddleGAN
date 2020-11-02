@@ -10,7 +10,7 @@
 
 ## 2. 使用方法
 ### 2.1 测试
-预训练模型可以从如下地址下载: [psgan_weight](https://paddlegan.bj.bcebos.com/models/psgan_weight.pkl)
+预训练模型可以从如下地址下载: [psgan_weight](https://paddlegan.bj.bcebos.com/models/psgan_weight.pdparams)
 
 运行如下命令，就可以完成妆容迁移，程序运行成功后，会在当前文件夹生成妆容迁移后的图片文件。本项目中提供了原始图片和参考供展示使用，具体命令如下所示：
 
@@ -75,7 +75,7 @@ data
 ### 2.3 模型
 Model|Dataset|BatchSize|Inference speed|Download
 ---|:--:|:--:|:--:|:--:
-PSGAN|MT-Dataset| 1 | 1.9s(GPU:P40) | [model](https://paddlegan.bj.bcebos.com/models/psgan_weight.pkl)
+PSGAN|MT-Dataset| 1 | 1.9s(GPU:P40) | [model](https://paddlegan.bj.bcebos.com/models/psgan_weight.pdparams)
 
 ## 3. 妆容迁移结果展示
 
