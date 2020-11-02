@@ -23,7 +23,7 @@ from paddle.utils.download import get_path_from_url
 import pickle
 from .model import BiSeNet
 
-BISENET_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/bisnet.pdparams'
+BISENET_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models%2Fbisenet.pdparams'
 
 
 class FaceParser:
@@ -52,7 +52,6 @@ class FaceParser:
         #self.dict = paddle.to_tensor(mapper)
         self.save_pth = get_path_from_url(BISENET_WEIGHT_URL,
                                           osp.split(osp.realpath(__file__))[0])
-        self.save_pth = '/workspace/pr-ppgan/PaddleGAN/ppgan/faceutils/mask/bisenet.pdparams'
 
         self.net = BiSeNet(n_classes=19)
 

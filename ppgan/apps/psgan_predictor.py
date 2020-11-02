@@ -53,7 +53,7 @@ def mask2image(mask: np.array, format="HWC"):
     return canvas
 
 
-PS_WEIGHT_URL = " "
+PS_WEIGHT_URL = "https://paddlegan.bj.bcebos.com/models%2Fpsgan_weight.pkl"
 
 
 class PreProcess:
