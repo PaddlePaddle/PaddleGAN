@@ -10,10 +10,7 @@ PaddleGAN is an development kit of Generative Adversarial Network based on Paddl
 
 ### Image Translation
 <div align='center'>
-  <img src='./docs/imgs/A2B.png'>
-</div>
-<div align='center'>
-  <img src='./docs/imgs/B2A.png'>
+  <img src='./docs/imgs/horse2zebra.gif'>
 </div>
 
 
