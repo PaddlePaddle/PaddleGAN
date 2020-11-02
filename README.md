@@ -10,10 +10,7 @@ PaddleGAN 是一个基于飞桨的生成对抗网络开发工具包.
 
 ### 图片变换
 <div align='center'>
-  <img src='./docs/imgs/A2B.png'>
-</div>
-<div align='center'>
-  <img src='./docs/imgs/B2A.png'>
+  <img src='./docs/imgs/horse2zebra.gif'>
 </div>
 
 ### 妆容迁移
