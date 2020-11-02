@@ -17,7 +17,8 @@ python tools/psgan_infer.py \
   --config-file configs/makeup.yaml \
   --model_path /your/model/path \
   --source_path  docs/imgs/ps_source.png  \
-  --reference_dir docs/imgs/ref/ps_ref
+  --reference_dir docs/imgs/ref/ps_ref \
+  --evaluate-only True
 ```
 **params:**
 - config-file: PSGAN network configuration file, yaml format
