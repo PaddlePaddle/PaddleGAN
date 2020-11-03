@@ -6,7 +6,7 @@ English | [简体中文](./README.md)
 
 # PaddleGAN
 
-PaddleGAN is an development kit of Generative Adversarial Network based on PaddlePaddle.
+PaddleGAN is a software development kit of Generative Adversarial Network based on PaddlePaddle.
 
 ### Image Translation
 <div align='center'>
@@ -46,7 +46,7 @@ changes.
 
 - Rich applications:
 
-  PaddleGAN provides rich of applications, such as image generation, image restore, image colorization, video interpolate, makeup shifter.
+  PaddleGAN provides rich of applications, such as image generator, image restorer, image colorizer, video interpolator, makeup shifter.
 
 ## Install
 
@@ -65,7 +65,7 @@ Get started through ppgan.app interface:
 More tutorials:
 
 - [Data preparation](./docs/en_US/data_prepare.md)
-- [Traning/Evaluating/Testing basic usage](./docs/zh_CN/get_started.md)
+- [Training/Evaluating/Testing basic usage](./docs/zh_CN/get_started.md)
 
 ## Model Tutorial
 
@@ -79,7 +79,7 @@ More tutorials:
 ## Changelog
 
 - v0.1.0 (2020.11.02)
-  - Realse first version, supported models include Pixel2Pixel, CycleGAN, PSGAN. Supported applications include video frame interpolation, super resolution, colorize images and videos, image animation.
+  - Release first version, supported models include Pixel2Pixel, CycleGAN, PSGAN. Supported applications include video frame interpolation, super resolution, colorize images and videos, image animation.
   - Modular design and friendly interface.
 
 ## Contributing
