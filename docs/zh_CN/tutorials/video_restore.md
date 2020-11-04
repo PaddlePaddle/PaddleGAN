@@ -63,6 +63,7 @@ ppgan.apps.DeOldifyPredictor(output='output', weight_path=None, render_factor=32
 
 - `output (str，可选的)`: 输出的文件夹路径，默认值：`output`.
 - `weight_path (None，可选的)`: 载入的权重路径，如果没有设置，则从云端下载默认的权重到本地。默认值：`None`。
+- `artistic (bool)`: 是否使用偏"艺术性"的模型。"艺术性"的模型有可能产生一些有趣的颜色，但是毛刺比较多。
 - `render_factor (int)`: 会将该参数乘以16后作为输入帧的resize的值，如果该值设置为32，
                          则输入帧会resize到(32 * 16, 32 * 16)的尺寸再输入到网络中。
 
