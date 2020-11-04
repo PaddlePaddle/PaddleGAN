@@ -39,6 +39,7 @@ ppgan.apps.DeOldifyPredictor(output='output', weight_path=None, render_factor=32
 >
 > > - output (str):  设置输出图片的保存路径，默认是output。注意，保存路径为设置output/DeOldify。
 > > - weight_path (str): 指定模型路径，默认是None，则会自动下载内置的已经训练好的模型。
+> > - artistic (bool): 是否使用偏"艺术性"的模型。"艺术性"的模型有可能产生一些有趣的颜色，但是毛刺比较多。
 > > - render_factor (int): 图片渲染上色时的缩放因子，图片会缩放到边长为16xrender_factor的正方形， 再上色，例如render_factor默认值为32，输入图片先缩放到(16x32=512) 512x512大小的图片。通常来说，render_factor越小，计算速度越快，颜色看起来也更鲜活。较旧和较低质量的图像通常会因降低渲染因子而受益。渲染因子越高，图像质量越好，但颜色可能会稍微褪色。
 
 ### run

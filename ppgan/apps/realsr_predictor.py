@@ -107,7 +107,10 @@ class RealSRPredictor(BasePredictor):
 
             out_path = None
             if self.output:
-                base_name = os.path.splitext(os.path.basename(input))[0]
+                try:
+                    base_name = os.path.splitext(os.path.basename(input))[0]
+                except:
+                    base_name = 'result'
                 out_path = os.path.join(self.output, base_name + '.png')
                 pred_img.save(out_path)
 
