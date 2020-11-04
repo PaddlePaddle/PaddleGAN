@@ -1,0 +1,1 @@
+../../zh_CN/tutorials/video_restore.md
