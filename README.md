@@ -112,5 +112,3 @@ PaddleGAN SIG就是这样一个汇集对GAN感兴趣小伙伴们的开发者组�
 ## 许可证书
 
 本项目的发布受[Apache 2.0 license](LICENSE)许可认证。
-
-## 
