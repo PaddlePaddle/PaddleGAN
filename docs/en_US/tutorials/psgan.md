@@ -35,14 +35,14 @@ python tools/psgan_infer.py \
 ```
 mv landmarks/makeup MT-Dataset/landmarks/makeup
 mv landmarks/non-makeup MT-Dataset/landmarks/non-makeup
-mv landmarks/train_makeup.txt MT-Dataset/makeup.txt
-mv tlandmarks/train_non-makeup.txt MT-Dataset/non-makeup.txt
+cp landmarks/train_makeup.txt MT-Dataset/train_makeup.txt
+cp tlandmarks/train_non-makeup.txt MT-Dataset/train_non-makeup.txt
 ```
 
 The final data directory should be looked like:
 
 ```
-data
+data/MT-Dataset
 ├── images
 │   ├── makeup
 │   └── non-makeup
