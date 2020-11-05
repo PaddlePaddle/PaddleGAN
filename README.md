@@ -10,6 +10,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 <div align='center'>
   <img src='./docs/imgs/ppgan.jpg'>
 </div>
+
 [![License](https://img.shields.io/badge/license-Apache%202-red.svg)](LICENSE)![python version](https://img.shields.io/badge/python-3.6+-orange.svg)
 
 ## 快速开始
