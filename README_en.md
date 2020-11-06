@@ -45,12 +45,14 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 ### Image Translation
 
 <div align='center'>
-  <img src='./docs/imgs/horse2zebra.gif'>
+  <img src='./docs/imgs/horse2zebra.gif'width='700' height='200'/>
 </div>
+
 ### Old video restore
 <div align='center'>
-  <img src='./docs/imgs/color_sr_peking.gif'>
+  <img src='./docs/imgs/color_sr_peking.gif' width='700'/>
 </div>
+
 
 ### Motion driving
 <div align='center'>
@@ -59,15 +61,15 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 ### Super resolution
 
 <div align='center'>
-  <img src='./docs/imgs/sr_demo.png'>
+  <img src='./docs/imgs/sr_demo.png'width='700' height='250'/>
 </div>
+
 
 ### Makeup shifter
 
 <div align='center'>
-  <img src='./docs/imgs/makeup_shifter.png'>
+  <img src='./docs/imgs/makeup_shifter.png'width='700' height='250'/>
 </div>
-
 
 
 ## Changelog

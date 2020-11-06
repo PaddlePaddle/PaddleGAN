@@ -57,8 +57,6 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   <img src='./docs/imgs/horse2zebra.gif'width='700' height='200'/>
 </div>
 
-
-
 ### 老视频修复
 
 <div align='center'>
@@ -71,19 +69,19 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 <div align='center'>
   <img src='./docs/imgs/first_order.gif'/>
 </div>
-
-
 ### 超分辨率
 
 <div align='center'>
-  <img src='./docs/imgs/sr_demo.png'width='500' height='200'/>
+  <img src='./docs/imgs/sr_demo.png'width='700' height='250'/>
 </div>
+
 
 ### 妆容迁移
 
 <div align='center'>
-  <img src='./docs/imgs/makeup_shifter.png'width='550' height='200'/>
+  <img src='./docs/imgs/makeup_shifter.png'width='700' height='250'/>
 </div>
+
 
 ## 版本更新
 
