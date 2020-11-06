@@ -26,7 +26,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
  ```
 
 * 更多训练、评估教程:
-  * [数据准备](./docs/zh_CN/data_prepare.md) 
+  * [数据准备](./docs/zh_CN/data_prepare.md)
   * [训练/评估/推理教程](./docs/zh_CN/get_started.md)
 
 ## 经典模型实现
@@ -67,7 +67,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 ### 动作迁移
 
 <div align='center'>
-  <img src='./docs/imgs/first_order.gif'/>
+  <img src='./docs/imgs/first_order.gif' width='700'/>
 </div>
 
 ### 超分辨率

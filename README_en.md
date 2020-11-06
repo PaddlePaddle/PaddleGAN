@@ -56,7 +56,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 ### Motion driving
 <div align='center'>
-  <img src='./docs/imgs/first_order.gif'>
+  <img src='./docs/imgs/first_order.gif' width='700'>
 </div>
 
 ### Super resolution
