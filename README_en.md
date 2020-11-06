@@ -58,6 +58,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 <div align='center'>
   <img src='./docs/imgs/first_order.gif'>
 </div>
+
 ### Super resolution
 
 <div align='center'>
