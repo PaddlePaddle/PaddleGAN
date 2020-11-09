@@ -16,7 +16,7 @@ import numpy as np
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
-from paddle.vision.models import resnet101
+from paddle.vision.models import resnet34, resnet101
 
 from .hook import hook_outputs, model_sizes, dummy_eval
 from ...modules.nn import Spectralnorm
@@ -57,6 +57,7 @@ class Deoldify(SequentialEx):
     def __init__(self,
                  encoder,
                  n_classes,
+                 model_type='stable',
                  blur=False,
                  blur_final=True,
                  self_attention=False,
@@ -95,18 +96,34 @@ class Deoldify(SequentialEx):
             do_blur = blur and (not_final or blur_final)
             sa = self_attention and (i == len(sfs_idxs) - 3)
 
-            n_out = nf if not_final else nf // 2
+            if model_type == 'stable':
+                n_out = nf if not_final else nf // 2
+                unet_block = UnetBlockWide(up_in_c,
+                                           x_in_c,
+                                           n_out,
+                                           self.sfs[i],
+                                           final_div=not_final,
+                                           blur=blur,
+                                           self_attention=sa,
+                                           norm_type=norm_type,
+                                           extra_bn=extra_bn,
+                                           **kwargs)
+            elif model_type == 'artistic':
+                unet_block = UnetBlockDeep(up_in_c,
+                                           x_in_c,
+                                           self.sfs[i],
+                                           final_div=not_final,
+                                           blur=blur,
+                                           self_attention=sa,
+                                           norm_type=norm_type,
+                                           extra_bn=extra_bn,
+                                           nf_factor=nf_factor,
+                                           **kwargs)
+            else:
+                raise ValueError(
+                    'Expected model_type in [stable, artistic], but got {}'.
+                    format(model_type))
 
-            unet_block = UnetBlockWide(up_in_c,
-                                       x_in_c,
-                                       n_out,
-                                       self.sfs[i],
-                                       final_div=not_final,
-                                       blur=blur,
-                                       self_attention=sa,
-                                       norm_type=norm_type,
-                                       extra_bn=extra_bn,
-                                       **kwargs)
             unet_block.eval()
             layers.append(unet_block)
             x = unet_block(x)
@@ -151,7 +168,7 @@ def custom_conv_layer(ni: int,
     bn = norm_type in ('Batch', 'Batchzero') or extra_bn == True
     if bias is None:
         bias = not bn
-    conv_func = nn.Conv2DTranspose if transpose else nn.Conv1d if is_1d else nn.Conv2D
+    conv_func = nn.Conv2DTranspose if transpose else nn.Conv1D if is_1d else nn.Conv2D
 
     conv = conv_func(ni,
                      nf,
@@ -222,19 +239,18 @@ class UnetBlockWide(nn.Layer):
 class UnetBlockDeep(nn.Layer):
     "A quasi-UNet block, using `PixelShuffle_ICNR upsampling`."
 
-    def __init__(
-            self,
-            up_in_c: int,
-            x_in_c: int,
-            # hook: Hook,
-            final_div: bool = True,
-            blur: bool = False,
-            leaky: float = None,
-            self_attention: bool = False,
-            nf_factor: float = 1.0,
-            **kwargs):
+    def __init__(self,
+                 up_in_c: int,
+                 x_in_c: int,
+                 hook,
+                 final_div: bool = True,
+                 blur: bool = False,
+                 leaky: float = None,
+                 self_attention: bool = False,
+                 nf_factor: float = 1.0,
+                 **kwargs):
         super().__init__()
-
+        self.hook = hook
         self.shuf = CustomPixelShuffle_ICNR(up_in_c,
                                             up_in_c // 2,
                                             blur=blur,
@@ -312,7 +328,7 @@ def conv_layer(ni: int,
     if padding is None: padding = (ks - 1) // 2 if not transpose else 0
     bn = norm_type in ('Batch', 'BatchZero')
     if bias is None: bias = not bn
-    conv_func = nn.Conv2DTranspose if transpose else nn.Conv1d if is_1d else nn.Conv2D
+    conv_func = nn.Conv2DTranspose if transpose else nn.Conv1D if is_1d else nn.Conv2D
 
     conv = conv_func(ni,
                      nf,
@@ -472,16 +488,27 @@ def _get_sfs_idxs(sizes):
     return sfs_idxs
 
 
-def build_model():
-    backbone = resnet101()
+def build_model(model_type='stable'):
+    if model_type == 'stable':
+        backbone = resnet101()
+        nf_factor = 2
+    elif model_type == 'artistic':
+        backbone = resnet34()
+        nf_factor = 1.5
+    else:
+        raise ValueError(
+            'Expected model_type in [stable, artistic], but got {}'.format(
+                model_type))
+
     cut = -2
     encoder = nn.Sequential(*list(backbone.children())[:cut])
 
     model = Deoldify(encoder,
                      3,
+                     model_type=model_type,
                      blur=True,
                      y_range=(-3, 3),
                      norm_type='Spectral',
                      self_attention=True,
-                     nf_factor=2)
+                     nf_factor=nf_factor)
     return model

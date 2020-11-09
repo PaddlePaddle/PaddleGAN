@@ -10,15 +10,17 @@ This paper is to address the makeup transfer task, which aims to transfer the ma
 
 ## 2. How to use
 ### 2.1 Test
+Pretrained model can be downloaded under following link: [psgan_weight](https://paddlegan.bj.bcebos.com/models/psgan_weight.pdparams)
+
 Running the following command to complete the makeup transfer task. It will geneate the transfered image in the current path when the program running sucessfully.
 
 ```
-cd applications
-python tools/ps_demo.py \  
+python tools/psgan_infer.py \  
   --config-file configs/makeup.yaml \
   --model_path /your/model/path \
-  --source_path  /your/source/image/path  \
-  --reference_dir /your/ref/image/path
+  --source_path  docs/imgs/ps_source.png  \
+  --reference_dir docs/imgs/ref/ps_ref \
+  --evaluate-only True
 ```
 **params:**
 - config-file: PSGAN network configuration file, yaml format
@@ -33,14 +35,14 @@ python tools/ps_demo.py \
 ```
 mv landmarks/makeup MT-Dataset/landmarks/makeup
 mv landmarks/non-makeup MT-Dataset/landmarks/non-makeup
-mv landmarks/train_makeup.txt MT-Dataset/makeup.txt
-mv tlandmarks/train_non-makeup.txt MT-Dataset/non-makeup.txt
+cp landmarks/train_makeup.txt MT-Dataset/train_makeup.txt
+cp landmarks/train_non-makeup.txt MT-Dataset/train_non-makeup.txt
 ```
 
 The final data directory should be looked like:
 
 ```
-data
+data/MT-Dataset
 ├── images
 │   ├── makeup
 │   └── non-makeup
@@ -77,7 +79,7 @@ Notation: In train phase, the `isTrain` value in makeup.yaml file is `True`, but
 
 Model|Dataset|BatchSize|Inference speed|Download
 ---|:--:|:--:|:--:|:--:
-PSGAN|MT-Dataset| 1 | 1.9s/image (GPU:P40) | [model]()
+PSGAN|MT-Dataset| 1 | 1.9s/image (GPU:P40) | [model](https://paddlegan.bj.bcebos.com/models/psgan_weight.pdparams)
 
 ## 3. Result
 ![](../../imgs/makeup_shifter.png)

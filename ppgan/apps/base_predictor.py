@@ -14,6 +14,7 @@
 
 import os
 import cv2
+import numpy as np
 from PIL import Image
 import paddle
 
@@ -64,9 +65,16 @@ class BasePredictor(object):
 
     def is_image(self, input):
         try:
-            img = Image.open(input)
-            _ = img.size
-            return True
+            if isinstance(input, (np.ndarray, Image.Image)):
+                return True
+            elif isinstance(input, str):
+                if not os.path.isfile(input):
+                    raise ValueError('input must be a file')
+                img = Image.open(input)
+                _ = img.size
+                return True
+            else:
+                return False
         except:
             return False
 

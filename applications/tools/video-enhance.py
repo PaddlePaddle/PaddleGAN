@@ -67,6 +67,10 @@ parser.add_argument('--mindim',
                     default=360,
                     help='Length of minimum image edges')
 # DeOldify args
+parser.add_argument('--artistic',
+                    action='store_true',
+                    default=False,
+                    help='whether to use artistic DeOldify Model')
 parser.add_argument('--render_factor',
                     type=int,
                     default=32,
@@ -107,6 +111,7 @@ if __name__ == "__main__":
         elif order == 'DeOldify':
             predictor = DeOldifyPredictor(args.output,
                                           weight_path=args.DeOldify_weight,
+                                          artistic=args.artistic,
                                           render_factor=args.render_factor)
             frames_path, temp_video_path = predictor.run(temp_video_path)
         elif order == 'RealSR':

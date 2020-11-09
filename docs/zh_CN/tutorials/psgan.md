@@ -2,7 +2,7 @@
 
 ## 1. PSGAN原理
 
-[PSGAN](https://arxiv.org/abs/1909.06956)模型的任务是妆容迁移， 即将任意参照图像上的妆容迁移到不带妆容的源图像上。很多人像美化应用都需要这种技术。近来的一些妆容迁移方法大都基于生成对抗网络（GAN）。它们通常采用 CycleGAN 的框架，并在两个数据集上进行训练，即无妆容图像和有妆容图像。但是，现有的方法存在一个局限性：只在正面人脸图像上表现良好，没有为处理源图像和参照图像之间的姿态和表情差异专门设计模块。PSGAN是一种全新的姿态稳健可感知空间的生生成对抗网络。PSGAN 主要分为三部分：妆容提炼网络（MDNet）、注意式妆容变形（AMM）模块和卸妆-再化妆网络（DRNet）。这三种新提出的模块能让 PSGAN 具备上述的完美妆容迁移模型所应具备的能力。
+[PSGAN](https://arxiv.org/abs/1909.06956)模型的任务是妆容迁移， 即将任意参照图像上的妆容迁移到不带妆容的源图像上。很多人像美化应用都需要这种技术。近来的一些妆容迁移方法大都基于生成对抗网络（GAN）。它们通常采用 CycleGAN 的框架，并在两个数据集上进行训练，即无妆容图像和有妆容图像。但是，现有的方法存在一个局限性：只在正面人脸图像上表现良好，没有为处理源图像和参照图像之间的姿态和表情差异专门设计模块。PSGAN是一种全新的姿态稳健可感知空间的生成对抗网络。PSGAN 主要分为三部分：妆容提炼网络（MDNet）、注意式妆容变形（AMM）模块和卸妆-再化妆网络（DRNet）。这三种新提出的模块能让 PSGAN 具备上述的完美妆容迁移模型所应具备的能力。
 
 <div align="center">
   <img src="../../imgs/psgan_arc.png" width="800"/>
@@ -10,15 +10,17 @@
 
 ## 2. 使用方法
 ### 2.1 测试
+预训练模型可以从如下地址下载: [psgan_weight](https://paddlegan.bj.bcebos.com/models/psgan_weight.pdparams)
+
 运行如下命令，就可以完成妆容迁移，程序运行成功后，会在当前文件夹生成妆容迁移后的图片文件。本项目中提供了原始图片和参考供展示使用，具体命令如下所示：
 
 ```
-cd applications/
-python tools/ps_demo.py \  
+python tools/psgan_infer.py \  
   --config-file configs/makeup.yaml \
   --model_path /your/model/path \
-  --source_path  /your/source/image/path  \
-  --reference_dir /your/ref/image/path
+  --source_path  docs/imgs/ps_source.png  \
+  --reference_dir docs/imgs/ref/ps_ref \
+  --evaluate-only True
 ```
 **参数说明:**
 - config-file: PSGAN网络到参数配置文件，格式为yaml
@@ -33,13 +35,13 @@ python tools/ps_demo.py \
 ```
 mv landmarks/makeup MT-Dataset/landmarks/makeup
 mv landmarks/non-makeup MT-Dataset/landmarks/non-makeup
-mv landmarks/train_makeup.txt MT-Dataset/makeup.txt
-mv tlandmarks/train_non-makeup.txt MT-Dataset/non-makeup.txt
+cp landmarks/train_makeup.txt MT-Dataset/train_makeup.txt
+cp landmarks/train_non-makeup.txt MT-Dataset/train_non-makeup.txt
 ```
 
 最后数据集目录如下所示：
 ```
-data
+data/MT-Dataset
 ├── images
 │   ├── makeup
 │   └── non-makeup
@@ -73,7 +75,7 @@ data
 ### 2.3 模型
 Model|Dataset|BatchSize|Inference speed|Download
 ---|:--:|:--:|:--:|:--:
-PSGAN|MT-Dataset| 1 | 1.9s(GPU:P40) | [model]()
+PSGAN|MT-Dataset| 1 | 1.9s(GPU:P40) | [model](https://paddlegan.bj.bcebos.com/models/psgan_weight.pdparams)
 
 ## 3. 妆容迁移结果展示
 

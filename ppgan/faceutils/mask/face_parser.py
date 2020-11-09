@@ -23,7 +23,7 @@ from paddle.utils.download import get_path_from_url
 import pickle
 from .model import BiSeNet
 
-BISENET_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/bisnet.pdparams'
+BISENET_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/bisenet.pdparams'
 
 
 class FaceParser:
@@ -65,7 +65,7 @@ class FaceParser:
         image = image.transpose((2, 0, 1))
         image = self.transforms(image)
 
-        state_dict, _ = paddle.load(self.save_pth)
+        state_dict = paddle.load(self.save_pth)
         self.net.set_dict(state_dict)
         self.net.eval()
 
@@ -74,8 +74,6 @@ class FaceParser:
             image = image.unsqueeze(0)
             out = self.net(image)[0]
             parsing = out.squeeze(0).argmax(0)  #argmax(0).astype('float32')
-
-        #parsing = paddle.nn.functional.embedding(x=self.dict, weight=parsing)
 
         parse_np = parsing.numpy()
         h, w = parse_np.shape

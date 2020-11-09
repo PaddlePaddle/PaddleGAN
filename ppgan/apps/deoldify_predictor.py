@@ -26,17 +26,27 @@ from ppgan.models.generators.deoldify import build_model
 
 from .base_predictor import BasePredictor
 
-DEOLDIFY_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/applications/DeOldify_stable.pdparams'
+DEOLDIFY_STABLE_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/applications/DeOldify_stable.pdparams'
+DEOLDIFY_ART_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/applications/DeOldify_art.pdparams'
 
 
 class DeOldifyPredictor(BasePredictor):
-    def __init__(self, output='output', weight_path=None, render_factor=32):
-        # self.input = input
+    def __init__(self,
+                 output='output',
+                 weight_path=None,
+                 artistic=False,
+                 render_factor=32):
         self.output = os.path.join(output, 'DeOldify')
+        if not os.path.exists(self.output):
+            os.makedirs(self.output)
         self.render_factor = render_factor
-        self.model = build_model()
+        self.model = build_model(
+            model_type='artistic' if artistic else 'stable')
         if weight_path is None:
-            weight_path = get_path_from_url(DEOLDIFY_WEIGHT_URL)
+            if artistic:
+                weight_path = get_path_from_url(DEOLDIFY_ART_WEIGHT_URL)
+            else:
+                weight_path = get_path_from_url(DEOLDIFY_STABLE_WEIGHT_URL)
 
         state_dict = paddle.load(weight_path)
         self.model.load_dict(state_dict)
@@ -134,7 +144,10 @@ class DeOldifyPredictor(BasePredictor):
 
             out_path = None
             if self.output:
-                base_name = os.path.splitext(os.path.basename(input))[0]
+                try:
+                    base_name = os.path.splitext(os.path.basename(input))[0]
+                except:
+                    base_name = 'result'
                 out_path = os.path.join(self.output, base_name + '.png')
                 pred_img.save(out_path)
 

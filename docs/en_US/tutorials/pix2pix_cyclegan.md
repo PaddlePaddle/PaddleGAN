@@ -37,9 +37,12 @@
 
 ## 1.3 Results
 
-![](../imgs/horse2zebra.png)
+![](../../imgs/horse2zebra.png)
 
-[model download](TODO)
+## 1.4 模型下载
+| 模型 | 数据集 | 下载地址 |
+|---|---|---|
+| Pix2Pix_cityscapes  | cityscapes | [Pix2Pix_cityscapes](https://paddlegan.bj.bcebos.com/models/Pix2Pix_cityscapes.pdparams)
 
 
 
@@ -49,7 +52,7 @@
 
    CycleGAN uses unpaired pictures for image translation, input two different images with different styles, and automatically perform style transfer. CycleGAN consists of two generators and two discriminators, generator A is inputting images of style A and outputting images of style B, generator B is inputting images of style B and outputting images of style A. The biggest difference between CycleGAN and pix2pix is that CycleGAN can realize image translation without establishing a one-to-one mapping between the source domain and the target domain.
 
-![](../imgs/cyclegan.png)
+![](../../imgs/cyclegan.png)
 
 ## 2.2 How to use
 
@@ -87,9 +90,13 @@
 
 ## 2.3 Results
 
-![](../imgs/A2B.png)
+![](../../imgs/A2B.png)
 
-[model download](TODO)
+## 2.4 模型下载
+| 模型 | 数据集 | 下载地址 |
+|---|---|---|
+| CycleGAN_cityscapes  | cityscapes | [CycleGAN_cityscapes](https://paddlegan.bj.bcebos.com/models/CycleGAN_cityscapes.pdparams) |
+| CycleGAN_horse2zebra | horse2zebra | [CycleGAN_horse2zebra](https://paddlegan.bj.bcebos.com/models/CycleGAN_horse2zebra.pdparams)
 
 
 # References

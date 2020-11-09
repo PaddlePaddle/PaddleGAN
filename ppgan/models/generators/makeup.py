@@ -296,31 +296,65 @@ class MANet(paddle.nn.Layer):
         # x -> src img
         x = self.encoder(x)
         _, c, h, w = x.shape
-        x_flat = x.reshape([-1, c, h * w])
-        x_flat = self.w * x_flat
-        if x_p is not None:
-            x_flat = paddle.concat([x_flat, x_p], axis=1)
 
         _, c2, h2, w2 = y.shape
-        y_flat = y.reshape([-1, c2, h2 * w2])
-        y_flat = self.w * y_flat
-        if y_p is not None:
-            y_flat = paddle.concat([y_flat, y_p], axis=1)
-        a_ = paddle.matmul(x_flat, y_flat, transpose_x=True) * 200.0
 
-        # mask softmax
-        if consistency_mask is not None:
-            a_ = a_ - 100.0 * (1 - consistency_mask)
+        mask_x = F.interpolate(mask_x, size=(64, 64))
+        mask_x = mask_x.transpose((1, 0, 2, 3))
+        mask_x_re = mask_x.tile([1, x.shape[1], 1, 1])
+        mask_x_diff_re = mask_x.tile([1, x_p.shape[1], 1, 1])
+        mask_y = F.interpolate(mask_y, size=(64, 64))
+        mask_y = mask_y.transpose((1, 0, 2, 3))
+        mask_y_re = mask_y.tile([1, y.shape[1], 1, 1])
+        mask_y_diff_re = mask_y.tile([1, y_p.shape[1], 1, 1])
+
+        x_re = x.tile([3, 1, 1, 1])
+        y_re = y.tile([3, 1, 1, 1])
+        x_flat = x_re * mask_x_re
+        y_flat = y_re * mask_y_re
+
+        x_p = x_p.tile([3, 1, 1, 1]) * mask_x_diff_re
+        y_p = y_p.tile([3, 1, 1, 1]) * mask_y_diff_re
+
+        norm_x = paddle.norm(x_p, axis=1,
+                             keepdim=True).tile([1, x_p.shape[1], 1, 1])
+        norm_x = paddle.where(norm_x == 0, paddle.to_tensor(1e10), norm_x)
+        x_p = x_p / norm_x
+        norm_y = paddle.norm(y_p, axis=1,
+                             keepdim=True).tile([1, y_p.shape[1], 1, 1])
+        norm_y = paddle.where(norm_y == 0, paddle.to_tensor(1e10), norm_y)
+        y_p = y_p / norm_y
+
+        x_flat = paddle.concat([x_flat * 0.01, x_p], axis=1)
+        y_flat = paddle.concat([y_flat * 0.01, y_p], axis=1)
+
+        x_flat_re = x_flat.reshape([3, x_flat.shape[1], h * w])
+        y_flat_re = y_flat.reshape([3, y_flat.shape[1], h2 * w2])
+
+        a_ = paddle.matmul(x_flat_re, y_flat_re, transpose_x=True)
+
+        with paddle.no_grad():
+            a_mask = a_ != 0
+
+        a_ *= 200
         a = F.softmax(a_, axis=-1)
+        a = a * a_mask
 
         gamma, beta = self.simple_spade(y)
+        gamma = gamma.tile([3, 1, 1, 1]) * mask_y
+        beta = beta.tile([3, 1, 1, 1]) * mask_y
 
         beta = beta.reshape([-1, h2 * w2, 1])
         beta = paddle.matmul(a, beta)
+        beta = beta.transpose((0, 2, 1))
         beta = beta.reshape([-1, 1, h2, w2])
         gamma = gamma.reshape([-1, h2 * w2, 1])
         gamma = paddle.matmul(a, gamma)
+        gamma = gamma.transpose((0, 2, 1))
         gamma = gamma.reshape([-1, 1, h2, w2])
+
+        beta = (beta[0] + beta[1] + beta[2]).unsqueeze(0)
+        gamma = (gamma[0] + gamma[1] + gamma[2]).unsqueeze(0)
         x = x * (1 + gamma) + beta
 
         for i in range(self.repeat_num):
