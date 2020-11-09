@@ -328,7 +328,7 @@ class MakeupModel(BaseModel):
                              g_B_skin_loss_his * 0.1) * 0.1
 
         self.losses['G_A_his_loss'] = self.loss_G_A_his
-        self.losses['G_B_his_loss'] = self.loss_G_A_his
+        self.losses['G_B_his_loss'] = self.loss_G_B_his
 
         #vgg loss
         vgg_s = self.vgg(self.real_A)
