@@ -1,6 +1,6 @@
 # Applications接口说明
 
-ppgan.apps包含超分、插针、上色、换妆、图像动画生成等应用，接口使用简洁，并内置了已训练好的模型，可以直接用来做应用。
+ppgan.apps包含超分、插针、上色、换妆、图像动画生成、人脸解析等应用，接口使用简洁，并内置了已训练好的模型，可以直接用来做应用。
 
 ## 公共用法
 
@@ -244,7 +244,7 @@ run(video_path)
 >
 > **返回值**
 >
-> > - tuple(str, str): 前者超分后的视频每帧图片的保存路径，后者为昨晚超分的视频路径。
+> > - tuple(str, str): 前者超分后的视频每帧图片的保存路径，后者为做完超分的视频路径。
 
 
 
@@ -254,7 +254,7 @@ run(video_path)
 ppgan.apps.DAINPredictor(output='output', weight_path=None，time_step=None, use_gpu=True, key_frame_thread=0，remove_duplicates=False)
 ```
 
-> 构建插针DAIN模型的实例。DAIN: Depth-Aware Video Frame Interpolation，论文链接: https://arxiv.org/abs/1904.00830 ，对视频做插针，获得帧率更高的视频。
+> 构建插帧DAIN模型的实例。DAIN: Depth-Aware Video Frame Interpolation，论文链接: https://arxiv.org/abs/1904.00830 ，对视频做插帧，获得帧率更高的视频。
 >
 > **示例**
 >
@@ -269,7 +269,7 @@ ppgan.apps.DAINPredictor(output='output', weight_path=None，time_step=None, use
 >
 > > - output_path (str):  设置预测输出的保存路径，默认是output。注意，保存路径为设置output/DAIN。
 > > - weight_path (str):  指定模型路径，默认是None，则会自动下载内置的已经训练好的模型。
-> > - time_step (float): 帧率变化的倍数为 1./time_step，例如，如果time_step为0.5，则2倍插针，为0.25，则为4倍插针。
+> > - time_step (float): 帧率变化的倍数为 1./time_step，例如，如果time_step为0.5，则2倍插针，为0.25，则为4倍插帧。
 > > - use_gpu (bool): 是否使用GPU做预测，默认是True。
 > > - remove_duplicates (bool): 是否去除重复帧，默认是False。
 
@@ -295,7 +295,7 @@ run(video_path)
 ppgan.apps.FirstOrderPredictor(output='output', weight_path=None，config=None, relative=False, adapt_scale=False，find_best_frame=False, best_frame=None)
 ```
 
-> 构建FirsrOrder模型的实例，此模型用来做Image Animation，既给定一张源图片和一个驱动视频，生成一段视频，其中住体是源图片，动作是驱动视频中的动作。论文是First Order Motion Model for Image Animation，论文链接: https://arxiv.org/abs/2003.00196 。
+> 构建FirsrOrder模型的实例，此模型用来做Image Animation，即给定一张源图片和一个驱动视频，生成一段视频，其中主体是源图片，动作是驱动视频中的动作。论文是First Order Motion Model for Image Animation，论文链接: https://arxiv.org/abs/2003.00196 。
 >
 > **示例**
 >
@@ -330,3 +330,24 @@ run(source_image，driving_video)
 > **返回值**
 >
 > > 无。
+
+## ppgan.apps.FaceParsePredictor
+
+```pyhton
+ppgan.apps.FaceParsePredictor(output_path='output')
+```
+> 构建人脸解析模型实例，此模型用来做人脸解析， 即给定一个输入的人脸图像，人脸解析将为每个语义成分(如头发、嘴唇、鼻子、耳朵等)分配一个像素级标签。我们用BiseNet来完成这项任务。论文是 BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation, 论文链接: https://arxiv.org/abs/1808.00897v1.
+
+**参数:**
+
+- input_image: 输入待解析的图片文件路径
+
+**示例:**
+
+```
+from ppgan.apps import FaceParsePredictor
+parser = FaceParsePredictor()
+parser.run('docs/imgs/face.png')
+```
+**返回值:**
+- mask(numpy.ndarray): 返回解析完成的人脸成分mask矩阵, 数据类型为numpy.ndarray

@@ -52,5 +52,8 @@ class FaceParsePredictor(BasePredictor):
         mask = cv2.resize(mask.numpy(), (256, 256))
         mask = mask.astype(np.uint8)
         mask = mask2image(mask)
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
         save_path = os.path.join(self.output_path, 'face_parse.png')
         cv2.imwrite(save_path, mask)
+        return mask
