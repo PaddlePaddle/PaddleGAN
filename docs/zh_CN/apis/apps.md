@@ -338,16 +338,16 @@ ppgan.apps.FaceParsePredictor(output_path='output')
 ```
 > 构建人脸解析模型实例，此模型用来做人脸解析， 即给定一个输入的人脸图像，人脸解析将为每个语义成分(如头发、嘴唇、鼻子、耳朵等)分配一个像素级标签。我们用BiseNet来完成这项任务。论文是 BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation, 论文链接: https://arxiv.org/abs/1808.00897v1.
 
-**参数:**
+> **参数:**
+>
+> > - input_image: 输入待解析的图片文件路径
 
-- input_image: 输入待解析的图片文件路径
-
-**示例:**
-
-```
-from ppgan.apps import FaceParsePredictor
-parser = FaceParsePredictor()
-parser.run('docs/imgs/face.png')
-```
-**返回值:**
-- mask(numpy.ndarray): 返回解析完成的人脸成分mask矩阵, 数据类型为numpy.ndarray
+> **示例:**
+>
+> ```
+> from ppgan.apps import FaceParsePredictor
+> parser = FaceParsePredictor()
+> parser.run('docs/imgs/face.png')
+> ```
+> **返回值:**
+> > - mask(numpy.ndarray): 返回解析完成的人脸成分mask矩阵, 数据类型为numpy.ndarray
