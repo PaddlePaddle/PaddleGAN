@@ -17,14 +17,14 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 * 请确保您按照[安装文档](./docs/zh_CN/install.md)的说明正确安装了PaddlePaddle和PaddleGAN
 
-* 通过ppgan.app接口使用预训练模型:
+* 通过ppgan.apps接口使用预训练模型:
 
  ```python
  from ppgan.apps import RealSRPredictor
  sr = RealSRPredictor()
  sr.run("docs/imgs/monarch.png")
  ```
-
+* 更多预训练模型的使用请参考[ppgan.apps apis](./docs/zh_CN/apis/apps.md)
 * 更多训练、评估教程:
   * [数据准备](./docs/zh_CN/data_prepare.md)
   * [训练/评估/推理教程](./docs/zh_CN/get_started.md)

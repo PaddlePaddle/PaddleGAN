@@ -24,7 +24,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
  sr = RealSRPredictor()
  sr.run("docs/imgs/monarch.png")
  ```
-
+* More usage of pre-trained models, please refer to [ppgan.apps apis](./docs/en_US/apis/apps.md)
 * More tutorials:
   - [Data preparation](./docs/en_US/data_prepare.md)
   - [Training/Evaluating/Testing basic usage](./docs/zh_CN/get_started.md)
