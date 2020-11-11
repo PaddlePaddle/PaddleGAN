@@ -17,14 +17,14 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 * 请确保您按照[安装文档](./docs/zh_CN/install.md)的说明正确安装了PaddlePaddle和PaddleGAN
 
-* 通过ppgan.app接口使用预训练模型:
+* 通过ppgan.apps接口使用预训练模型:
 
  ```python
  from ppgan.apps import RealSRPredictor
  sr = RealSRPredictor()
  sr.run("docs/imgs/monarch.png")
  ```
-
+* 更多预训练模型的使用请参考[ppgan.apps apis](./docs/zh_CN/apis/apps.md)
 * 更多训练、评估教程:
   * [数据准备](./docs/zh_CN/data_prepare.md)
   * [训练/评估/推理教程](./docs/zh_CN/get_started.md)
@@ -91,19 +91,20 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   - 初版发布，支持Pixel2Pixel、CycleGAN、PSGAN模型，支持视频插针、超分、老照片/视频上色、视频动作生成等应用。
   - 模块化设计，接口简单易用。
 
-## PaddleGAN 特别兴趣小组（Special Interest Group）
+## 欢迎加入PaddleGAN技术交流群
+
+扫描二维码加入PaddleGAN QQ群[群号：1058398620]，获得更高效的问题答疑，与各行业开发者交流讨论，我们期待您的加入！
+
+<div align='center'>
+  <img src='./docs/imgs/qq.png'width='250' height='300'/>
+</div>
+### PaddleGAN 特别兴趣小组（Special Interest Group）
 
 最早于1961年被[ACM（Association for Computing Machinery)](https://en.wikipedia.org/wiki/Association_for_Computing_Machinery)首次提出并使用，国际顶尖开源组织包括[Kubernates](https://kubernetes.io/)都采用SIGs的形式，使拥有同样特定兴趣的成员可以共同分享、学习知识并进行项目开发。这些成员不需要在同一国家/地区、同一个组织，只要大家志同道合，都可以奔着相同的目标一同学习、工作、玩耍~
 
 PaddleGAN SIG就是这样一个汇集对GAN感兴趣小伙伴们的开发者组织，在这里，有百度飞桨的一线开发人员、有来自世界500强的资深工程师、有国内外顶尖高校的学生。
 
-我们正在持续招募有兴趣、有能力的开发者加入我们一起共同建设本项目，并一起探索更多有用、有趣的应用。
-
-[PaddleGAN QQ 群号：1058398620]
-
-<div align='center'>
-  <img src='./docs/imgs/qq.png'width='250' height='300'/>
-</div>
+我们正在持续招募有兴趣、有能力的开发者加入我们一起共同建设本项目，并一起探索更多有用、有趣的应用。欢迎大家在加入群后联系我们讨论加入SIG并参与共建事宜。
 
 ## 贡献代码
 
