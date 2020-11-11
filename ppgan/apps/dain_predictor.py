@@ -269,6 +269,7 @@ class DAINPredictor(BasePredictor):
             return sum([2**i for (i, v) in enumerate(diff.flatten()) if v])
 
         hashes = {}
+        max_interp = 9
         image_paths = sorted(glob.glob(os.path.join(paths, '*.png')))
         for image_path in image_paths:
             image = cv2.imread(image_path)
@@ -283,7 +284,16 @@ class DAINPredictor(BasePredictor):
                 last_index = int(
                     hashed_paths[-1].split('/')[-1].split('.')[-2]) + 1
                 gap = 2 * (last_index - first_index) - 1
-                if gap > 9:
+                if gap > 2 * max_interp:
+                    cut1 = len(hashed_paths) // 3
+                    cut2 = cut1 * 2
+                    for p in hashed_paths[1:cut1 - 1]:
+                        os.remove(p)
+                    for p in hashed_paths[cut1 + 1:cut2]:
+                        os.remove(p)
+                    for p in hashed_paths[cut2 + 1:]:
+                        os.remove(p)
+                if gap > max_interp:
                     mid = len(hashed_paths) // 2
                     for p in hashed_paths[1:mid - 1]:
                         os.remove(p)
