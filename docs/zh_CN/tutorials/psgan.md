@@ -33,8 +33,8 @@ python tools/psgan_infer.py \
 2. 下载landmarks数据[lmks](https://paddlegan.bj.bcebos.com/landmarks.tar)，并解压
 3. 运行如下命令进行文件夹及文件替换:
 ```
-mv landmarks/makeup MT-Dataset/landmarks/makeup
-mv landmarks/non-makeup MT-Dataset/landmarks/non-makeup
+rm -rf MT-Dataset/landmarks/makeup && mv landmarks/makeup MT-Dataset/landmarks/
+rm -rf MT-Dataset/landmarks/non-makeup && mv landmarks/non-makeup MT-Dataset/landmarks/
 cp landmarks/train_makeup.txt MT-Dataset/train_makeup.txt
 cp landmarks/train_non-makeup.txt MT-Dataset/train_non-makeup.txt
 ```

@@ -12,7 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+import sys
 import argparse
+
+cur_path = os.path.abspath(os.path.dirname(__file__))
+root_path = os.path.split(cur_path)[0]
+sys.path.append(root_path)
+
 from ppgan.utils.options import parse_args
 from ppgan.utils.config import get_config
 from ppgan.apps.psgan_predictor import PSGANPredictor
