@@ -185,14 +185,22 @@ class PSGANPredictor(BasePredictor):
         inference = Inference(self.cfg, self.weight_path)
         postprocess = PostProcess(self.cfg)
 
-        source = Image.open(self.args.source_path).convert("RGB")
+        try:
+            source = Image.open(self.args.source_path).convert("RGB")
+        except IOError:
+            print("Error: {} is not exist".format(self.args.source_path))
+            sys.exit()
+
         reference_paths = list(Path(self.args.reference_dir).glob("*"))
+        if len(reference_paths) == 0:
+            print("Error: Can't find image file in {}.".format(
+                self.args.reference_dir))
+            sys.exit()
         np.random.shuffle(reference_paths)
         for reference_path in reference_paths:
             if not reference_path.is_file():
                 print(reference_path, "is not a valid file.")
                 continue
-
             reference = Image.open(reference_path).convert("RGB")
 
             # Transfer the psgan from reference to source.
