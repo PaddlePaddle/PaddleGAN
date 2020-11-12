@@ -65,3 +65,17 @@ class Spectralnorm(paddle.nn.Layer):
         self.layer.weight = weight
         out = self.layer(x)
         return out
+
+
+class RhoClipper(object):
+    def __init__(self, min, max):
+        self.clip_min = min
+        self.clip_max = max
+        assert min < max
+
+    def __call__(self, module):
+
+        if hasattr(module, 'rho'):
+            w = module.rho
+            w = w.clip(self.clip_min, self.clip_max)
+            module.rho.set_value(w)

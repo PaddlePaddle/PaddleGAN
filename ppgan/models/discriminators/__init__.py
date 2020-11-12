@@ -13,3 +13,4 @@
 # limitations under the License.
 
 from .nlayers import NLayerDiscriminator
+from .discriminator_ugatit import UGATITDiscriminator
