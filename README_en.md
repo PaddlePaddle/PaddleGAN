@@ -24,7 +24,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
  sr = RealSRPredictor()
  sr.run("docs/imgs/monarch.png")
  ```
-
+* More usage of pre-trained models, please refer to [ppgan.apps apis](./docs/en_US/apis/apps.md)
 * More tutorials:
   - [Data preparation](./docs/en_US/data_prepare.md)
   - [Training/Evaluating/Testing basic usage](./docs/zh_CN/get_started.md)
@@ -35,6 +35,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 * [CycleGAN](./docs/en_US/tutorials/pix2pix_cyclegan.md)
 * [PSGAN](./docs/en_US/tutorials/psgan.md)
 * [First Order Motion Model](./docs/en_US/tutorials/motion_driving.md)
+* [FaceParsing](./docs/en_US/tutorials/face_parse.md)
 
 ## Composite Application
 
@@ -79,20 +80,21 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
   - Release first version, supported models include Pixel2Pixel, CycleGAN, PSGAN. Supported applications include video frame interpolation, super resolution, colorize images and videos, image animation.
   - Modular design and friendly interface.
 
-## PaddleGAN Special Interest Group（SIG）
+## Community
+
+Scan OR Code below to join [PaddleGAN QQ Group：1058398620], you can get offical technical support  here and communicate with other developers/friends. Look forward to your participation!
+
+<div align='center'>
+  <img src='./docs/imgs/qq.png'width='250' height='300'/>
+</div>
+
+### PaddleGAN Special Interest Group（SIG）
 
 It was first proposed and used by [ACM（Association for Computing Machinery)](https://en.wikipedia.org/wiki/Association_for_Computing_Machinery) in 1961. Top International open source organizations including [Kubernates](https://kubernetes.io/) all adopt the form of SIGs, so that members with the same specific interests can share, learn knowledge and develop projects. These members do not need to be in the same country/region or the same organization, as long as they are like-minded, they can all study, work, and play together with the same goals~
 
 PaddleGAN SIG is such a developer organization that brings together people who interested in GAN. There are frontline developers of PaddlePaddle, senior engineers from the world's top 500, and students from top universities at home and abroad.
 
 We are continuing to recruit developers interested and capable to join us building this project and explore more useful and interesting applications together.
-
-[PaddleGAN QQ Group：1058398620]
-
-<div align='center'>
-  <img src='./docs/imgs/qq.png'width='250' height='300'/>
-</div>
-
 
 
 ## Contributing
