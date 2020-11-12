@@ -20,7 +20,7 @@ with open('requirments.txt', encoding="utf-8-sig") as f:
 
 
 def readme():
-    with open('doc/doc_en/whl_en.md', encoding="utf-8-sig") as f:
+    with open('README.md', encoding="utf-8-sig") as f:
         README = f.read()
     return README
 
@@ -31,7 +31,6 @@ setup(
     include_package_data=True,
     entry_points={"console_scripts": ["paddlegan= paddlegan.paddlegan:main"]},
     author='PaddlePaddle Author',
-    author_email='dltp-all@baidu.com',
     version='0.1.0',
     install_requires=requirements,
     license='Apache License 2.0',
