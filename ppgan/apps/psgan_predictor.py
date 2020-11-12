@@ -18,7 +18,6 @@ import argparse
 from pathlib import Path
 
 from PIL import Image
-from fire import Fire
 import numpy as np
 
 import paddle
