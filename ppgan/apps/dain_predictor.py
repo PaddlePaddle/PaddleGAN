@@ -82,14 +82,9 @@ class DAINPredictor(BasePredictor):
         vidname = video_path.split('/')[-1].split('.')[0]
 
         frames = sorted(glob.glob(os.path.join(out_path, '*.png')))
-        orig_frames = len(frames)
-        need_frames = orig_frames * times_interp
 
         if self.remove_duplicates:
             frames = self.remove_duplicate_frames(out_path)
-            left_frames = len(frames)
-            timestep = left_frames / need_frames
-            num_frames = int(1.0 / timestep) - 1
 
         img = imread(frames[0])
 
@@ -125,9 +120,11 @@ class DAINPredictor(BasePredictor):
         if not os.path.exists(os.path.join(frame_path_combined, vidname)):
             os.makedirs(os.path.join(frame_path_combined, vidname))
 
-        for i in tqdm(range(frame_num - 1)):
+        for i in range(frame_num - 1):
             first = frames[i]
             second = frames[i + 1]
+            first_index = int(first.split('/')[-1].split('.')[-2])
+            second_index = int(second.split('/')[-1].split('.')[-2])
 
             img_first = imread(first)
             img_second = imread(second)
@@ -173,22 +170,43 @@ class DAINPredictor(BasePredictor):
                                 padding_left:padding_left + int_width],
                     (1, 2, 0)) for item in y_
             ]
-            time_offsets = [kk * timestep for kk in range(1, 1 + num_frames, 1)]
+            if self.remove_duplicates:
+                num_frames = times_interp * (second_index - first_index) - 1
+                time_offsets = [
+                    kk * timestep for kk in range(1, 1 + num_frames, 1)
+                ]
+                start = times_interp * first_index + 1
+                for item, time_offset in zip(y_, time_offsets):
+                    out_dir = os.path.join(frame_path_interpolated, vidname,
+                                           "{:08d}.png".format(start))
+                    imsave(out_dir, np.round(item).astype(np.uint8))
+                    start = start + 1
 
-            count = 1
-            for item, time_offset in zip(y_, time_offsets):
-                out_dir = os.path.join(frame_path_interpolated, vidname,
-                                       "{:0>6d}_{:0>4d}.png".format(i, count))
-                count = count + 1
-                imsave(out_dir, np.round(item).astype(np.uint8))
+            else:
+                time_offsets = [
+                    kk * timestep for kk in range(1, 1 + num_frames, 1)
+                ]
 
-        num_frames = int(1.0 / timestep) - 1
+                count = 1
+                for item, time_offset in zip(y_, time_offsets):
+                    out_dir = os.path.join(
+                        frame_path_interpolated, vidname,
+                        "{:0>6d}_{:0>4d}.png".format(i, count))
+                    count = count + 1
+                    imsave(out_dir, np.round(item).astype(np.uint8))
 
         input_dir = os.path.join(frame_path_input, vidname)
         interpolated_dir = os.path.join(frame_path_interpolated, vidname)
         combined_dir = os.path.join(frame_path_combined, vidname)
-        self.combine_frames(input_dir, interpolated_dir, combined_dir,
-                            num_frames)
+
+        if self.remove_duplicates:
+            self.combine_frames_with_rm(input_dir, interpolated_dir,
+                                        combined_dir, times_interp)
+
+        else:
+            num_frames = int(1.0 / timestep) - 1
+            self.combine_frames(input_dir, interpolated_dir, combined_dir,
+                                num_frames)
 
         frame_pattern_combined = os.path.join(frame_path_combined, vidname,
                                               '%08d.png')
@@ -223,6 +241,26 @@ class DAINPredictor(BasePredictor):
                 except Exception as e:
                     print(e)
 
+    def combine_frames_with_rm(self, input, interpolated, combined,
+                               times_interp):
+        frames1 = sorted(glob.glob(os.path.join(input, '*.png')))
+        frames2 = sorted(glob.glob(os.path.join(interpolated, '*.png')))
+        num1 = len(frames1)
+        num2 = len(frames2)
+
+        for i in range(num1):
+            src = frames1[i]
+            index = int(src.split('/')[-1].split('.')[-2])
+            dst = os.path.join(combined,
+                               '{:08d}.png'.format(times_interp * index))
+            shutil.copy2(src, dst)
+
+        for i in range(num2):
+            src = frames2[i]
+            imgname = src.split('/')[-1]
+            dst = os.path.join(combined, imgname)
+            shutil.copy2(src, dst)
+
     def remove_duplicate_frames(self, paths):
         def dhash(image, hash_size=8):
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -231,6 +269,7 @@ class DAINPredictor(BasePredictor):
             return sum([2**i for (i, v) in enumerate(diff.flatten()) if v])
 
         hashes = {}
+        max_interp = 9
         image_paths = sorted(glob.glob(os.path.join(paths, '*.png')))
         for image_path in image_paths:
             image = cv2.imread(image_path)
@@ -241,14 +280,28 @@ class DAINPredictor(BasePredictor):
 
         for (h, hashed_paths) in hashes.items():
             if len(hashed_paths) > 1:
-                for p in hashed_paths[1:]:
-                    os.remove(p)
-
-        frames = sorted(glob.glob(os.path.join(paths, '*.png')))
-        for fid, frame in enumerate(frames):
-            new_name = '{:08d}'.format(fid) + '.png'
-            new_name = os.path.join(paths, new_name)
-            os.rename(frame, new_name)
+                first_index = int(hashed_paths[0].split('/')[-1].split('.')[-2])
+                last_index = int(
+                    hashed_paths[-1].split('/')[-1].split('.')[-2]) + 1
+                gap = 2 * (last_index - first_index) - 1
+                if gap > 2 * max_interp:
+                    cut1 = len(hashed_paths) // 3
+                    cut2 = cut1 * 2
+                    for p in hashed_paths[1:cut1 - 1]:
+                        os.remove(p)
+                    for p in hashed_paths[cut1 + 1:cut2]:
+                        os.remove(p)
+                    for p in hashed_paths[cut2 + 1:]:
+                        os.remove(p)
+                if gap > max_interp:
+                    mid = len(hashed_paths) // 2
+                    for p in hashed_paths[1:mid - 1]:
+                        os.remove(p)
+                    for p in hashed_paths[mid + 1:]:
+                        os.remove(p)
+                else:
+                    for p in hashed_paths[1:]:
+                        os.remove(p)
 
         frames = sorted(glob.glob(os.path.join(paths, '*.png')))
         return frames

@@ -20,7 +20,7 @@ with open('requirments.txt', encoding="utf-8-sig") as f:
 
 
 def readme():
-    with open('doc/doc_en/whl_en.md', encoding="utf-8-sig") as f:
+    with open('README_en.md', encoding="utf-8-sig") as f:
         README = f.read()
     return README
 
@@ -30,10 +30,13 @@ setup(
     packages=['ppgan'],
     include_package_data=True,
     entry_points={"console_scripts": ["paddlegan= paddlegan.paddlegan:main"]},
+    author='PaddlePaddle Author',
     version='0.1.0',
     install_requires=requirements,
     license='Apache License 2.0',
     description='Awesome GAN toolkits based on PaddlePaddle',
+    long_description=readme(),
+    long_description_content_type='text/markdown',
     url='https://github.com/PaddlePaddle/PaddleGAN',
     download_url='https://github.com/PaddlePaddle/PaddleGAN.git',
     keywords=['gan paddlegan'],
