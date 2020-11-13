@@ -46,10 +46,10 @@ class SpectralNorm(object):
 
         return weight_mat.reshape([height, -1])
 
-    def compute_weight(self, module, do_power_iteration):
-        weight = getattr(module, self.name + '_orig')
-        u = getattr(module, self.name + '_u')
-        v = getattr(module, self.name + '_v')
+    def compute_weight(self, layer, do_power_iteration):
+        weight = getattr(layer, self.name + '_orig')
+        u = getattr(layer, self.name + '_u')
+        v = getattr(layer, self.name + '_v')
         weight_mat = self.reshape_weight_to_matrix(weight)
 
         if do_power_iteration:
@@ -79,69 +79,69 @@ class SpectralNorm(object):
         weight = weight / sigma
         return weight
 
-    def remove(self, module):
+    def remove(self, layer):
         with paddle.no_grad():
-            weight = self.compute_weight(module, do_power_iteration=False)
-        delattr(module, self.name)
-        delattr(module, self.name + '_u')
-        delattr(module, self.name + '_v')
-        delattr(module, self.name + '_orig')
+            weight = self.compute_weight(layer, do_power_iteration=False)
+        delattr(layer, self.name)
+        delattr(layer, self.name + '_u')
+        delattr(layer, self.name + '_v')
+        delattr(layer, self.name + '_orig')
 
-        module.add_parameter(self.name, weight.detach())
+        layer.add_parameter(self.name, weight.detach())
 
-    def __call__(self, module, inputs):
-        setattr(module, self.name,
-                self.compute_weight(module, do_power_iteration=module.training))
+    def __call__(self, layer, inputs):
+        setattr(layer, self.name,
+                self.compute_weight(layer, do_power_iteration=layer.training))
 
     @staticmethod
-    def apply(module, name, n_power_iterations, dim, eps):
-        for k, hook in module._forward_pre_hooks.items():
+    def apply(layer, name, n_power_iterations, dim, eps):
+        for k, hook in layer._forward_pre_hooks.items():
             if isinstance(hook, SpectralNorm) and hook.name == name:
                 raise RuntimeError("Cannot register two spectral_norm hooks on "
                                    "the same parameter {}".format(name))
 
         fn = SpectralNorm(name, n_power_iterations, dim, eps)
-        weight = module._parameters[name]
+        weight = layer._parameters[name]
 
         with paddle.no_grad():
             weight_mat = fn.reshape_weight_to_matrix(weight)
             h, w = weight_mat.shape
 
             # randomly initialize u and v
-            u = module.create_parameter([h])
+            u = layer.create_parameter([h])
             u = normal_(u, 0., 1.)
-            v = module.create_parameter([w])
+            v = layer.create_parameter([w])
             v = normal_(v, 0., 1.)
             u = F.normalize(u, axis=0, epsilon=fn.eps)
             v = F.normalize(v, axis=0, epsilon=fn.eps)
 
         # delete fn.name form parameters, otherwise you can not set attribute
-        del module._parameters[fn.name]
-        module.add_parameter(fn.name + "_orig", weight)
+        del layer._parameters[fn.name]
+        layer.add_parameter(fn.name + "_orig", weight)
         # still need to assign weight back as fn.name because all sorts of
         # things may assume that it exists, e.g., when initializing weights.
         # However, we can't directly assign as it could be an Parameter and
         # gets added as a parameter. Instead, we register weight * 1.0 as a plain
         # attribute.
-        setattr(module, fn.name, weight * 1.0)
-        module.register_buffer(fn.name + "_u", u)
-        module.register_buffer(fn.name + "_v", v)
+        setattr(layer, fn.name, weight * 1.0)
+        layer.register_buffer(fn.name + "_u", u)
+        layer.register_buffer(fn.name + "_v", v)
 
-        module.register_forward_pre_hook(fn)
+        layer.register_forward_pre_hook(fn)
         return fn
 
 
-def spectral_norm(module,
+def spectral_norm(layer,
                   name='weight',
                   n_power_iterations=1,
                   eps=1e-12,
                   dim=None):
 
     if dim is None:
-        if isinstance(module, (nn.Conv1DTranspose, nn.Conv2DTranspose,
-                               nn.Conv3DTranspose, nn.Linear)):
+        if isinstance(layer, (nn.Conv1DTranspose, nn.Conv2DTranspose,
+                              nn.Conv3DTranspose, nn.Linear)):
             dim = 1
         else:
             dim = 0
-    SpectralNorm.apply(module, name, n_power_iterations, dim, eps)
-    return module
+    SpectralNorm.apply(layer, name, n_power_iterations, dim, eps)
+    return layer
