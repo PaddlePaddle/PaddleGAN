@@ -85,6 +85,13 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 </div>
 
 
+### 人脸动漫化
+
+<div align='center'>
+  <img src='./docs/imgs/ugatit.png'width='700' height='250'/>
+</div>
+
+
 ## 版本更新
 
 - v0.1.0 (2020.11.02)
