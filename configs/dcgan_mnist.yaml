@@ -1,0 +1,74 @@
+epochs: 200
+output_dir: output_dir
+
+model:
+  name: DCGANModel
+  generator:
+    name: DCGenerator
+    norm_type: batch
+    input_nz: 100
+    input_nc: 3
+    output_nc: 3
+    ngf: 64
+  discriminator:
+    name: DCDiscriminator
+    norm_type: batch
+    ndf: 64
+    input_nc: 3
+  gan_mode: vanilla #wgangp
+
+dataset:
+  train:
+    name: SingleDataset
+    dataroot: data/mnist/train
+    phase: train
+    max_dataset_size: inf
+    direction: AtoB
+    input_nc: 3
+    output_nc: 3
+    batch_size: 64
+    serial_batches: False
+    pool_size: 50
+    transforms:
+      - name: Resize
+        size: [64, 64]
+        interpolation: 'bicubic' #cv2.INTER_CUBIC
+      - name: RandomHorizontalFlip
+        prob: 0.5
+      - name: Transpose
+      - name: Normalize
+        mean: [127.5, 127.5, 127.5]
+        std: [127.5, 127.5, 127.5]
+  test:
+    name: SingleDataset
+    dataroot: data/mnist/test
+    max_dataset_size: inf
+    input_nc: 3
+    output_nc: 3
+    serial_batches: False
+    pool_size: 50
+    transforms:
+      - name: Resize
+        size: [64, 64]
+        interpolation: 'bicubic' #cv2.INTER_CUBIC
+      - name: Transpose
+      - name: Normalize
+        mean: [127.5, 127.5, 127.5]
+        std: [127.5, 127.5, 127.5]
+
+optimizer:
+  name: Adam
+  beta1: 0.5
+
+lr_scheduler:
+  name: linear
+  learning_rate: 0.0002
+  start_epoch: 100
+  decay_epochs: 100
+
+log_config:
+  interval: 100
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 5
