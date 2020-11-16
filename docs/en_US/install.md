@@ -24,8 +24,11 @@ Note: command above will install paddle with cuda10.2，if your installed cuda i
 </code></pre> </details> </td> <td align="left"><details><summary> install </summary><pre><code>python -m pip install https://paddle-wheel.bj.bcebos.com/2.0.0-rc0-gpu-cuda9-cudnn7-mkl%2Fpaddlepaddle_gpu-2.0.0rc0.post90-cp36-cp36m-linux_x86_64.whl
 </code></pre> </details> </td> </tr></tbody></table>
 
+Visit home page of [paddlepaddle](https://www.paddlepaddle.org.cn/install/quick) for support of other systems, such as Windows10
 
-### 2. Install through pip
+### 2. Install paddleGAN 
+
+#### 2.1 Install through pip
 
 ```
 # only support Python3
@@ -39,7 +42,7 @@ git clone https://github.com/PaddlePaddle/PaddleGAN
 cd PaddleGAN
 ```
 
-### 3. Install through source code
+#### 2.2 Install through source code
 
 ```
 git clone https://github.com/PaddlePaddle/PaddleGAN
