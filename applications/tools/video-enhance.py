@@ -76,7 +76,7 @@ parser.add_argument('--render_factor',
                     default=32,
                     help='model inputsize=render_factor*16')
 #process order support model name:[DAIN, DeepRemaster, DeOldify, RealSR, EDVR]
-parser.add_argument('--proccess_order',
+parser.add_argument('--process_order',
                     type=str,
                     default='none',
                     nargs='+',
