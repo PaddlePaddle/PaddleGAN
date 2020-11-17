@@ -85,7 +85,7 @@ parser.add_argument('--process_order',
 if __name__ == "__main__":
     args = parser.parse_args()
 
-    orders = args.proccess_order
+    orders = args.process_order
     temp_video_path = None
 
     for order in orders:
