@@ -23,7 +23,7 @@ logger_initialized = {}
 
 def setup_logger(output=None, name="ppgan"):
     """
-    Initialize the detectron2 logger and set its verbosity level to "INFO".
+    Initialize the ppgan logger and set its verbosity level to "INFO".
 
     Args:
         output (str): a file name or a directory to save log. If None, will not save log file.
@@ -35,6 +35,8 @@ def setup_logger(output=None, name="ppgan"):
         logging.Logger: a logger
     """
     logger = logging.getLogger(name)
+    if name in logger_initialized:
+        return logger
     logger.setLevel(logging.INFO)
     logger.propagate = False
 
@@ -71,9 +73,9 @@ def setup_logger(output=None, name="ppgan"):
     return logger
 
 
-def get_logger(name, output=None):
+def get_logger(name='ppgan'):
     logger = logging.getLogger(name)
     if name in logger_initialized:
         return logger
 
-    return setup_logger(name=name, output=name)
+    return setup_logger(name=name)
