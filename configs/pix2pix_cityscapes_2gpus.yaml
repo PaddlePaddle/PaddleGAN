@@ -24,6 +24,8 @@ dataset:
   train:
     name: PairedDataset
     dataroot: data/cityscapes
+    num_workers: 0
+    batch_size: 1
     phase: train
     max_dataset_size: inf
     direction: BtoA
