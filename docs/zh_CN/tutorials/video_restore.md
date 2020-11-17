@@ -5,13 +5,13 @@
 ### 使用applications中的video-enhance.py工具进行快速开始视频修复
 ```
 cd applications
-python tools/video-enhance.py --input you_video_path.mp4 --proccess_order DAIN DeOldify EDVR --output output_dir
+python tools/video-enhance.py --input you_video_path.mp4 --process_order DAIN DeOldify EDVR --output output_dir
 ```
 #### 参数
 
 - `--input (str)`: 输入的视频路径。
 - `--output (str)`: 输出的视频路径。
-- `--proccess_order`: 调用的模型名字和顺序，比如输入为 `DAIN DeOldify EDVR`，则会顺序调用 `DAINPredictor` `DeOldifyPredictor` `EDVRPredictor` 。
+- `--process_order`: 调用的模型名字和顺序，比如输入为 `DAIN DeOldify EDVR`，则会顺序调用 `DAINPredictor` `DeOldifyPredictor` `EDVRPredictor` 。
 
 #### 效果展示
 ![](../../imgs/color_sr_peking.gif)

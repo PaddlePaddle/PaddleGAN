@@ -46,3 +46,13 @@ git clone https://github.com/PaddlePaddle/PaddleGAN
 cd PaddleGAN
 pip install -v -e .  # or "python setup.py develop"
 ```
+
+### 4. Installation of other tools that may be used
+
+#### 4.1 ffmpeg
+
+If you need to use ppgan to handle video-related tasks, you need to install ffmpeg. It is recommended that you use [conda](https://docs.conda.io/en/latest/miniconda.html) to install:
+
+```
+conda install x264=='1!152.20180717' ffmpeg=4.0.2 -c conda-forge
+```

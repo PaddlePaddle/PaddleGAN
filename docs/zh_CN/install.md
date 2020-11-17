@@ -47,3 +47,14 @@ pip install -v -e .  # or "python setup.py develop"
 ```
 
 按照上述方法安装成功后，本地的修改也会自动同步到ppgan中
+
+
+### 4. 其他可能用到的工具安装
+
+#### 4.1 ffmpeg
+
+如果需要使用ppgan处理视频相关的任务，则需要安装ffmpeg。这里推荐您使用[conda](https://docs.conda.io/en/latest/miniconda.html)安装：
+
+```
+conda install x264=='1!152.20180717' ffmpeg=4.0.2 -c conda-forge
+```
