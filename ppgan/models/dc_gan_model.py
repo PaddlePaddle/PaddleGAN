@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import paddle
-from paddle import fluid
 from .base_model import BaseModel
 
 from .builder import MODELS
@@ -23,12 +22,11 @@ from .losses import GANLoss
 
 from ..solver import build_optimizer
 from ..modules.init import init_weights
-from ..utils.image_pool import ImagePool
 
 
 @MODELS.register()
 class DCGANModel(BaseModel):
-    """ This class implements the DCGAN model, for learning a mapping from input images to output images given paired data.
+    """ This class implements the DCGAN model, for learning a distribution from input images.
 
     The model training requires dataset.
     By default, it uses a '--netG DCGenerator' generator,
@@ -38,7 +36,7 @@ class DCGANModel(BaseModel):
     DCGAN paper: https://arxiv.org/pdf/1511.06434
     """
     def __init__(self, cfg):
-        """Initialize the pix2pix class.
+        """Initialize the DCGAN class.
 
         Parameters:
             opt (config dict)-- stores all the experiment flags; needs to be a subclass of Dict
@@ -48,7 +46,6 @@ class DCGANModel(BaseModel):
         self.nets['netG'] = build_generator(cfg.model.generator)
         init_weights(self.nets['netG'])
         self.cfg = cfg
-        # define a discriminator; conditional GANs need to take both input and output images; Therefore, #channels for D is input_nc + output_nc
         if self.is_train:
             self.nets['netD'] = build_discriminator(cfg.model.discriminator)
             init_weights(self.nets['netD'])
@@ -75,12 +72,15 @@ class DCGANModel(BaseModel):
         Parameters:
             input (dict): include the data itself and its metadata information.
         """
-        self.real = paddle.to_tensor(input['A'])
-        self.z = paddle.randn(shape=(self.real.shape[0],self.cfg.model.generator.input_nz,1,1))
+        # get 1-channel gray image, or 3-channel color image
+        self.real = paddle.to_tensor(input['A'][:,0:self.cfg.model.generator.input_nc,:,:])
         self.image_paths = input['A_paths']
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
+
+        # generate random noise and fake image
+        self.z = paddle.rand(shape=(self.real.shape[0],self.cfg.model.generator.input_nz,1,1))
         self.fake = self.nets['netG'](self.z) 
 
         # put items to visual dict
@@ -89,19 +89,13 @@ class DCGANModel(BaseModel):
 
     def backward_D(self):
         """Calculate GAN loss for the discriminator"""
-        # Fake; stop backprop to the generator by detaching fake_B
-        # use conditional GANs; we need to feed both input and output to the discriminator
+        # Fake; stop backprop to the generator by detaching fake
         pred_fake = self.nets['netD'](self.fake.detach())
-        #print("pred_fake:",pred_fake.numpy())
-        pred_fake = fluid.layers.squeeze(pred_fake,[-1,-2]) 
         self.loss_D_fake = self.criterionGAN(pred_fake, False)
-        #print("loss_D_fake:",self.loss_D_fake.numpy())
-        # Real
-        pred_real = self.nets['netD'](self.real.detach())
-        #print("pred_real:",pred_real.numpy())
-        pred_real = fluid.layers.squeeze(pred_real,[-1,-2]) 
+
+        pred_real = self.nets['netD'](self.real)
         self.loss_D_real = self.criterionGAN(pred_real, True)
-        #print("loss_D_real:",self.loss_D_real.numpy())
+
         # combine loss and calculate gradients
         self.loss_D = (self.loss_D_fake + self.loss_D_real) * 0.5
 
@@ -111,12 +105,10 @@ class DCGANModel(BaseModel):
         self.losses['D_real_loss'] = self.loss_D_real
 
     def backward_G(self):
-        """Calculate GAN and L1 loss for the generator"""
-        # First, G(A) should fake the discriminator
-        pred_fake = self.nets['netD'](self.fake.detach())
-        pred_fake = fluid.layers.squeeze(pred_fake,[-1,-2]) 
+        """Calculate GAN loss for the generator"""
+        # G(A) should fake the discriminator
+        pred_fake = self.nets['netD'](self.fake)
         self.loss_G_GAN = self.criterionGAN(pred_fake, True)
-        # Second, G(A) = B
 
         # combine loss and calculate gradients
         self.loss_G = self.loss_G_GAN
@@ -129,14 +121,16 @@ class DCGANModel(BaseModel):
         # compute fake images: G(A)
         self.forward()
 
-        # update D
+        #update D
         self.set_requires_grad(self.nets['netD'], True)
+        self.set_requires_grad(self.nets['netG'], False)
         self.optimizers['optimizer_D'].clear_grad()
         self.backward_D()
         self.optimizers['optimizer_D'].step()
 
         # update G
         self.set_requires_grad(self.nets['netD'], False)
+        self.set_requires_grad(self.nets['netG'], True)
         self.optimizers['optimizer_G'].clear_grad()
         self.backward_G()
         self.optimizers['optimizer_G'].step()

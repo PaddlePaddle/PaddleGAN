@@ -33,7 +33,6 @@ class DCDiscriminator(nn.Layer):
         Parameters:
             input_nc (int)  -- the number of channels in input images
             ndf (int)       -- the number of filters in the last conv layer
-            n_layers (int)  -- the number of conv layers in the discriminator
             norm_type (str)      -- normalization layer type
         """
         super(DCDiscriminator, self).__init__()
@@ -73,7 +72,7 @@ class DCDiscriminator(nn.Layer):
                                   stride=2,
                                   padding=padw),
                     BatchNorm2D(ndf * nf_mult),
-                    nn.LeakyReLU(0.01)
+                    nn.LeakyReLU(0.2)
                 ]
             else:
                 sequence += [
