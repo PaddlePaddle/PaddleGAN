@@ -31,7 +31,7 @@ setup(
     include_package_data=True,
     entry_points={"console_scripts": ["paddlegan= paddlegan.paddlegan:main"]},
     author='PaddlePaddle Author',
-    version='0.1.1',
+    version='0.1.0',
     install_requires=requirements,
     license='Apache License 2.0',
     description='Awesome GAN toolkits based on PaddlePaddle',
