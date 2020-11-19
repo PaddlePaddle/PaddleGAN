@@ -16,7 +16,7 @@
 class Registry(object):
     """
     The registry that provides name -> object mapping, to support third-party users' custom modules.
-    To create a registry (inside segmentron):
+    To create a registry (inside ppgan):
     .. code-block:: python
         BACKBONE_REGISTRY = Registry('BACKBONE')
     To register an object:
