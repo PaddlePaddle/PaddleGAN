@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from .base_model import BaseModel
+from .gan_model import GANModel
 from .cycle_gan_model import CycleGANModel
 from .pix2pix_model import Pix2PixModel
 from .srgan_model import SRGANModel

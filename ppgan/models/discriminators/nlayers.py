@@ -27,7 +27,7 @@ from .builder import DISCRIMINATORS
 @DISCRIMINATORS.register()
 class NLayerDiscriminator(nn.Layer):
     """Defines a PatchGAN discriminator"""
-    def __init__(self, input_nc, ndf=64, n_layers=3, norm_type='instance'):
+    def __init__(self, input_nc, ndf=64, n_layers=3, norm_type='instance', use_sigmoid=False):
         """Construct a PatchGAN discriminator
 
         Parameters:
@@ -35,6 +35,7 @@ class NLayerDiscriminator(nn.Layer):
             ndf (int)       -- the number of filters in the last conv layer
             n_layers (int)  -- the number of conv layers in the discriminator
             norm_type (str)      -- normalization layer type
+            use_sigmoid (bool)   -- whether use sigmoid at last
         """
         super(NLayerDiscriminator, self).__init__()
         norm_layer = build_norm_layer(norm_type)
@@ -139,7 +140,28 @@ class NLayerDiscriminator(nn.Layer):
             ]  # output 1 channel prediction map
 
         self.model = nn.Sequential(*sequence)
+        self.final_act = F.sigmoid if use_sigmoid else (lambda x:x)
 
     def forward(self, input):
         """Standard forward."""
-        return self.model(input)
+        return self.final_act(self.model(input))
+
+
+@DISCRIMINATORS.register()
+class NLayerDiscriminatorWithClassification(NLayerDiscriminator):
+    def __init__(self, input_nc, n_class=10, **kwargs):
+        input_nc = input_nc + n_class
+        super(NLayerDiscriminatorWithClassification, self).__init__(input_nc, **kwargs)
+
+        self.n_class = n_class
+    
+    def forward(self, x, class_id):
+        if self.n_class > 0:
+            class_id = (class_id % self.n_class).detach()
+            class_id = F.one_hot(class_id, self.n_class).astype('float32')
+            class_id = class_id.reshape([x.shape[0], -1, 1, 1])
+            class_id = class_id.tile([1,1,*x.shape[2:]])
+            x = paddle.concat([x, class_id], 1)
+        
+        return super(NLayerDiscriminatorWithClassification, self).forward(x)
+

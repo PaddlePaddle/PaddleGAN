@@ -17,10 +17,16 @@ We modify the official PyTorch image folder (https://github.com/pytorch/vision/b
 so that this class can load images from both current directory and its subdirectories.
 """
 
-from paddle.io import Dataset
+import cv2
 from PIL import Image
 import os
 import os.path
+import numpy as np
+
+from .builder import DATASETS
+from .base_dataset import BaseDataset
+from .transforms.builder import build_transforms
+
 
 IMG_EXTENSIONS = [
     '.jpg',
@@ -61,12 +67,11 @@ def default_loader(path):
     return Image.open(path).convert('RGB')
 
 
-class ImageFolder(Dataset):
-    def __init__(self,
-                 root,
-                 transform=None,
-                 return_paths=False,
-                 loader=default_loader):
+@DATASETS.register()
+class ImageFolder(BaseDataset):
+    def __init__(self, cfg):
+        BaseDataset.__init__(self, cfg)
+        root = self.cfg.root
         imgs = make_dataset(root)
         if len(imgs) == 0:
             raise (RuntimeError("Found 0 images in: " + root + "\n"
@@ -75,19 +80,45 @@ class ImageFolder(Dataset):
 
         self.root = root
         self.imgs = imgs
-        self.transform = transform
-        self.return_paths = return_paths
-        self.loader = loader
+        self.transform = build_transforms(self.cfg.transforms)
+        self.return_paths = self.cfg.return_paths
 
     def __getitem__(self, index):
         path = self.imgs[index]
-        img = self.loader(path)
+        img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
         if self.transform is not None:
             img = self.transform(img)
+        return_dict = {'img': img}
+
         if self.return_paths:
-            return img, path
-        else:
-            return img
+            return_dict['path'] = path
+
+        return return_dict
 
     def __len__(self):
         return len(self.imgs)
+
+
+@DATASETS.register()
+class ImageFolderWithClassification(ImageFolder):
+    def __init__(self, cfg):
+        super(ImageFolderWithClassification, self).__init__(cfg)
+
+        root = self.root
+        folders = [os.path.join(root, f) for f in sorted(os.listdir(root))]
+        folders = [f for f in folders if os.path.isdir(f)]
+        class_ids = []
+        for path in self.imgs:
+            for class_id, folder in enumerate(folders):
+                if folder in path:
+                    class_ids.append(class_id)
+                    break
+        self.class_ids = class_ids
+
+    def __getitem__(self, index):
+        return_dict = super(ImageFolderWithClassification, self).__getitem__(index)
+
+        class_id = np.asarray(self.class_ids[index])
+        return_dict['class_id'] = class_id
+        
+        return return_dict

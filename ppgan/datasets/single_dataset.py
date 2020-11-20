@@ -57,7 +57,7 @@ class SingleDataset(BaseDataset):
         return len(self.A_paths)
 
     def get_path_by_indexs(self, indexs):
-        if isinstance(indexs, paddle.Variable):
+        if isinstance(indexs, paddle.Tensor):
             indexs = indexs.numpy()
         current_paths = []
         for index in indexs:
