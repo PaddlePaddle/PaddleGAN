@@ -105,8 +105,9 @@ class Trainer:
 
                 step_start_time = time.time()
 
-            self.logger.info('train one epoch time: {}'.format(time.time() -
-                                                               start_time))
+            self.logger.info(
+                'train one epoch use time: {:.3f} seconds.'.format(time.time() -
+                                                                   start_time))
             if self.validate_interval > -1 and epoch % self.validate_interval:
                 self.validate()
             self.model.lr_scheduler.step()

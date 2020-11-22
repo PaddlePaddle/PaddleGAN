@@ -23,6 +23,8 @@ import paddle
 from ppgan.models.generators import RRDBNet
 from ppgan.utils.video import frames2video, video2frames
 from ppgan.utils.download import get_path_from_url
+from ppgan.utils.logger import get_logger
+
 from .base_predictor import BasePredictor
 
 REALSR_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/applications/DF2K_JPEG.pdparams'
@@ -113,5 +115,7 @@ class RealSRPredictor(BasePredictor):
                     base_name = 'result'
                 out_path = os.path.join(self.output, base_name + '.png')
                 pred_img.save(out_path)
+                logger = get_logger()
+                logger.info('Image saved to {}'.format(out_path))
 
             return pred_img, out_path

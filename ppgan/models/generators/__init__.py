@@ -17,3 +17,4 @@ from .unet import UnetGenerator
 from .rrdb_net import RRDBNet
 from .makeup import GeneratorPSGANAttention
 from .deep_conv import DeepConvGenerator, ConditionalDeepConvGenerator
+from .dcgenerator import DCGenerator
