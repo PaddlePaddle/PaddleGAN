@@ -50,7 +50,7 @@ def read_img(path, size=None, is_gt=False):
     """read image by cv2
     return: Numpy float32, HWC, BGR, [0,1]"""
     img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
-    img = cv2.resize(img, (1000, 1000))
+
     img = img.astype(np.float32) / 255.
     if img.ndim == 2:
         img = np.expand_dims(img, axis=2)
@@ -60,7 +60,7 @@ def read_img(path, size=None, is_gt=False):
     return img
 
 
-def get_test_neighbor_frames(crt_i, N, max_n, padding='replicate'):
+def get_test_neighbor_frames(crt_i, N, max_n, padding='new_info'):
     """Generate an index list for reading N frames from a sequence of images
     Args:
         crt_i (int): current center index
@@ -116,7 +116,6 @@ class EDVRDataset:
 
     def __getitem__(self, index):
         indexs = get_test_neighbor_frames(index, 5, len(self.frames))
-
         frame_list = []
         for i in indexs:
             img = read_img(self.frames[i])
@@ -162,18 +161,13 @@ class EDVRPredictor(BasePredictor):
 
         out_path = video2frames(vid, output_path)
 
-        # frames = sorted(glob.glob(os.path.join(out_path, '*.png')))
-        frames = sorted(
-            glob.glob(
-                os.path.join(
-                    '/workspace/codes/PaddleGAN007/applications/demo_pics/',
-                    '*.jpg')))
+        frames = sorted(glob.glob(os.path.join(out_path, '*.png')))
+
         dataset = EDVRDataset(frames)
-        print('debug len:', len(dataset))
+
         periods = []
         cur_time = time.time()
         for infer_iter, data in enumerate(tqdm(dataset)):
-            print('i am here')
             data_feed_in = [data[0]]
 
             outs = self.base_forward(np.array(data_feed_in))
@@ -183,8 +177,6 @@ class EDVRPredictor(BasePredictor):
             frame_path = data[1]
 
             img_i = get_img(infer_result_list[0])
-            print('save path:',
-                  os.path.join(pred_frame_path, os.path.basename(frame_path)))
             save_img(
                 img_i,
                 os.path.join(pred_frame_path, os.path.basename(frame_path)))
@@ -194,7 +186,6 @@ class EDVRPredictor(BasePredictor):
             period = cur_time - prev_time
             periods.append(period)
 
-            # print('Processed {} samples'.format(infer_iter + 1))
         frame_pattern_combined = os.path.join(pred_frame_path, '%08d.png')
         vid_out_path = os.path.join(self.output,
                                     '{}_edvr_out.mp4'.format(base_name))
