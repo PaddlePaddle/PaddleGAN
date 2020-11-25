@@ -17,3 +17,4 @@ from .unet import UnetGenerator
 from .rrdb_net import RRDBNet
 from .makeup import GeneratorPSGANAttention
 from .resnet_ugatit import ResnetUGATITGenerator
+from .dcgenerator import DCGenerator

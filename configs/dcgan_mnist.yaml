@@ -1,65 +1,52 @@
 epochs: 200
 output_dir: output_dir
-lambda_A: 10.0
-lambda_B: 10.0
-lambda_identity: 0.5
 
 model:
-  name: CycleGANModel
+  name: DCGANModel
   generator:
-    name: ResnetGenerator
-    output_nc: 3
-    n_blocks: 9
+    name: DCGenerator
+    norm_type: batch
+    input_nz: 100
+    input_nc: 1
+    output_nc: 1
     ngf: 64
-    use_dropout: False
-    norm_type: instance
-    input_nc: 3
   discriminator:
-    name: NLayerDiscriminator
+    name: DCDiscriminator
+    norm_type: batch
     ndf: 64
-    n_layers: 3
-    norm_type: instance
-    input_nc: 3
-  gan_mode: lsgan
+    input_nc: 1
+  gan_mode: vanilla #wgangp
 
 dataset:
   train:
-    name: UnpairedDataset
-    dataroot: data/cityscapes
-    num_workers: 0
-    batch_size: 1
+    name: SingleDataset
+    dataroot: data/mnist/train
     phase: train
     max_dataset_size: inf
     direction: AtoB
-    input_nc: 3
-    output_nc: 3
+    input_nc: 1
+    output_nc: 1
+    batch_size: 128
     serial_batches: False
-    pool_size: 50
     transforms:
       - name: Resize
-        size: [286, 286]
+        size: [64, 64]
         interpolation: 'bicubic' #cv2.INTER_CUBIC
-      - name: RandomCrop
-        size: [256, 256]
-      - name: RandomHorizontalFlip
-        prob: 0.5
       - name: Transpose
       - name: Normalize
         mean: [127.5, 127.5, 127.5]
         std: [127.5, 127.5, 127.5]
   test:
     name: SingleDataset
-    dataroot: data/cityscapes/testB
+    dataroot: data/mnist/test
     max_dataset_size: inf
-    direction: BtoA
-    input_nc: 3
-    output_nc: 3
+    input_nc: 1
+    output_nc: 1
     serial_batches: False
-    pool_size: 50
     transforms:
       - name: Resize
-        size: [256, 256]
-        interpolation: 'bicubic' #cv2.INTER_CUBIC
+        size: [64, 64]
+        interpolation: 'bicubic' #cv2.INTER_CUBIC 
       - name: Transpose
       - name: Normalize
         mean: [127.5, 127.5, 127.5]
@@ -71,7 +58,7 @@ optimizer:
 
 lr_scheduler:
   name: linear
-  learning_rate: 0.0002
+  learning_rate: 0.00002
   start_epoch: 100
   decay_epochs: 100
 

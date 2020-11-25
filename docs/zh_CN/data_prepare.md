@@ -70,7 +70,7 @@ custom_datasets
 
 #### 从网页下载
 
-pixel2pixel模型相关的数据集可以在[这里](hhttps://people.eecs.berkeley.edu/~tinghuiz/projects/pix2pix/datasets/)下载
+pixel2pixel模型相关的数据集可以在[这里](https://people.eecs.berkeley.edu/~tinghuiz/projects/pix2pix/datasets/)下载
 
 #### 使用脚本下载
 
@@ -92,3 +92,5 @@ facades
 ├── train
 └── val
 ```
+
+![](../imgs/1.jpg)

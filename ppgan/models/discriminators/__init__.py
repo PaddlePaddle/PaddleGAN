@@ -14,3 +14,4 @@
 
 from .nlayers import NLayerDiscriminator
 from .discriminator_ugatit import UGATITDiscriminator
+from .dcdiscriminator import DCDiscriminator

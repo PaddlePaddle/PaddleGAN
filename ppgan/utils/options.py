@@ -16,7 +16,7 @@ import argparse
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Segmentron')
+    parser = argparse.ArgumentParser(description='PaddleGAN')
     parser.add_argument('--config-file',
                         metavar="FILE",
                         help='config file path')

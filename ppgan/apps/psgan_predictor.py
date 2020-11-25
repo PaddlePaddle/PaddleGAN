@@ -210,8 +210,10 @@ class PSGANPredictor(BasePredictor):
 
             ref_img_name = os.path.split(reference_path)[1]
             if not os.path.exists(self.output_path):
-                os.makedirs(sefl.output_path)
+                os.makedirs(self.output_path)
 
             save_path = os.path.join(self.output_path,
                                      'transfered_ref_' + ref_img_name)
             image.save(save_path)
+            print('Transfered image {} has been saved!'.format(save_path))
+        print('done!!!')
