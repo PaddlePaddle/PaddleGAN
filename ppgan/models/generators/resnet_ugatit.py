@@ -222,7 +222,7 @@ class ResnetAdaILNBlock(nn.Layer):
                                stride=1,
                                padding=0,
                                bias_attr=use_bias)
-        self.norm1 = adaILN(dim)
+        self.norm1 = AdaILN(dim)
         self.relu1 = nn.ReLU()
 
         self.pad2 = nn.Pad2D(padding=[1, 1, 1, 1], mode="reflect")
@@ -232,7 +232,7 @@ class ResnetAdaILNBlock(nn.Layer):
                                stride=1,
                                padding=0,
                                bias_attr=use_bias)
-        self.norm2 = adaILN(dim)
+        self.norm2 = AdaILN(dim)
 
     def forward(self, x, gamma, beta):
         out = self.pad1(x)
@@ -246,9 +246,9 @@ class ResnetAdaILNBlock(nn.Layer):
         return out + x
 
 
-class adaILN(nn.Layer):
+class AdaILN(nn.Layer):
     def __init__(self, num_features, eps=1e-5):
-        super(adaILN, self).__init__()
+        super(AdaILN, self).__init__()
         self.eps = eps
         shape = (1, num_features, 1, 1)
 
@@ -303,17 +303,3 @@ class ILN(nn.Layer):
                                            [input.shape[0], -1, -1, -1])
 
         return out
-
-
-class RhoClipper(object):
-    def __init__(self, min, max):
-        self.clip_min = min
-        self.clip_max = max
-        assert min < max
-
-    def __call__(self, module):
-
-        if hasattr(module, 'rho'):
-            w = module.rho
-            w = w.clamp(self.clip_min, self.clip_max)
-            module.rho.set_value(w)

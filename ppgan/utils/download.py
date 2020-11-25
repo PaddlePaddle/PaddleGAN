@@ -98,6 +98,7 @@ def _download(url, path, md5sum=None):
     path (str): download to given path
     """
     if not osp.exists(path):
+        print('debuggggg:', osp.exists(path), path)
         os.makedirs(path)
 
     fname = osp.split(url)[-1]
