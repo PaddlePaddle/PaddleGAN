@@ -20,9 +20,9 @@ from PIL import Image
 import dlib
 import cv2
 from ..image import resize_by_max
-from paddle.utils.download import get_path_from_url
+from paddle.utils.download import get_weights_path_from_url
 
-LMS_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/lms.dat'
+LANDMARKS_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/lms.dat'
 
 
 def detect(image: Image):
@@ -123,8 +123,7 @@ def crop_by_image_size(image: Image, face):
 
 
 def landmarks(image: Image, face):
-    cur_path = os.path.abspath(os.path.dirname(__file__))
-    weight_path = get_path_from_url(LMS_WEIGHT_URL, cur_path)
+    weight_path = get_weights_path_from_url(LANDMARKS_WEIGHT_URL)
     predictor = dlib.shape_predictor(weight_path)
     shape = predictor(np.asarray(image), face).parts()
     return np.array([[p.y, p.x] for p in shape])
