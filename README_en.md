@@ -74,6 +74,12 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 </div>
 
 
+### Face cartoonization
+
+<div align='center'>
+  <img src='./docs/imgs/ugatit.png'width='700' height='250'/>
+</div>
+
 ## Changelog
 
 - v0.1.0 (2020.11.02)

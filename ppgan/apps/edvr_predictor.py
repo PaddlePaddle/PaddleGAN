@@ -186,7 +186,6 @@ class EDVRPredictor(BasePredictor):
             period = cur_time - prev_time
             periods.append(period)
 
-            # print('Processed {} samples'.format(infer_iter + 1))
         frame_pattern_combined = os.path.join(pred_frame_path, '%08d.png')
         vid_out_path = os.path.join(self.output,
                                     '{}_edvr_out.mp4'.format(base_name))
