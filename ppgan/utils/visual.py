@@ -57,3 +57,13 @@ def save_image(image_numpy, image_path, aspect_ratio=1.0):
     if aspect_ratio < 1.0:
         image_pil = image_pil.resize((int(h / aspect_ratio), w), Image.BICUBIC)
     image_pil.save(image_path)
+
+
+def mask2image(mask: np.array, format="HWC"):
+    H, W = mask.shape
+
+    canvas = np.zeros((H, W, 3), dtype=np.uint8)
+    for i in range(int(mask.max())):
+        color = np.random.rand(1, 1, 3) * 255
+        canvas += (mask == i)[:, :, None] * color.astype(np.uint8)
+    return canvas

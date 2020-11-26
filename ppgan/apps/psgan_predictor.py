@@ -18,7 +18,6 @@ import argparse
 from pathlib import Path
 
 from PIL import Image
-from fire import Fire
 import numpy as np
 
 import paddle
@@ -41,16 +40,6 @@ def toImage(net_output):
     img = np.uint8(img)
     img = Image.fromarray(img, mode='RGB')
     return img
-
-
-def mask2image(mask: np.array, format="HWC"):
-    H, W = mask.shape
-
-    canvas = np.zeros((H, W, 3), dtype=np.uint8)
-    for i in range(int(mask.max())):
-        color = np.random.rand(1, 1, 3) * 255
-        canvas += (mask == i)[:, :, None] * color.astype(np.uint8)
-    return canvas
 
 
 PS_WEIGHT_URL = "https://paddlegan.bj.bcebos.com/models/psgan_weight.pdparams"
@@ -81,6 +70,7 @@ class PreProcess:
                                                   self.down_ratio,
                                                   self.width_ratio)
         np_image = np.array(image)
+        image_trans = self.transform(np_image)
         mask = self.face_parser.parse(
             np.float32(cv2.resize(np_image, (512, 512))))
         mask = cv2.resize(mask.numpy(), (self.img_size, self.img_size),
@@ -88,7 +78,8 @@ class PreProcess:
         mask = mask.astype(np.uint8)
         mask_tensor = paddle.to_tensor(mask)
 
-        lms = futils.dlib.landmarks(image, face) * self.img_size / image.width
+        lms = futils.dlib.landmarks(
+            image, face) / image_trans.shape[:2] * self.img_size
         lms = lms.round()
 
         P_np = generate_P_from_lmks(lms, self.img_size, self.img_size,
@@ -96,10 +87,8 @@ class PreProcess:
 
         mask_aug = generate_mask_aug(mask, lms)
 
-        image = self.transform(np_image)
-
         return [
-            self.norm(image).unsqueeze(0),
+            self.norm(image_trans).unsqueeze(0),
             np.float32(mask_aug),
             np.float32(P_np),
             np.float32(mask)
@@ -195,14 +184,22 @@ class PSGANPredictor(BasePredictor):
         inference = Inference(self.cfg, self.weight_path)
         postprocess = PostProcess(self.cfg)
 
-        source = Image.open(self.args.source_path).convert("RGB")
+        try:
+            source = Image.open(self.args.source_path).convert("RGB")
+        except IOError:
+            print("Error: {} is not exist".format(self.args.source_path))
+            sys.exit()
+
         reference_paths = list(Path(self.args.reference_dir).glob("*"))
+        if len(reference_paths) == 0:
+            print("Error: Can't find image file in {}.".format(
+                self.args.reference_dir))
+            sys.exit()
         np.random.shuffle(reference_paths)
         for reference_path in reference_paths:
             if not reference_path.is_file():
                 print(reference_path, "is not a valid file.")
                 continue
-
             reference = Image.open(reference_path).convert("RGB")
 
             # Transfer the psgan from reference to source.
@@ -212,6 +209,11 @@ class PSGANPredictor(BasePredictor):
             image = postprocess(source_crop, image)
 
             ref_img_name = os.path.split(reference_path)[1]
+            if not os.path.exists(self.output_path):
+                os.makedirs(self.output_path)
+
             save_path = os.path.join(self.output_path,
                                      'transfered_ref_' + ref_img_name)
             image.save(save_path)
+            print('Transfered image {} has been saved!'.format(save_path))
+        print('done!!!')

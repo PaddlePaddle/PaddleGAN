@@ -31,33 +31,30 @@ from .builder import MODELS
 
 
 @MODELS.register()
-class SRModel(BaseModel):
+class BaseSRModel(BaseModel):
     """Base SR model for single image super-resolution."""
     def __init__(self, cfg):
-        super(SRModel, self).__init__(cfg)
+        super(BaseSRModel, self).__init__(cfg)
 
-        self.model_names = ['G']
+        self.nets['netG'] = build_generator(cfg.model.generator)
 
-        self.netG = build_generator(cfg.model.generator)
-        self.visual_names = ['lq', 'output', 'gt']
-
-        self.loss_names = ['l_total']
-
-        self.optimizers = []
         if self.is_train:
-            self.criterionL1 = paddle.nn.L1Loss()
+            # self.criterionL1 = paddle.nn.L1Loss()
+            # loss_cfgs = self.cfg.model.losses
+            self.build_criterions(cfg.model.losses)
 
             self.build_lr_scheduler()
-            self.optimizer_G = build_optimizer(
+            self.optimizers['optimizer_G'] = build_optimizer(
                 cfg.optimizer,
                 self.lr_scheduler,
-                parameter_list=self.netG.parameters())
-            self.optimizers.append(self.optimizer_G)
+                parameter_list=self.nets['netG'].parameters())
 
     def set_input(self, input):
-        self.lq = paddle.to_tensor(input['lq'])
+        self.lq = paddle.fluid.dygraph.to_variable(input['lq'])
+        self.visual_items['lq'] = self.lq
         if 'gt' in input:
-            self.gt = paddle.to_tensor(input['gt'])
+            self.gt = paddle.fluid.dygraph.to_variable(input['gt'])
+            self.visual_items['gt'] = self.gt
         self.image_paths = input['lq_path']
 
     def forward(self):
@@ -66,21 +63,22 @@ class SRModel(BaseModel):
     def test(self):
         """Forward function used in test time.
         """
+        self.nets['netG'].eval()
         with paddle.no_grad():
-            self.output = self.netG(self.lq)
+            self.output = self.nets['netG'](self.lq)
+            self.visual_items['output'] = self.output
+        self.nets['netG'].train()
 
     def optimize_parameters(self):
-        self.optimizer_G.clear_grad()
-        self.output = self.netG(self.lq)
-
+        self.optimizers['optimizer_G'].clear_grad()
         l_total = 0
-        loss_dict = OrderedDict()
+        self.output = self.nets['netG'](self.lq)
+        self.visual_items['output'] = self.output
         # pixel loss
         if self.criterionL1:
             l_pix = self.criterionL1(self.output, self.gt)
             l_total += l_pix
-            loss_dict['l_pix'] = l_pix
+            self.losses['loss_pix'] = l_pix
 
         l_total.backward()
-        self.loss_l_total = l_total
-        self.optimizer_G.step()
+        self.optimizers['optimizer_G'].step()

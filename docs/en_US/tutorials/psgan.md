@@ -19,7 +19,7 @@ python tools/psgan_infer.py \
   --config-file configs/makeup.yaml \
   --model_path /your/model/path \
   --source_path  docs/imgs/ps_source.png  \
-  --reference_dir docs/imgs/ref/ps_ref \
+  --reference_dir docs/imgs/ref \
   --evaluate-only True
 ```
 **params:**
@@ -33,16 +33,16 @@ python tools/psgan_infer.py \
 2. Downloading the landmarks [data](https://paddlegan.bj.bcebos.com/landmarks.tar), and uncompress it
 3. Runnint the following command to substitute files:
 ```
-mv landmarks/makeup MT-Dataset/landmarks/makeup
-mv landmarks/non-makeup MT-Dataset/landmarks/non-makeup
-mv landmarks/train_makeup.txt MT-Dataset/makeup.txt
-mv tlandmarks/train_non-makeup.txt MT-Dataset/non-makeup.txt
+rm -rf MT-Dataset/landmarks/makeup && mv landmarks/makeup MT-Dataset/landmarks/
+rm -rf MT-Dataset/landmarks/non-makeup && mv landmarks/non-makeup MT-Dataset/landmarks/
+cp landmarks/train_makeup.txt MT-Dataset/train_makeup.txt
+cp landmarks/train_non-makeup.txt MT-Dataset/train_non-makeup.txt
 ```
 
 The final data directory should be looked like:
 
 ```
-data
+data/MT-Dataset
 ├── images
 │   ├── makeup
 │   └── non-makeup

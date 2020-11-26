@@ -19,3 +19,5 @@ from .srgan_model import SRGANModel
 from .sr_model import SRModel
 from .makeup_model import MakeupModel
 from .esrgan_model import ESRGAN
+from .ugatit_model import UGATITModel
+from .dc_gan_model import DCGANModel

@@ -18,12 +18,12 @@ import sys
 
 from paddle.distributed import ParallelEnv
 
-logger_initialized = {}
+logger_initialized = []
 
 
 def setup_logger(output=None, name="ppgan"):
     """
-    Initialize the detectron2 logger and set its verbosity level to "INFO".
+    Initialize the ppgan logger and set its verbosity level to "INFO".
 
     Args:
         output (str): a file name or a directory to save log. If None, will not save log file.
@@ -69,14 +69,13 @@ def setup_logger(output=None, name="ppgan"):
         fh.setLevel(logging.DEBUG)
         fh.setFormatter(plain_formatter)
         logger.addHandler(fh)
-    logger_initialized[name] = True
-    print('init logger:', logger_initialized.keys())
+    logger_initialized.append(name)
     return logger
 
 
-def get_logger(name, output=None):
+def get_logger(name='ppgan'):
     logger = logging.getLogger(name)
     if name in logger_initialized:
         return logger
-    print('logger name:', name)
-    return setup_logger(name=name, output=name)
+
+    return setup_logger(name=name)

@@ -19,10 +19,17 @@ from PIL import Image
 import dlib
 import cv2
 from ..image import resize_by_max
+from ppgan.utils.logger import get_logger
+logger = get_logger()
 
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor(
-    osp.split(osp.realpath(__file__))[0] + '/lms.dat')
+
+try:
+    predictor = dlib.shape_predictor(
+        osp.split(osp.realpath(__file__))[0] + '/lms.dat')
+except Exception as e:
+    predictor = None
+    logger.warning(e)
 
 
 def detect(image: Image):

@@ -23,8 +23,11 @@ pip install -U paddlepaddle-gpu==2.0.0rc0
 </code></pre> </details> </td> <td align="left"><details><summary> install </summary><pre><code>python -m pip install https://paddle-wheel.bj.bcebos.com/2.0.0-rc0-gpu-cuda9-cudnn7-mkl%2Fpaddlepaddle_gpu-2.0.0rc0.post90-cp36-cp36m-linux_x86_64.whl
 </code></pre> </details> </td> </tr></tbody></table>
 
-### 2. 通过Pip安装
+支持更多系统的安装教程请前往[paddlepaddle官网](https://www.paddlepaddle.org.cn/install/quick)
 
+### 2. 安装PaddleGAN
+
+##### 2.1 通过Pip安裝
 ```
 # only support Python3
 python3 -m pip install --upgrade ppgan
@@ -37,7 +40,7 @@ git clone https://github.com/PaddlePaddle/PaddleGAN
 cd PaddleGAN
 ```
 
-### 3. 通过源码安装PaddleGAN
+##### 2.2通过源码安装
 
 ```
 git clone https://github.com/PaddlePaddle/PaddleGAN
@@ -47,3 +50,14 @@ pip install -v -e .  # or "python setup.py develop"
 ```
 
 按照上述方法安装成功后，本地的修改也会自动同步到ppgan中
+
+
+### 4. 其他可能用到的工具安装
+
+#### 4.1 ffmpeg
+
+如果需要使用ppgan处理视频相关的任务，则需要安装ffmpeg。这里推荐您使用[conda](https://docs.conda.io/en/latest/miniconda.html)安装：
+
+```
+conda install x264=='1!152.20180717' ffmpeg=4.0.2 -c conda-forge
+```

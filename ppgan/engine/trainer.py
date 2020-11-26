@@ -17,8 +17,9 @@ import time
 import copy
 
 import logging
-import paddle
+import datetime
 
+import paddle
 from paddle.distributed import ParallelEnv
 
 from ..datasets.builder import build_dataloader
@@ -64,6 +65,8 @@ class Trainer:
 
         # time count
         self.steps_per_epoch = len(self.train_dataloader)
+        self.total_steps = self.epochs * self.steps_per_epoch
+
         self.time_count = {}
         self.best_metric = {}
 
@@ -109,12 +112,12 @@ class Trainer:
 
                 self.model.lr_scheduler.step()
 
-            self.logger.info('train one epoch time: {}'.format(time.time() -
-                                                               start_time))
+            self.logger.info(
+                'train one epoch use time: {:.3f} seconds.'.format(time.time() -
+                                                                   start_time))
             if self.validate_interval > -1 and epoch % self.validate_interval == 0:
                 self.validate()
-            # print(self.validate_interval, epoch % self.validate_interval)
-            # self.model.lr_scheduler.step()
+
             if epoch % self.weight_interval == 0:
                 self.save(epoch, 'weight', keep=-1)
             self.save(epoch)
@@ -252,7 +255,14 @@ class Trainer:
             message += 'reader_cost: %.5f sec ' % self.data_time
 
         if hasattr(self, 'ips'):
-            message += 'ips: %.5f images/s' % self.ips
+            message += 'ips: %.5f images/s ' % self.ips
+
+        if hasattr(self, 'step_time'):
+            cur_step = self.steps_per_epoch * (self.current_epoch -
+                                               1) + self.batch_id
+            eta = self.step_time * (self.total_steps - cur_step - 1)
+            eta_str = str(datetime.timedelta(seconds=int(eta)))
+            message += f'eta: {eta_str}'
 
         # print the message
         self.logger.info(message)
