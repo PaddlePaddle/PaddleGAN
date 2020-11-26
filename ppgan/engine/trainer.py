@@ -35,9 +35,8 @@ class Trainer:
         # build train dataloader
         self.train_dataloader = build_dataloader(cfg.dataset.train)
 
-        if 'lr_scheduler' in cfg.optimizer:
-            cfg.optimizer.lr_scheduler.step_per_epoch = len(
-                self.train_dataloader)
+        if 'lr_scheduler' in cfg:
+            cfg.lr_scheduler.step_per_epoch = len(self.train_dataloader)
 
         # build model
         self.model = build_model(cfg)
@@ -64,8 +63,11 @@ class Trainer:
         self.local_rank = ParallelEnv().local_rank
 
         # time count
+        self.steps_per_epoch = len(self.train_dataloader)
         self.time_count = {}
         self.best_metric = {}
+
+        # self.save(0)
 
     def distributed_data_parallel(self):
         strategy = paddle.distributed.prepare_context()
@@ -105,11 +107,14 @@ class Trainer:
 
                 step_start_time = time.time()
 
+                self.model.lr_scheduler.step()
+
             self.logger.info('train one epoch time: {}'.format(time.time() -
                                                                start_time))
-            if self.validate_interval > -1 and epoch % self.validate_interval:
+            if self.validate_interval > -1 and epoch % self.validate_interval == 0:
                 self.validate()
-            self.model.lr_scheduler.step()
+            # print(self.validate_interval, epoch % self.validate_interval)
+            # self.model.lr_scheduler.step()
             if epoch % self.weight_interval == 0:
                 self.save(epoch, 'weight', keep=-1)
             self.save(epoch)
@@ -117,7 +122,8 @@ class Trainer:
     def validate(self):
         if not hasattr(self, 'val_dataloader'):
             self.val_dataloader = build_dataloader(self.cfg.dataset.val,
-                                                   is_train=False)
+                                                   is_train=False,
+                                                   distributed=False)
 
         metric_result = {}
 
@@ -176,6 +182,7 @@ class Trainer:
         if not hasattr(self, 'test_dataloader'):
             self.test_dataloader = build_dataloader(self.cfg.dataset.test,
                                                     is_train=False)
+        metric_result = {}
 
         # data[0]: img, data[1]: img path index
         # test batch size must be 1
@@ -196,17 +203,44 @@ class Trainer:
                     name = '%s_%s' % (basename, k)
                     visual_results.update({name: img_tensor[j]})
 
-            self.visual('visual_test', visual_results=visual_results)
+                if 'psnr' in self.cfg.validate.metrics:
+                    psnr_value = calculate_psnr(
+                        tensor2img(current_visuals['output'][j], (0., 1.)),
+                        tensor2img(current_visuals['gt'][j], (0., 1.)),
+                        **self.cfg.validate.metrics.psnr)
+                    if 'psnr' not in metric_result:
+                        metric_result['psnr'] = psnr_value
+                    else:
+                        metric_result['psnr'] += psnr_value
+                if 'ssim' in self.cfg.validate.metrics:
+                    ssim_value = calculate_ssim(
+                        tensor2img(current_visuals['output'][j], (0., 1.)),
+                        tensor2img(current_visuals['gt'][j], (0., 1.)),
+                        **self.cfg.validate.metrics.ssim)
+                    if 'ssim' not in metric_result:
+                        metric_result['ssim'] = ssim_value
+                    else:
+                        metric_result['ssim'] += ssim_value
 
+            # print('batch：', i, psnr_value, ssim_value, basename)
+            print('batch：', i, ssim_value, basename)
+            self.visual('visual_test', visual_results=visual_results)
             if i % self.log_interval == 0:
                 self.logger.info('Test iter: [%d/%d]' %
                                  (i, len(self.test_dataloader)))
+        for metric_name in metric_result.keys():
+            metric_result[metric_name] /= len(self.test_dataloader.dataset)
+
+        print(metric_result)
 
     def print_log(self):
         losses = self.model.get_current_losses()
-        message = 'Epoch: %d, iters: %d ' % (self.current_epoch, self.batch_id)
+        message = 'Epoch: %d/%d, iters: %d/%d ' % (self.current_epoch,
+                                                   self.epochs, self.batch_id,
+                                                   self.steps_per_epoch)
 
-        message += '%s: %.6f ' % ('lr', self.current_learning_rate)
+        # message += '%s: %.6f ' % ('lr', self.current_learning_rate)
+        message += f'lr: {self.current_learning_rate:.3e} '
 
         for k, v in losses.items():
             message += '%s: %.3f ' % (k, v)
@@ -243,6 +277,7 @@ class Trainer:
         min_max = self.cfg.get('min_max', None)
         if min_max is None:
             min_max = (-1., 1.)
+
         for label, image in visual_results.items():
             image_numpy = tensor2img(image, min_max)
             img_path = os.path.join(self.output_dir, results_dir,
@@ -298,4 +333,11 @@ class Trainer:
         state_dicts = load(weight_path)
 
         for net_name, net in self.model.nets.items():
-            net.set_state_dict(state_dicts[net_name])
+            if net_name in state_dicts:
+                net.set_state_dict(state_dicts[net_name])
+                self.logger.info(
+                    'Loaded pretrained weight for net {}'.format(net_name))
+            else:
+                self.logger.warning(
+                    'Can not find state dict of net {}. Skip load pretrained weight for net {}'
+                    .format(net_name, net_name))

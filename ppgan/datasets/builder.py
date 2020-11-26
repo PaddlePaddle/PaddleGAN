@@ -66,22 +66,37 @@ class DictDataset(paddle.io.Dataset):
 
 
 class DictDataLoader():
-    def __init__(self, dataset, batch_size, is_train, num_workers=4):
+    def __init__(self,
+                 dataset,
+                 batch_size,
+                 is_train,
+                 num_workers=4,
+                 distributed=True):
 
         self.dataset = DictDataset(dataset)
 
         place = paddle.CUDAPlace(ParallelEnv().dev_id) \
                     if ParallelEnv().nranks > 1 else paddle.CUDAPlace(0)
 
-        sampler = DistributedBatchSampler(self.dataset,
-                                          batch_size=batch_size,
-                                          shuffle=True if is_train else False,
-                                          drop_last=True if is_train else False)
+        if distributed:
+            sampler = DistributedBatchSampler(
+                self.dataset,
+                batch_size=batch_size,
+                shuffle=True if is_train else False,
+                drop_last=True if is_train else False)
 
-        self.dataloader = paddle.io.DataLoader(self.dataset,
-                                               batch_sampler=sampler,
-                                               places=place,
-                                               num_workers=num_workers)
+            self.dataloader = paddle.io.DataLoader(self.dataset,
+                                                   batch_sampler=sampler,
+                                                   places=place,
+                                                   num_workers=num_workers)
+        else:
+            self.dataloader = paddle.io.DataLoader(
+                self.dataset,
+                batch_size=batch_size,
+                shuffle=True if is_train else False,
+                drop_last=True if is_train else False,
+                places=place,
+                num_workers=num_workers)
 
         self.batch_size = batch_size
 
@@ -117,12 +132,16 @@ class DictDataLoader():
         return current_items
 
 
-def build_dataloader(cfg, is_train=True):
+def build_dataloader(cfg, is_train=True, distributed=True):
     dataset = DATASETS.get(cfg.name)(cfg)
 
     batch_size = cfg.get('batch_size', 1)
     num_workers = cfg.get('num_workers', 0)
 
-    dataloader = DictDataLoader(dataset, batch_size, is_train, num_workers)
+    dataloader = DictDataLoader(dataset,
+                                batch_size,
+                                is_train,
+                                num_workers,
+                                distributed=distributed)
 
     return dataloader

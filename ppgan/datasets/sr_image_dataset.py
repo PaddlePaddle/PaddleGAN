@@ -21,6 +21,7 @@ import paddle.vision.transforms as transform
 from pathlib import Path
 from paddle.io import Dataset
 from .builder import DATASETS
+from .transforms.builder import build_transforms
 
 
 def scandir(dir_path, suffix=None, recursive=False):
@@ -221,6 +222,8 @@ class SRImageDataset(Dataset):
                 [self.lq_folder, self.gt_folder], ['lq', 'gt'],
                 self.filename_tmpl)
 
+        # self.transforms = build_transforms(cfg.transforms)
+
     def __getitem__(self, index):
         scale = self.cfg['scale']
 
@@ -229,8 +232,8 @@ class SRImageDataset(Dataset):
         gt_path = self.paths[index]['gt_path']
         lq_path = self.paths[index]['lq_path']
 
-        img_gt = cv2.imread(gt_path).astype(np.float32) / 255.
-        img_lq = cv2.imread(lq_path).astype(np.float32) / 255.
+        img_gt = cv2.imread(gt_path).astype(np.float32)[..., ::-1] / 255.
+        img_lq = cv2.imread(lq_path).astype(np.float32)[..., ::-1] / 255.
 
         # augmentation for training
         if self.cfg['phase'] == 'train':
@@ -244,7 +247,7 @@ class SRImageDataset(Dataset):
 
         # TODO: color space transform
         # BGR to RGB, HWC to CHW, numpy to tensor
-        permute = transform.Permute()
+        permute = transform.Transpose()
         img_gt = permute(img_gt)
         img_lq = permute(img_lq)
         return {

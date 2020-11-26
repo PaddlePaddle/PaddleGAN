@@ -35,6 +35,8 @@ def setup_logger(output=None, name="ppgan"):
         logging.Logger: a logger
     """
     logger = logging.getLogger(name)
+    if name in logger_initialized:
+        return logger
     logger.setLevel(logging.INFO)
     logger.propagate = False
 
@@ -67,7 +69,8 @@ def setup_logger(output=None, name="ppgan"):
         fh.setLevel(logging.DEBUG)
         fh.setFormatter(plain_formatter)
         logger.addHandler(fh)
-
+    logger_initialized[name] = True
+    print('init logger:', logger_initialized.keys())
     return logger
 
 
@@ -75,5 +78,5 @@ def get_logger(name, output=None):
     logger = logging.getLogger(name)
     if name in logger_initialized:
         return logger
-
+    print('logger name:', name)
     return setup_logger(name=name, output=name)

@@ -31,11 +31,13 @@ def tensor2img(input_image, min_max=(-1., 1.), imtype=np.uint8):
             image_numpy = np.tile(image_numpy, (3, 1, 1))
         image_numpy = image_numpy.clip(min_max[0], min_max[1])
         image_numpy = (image_numpy - min_max[0]) / (min_max[1] - min_max[0])
-        image_numpy = (np.transpose(
-            image_numpy,
-            (1, 2, 0))) * 255.0  # post-processing: tranpose and scaling
+        if imtype == np.uint8:
+            image_numpy = (np.transpose(
+                image_numpy,
+                (1, 2, 0))) * 255.0  # post-processing: tranpose and scaling
     else:  # if it is a numpy array, do nothing
         image_numpy = input_image
+    image_numpy = image_numpy.round()
     return image_numpy.astype(imtype)
 
 

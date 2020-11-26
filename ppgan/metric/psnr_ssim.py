@@ -46,6 +46,8 @@ def calculate_psnr(img1,
         raise ValueError(
             f'Wrong input_order {input_order}. Supported input_orders are '
             '"HWC" and "CHW"')
+    img1 = img1.copy().astype('float32')
+    img2 = img2.copy().astype('float32')
     img1 = reorder_image(img1, input_order=input_order)
     img2 = reorder_image(img2, input_order=input_order)
 
@@ -134,6 +136,10 @@ def calculate_ssim(img1,
         raise ValueError(
             f'Wrong input_order {input_order}. Supported input_orders are '
             '"HWC" and "CHW"')
+
+    img1 = img1.copy().astype('float32')[..., ::-1]
+    img2 = img2.copy().astype('float32')[..., ::-1]
+
     img1 = reorder_image(img1, input_order=input_order)
     img2 = reorder_image(img2, input_order=input_order)
 

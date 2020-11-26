@@ -19,6 +19,7 @@ import numpy as np
 from collections import OrderedDict
 from abc import ABC, abstractmethod
 
+from .criterions.builder import build_criterion
 from ..solver.lr_scheduler import build_lr_scheduler
 
 
@@ -57,6 +58,7 @@ class BaseModel(ABC):
         self.nets = OrderedDict()
         self.visual_items = OrderedDict()
         self.optimizers = OrderedDict()
+        self.criterions = OrderedDict()
         self.image_paths = []
         self.metric = 0  # used for learning rate policy 'plateau'
 
@@ -79,8 +81,18 @@ class BaseModel(ABC):
         """Calculate losses, gradients, and update network weights; called in every training iteration"""
         pass
 
+    def build_criterions(self, loss_cfgs):
+        if isinstance(loss_cfgs, (list, tuple)):
+            for loss_cfg in loss_cfgs:
+                for name, cfg in loss_cfg.items():
+                    self.criterions[name] = build_criterion(cfg)
+        print('debugggg:', self.criterions)
+
     def build_lr_scheduler(self):
         self.lr_scheduler = build_lr_scheduler(self.cfg.lr_scheduler)
+
+    def build_optimizers(self):
+        pass
 
     def eval(self):
         """Make models eval mode during test time"""
