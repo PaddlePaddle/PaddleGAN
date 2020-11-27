@@ -68,10 +68,9 @@ class KPDetector(nn.Layer):
         """
         shape = heatmap.shape
         heatmap = heatmap.unsqueeze(-1)
-        grid = make_coordinate_grid(shape[2:],
-                                    heatmap.dtype).unsqueeze(0).unsqueeze(0)
         value = (heatmap * grid).sum(axis=(2, 3))
 
+        grid = make_coordinate_grid(shape[2:]).unsqueeze([0, 1])
         kp = {'value': value}
 
         return kp
@@ -86,8 +85,7 @@ class KPDetector(nn.Layer):
         final_shape = prediction.shape
         heatmap = prediction.reshape([final_shape[0], final_shape[1], -1])
         heatmap = F.softmax(heatmap / self.temperature, axis=2)
-        heatmap = heatmap.reshape([*final_shape])
-
+        heatmap = heatmap.reshape(final_shape)
         out = self.gaussian2kp(heatmap)
 
         if self.jacobian is not None:

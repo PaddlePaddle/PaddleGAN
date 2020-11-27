@@ -15,3 +15,4 @@
 from .nlayers import NLayerDiscriminator
 from .discriminator_ugatit import UGATITDiscriminator
 from .dcdiscriminator import DCDiscriminator
+from .discriminator_firstorder import FirstOrder_Discriminator
