@@ -7,7 +7,12 @@ from ppgan.models.generators.builder import GENERATORS
 from .occlusion_aware import OcclusionAwareGenerator
 from ...modules.first_order import make_coordinate_grid, ImagePyramide, detach_kp
 from ...modules.keypoint_detector import KPDetector
-TEST_MODE=False
+
+import logging
+TEST_MODE = False
+if TEST_MODE:
+    logging.getLogger().setLevel(logging.WARNING)
+    logging.warning('firstorder_gen.py: Enter TEST_MODE')
 # kp_detector:
 #   temperature: 0.1
 #   block_expansion: 32

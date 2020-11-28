@@ -296,19 +296,21 @@ class AntiAliasInterpolation2d(nn.Layer):
         # Make sure sum of values in gaussian kernel equals 1.
         kernel = kernel / paddle.sum(kernel)
         # Reshape to depthwise convolutional weight
-        kernel = kernel.reshape([1, 1, *kernel.shape])
-        kernel = paddle.tile(kernel, [channels, *[1] * (kernel.dim() - 1)])
-
-        self.register_buffer('weight', kernel)
+        kernel = kernel.reshape((1, 1, *kernel.shape))
+        kernel = kernel.tile((channels, *((1,)*(len(kernel.shape)-1))))  # [1, 1, *kernel.shape] -> [channels, 1, *kernel.shape]
+        self.kernel_attr = paddle.ParamAttr(initializer=paddle.nn.initializer.Assign(kernel), trainable=False)
         self.groups = channels
         self.scale = scale
+        self.conv = nn.Conv2D(channels, channels, kernel_size=kernel.shape[-1], groups=self.groups,
+                              weight_attr=self.kernel_attr,
+                              bias_attr=False
+                              )
+        self.conv.weight.set_value(kernel)
 
     def forward(self, input):
         if self.scale == 1.0:
             return input
-
-        out = F.pad(input, [self.ka, self.kb, self.ka, self.kb])
-        out = F.conv2d(out, weight=self.weight, groups=self.groups)
-        out = F.interpolate(out, scale_factor=[self.scale, self.scale])
-
+        out = F.pad(input, [self.ka, self.kb, self.ka, self.kb], mode='constant')
+        out = self.conv(out)
+        out = F.interpolate(out, scale_factor=self.scale, mode='NEAREST', align_corners=False)
         return out

@@ -1,6 +1,5 @@
 epochs: 200
 output_dir: output_dir
-lambda_L1: 100
 
 model:
   name: FirstOrderModel
@@ -36,19 +35,9 @@ model:
       max_features: 512
       num_blocks: 4
       sn: True
-
-#  gan_mode: vanilla
-lr_scheduler:
-  epoch_milestones: [60, 90]
-  lr_generator: 2.0e-4
-  lr_discriminator: 2.0e-4
-  lr_kp_detector: 2.0e-4
-
-optimizer:
-  name: Adam
+#  gan_mode: vanilla #  Loss较难分离，不使用gan_mode参数设置
 
 train_params:
-  num_epochs: 100
   scales: [1, 0.5, 0.25, 0.125]
   checkpoint_freq: 100
   transform_params:
@@ -63,12 +52,21 @@ train_params:
     equivariance_value: 10
     equivariance_jacobian: 10
 
+optimizer:
+  name: Adam
+
+lr_scheduler:
+  epoch_milestones: [60, 90]
+  lr_generator: 2.0e-4
+  lr_discriminator: 2.0e-4
+  lr_kp_detector: 2.0e-4
+
 dataset:
   train:
     name: FirstOrderDataset
     phase: train
     # 数据集路径，请保证该目录下有train和test两个子文件夹，并将数据与对应置入
-    dataroot: data/cityscapes
+    dataroot: /home/aistudio/work/dataset/moving-gif
     num_repeats: 10
     id_sampling: False
     pairs_list: None
@@ -83,6 +81,7 @@ dataset:
     output_nc: 3
     serial_batches: False
     pool_size: 0
+# TODO:
 #    augmentation_params:
 #      flip_param:
 #        horizontal_flip: True
@@ -110,27 +109,27 @@ dataset:
 #        mean: [127.5, 127.5, 127.5]
 #        std: [127.5, 127.5, 127.5]
 #        keys: [image, image]
-  test:
-    name: PairedDataset
-    dataroot: data/cityscapes/
-    phase: test
-    max_dataset_size: inf
-    direction: BtoA
-    input_nc: 3
-    output_nc: 3
-    serial_batches: True
-    pool_size: 50
-    transforms:
-      - name: Resize
-        size: [256, 256]
-        interpolation: 'bicubic' #cv2.INTER_CUBIC
-        keys: [image, image]
-      - name: Transpose
-        keys: [image, image]
-      - name: Normalize
-        mean: [127.5, 127.5, 127.5]
-        std: [127.5, 127.5, 127.5]
-        keys: [image, image]
+#  test:
+#    name: PairedDataset
+#    dataroot: data/cityscapes/
+#    phase: test
+#    max_dataset_size: inf
+#    direction: BtoA
+#    input_nc: 3
+#    output_nc: 3
+#    serial_batches: True
+#    pool_size: 50
+#    transforms:
+#      - name: Resize
+#        size: [256, 256]
+#        interpolation: 'bicubic' #cv2.INTER_CUBIC
+#        keys: [image, image]
+#      - name: Transpose
+#        keys: [image, image]
+#      - name: Normalize
+#        mean: [127.5, 127.5, 127.5]
+#        std: [127.5, 127.5, 127.5]
+#        keys: [image, image]
 
 log_config:
   interval: 100
@@ -138,32 +137,3 @@ log_config:
 
 snapshot_config:
   interval: 5
-
-#########
-ckpt_model:
-  # start_epoch 仅在恢复训练时需要填写
-  start_epoch:
-  # vgg19_model 为与原文一致采用原文的预训练模型
-  vgg19_model: /home/aistudio/work/pre-trained/vgg19_np.npz
-  # 从头训练
-  # generator:
-  # discriminator:
-  # kp:
-
-# 以下部分参数仅在reconstruction和animate模式中使用，当前未实现
-reconstruction_params:
-  num_videos: 1000
-  format: '.mp4'
-
-animate_params:
-  num_pairs: 50
-  format: '.mp4'
-  normalization_params:
-    adapt_movement_scale: False
-    use_relative_movement: True
-    use_relative_jacobian: True
-# 可视化参数无效
-visualizer_params:
-  kp_size: 5
-  draw_border: True
-  colormap: 'gist_rainbow'

@@ -8,6 +8,15 @@ from ..modules.init import init_weights
 from ..solver import build_optimizer
 
 
+import logging
+TEST_MODE = False
+if TEST_MODE:
+    import numpy as np
+    logging.warning('TEST MODE: run.py')
+    fake_batch_size = 2
+    fake_input = np.transpose(np.tile(np.load('/home/aistudio/work/src/img.npy')[:1, ...], (fake_batch_size, 1, 1, 1)).astype(np.float32)/255, (0, 3, 1, 2))  #Shape:[fake_batch_size, 3, 256, 256]
+    
+    
 @MODELS.register()
 class FirstOrderModel(BaseModel):
     def __init__(self, cfg):
@@ -30,8 +39,9 @@ class FirstOrderModel(BaseModel):
         self.nets['Dis'] = build_discriminator(discriminator_cfg)
         
         # init params
-        init_weights(self.nets['Gen_Full'])
-        init_weights(self.nets['Dis'])
+        # it will reinit AADownSample param
+        # init_weights(self.nets['Gen_Full'])
+        # init_weights(self.nets['Dis'])
         
         if self.is_train:
             # TODO: Add loss
@@ -64,9 +74,14 @@ class FirstOrderModel(BaseModel):
                 parameter_list=self.nets['Dis'].parameters())
 
     def set_input(self, input):
-        pass
-        self.input_data = input
-        return
+        if TEST_MODE:
+            logging.warning('TEST MODE: Input is Fixed')
+            x = dict()
+            x['driving'] = paddle.to_tensor(fake_input)
+            x['source'] = paddle.to_tensor(fake_input)
+            self.input_data = x
+        else:
+            self.input_data = input
     
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
@@ -102,4 +117,6 @@ class FirstOrderModel(BaseModel):
         self.optimizers['optimizer_Dis'].clear_grad()
         self.backward_D()
         self.optimizers['optimizer_Dis'].step()
-        
+        if TEST_MODE:
+            logging.warning('\n'+'\n'.join(['%s:%1.4f'%(k,v) for k,v,in self.losses.items()]))
+            import pdb;pdb.set_trace()

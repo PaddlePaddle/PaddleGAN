@@ -98,7 +98,7 @@ class OcclusionAwareGenerator(nn.Layer):
                                         mode='bilinear',
                                         align_corners=False)
             deformation = deformation.transpose([0, 2, 3, 1])
-        return F.grid_sample(inp, deformation, align_corners=False)
+        return F.grid_sample(inp, deformation, mode='bilinear', padding_mode='zeros', align_corners=True)
 
     def forward(self, source_image, kp_driving, kp_source):
         # Encoding (downsampling) part
