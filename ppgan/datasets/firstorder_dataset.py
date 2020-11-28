@@ -131,18 +131,6 @@ class FramesDataset(Dataset):
         res = hsv_to_rgb(res)
         return res
     
-    def preload(self, idx):
-        """return the $idx$-th video
-        """
-        if self.is_train and self.id_sampling:
-            name = self.videos[idx]
-            path = np.random.choice(glob.glob(os.path.join(self.root_dir, name + '*.mp4')))
-        else:
-            name = self.videos[idx]
-            path = os.path.join(self.root_dir, name)
-        video_array = read_video(path, frame_shape=self.frame_shape)
-        return video_array
-    
     def __getitem__(self, idx):
         if self.process_time:
             a0 = time.process_time()
@@ -196,34 +184,34 @@ class FramesDataset(Dataset):
             if len(source.shape) == 2:
                 source = source[..., np.newaxis]
                 source = np.tile(source, (1, 1, 3))
-            if self.process_time:
-                a11 = time.process_time()
-            # random_flip_left_right
-            if 'flip_param' in self.transform.keys() and self.transform['flip_param']['horizontal_flip']:
-                if np.random.random() >= 0.5:
-                    driving = driving[:, ::-1, :]
-                    source = source[:, ::-1, :]
-            if self.process_time:
-                a12 = time.process_time()
-                print('A11-12 T:%1.5f' % (a12 - a11))
-            # time_flip
-            if 'flip_param' in self.transform.keys() and self.transform['flip_param']['time_flip']:
-                if np.random.random() >= 0.5:
-                    buf = driving
-                    driving = source
-                    source = buf
-            if self.process_time:
-                a13 = time.process_time()
-                print('A12-13 T:%1.5f' % (a13 - a12))
-            # jitter_param 只写了hue
-            if 'jitter_param' in self.transform.keys():
-                if 'hue' in self.transform['jitter_param'].keys():
-                    jitter_value = (np.random.random() * 2 - 1) * self.transform['jitter_param']['hue']
-                    driving = self.colorize(driving, jitter_value)
-                    source = self.colorize(source, jitter_value)
-            if self.process_time:
-                a14 = time.process_time()
-                print('A13-14 T:%1.5f' % (a14 - a13))
+            # if self.process_time:
+            #     a11 = time.process_time()
+            # # random_flip_left_right
+            # if 'flip_param' in self.transform.keys() and self.transform['flip_param']['horizontal_flip']:
+            #     if np.random.random() >= 0.5:
+            #         driving = driving[:, ::-1, :]
+            #         source = source[:, ::-1, :]
+            # if self.process_time:
+            #     a12 = time.process_time()
+            #     print('A11-12 T:%1.5f' % (a12 - a11))
+            # # time_flip
+            # if 'flip_param' in self.transform.keys() and self.transform['flip_param']['time_flip']:
+            #     if np.random.random() >= 0.5:
+            #         buf = driving
+            #         driving = source
+            #         source = buf
+            # if self.process_time:
+            #     a13 = time.process_time()
+            #     print('A12-13 T:%1.5f' % (a13 - a12))
+            # # jitter_param 只写了hue
+            # if 'jitter_param' in self.transform.keys():
+            #     if 'hue' in self.transform['jitter_param'].keys():
+            #         jitter_value = (np.random.random() * 2 - 1) * self.transform['jitter_param']['hue']
+            #         driving = self.colorize(driving, jitter_value)
+            #         source = self.colorize(source, jitter_value)
+            # if self.process_time:
+            #     a14 = time.process_time()
+            #     print('A13-14 T:%1.5f' % (a14 - a13))
             out['driving'] = driving.transpose((2, 0, 1))
             out['source'] = source.transpose((2, 0, 1))
         else:
