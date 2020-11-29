@@ -20,3 +20,4 @@ from .sr_model import SRModel
 from .makeup_model import MakeupModel
 from .ugatit_model import UGATITModel
 from .dc_gan_model import DCGANModel
+from .animeganv2_model import AnimeGANV2Model, AnimeGANV2PreTrainModel

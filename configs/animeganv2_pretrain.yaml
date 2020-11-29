@@ -1,15 +1,10 @@
-epochs: 50
+epochs: 2
 output_dir: output_dir
-pretrain_ckpt: output_dir/AnimeGANV2PreTrainModel-2020-11-29-17-02/epoch_2_checkpoint.pdparams
-g_adv_weight: 300.
-d_adv_weight: 300.
-con_weight: 1.5
-sty_weight: 2.5
-color_weight: 10.
-tv_weight: 1.
+con_weight: 1
+pretrain_ckpt: null
 
 model:
-  name: AnimeGANV2Model
+  name: AnimeGANV2PreTrainModel
   generator:
     name: AnimeGenerator
   discriminator:

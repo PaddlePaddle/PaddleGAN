@@ -9,7 +9,7 @@ from .transforms.builder import build_transforms
 
 
 @DATASETS.register()
-class AnimeV2Dataset(BaseDataset):
+class AnimeGANV2Dataset(BaseDataset):
     """
     """
     def __init__(self, cfg):
