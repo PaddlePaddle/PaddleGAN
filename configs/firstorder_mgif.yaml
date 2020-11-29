@@ -39,7 +39,6 @@ model:
 
 train_params:
   scales: [1, 0.5, 0.25, 0.125]
-  checkpoint_freq: 100
   transform_params:
     sigma_affine: 0.05
     sigma_tps: 0.005
@@ -79,8 +78,6 @@ dataset:
     direction: BtoA
     input_nc: 3
     output_nc: 3
-    serial_batches: False
-    pool_size: 0
 # TODO:
 #    augmentation_params:
 #      flip_param:
@@ -137,3 +134,9 @@ log_config:
 
 snapshot_config:
   interval: 5
+
+pytorch_ckpt:
+  vgg19_model: /home/aistudio/work/pre-trained/vgg19_np.npz
+  generator: /home/aistudio/work/pre-trained/mgif/G_param.npz
+  discriminator: /home/aistudio/work/pre-trained/mgif/D_param.npz
+  kp: /home/aistudio/work/pre-trained/mgif/KP_param.npz

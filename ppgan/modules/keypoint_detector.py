@@ -52,7 +52,7 @@ class KPDetector(nn.Layer):
                                       kernel_size=(7, 7),
                                       padding=pad)
             self.jacobian.weight.set_value(paddle.zeros(self.jacobian.weight.shape, dtype='float32'))
-            self.jacobian.bias.set_value(paddle.to_tensor([1, 0, 0, 1]).astype('float32') * self.num_jacobian_maps)
+            self.jacobian.bias.set_value(paddle.to_tensor([1, 0, 0, 1] * self.num_jacobian_maps).astype('float32'))
         else:
             self.jacobian = None
 
