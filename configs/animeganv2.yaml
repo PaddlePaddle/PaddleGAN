@@ -1,0 +1,90 @@
+epochs: 200
+output_dir: output_dir
+# lambda_A: 10.0
+# lambda_B: 10.0
+# lambda_identity: 0.5
+
+model:
+  name: CycleGANModel
+  generator:
+    name: ResnetGenerator
+    output_nc: 3
+    n_blocks: 9
+    ngf: 64
+    use_dropout: False
+    norm_type: instance
+    input_nc: 3
+  discriminator:
+    name: NLayerDiscriminator
+    ndf: 64
+    n_layers: 3
+    norm_type: instance
+    input_nc: 3
+  gan_mode: lsgan
+
+dataset:
+  train:
+    name: AnimeV2Dataset
+    dataroot: /home/lxy/zhengqihang/animedataset
+    style: Hayao
+    num_workers: 0
+    batch_size: 1
+    phase: train
+    direction: AtoB
+    input_nc: 3
+    output_nc: 3
+    serial_batches: False
+    pool_size: 50
+    transform_real:
+      - name: Transpose
+      - name: Normalize
+        mean: [127.5, 127.5, 127.5]
+        std: [127.5, 127.5, 127.5]
+    transform_anime:
+      - name: Add
+        value: [-4.4346957, -8.665916, 13.100612]
+      - name: Transpose
+      - name: Normalize
+        mean: [127.5, 127.5, 127.5]
+        std: [127.5, 127.5, 127.5]
+    transform_gray:
+      - name: Grayscale
+        num_output_channels: 3
+      - name: Transpose
+      - name: Normalize
+        mean: [127.5, 127.5, 127.5]
+        std: [127.5, 127.5, 127.5]
+  test:
+    name: SingleDataset
+    dataroot: /home/lxy/zhengqihang/animedataset/test/test_photo
+    max_dataset_size: inf
+    direction: BtoA
+    input_nc: 3
+    output_nc: 3
+    serial_batches: False
+    pool_size: 50
+    transforms:
+      - name: Resize
+        size: [256, 256]
+        interpolation: 'bicubic' #cv2.INTER_CUBIC
+      - name: Transpose
+      - name: Normalize
+        mean: [127.5, 127.5, 127.5]
+        std: [127.5, 127.5, 127.5]
+
+optimizer:
+  name: Adam
+  beta1: 0.5
+
+lr_scheduler:
+  name: linear
+  learning_rate: 0.0002
+  start_epoch: 100
+  decay_epochs: 100
+
+log_config:
+  interval: 100
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 5

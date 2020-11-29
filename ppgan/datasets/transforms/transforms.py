@@ -19,6 +19,7 @@ import collections
 import numpy as np
 
 import paddle.vision.transforms as T
+import ppgan.datasets.transforms.functional as custom_F
 import paddle.vision.transforms.functional as F
 
 from .builder import TRANSFORMS
@@ -35,6 +36,7 @@ TRANSFORMS.register(T.RandomCrop)
 TRANSFORMS.register(T.RandomHorizontalFlip)
 TRANSFORMS.register(T.Normalize)
 TRANSFORMS.register(T.Transpose)
+TRANSFORMS.register(T.Grayscale)
 
 
 @TRANSFORMS.register()
@@ -72,3 +74,18 @@ class PairedRandomHorizontalFlip(T.RandomHorizontalFlip):
         if self.params['flip']:
             return F.hflip(image)
         return image
+
+
+@TRANSFORMS.register()
+class Add(T.BaseTransform):
+    def __init__(self, value, keys=None):
+        super().__init__(keys=keys)
+        self.value = value
+
+    def _get_params(self, inputs):
+        params = {}
+        params['value'] = self.value
+        return params
+
+    def _apply_image(self, image):
+        return custom_F.add(image, self.params['value'])
