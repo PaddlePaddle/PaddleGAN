@@ -1,14 +1,15 @@
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
+import logging
+
 import numpy as np
+import paddle
+import paddle.nn.functional as F
+from paddle import nn
 
 from ppgan.models.generators.builder import GENERATORS
 from .occlusion_aware import OcclusionAwareGenerator
 from ...modules.first_order import make_coordinate_grid, ImagePyramide, detach_kp
 from ...modules.keypoint_detector import KPDetector
 
-import logging
 TEST_MODE = False
 if TEST_MODE:
     logging.getLogger().setLevel(logging.WARNING)

@@ -1,14 +1,14 @@
+import logging
+
 import paddle
 
-from .discriminators.builder import build_discriminator
-from .generators.builder import build_generator
 from .base_model import BaseModel
 from .builder import MODELS
+from .discriminators.builder import build_discriminator
+from .generators.builder import build_generator
 from ..modules.init import init_weights
 from ..solver import build_optimizer
 
-
-import logging
 TEST_MODE = False
 if TEST_MODE:
     import numpy as np
@@ -62,8 +62,6 @@ class FirstOrderModel(BaseModel):
             # TODO: Add loss
             self.losses = {}
             # define loss functions
-            # self.criterionGAN = GANLoss(cfg.model.gan_mode)
-            # self.criterionL1 = paddle.nn.L1Loss()
 
             # build optimizers
             # self.build_lr_scheduler()
@@ -120,7 +118,7 @@ class FirstOrderModel(BaseModel):
         self.forward()
         
         # update G
-        self.set_requires_grad(self.nets['Dis'], False)
+        self.set_requires_grad(self.nets['Dis'].discriminator, False)
         self.optimizers['optimizer_KP'].clear_grad()
         self.optimizers['optimizer_Gen'].clear_grad()
         self.backward_G()
@@ -128,7 +126,7 @@ class FirstOrderModel(BaseModel):
         self.optimizers['optimizer_Gen'].step()
 
         # update D
-        self.set_requires_grad(self.nets['Dis'], True)
+        self.set_requires_grad(self.nets['Dis'].discriminator, True)
         self.optimizers['optimizer_Dis'].clear_grad()
         self.backward_D()
         self.optimizers['optimizer_Dis'].step()

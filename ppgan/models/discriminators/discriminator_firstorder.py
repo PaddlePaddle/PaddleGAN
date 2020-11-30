@@ -1,6 +1,7 @@
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
+
 from .builder import DISCRIMINATORS
 from ...modules.first_order import ImagePyramide, detach_kp, kp2gaussian
 
