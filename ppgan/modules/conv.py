@@ -47,7 +47,7 @@ class NonNormConv2d(nn.Layer):
         return self.act(out)
 
 
-class Conv2dTranspose(nn.Layer):
+class Conv2dTranspseRelu(nn.Layer):
     def __init__(self,
                  cin,
                  cout,

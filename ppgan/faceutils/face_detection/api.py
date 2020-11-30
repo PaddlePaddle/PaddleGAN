@@ -1,13 +1,10 @@
-from __future__ import print_function
-import os
 import paddle
 from enum import Enum
 import numpy as np
 import cv2
 
-from utils import *
+from .utils import *
 import sys
-sys.path.append('../')
 
 
 class LandmarksType(Enum):
@@ -36,9 +33,6 @@ class NetworkSize(Enum):
 
     def __int__(self):
         return self.value
-
-
-ROOT = os.path.dirname(os.path.abspath(__file__))
 
 
 class FaceAlignment:
