@@ -14,22 +14,8 @@ class FaceDetector(object):
     bounding boxes. Optionally, for speed considerations detect from path is
     recommended.
     """
-    def __init__(self, device, verbose):
-        self.device = device
+    def __init__(self, verbose):
         self.verbose = verbose
-
-        if verbose:
-            if 'cpu' in device:
-                logger = logging.getLogger(__name__)
-                logger.warning(
-                    "Detection running on CPU, this may be potentially slow.")
-
-        if 'cpu' not in device and 'cuda' not in device:
-            if verbose:
-                logger.error(
-                    "Expected values for device are: {cpu, cuda} but got: %s",
-                    device)
-            raise ValueError
 
     def detect_from_image(self, tensor_or_path):
         """Detects faces in a given image.
@@ -37,7 +23,7 @@ class FaceDetector(object):
         This function detects the faces present in a provided BGR(usually)
         image. The input can be either the image itself or the path to it.
 
-        Arguments:
+        Args:
             tensor_or_path {numpy.ndarray, paddle.tensor or string} -- the path
             to an image or the image itself.
 
@@ -60,10 +46,8 @@ class FaceDetector(object):
                               show_progress_bar=True):
         """Detects faces from all the images present in a given directory.
 
-        Arguments:
+        Ars:
             path {string} -- a string containing a path that points to the folder containing the images
-
-        Keyword Arguments:
             extensions {list} -- list of string containing the extensions to be
             consider in the following format: ``.extension_name`` (default:
             {['.jpg', '.png']}) recursive {bool} -- option wherever to scan the
@@ -128,7 +112,7 @@ class FaceDetector(object):
     def tensor_or_path_to_ndarray(tensor_or_path, rgb=True):
         """Convert path (represented as a string) or paddle.tensor to a numpy.ndarray
 
-        Arguments:
+        Args:
             tensor_or_path {numpy.ndarray, paddle.tensor or string} -- path to the image, or the image itself
         """
         if isinstance(tensor_or_path, str):

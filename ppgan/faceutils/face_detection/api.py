@@ -5,8 +5,9 @@ from enum import Enum
 import numpy as np
 import cv2
 
-from .utils import *
+from utils import *
 import sys
+sys.path.append('../')
 
 
 class LandmarksType(Enum):
@@ -44,11 +45,9 @@ class FaceAlignment:
     def __init__(self,
                  landmarks_type,
                  network_size=NetworkSize.LARGE,
-                 device='cuda',
                  flip_input=False,
                  face_detector='sfd',
                  verbose=False):
-        self.device = device
         self.flip_input = flip_input
         self.landmarks_type = landmarks_type
         self.verbose = verbose
@@ -59,8 +58,7 @@ class FaceAlignment:
         face_detector_module = __import__(
             'face_detection.detection.' + face_detector, globals(), locals(),
             [face_detector], 0)
-        self.face_detector = face_detector_module.FaceDetector(device=device,
-                                                               verbose=verbose)
+        self.face_detector = face_detector_module.FaceDetector(verbose=verbose)
 
     def get_detections_for_batch(self, images):
         images = images[..., ::-1]
@@ -78,14 +76,3 @@ class FaceAlignment:
             results.append((x1, y1, x2, y2))
 
         return results
-
-
-if __name__ == '__main__':
-    detector = FaceAlignment(LandmarksType._2D)
-    img = cv2.imread('./vFG638.png')
-    img_e = np.expand_dims(img, 0)
-    result = detector.get_detections_for_batch(img_e)
-    print(result)
-    x1, y1, x2, y2 = result[0]
-    cv2.rectangle(img, (int(x1), int(y1)), (int(x2), int(y2)), (0, 0, 255), 1)
-    cv2.imwrite('./rec.png', img)

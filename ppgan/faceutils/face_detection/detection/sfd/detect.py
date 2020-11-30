@@ -16,7 +16,7 @@ from .net_s3fd import s3fd
 from .bbox import *
 
 
-def detect(net, img, device):
+def detect(net, img):
     img = img - np.array([104, 117, 123])
     img = img.transpose(2, 0, 1)
     img = img.reshape((1, ) + img.shape)
@@ -54,7 +54,7 @@ def detect(net, img, device):
     return bboxlist
 
 
-def batch_detect(net, imgs, device):
+def batch_detect(net, imgs):
     imgs = imgs - np.array([104, 117, 123])
     imgs = imgs.transpose(0, 3, 1, 2)
 
@@ -94,9 +94,9 @@ def batch_detect(net, imgs, device):
     return bboxlist
 
 
-def flip_detect(net, img, device):
+def flip_detect(net, img):
     img = cv2.flip(img, 1)
-    b = detect(net, img, device)
+    b = detect(net, img)
 
     bboxlist = np.zeros(b.shape)
     bboxlist[:, 0] = img.shape[1] - b[:, 2]

@@ -3,7 +3,7 @@ from paddle import nn
 from paddle.nn import functional as F
 
 
-class Conv2d(nn.Layer):
+class ConvBNRelu(nn.Layer):
     def __init__(self,
                  cin,
                  cout,
@@ -27,7 +27,7 @@ class Conv2d(nn.Layer):
         return self.act(out)
 
 
-class nonorm_Conv2d(nn.Layer):
+class NonNormConv2d(nn.Layer):
     def __init__(self,
                  cin,
                  cout,

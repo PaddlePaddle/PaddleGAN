@@ -1,6 +1,3 @@
-from __future__ import print_function
-import os
-import sys
 import time
 import paddle
 import math
@@ -78,13 +75,11 @@ def transform(point, center, scale, resolution, invert=False):
     function generates and affine transformation matrix. If invert is ``True``
     it will produce the inverse transformation.
 
-    Arguments:
+    Args:
         point {paddle.tensor} -- the input 2D point
         center {paddle.tensor or numpy.array} -- the center around which to perform the transformations
         scale {float} -- the scale of the face/object
         resolution {float} -- the output resolution
-
-    Keyword Arguments:
         invert {bool} -- define wherever the function should produce the direct or the
         inverse transformation matrix (default: {False})
     """
@@ -110,17 +105,13 @@ def transform(point, center, scale, resolution, invert=False):
 def crop(image, center, scale, resolution=256.0):
     """Center crops an image or set of heatmaps
 
-    Arguments:
+    Args:
         image {numpy.array} -- an rgb image
         center {numpy.array} -- the center of the object, usually the same as of the bounding box
         scale {float} -- scale of the face
-
-    Keyword Arguments:
         resolution {float} -- the size of the output cropped image (default: {256.0})
 
-    Returns:
-        [type] -- [description]
-    """  # Crop around the center point
+    """
     """ Crops the image around the center. Input is expected to be an np.ndarray """
     ul = transform([1, 1], center, scale, resolution, True)
     ul = ul.numpy()
@@ -155,10 +146,8 @@ def get_preds_fromhm(hm, center=None, scale=None):
     and the scale is provided the function will return the points also in
     the original coordinate frame.
 
-    Arguments:
+    Args:
         hm {paddle.tensor} -- the predicted heatmaps, of shape [B, N, W, H]
-
-    Keyword Arguments:
         center {paddle.tensor} -- the center of the bounding box (default: {None})
         scale {float} -- face scale (default: {None})
     """
@@ -205,10 +194,8 @@ def get_preds_fromhm_batch(hm, centers=None, scales=None):
     and the scales is provided the function will return the points also in
     the original coordinate frame.
 
-    Arguments:
+    Args:
         hm {paddle.tensor} -- the predicted heatmaps, of shape [B, N, W, H]
-
-    Keyword Arguments:
         centers {paddle.tensor} -- the centers of the bounding box (default: {None})
         scales {float} -- face scales (default: {None})
     """
@@ -254,11 +241,9 @@ def shuffle_lr(parts, pairs=None):
     """Shuffle the points left-right according to the axis of symmetry
     of the object.
 
-    Arguments:
+    Args:
         parts {paddle.tensor} -- a 3D or 4D object containing the
         heatmaps.
-
-    Keyword Arguments:
         pairs {list of integers} -- [order of the flipped points] (default: {None})
     """
     if pairs is None:
@@ -274,83 +259,3 @@ def shuffle_lr(parts, pairs=None):
         parts = paddle.to_tensor(parts.numpy()[:, pairs, ...])
 
     return parts
-
-
-def flip(tensor, is_label=False):
-    """Flip an image or a set of heatmaps left-right
-
-    Arguments:
-        tensor {numpy.array or paddle.tensor} -- [the input image or heatmaps]
-
-    Keyword Arguments:
-        is_label {bool} -- [denote wherever the input is an image or a set of heatmaps ] (default: {False})
-    """
-    if not paddle.is_tensor(tensor):
-        tensor = paddle.to_tensor(tensor)
-
-    if is_label:
-        tensor = shuffle_lr(tensor).flip([tensor.dim() - 1])
-    else:
-        tensor = tensor.flip([tensor.dim() - 1])
-
-    return tensor
-
-
-# From pyzolib/paths.py (https://bitbucket.org/pyzo/pyzolib/src/tip/paths.py)
-
-
-def appdata_dir(appname=None, roaming=False):
-    """ appdata_dir(appname=None, roaming=False)
-
-    Get the path to the application directory, where applications are allowed
-    to write user specific files (e.g. configurations). For non-user specific
-    data, consider using common_appdata_dir().
-    If appname is given, a subdir is appended (and created if necessary).
-    If roaming is True, will prefer a roaming directory (Windows Vista/7).
-    """
-
-    # Define default user directory
-    userDir = os.getenv('FACEALIGNMENT_USERDIR', None)
-    if userDir is None:
-        userDir = os.path.expanduser('~')
-        if not os.path.isdir(userDir):  # pragma: no cover
-            userDir = '/var/tmp'  # issue #54
-
-    # Get system app data dir
-    path = None
-    if sys.platform.startswith('win'):
-        path1, path2 = os.getenv('LOCALAPPDATA'), os.getenv('APPDATA')
-        path = (path2 or path1) if roaming else (path1 or path2)
-    elif sys.platform.startswith('darwin'):
-        path = os.path.join(userDir, 'Library', 'Application Support')
-    # On Linux and as fallback
-    if not (path and os.path.isdir(path)):
-        path = userDir
-
-    # Maybe we should store things local to the executable (in case of a
-    # portable distro or a frozen application that wants to be portable)
-    prefix = sys.prefix
-    if getattr(sys, 'frozen', None):
-        prefix = os.path.abspath(os.path.dirname(sys.executable))
-    for reldir in ('settings', '../settings'):
-        localpath = os.path.abspath(os.path.join(prefix, reldir))
-        if os.path.isdir(localpath):  # pragma: no cover
-            try:
-                open(os.path.join(localpath, 'test.write'), 'wb').close()
-                os.remove(os.path.join(localpath, 'test.write'))
-            except IOError:
-                pass  # We cannot write in this directory
-            else:
-                path = localpath
-                break
-
-    # Get path specific for this app
-    if appname:
-        if path == userDir:
-            appname = '.' + appname.lstrip('.')  # Make it a hidden directory
-        path = os.path.join(path, appname)
-        if not os.path.isdir(path):  # pragma: no cover
-            os.mkdir(path)
-
-    # Done
-    return path

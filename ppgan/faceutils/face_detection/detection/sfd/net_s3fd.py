@@ -179,8 +179,3 @@ class s3fd(nn.Layer):
             cls1, reg1, cls2, reg2, cls3, reg3, cls4, reg4, cls5, reg5, cls6,
             reg6
         ]
-
-
-if __name__ == '__main__':
-    model = s3fd()
-    print(model.state_dict().keys())
