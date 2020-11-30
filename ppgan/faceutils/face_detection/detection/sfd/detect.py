@@ -92,22 +92,3 @@ def batch_detect(net, imgs):
         bboxlist = np.zeros((1, BB, 5))
 
     return bboxlist
-
-
-def flip_detect(net, img):
-    img = cv2.flip(img, 1)
-    b = detect(net, img)
-
-    bboxlist = np.zeros(b.shape)
-    bboxlist[:, 0] = img.shape[1] - b[:, 2]
-    bboxlist[:, 1] = b[:, 1]
-    bboxlist[:, 2] = img.shape[1] - b[:, 0]
-    bboxlist[:, 3] = b[:, 3]
-    bboxlist[:, 4] = b[:, 4]
-    return bboxlist
-
-
-def pts_to_bb(pts):
-    min_x, min_y = np.min(pts, axis=0)
-    max_x, max_y = np.max(pts, axis=0)
-    return np.array([min_x, min_y, max_x, max_y])

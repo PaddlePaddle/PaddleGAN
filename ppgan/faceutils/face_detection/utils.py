@@ -38,36 +38,6 @@ def _gaussian(size=3,
     return gauss
 
 
-def draw_gaussian(image, point, sigma):
-    # Check if the gaussian is inside
-    ul = [math.floor(point[0] - 3 * sigma), math.floor(point[1] - 3 * sigma)]
-    br = [math.floor(point[0] + 3 * sigma), math.floor(point[1] + 3 * sigma)]
-    if (ul[0] > image.shape[1] or ul[1] > image.shape[0] or br[0] < 1
-            or br[1] < 1):
-        return image
-    size = 6 * sigma + 1
-    g = _gaussian(size)
-    g_x = [
-        int(max(1, -ul[0])),
-        int(min(br[0], image.shape[1])) - int(max(1, ul[0])) +
-        int(max(1, -ul[0]))
-    ]
-    g_y = [
-        int(max(1, -ul[1])),
-        int(min(br[1], image.shape[0])) - int(max(1, ul[1])) +
-        int(max(1, -ul[1]))
-    ]
-    img_x = [int(max(1, ul[0])), int(min(br[0], image.shape[1]))]
-    img_y = [int(max(1, ul[1])), int(min(br[1], image.shape[0]))]
-    assert (g_x[0] > 0 and g_y[1] > 0)
-    image[img_y[0] - 1:img_y[1],
-          img_x[0] - 1:img_x[1]] = image[img_y[0] - 1:img_y[1], img_x[0] -
-                                         1:img_x[1]] + g[g_y[0] - 1:g_y[1],
-                                                         g_x[0] - 1:g_x[1]]
-    image[image > 1] = 1
-    return image
-
-
 def transform(point, center, scale, resolution, invert=False):
     """Generate and affine transformation matrix.
 
@@ -139,102 +109,6 @@ def crop(image, center, scale, resolution=256.0):
                         dsize=(int(resolution), int(resolution)),
                         interpolation=cv2.INTER_LINEAR)
     return newImg
-
-
-def get_preds_fromhm(hm, center=None, scale=None):
-    """Obtain (x,y) coordinates given a set of N heatmaps. If the center
-    and the scale is provided the function will return the points also in
-    the original coordinate frame.
-
-    Args:
-        hm {paddle.tensor} -- the predicted heatmaps, of shape [B, N, W, H]
-        center {paddle.tensor} -- the center of the bounding box (default: {None})
-        scale {float} -- face scale (default: {None})
-    """
-    hm_re = hm.reshape(hm.shape[0], hm.shape[1], hm.shape[2] * hm.shape[3])
-    idx = paddle.argmax(hm_re, 2)
-    idx += 1
-    preds = idx.reshape(idx.shape[0], idx.shape[1],
-                        1).repeat(1, 1, 2).astype('float32')
-    preds = preds.numpy()
-    preds[..., 0] = np.apply_along_axis(lambda x: (x - 1) % hm.shape[3] + 1,
-                                        axis=0,
-                                        arr=preds[..., 0])
-    preds[..., 1] += -1
-    preds[..., 1] = preds[..., 1] / hm.shape[2]
-    preds[..., 1] = np.floor(preds[..., 1])
-    preds[..., 1] += 1
-
-    for i in range(preds.shape[0]):
-        for j in range(preds.shape[1]):
-            hm_ = hm.numpy()[i, j, :]
-            pX, pY = int(preds[i, j, 0]) - 1, int(preds[i, j, 1]) - 1
-            if pX > 0 and pX < 63 and pY > 0 and pY < 63:
-                diff = np.array([
-                    hm_[pY, pX + 1] - hm_[pY, pX - 1],
-                    hm_[pY + 1, pX] - hm_[pY - 1, pX]
-                ])
-                preds[i, j] += np.sign(diff) * .25
-
-    preds -= .5
-    preds = paddle.to_tensor(preds)
-
-    preds_orig = paddle.zeros(preds.shape)
-    if center is not None and scale is not None:
-        for i in range(hm.shape[0]):
-            for j in range(hm.shape[1]):
-                preds_orig[i, j] = transform(preds[i, j], center, scale,
-                                             hm.shape[2], True)
-
-    return preds, preds_orig
-
-
-def get_preds_fromhm_batch(hm, centers=None, scales=None):
-    """Obtain (x,y) coordinates given a set of N heatmaps. If the centers
-    and the scales is provided the function will return the points also in
-    the original coordinate frame.
-
-    Args:
-        hm {paddle.tensor} -- the predicted heatmaps, of shape [B, N, W, H]
-        centers {paddle.tensor} -- the centers of the bounding box (default: {None})
-        scales {float} -- face scales (default: {None})
-    """
-    hm_re = hm.reshape(hm.shape[0], hm.shape[1], hm.shape[2] * hm.shape[3])
-    idx = paddle.argmax(hm_re, 2)
-    idx += 1
-    preds = idx.reshape(idx.shape[0], idx.shape[1],
-                        1).repeat(1, 1, 2).astype('float32')
-    preds = preds.numpy()
-    preds[..., 0] = np.apply_along_axis(lambda x: (x - 1) % hm.shape[3] + 1,
-                                        axis=0,
-                                        arr=preds[..., 0])
-    preds[..., 1] += -1
-    preds[..., 1] = preds[..., 1] / hm.shape[2]
-    preds[..., 1] = np.floor(preds[..., 1])
-    preds[..., 1] += 1
-
-    for i in range(preds.shape[0]):
-        for j in range(preds.shape[1]):
-            hm_ = hm.numpy()[i, j, :]
-            pX, pY = int(preds[i, j, 0]) - 1, int(preds[i, j, 1]) - 1
-            if pX > 0 and pX < 63 and pY > 0 and pY < 63:
-                diff = np.array([
-                    hm_[pY, pX + 1] - hm_[pY, pX - 1],
-                    hm_[pY + 1, pX] - hm_[pY - 1, pX]
-                ])
-                preds[i, j] += np.sign(diff) * .25
-
-    preds -= .5
-    preds = paddle.to_tensor(preds)
-
-    preds_orig = paddle.zeros(preds.shape)
-    if centers is not None and scales is not None:
-        for i in range(hm.shape[0]):
-            for j in range(hm.shape[1]):
-                preds_orig[i, j] = transform(preds[i, j], centers, scales,
-                                             hm.shape[2], True)
-
-    return preds, preds_orig
 
 
 def shuffle_lr(parts, pairs=None):
