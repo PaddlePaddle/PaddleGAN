@@ -12,4 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .transforms import PairedRandomCrop, PairedRandomHorizontalFlip, Add
+from .transforms import PairedRandomCrop, PairedRandomHorizontalFlip, Add, ResizeToScale

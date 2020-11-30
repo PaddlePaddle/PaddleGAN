@@ -89,3 +89,46 @@ class Add(T.BaseTransform):
 
     def _apply_image(self, image):
         return custom_F.add(image, self.params['value'])
+
+
+@TRANSFORMS.register()
+class ResizeToScale(T.BaseTransform):
+    def __init__(self,
+                 size: int,
+                 scale: int,
+                 interpolation='bilinear',
+                 keys=None):
+        super().__init__(keys=keys)
+        if isinstance(size, int):
+            self.size = (size, size)
+        else:
+            self.size = size
+        self.scale = scale
+        self.interpolation = interpolation
+
+    def _get_params(self, inputs):
+        image = inputs[self.keys.index('image')]
+        hw = image.shape[:2]
+        params = {}
+        params['taget_size'] = self.reduce_to_scale(hw, self.size[::-1],
+                                                    self.scale)
+        return params
+
+    @staticmethod
+    def reduce_to_scale(img_hw, min_hw, scale):
+        im_h, im_w = img_hw
+        if im_h <= min_hw[0]:
+            im_h = min_hw[0]
+        else:
+            x = im_h % scale
+            im_h = im_h - x
+
+        if im_w < min_hw[1]:
+            im_w = min_hw[1]
+        else:
+            y = im_w % scale
+            im_w = im_w - y
+        return (im_h, im_w)
+
+    def _apply_image(self, image):
+        return F.resize(image, self.params['taget_size'], self.interpolation)

@@ -1,4 +1,4 @@
-epochs: 50
+epochs: 30
 output_dir: output_dir
 pretrain_ckpt: output_dir/AnimeGANV2PreTrainModel-2020-11-29-17-02/epoch_2_checkpoint.pdparams
 g_adv_weight: 300.
@@ -46,7 +46,7 @@ dataset:
         std: [127.5, 127.5, 127.5]
   test:
     name: SingleDataset
-    dataroot: /home/zqh/workspace/animedataset/test/test_photo
+    dataroot: /home/zqh/workspace/animedataset/test/HR_photo
     max_dataset_size: inf
     direction: BtoA
     input_nc: 3
@@ -54,9 +54,10 @@ dataset:
     serial_batches: False
     pool_size: 50
     transforms:
-      - name: Resize
+      - name: ResizeToScale
         size: [256, 256]
-        interpolation: "bicubic" #cv2.INTER_CUBIC
+        scale: 32
+        interpolation: bilinear
       - name: Transpose
       - name: Normalize
         mean: [127.5, 127.5, 127.5]
@@ -68,7 +69,7 @@ optimizer:
 
 lr_scheduler:
   name: linear
-  learning_rate: 0.0002
+  learning_rate: 0.00002
   start_epoch: 100
   decay_epochs: 100
 

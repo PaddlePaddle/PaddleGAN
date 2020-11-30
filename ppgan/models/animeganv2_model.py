@@ -58,11 +58,14 @@ class AnimeGANV2Model(BaseModel):
         """Unpack input data from the dataloader and perform necessary pre-processing steps.
 
         """
-
-        self.real = paddle.to_tensor(input['real'])
-        self.anime = paddle.to_tensor(input['anime'])
-        self.anime_gray = paddle.to_tensor(input['anime_gray'])
-        self.smooth_gray = paddle.to_tensor(input['smooth_gray'])
+        if self.is_train:
+            self.real = paddle.to_tensor(input['real'])
+            self.anime = paddle.to_tensor(input['anime'])
+            self.anime_gray = paddle.to_tensor(input['anime_gray'])
+            self.smooth_gray = paddle.to_tensor(input['smooth_gray'])
+        else:
+            self.real = paddle.to_tensor(input['A'])
+            self.image_paths = input['A_paths']
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
@@ -72,7 +75,15 @@ class AnimeGANV2Model(BaseModel):
         self.visual_items['real'] = self.real
         self.visual_items['fake'] = self.fake
 
-    def gram(self, x):
+    def test(self):
+        self.fake = self.nets['netG'](self.real)  # G(A)
+
+        # put items to visual dict
+        self.visual_items['real'] = self.real
+        self.visual_items['fake'] = self.fake
+
+    @staticmethod
+    def gram(x):
         b, c, h, w = x.shape
         x_tmp = x.reshape((b, c, (h * w)))
         gram = paddle.matmul(x_tmp, x_tmp, transpose_y=True)
