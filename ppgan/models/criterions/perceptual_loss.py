@@ -37,26 +37,22 @@ class PerceptualVGG(nn.Layer):
         self.use_input_norm = use_input_norm
 
         # get vgg model and load pretrained vgg weight
-        # remove _vgg from attributes to avoid `find_unused_parameters` bug
         _vgg = getattr(vgg, vgg_type)()
 
         if pretrained_url:
             weight_path = get_path_from_url(pretrained_url)
             state_dict = paddle.load(weight_path)
             _vgg.load_dict(state_dict)
-            # logger = get_logger('ppgan')
-            # logger.info('PerceptualVGG loaded pretrained weight.')
             print('PerceptualVGG loaded pretrained weight.')
-        # self.init_weights(_vgg, pretrained)
+
         num_layers = max(map(int, layer_name_list)) + 1
         assert len(_vgg.features) >= num_layers
         # only borrow layers that will be used from _vgg to avoid unused params
         print('num layers:', num_layers, _vgg.features, len(_vgg.features))
-        # self.vgg_layers = _vgg.features[0:num_layers]
+
         self.vgg_layers = nn.Sequential(
             *list(_vgg.features.children())[:num_layers])
-        print('debuggggg:', len(list(_vgg.features.children())),
-              len(self.vgg_layers))
+
         if self.use_input_norm:
             # the mean is for image with range [0, 1]
             self.register_buffer(
@@ -186,7 +182,7 @@ class PerceptualLoss(nn.Layer):
             style_loss *= self.style_weight
         else:
             style_loss = None
-        # print('debuggg:', self.perceptual_weight, self.style_weight)
+
         return percep_loss, style_loss
 
     def _gram_mat(self, x):
