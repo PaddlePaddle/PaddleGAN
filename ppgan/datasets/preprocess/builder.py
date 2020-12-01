@@ -14,7 +14,7 @@
 
 import copy
 import traceback
-import paddle
+
 from ...utils.registry import Registry, build_from_config
 
 LOAD_PIPELINE = Registry("LOAD_PIPELINE")
@@ -77,10 +77,6 @@ def build_load_pipeline(cfg):
 
 def build_transforms(cfg):
     transforms = []
-    # print('debug:', cfg)
-    # input_keys = cfg.pop('input_keys', None)
-    # if not isinstance(cfg, (list, tuple)):
-    #     cfg = [cfg]
     cfg_ = cfg.copy()
     input_keys = None
     if 'input_keys' in cfg_:
@@ -95,15 +91,3 @@ def build_transforms(cfg):
 
     transforms = Compose(transforms, input_keys=input_keys)
     return transforms
-
-
-# def build_preprocess(cfgs):
-#     preprocess = []
-
-#     for cfg in cfgs:
-#         cfg_ = copy.deepcopy(cfg)
-#         name = cfg_.pop('name')
-#         preprocess.append(PREPROCESS.get(name)(**cfg_))
-
-#     preprocess = Compose(preprocess)
-#     return preprocess
