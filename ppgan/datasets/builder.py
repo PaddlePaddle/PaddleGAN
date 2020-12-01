@@ -133,10 +133,14 @@ class DictDataLoader():
 
 
 def build_dataloader(cfg, is_train=True, distributed=True):
-    dataset = DATASETS.get(cfg.name)(cfg)
+    cfg_ = cfg.copy()
 
-    batch_size = cfg.get('batch_size', 1)
-    num_workers = cfg.get('num_workers', 0)
+    batch_size = cfg_.pop('batch_size', 1)
+    num_workers = cfg_.pop('num_workers', 0)
+
+    name = cfg_.pop('name')
+
+    dataset = DATASETS.get(name)(**cfg_)
 
     dataloader = DictDataLoader(dataset,
                                 batch_size,

@@ -21,7 +21,6 @@ import paddle.vision.transforms as transform
 from pathlib import Path
 from paddle.io import Dataset
 from .builder import DATASETS
-from .transforms.builder import build_transforms
 
 
 def scandir(dir_path, suffix=None, recursive=False):

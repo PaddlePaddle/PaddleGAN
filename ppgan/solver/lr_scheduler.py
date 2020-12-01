@@ -15,7 +15,23 @@
 import math
 import paddle
 
-from paddle.optimizer.lr import LRScheduler, MultiStepDecay
+from paddle.optimizer.lr import LRScheduler, MultiStepDecay, LambdaDecay
+from .builder import LRSCHEDULERS
+
+LRSCHEDULERS.register(MultiStepDecay)
+
+
+@LRSCHEDULERS.register()
+class LinearDecay(LambdaDecay):
+    def __init__(self, learning_rate, start_epoch, decay_epochs,
+                 iters_per_epoch):
+        def lambda_rule(epoch):
+            epoch = epoch // iters_per_epoch
+            lr_l = 1.0 - max(0,
+                             epoch + 1 - start_epoch) / float(decay_epochs + 1)
+            return lr_l
+
+        super().__init__(learning_rate, lambda_rule)
 
 
 def get_position_from_periods(iteration, cumulative_period):
@@ -39,6 +55,7 @@ def get_position_from_periods(iteration, cumulative_period):
             return i
 
 
+@LRSCHEDULERS.register()
 class CosineAnnealingRestartLR(LRScheduler):
     """ Cosine annealing with restarts learning rate scheme.
 
@@ -51,21 +68,19 @@ class CosineAnnealingRestartLR(LRScheduler):
     scheduler will restart with the weights in restart_weights.
 
     Args:
-        optimizer (paddle.nn.optimizer): PaddlePaddle optimizer.
+        learning_rate (float|paddle.nn.optimizer): PaddlePaddle optimizer.
         periods (list): Period for each cosine anneling cycle.
         restart_weights (list): Restart weights at each restart iteration.
             Default: [1].
         eta_min (float): The mimimum lr. Default: 0.
         last_epoch (int): Used in _LRScheduler. Default: -1.
     """
-    def __init__(
-            self,
-            #  optimizer,
-            learning_rate,
-            periods,
-            restart_weights=[1],
-            eta_min=0,
-            last_epoch=-1):
+    def __init__(self,
+                 learning_rate,
+                 periods,
+                 restart_weights=[1],
+                 eta_min=0,
+                 last_epoch=-1):
         self.periods = periods
         self.restart_weights = restart_weights
         self.eta_min = eta_min
@@ -83,40 +98,7 @@ class CosineAnnealingRestartLR(LRScheduler):
         nearest_restart = 0 if idx == 0 else self.cumulative_period[idx - 1]
         current_period = self.periods[idx]
 
-        # return [
         lr = self.eta_min + current_weight * 0.5 * (
             self.base_lr - self.eta_min) * (1 + math.cos(math.pi * (
                 (self.last_epoch - nearest_restart) / current_period)))
-        # if paddle.distributed.ParallelEnv().local_rank == 0:
-        #     print('debugggggg:', self.last_epoch, lr)
         return lr
-        #     for base_lr in self.base_lrs
-        # ]
-
-
-def build_lr_scheduler(cfg):
-    name = cfg.pop('name', None)
-    steps_per_epoch = cfg.pop('step_per_epoch', None)
-
-    # TODO: add more learning rate scheduler
-    if name == 'linear':
-
-        def lambda_rule(epoch):
-            epoch = epoch // steps_per_epoch
-            lr_l = 1.0 - max(
-                0, epoch + 1 - cfg.start_epoch) / float(cfg.decay_epochs + 1)
-            return lr_l
-
-        scheduler = paddle.optimizer.lr.LambdaDecay(cfg.learning_rate,
-                                                    lr_lambda=lambda_rule)
-        return scheduler
-    elif name == 'cosine_annealing_restart':
-        cfg.periods = [x * steps_per_epoch for x in cfg.periods]
-        scheduler = CosineAnnealingRestartLR(**cfg)
-        return scheduler
-    elif name == 'multi_step_decay':
-        cfg.milestones = [x * steps_per_epoch for x in cfg.milestones]
-        scheduler = MultiStepDecay(**cfg)
-        return scheduler
-    else:
-        raise NotImplementedError

@@ -12,65 +12,55 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import cv2
-import paddle
-import os.path
-from .base_dataset import BaseDataset, get_params, get_transform
-from .image_folder import make_dataset
-
 from .builder import DATASETS
-from .transforms.builder import build_transforms
+from .base_dataset import BaseDataset
 
 
 @DATASETS.register()
 class PairedDataset(BaseDataset):
     """A dataset class for paired image dataset.
     """
-    def __init__(self, cfg):
+    def __init__(self, dataroot, load_pipeline, transforms):
         """Initialize this dataset class.
 
         Args:
-            cfg (dict): configs of datasets.
+            dataroot (str): Directory of dataset.
+            load_pipeline (list[dict]): A sequence of data loading config.
+            transforms (list[dict]): A sequence of data transform config.
         """
-        BaseDataset.__init__(self, cfg)
-        self.dir_AB = os.path.join(cfg.dataroot,
-                                   cfg.phase)  # get the image directory
-        self.AB_paths = sorted(make_dataset(
-            self.dir_AB, cfg.max_dataset_size))  # get image paths
+        BaseDataset.__init__(self, load_pipeline, transforms)
+        self.dataroot = dataroot
+        self.annotations = self.load_annotations()
 
-        self.input_nc = self.cfg.output_nc if self.cfg.direction == 'BtoA' else self.cfg.input_nc
-        self.output_nc = self.cfg.input_nc if self.cfg.direction == 'BtoA' else self.cfg.output_nc
-        self.transforms = build_transforms(cfg.transforms)
+    def load_annotations(self):
+        """Load paired image paths.
 
-    def __getitem__(self, index):
-        """Return a data point and its metadata information.
-
-        Parameters:
-            index - - a random integer for data indexing
-
-        Returns a dictionary that contains A, B, A_paths and B_paths
-            A (tensor) - - an image in the input domain
-            B (tensor) - - its corresponding image in the target domain
-            A_paths (str) - - image paths
-            B_paths (str) - - image paths (same as A_paths)
+        Returns:
+            list[dict]: List that contains paired image paths.
         """
-        # read a image given a random integer index
-        AB_path = self.AB_paths[index]
-        AB = cv2.cvtColor(cv2.imread(AB_path), cv2.COLOR_BGR2RGB)
+        annotations = []
+        pair_paths = sorted(self.scan_folder(self.dataroot))
+        for pair_path in pair_paths:
+            annotations.append(dict(pair_path=pair_path))
 
+        return annotations
+
+    def __getitem__(self, idx):
+        datas = self.annotations[idx]
+
+        datas = self.load_pipeline(datas)
+
+        pair_img = datas['pair']
         # split AB image into A and B
-        h, w = AB.shape[:2]
+        h, w = pair_img.shape[:2]
         # w, h = AB.size
         w2 = int(w / 2)
 
-        A = AB[:h, :w2, :]
-        B = AB[:h, w2:, :]
+        datas['A'] = pair_img[:h, :w2, :]
+        datas['B'] = pair_img[:h, w2:, :]
+        datas['A_path'] = datas['pair_path']
+        datas['B_path'] = datas['pair_path']
 
-        # apply the same transform to both A and B
-        A, B = self.transforms((A, B))
+        datas = self.transforms(datas)
 
-        return {'A': A, 'B': B, 'A_paths': AB_path, 'B_paths': AB_path}
-
-    def __len__(self):
-        """Return the total number of images in the dataset."""
-        return len(self.AB_paths)
+        return datas

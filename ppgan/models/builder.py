@@ -21,5 +21,8 @@ MODELS = Registry("MODEL")
 
 
 def build_model(cfg):
-    model = MODELS.get(cfg.model.name)(cfg)
+    cfg_ = cfg.copy()
+    # print('debugggg', cfg_)
+    name = cfg_.pop('name', None)
+    model = MODELS.get(name)(**cfg_)
     return model

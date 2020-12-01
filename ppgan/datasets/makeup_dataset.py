@@ -13,35 +13,38 @@
 # limitations under the License.
 
 import cv2
-import os.path
-from .base_dataset import BaseDataset, get_transform
-from .transforms.makeup_transforms import get_makeup_transform
-import paddle.vision.transforms as T
-from PIL import Image
 import random
+import os.path
 import numpy as np
+from PIL import Image
+
+import paddle
+import paddle.vision.transforms as T
+from .base_dataset import BaseDataset
 from ..utils.preprocess import *
 
 from .builder import DATASETS
 
 
 @DATASETS.register()
-class MakeupDataset(BaseDataset):
-    def __init__(self, cfg):
-        """Initialize this dataset class.
+class MakeupDataset(paddle.io.Dataset):
+    def __init__(self, dataroot, phase, trans_size, cls_list):
+        """Initialize psgan dataset class.
 
-        Parameters:
-            opt (Option class) -- stores all the experiment flags; needs to be a subclass of BaseOptions
+        Args:
+            dataroot (str): Directory of dataset.
+            phase (str): 'train' or 'test'.
         """
-        BaseDataset.__init__(self, cfg)
-        self.image_path = cfg.dataroot
-        self.mode = cfg.phase
-        self.transform = get_makeup_transform(cfg)
+        self.image_path = dataroot
+        self.mode = phase
+        self.trans_size = trans_size
+        self.cls_list = cls_list
+        self.transform = self.build_makeup_transform()
 
         self.norm = T.Normalize([127.5, 127.5, 127.5], [127.5, 127.5, 127.5])
-        self.transform_mask = get_makeup_transform(cfg, pic="mask")
-        self.trans_size = cfg.trans_size
-        self.cls_list = cfg.cls_list
+        self.transform_mask = self.build_makeup_transform("mask")
+        self.trans_size = trans_size
+
         self.cls_A = self.cls_list[0]
         self.cls_B = self.cls_list[1]
         for cls in self.cls_list:
@@ -71,6 +74,18 @@ class MakeupDataset(BaseDataset):
                 getattr(self, cls + "_filenames").append(splits[0])
                 getattr(self, cls + "_mask_filenames").append(splits[1])
                 getattr(self, cls + "_lmks_filenames").append(splits[2])
+
+    def build_makeup_transform(self, pic="image"):
+        if pic == "image":
+            transform = T.Compose([
+                T.Resize(size=self.trans_size),
+                T.Transpose(),
+            ])
+        else:
+            transform = T.Resize(size=self.trans_size,
+                                 interpolation=cv2.INTER_NEAREST)
+
+        return transform
 
     def __getitem__(self, index):
         """Return MANet and MDNet needed params.

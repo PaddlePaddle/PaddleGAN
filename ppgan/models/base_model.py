@@ -20,23 +20,21 @@ from collections import OrderedDict
 from abc import ABC, abstractmethod
 
 from .criterions.builder import build_criterion
-from ..solver.lr_scheduler import build_lr_scheduler
+from ..solver import build_lr_scheduler, build_optimizer
+from ..metrics import build_metric
+from ..utils.visual import tensor2img
 
 
 class BaseModel(ABC):
     """This class is an abstract base class (ABC) for models.
     To create a subclass, you need to implement the following five functions:
-        -- <__init__>:                      initialize the class; first call BaseModel.__init__(self, opt).
-        -- <set_input>:                     unpack data from dataset and apply preprocessing.
+        -- <__init__>:                      initialize the class.
+        -- <setup_input>:                     unpack data from dataset and apply preprocessing.
         -- <forward>:                       produce intermediate results.
-        -- <optimize_parameters>:           calculate losses, gradients, and update network weights.
-        -- <modify_commandline_options>:    (optionally) add model-specific options and set default options.
+        -- <train_iter>:           calculate losses, gradients, and update network weights.
     """
-    def __init__(self, cfg):
+    def __init__(self):
         """Initialize the BaseModel class.
-
-        Args:
-            cfg (Dict)-- configs of Model.
 
         When creating your custom class, you need to implement your own initialization.
         In this function, you should first call <super(YourClass, self).__init__(self, cfg)>
@@ -48,68 +46,86 @@ class BaseModel(ABC):
                                           If two networks are updated at the same time, you can use itertools.chain to group them.
                                           See cycle_gan_model.py for an example.
         """
-        self.cfg = cfg
-        self.is_train = cfg.is_train
-        self.save_dir = os.path.join(
-            cfg.output_dir,
-            cfg.model.name)  # save all the checkpoints to save_dir
 
-        self.losses = OrderedDict()
         self.nets = OrderedDict()
-        self.visual_items = OrderedDict()
-        self.optimizers = OrderedDict()
         self.criterions = OrderedDict()
-        self.image_paths = []
-        self.metric = 0  # used for learning rate policy 'plateau'
+        self.optimizers = OrderedDict()
+        self.metrics = OrderedDict()
+        self.losses = OrderedDict()
+        self.visual_items = OrderedDict()
 
     @abstractmethod
-    def set_input(self, input):
+    def setup_input(self, input):
         """Unpack input data from the dataloader and perform necessary pre-processing steps.
 
-        Parameters:
+        Args:
             input (dict): includes the data itself and its metadata information.
         """
         pass
 
     @abstractmethod
     def forward(self):
-        """Run forward pass; called by both functions <optimize_parameters> and <test>."""
+        """Run forward pass; called by both functions <train_iter> and <test_iter>."""
         pass
 
     @abstractmethod
-    def optimize_parameters(self):
+    def train_iter(self, optims=None):
         """Calculate losses, gradients, and update network weights; called in every training iteration"""
         pass
 
-    def build_criterions(self, loss_cfgs):
-        if isinstance(loss_cfgs, (list, tuple)):
-            for loss_cfg in loss_cfgs:
-                for name, cfg in loss_cfg.items():
-                    self.criterions[name] = build_criterion(cfg)
-        print('debugggg:', self.criterions)
-
-    def build_lr_scheduler(self):
-        self.lr_scheduler = build_lr_scheduler(self.cfg.lr_scheduler)
-
-    def build_optimizers(self):
-        pass
-
-    def eval(self):
-        """Make models eval mode during test time"""
-        for name in self.model_names:
-            if isinstance(name, str):
-                net = getattr(self, 'net' + name)
-                net.eval()
-
-    def test(self):
-        """Forward function used in test time.
-
-        This function wraps <forward> function in no_grad() so we don't save intermediate steps for backprop
-        It also calls <compute_visuals> to produce additional visualization results
-        """
+    def test_iter(self, metrics=None):
+        """Calculate metrics; called in every test iteration"""
+        self.eval()
         with paddle.no_grad():
             self.forward()
-            self.compute_visuals()
+        self.train()
+
+    def setup_train_mode(self, is_train):
+        self.is_train = is_train
+
+    def setup_lr_schedulers(self, cfg):
+        self.lr_scheduler = build_lr_scheduler(cfg)
+        return self.lr_scheduler
+
+    def setup_optimizers(self, lr, cfg):
+        if cfg.get('name', None):
+            cfg_ = cfg.copy()
+            net_names = cfg_.pop('net_names')
+            parameters = []
+            for net_name in net_names:
+                parameters += self.nets[net_name].parameters()
+            self.optimizers['optim'] = build_optimizer(cfg_, lr, parameters)
+        else:
+            for opt_name, opt_cfg in cfg.items():
+                cfg_ = opt_cfg.copy()
+                net_names = cfg_.pop('net_names')
+                parameters = []
+                for net_name in net_names:
+                    parameters += self.nets[net_name].parameters()
+                self.optimizers[opt_name] = build_optimizer(
+                    cfg_, lr, parameters)
+
+        return self.optimizers
+
+    def setup_metrics(self, cfg):
+        if isinstance(list(cfg.values())[0], dict):
+            for metric_name, cfg_ in cfg.items():
+                self.metrics[metric_name] = build_metric(cfg_)
+        else:
+            metric = build_metric(cfg)
+            self.metrics[metric.__class__.__name__] = metric
+
+        return self.metrics
+
+    def eval(self):
+        """Make nets eval mode during test time"""
+        for net in self.nets.values():
+            net.eval()
+
+    def train(self):
+        """Make nets train mode during train time"""
+        for net in self.nets.values():
+            net.train()
 
     def compute_visuals(self):
         """Calculate additional output images for visdom and HTML visualization"""
@@ -130,8 +146,8 @@ class BaseModel(ABC):
     def set_requires_grad(self, nets, requires_grad=False):
         """Set requies_grad=Fasle for all the networks to avoid unnecessary computations
         Args:
-            nets (network list)   -- a list of networks
-            requires_grad (bool)  -- whether the networks require gradients or not
+            nets (network list): a list of networks
+            requires_grad (bool): whether the networks require gradients or not
         """
         if not isinstance(nets, list):
             nets = [nets]

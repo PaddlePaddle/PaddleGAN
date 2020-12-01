@@ -1,9 +1,5 @@
 epochs: 300
 output_dir: output_dir
-adv_weight: 1.0
-cycle_weight: 10.0
-identity_weight: 10.0
-cam_weight: 1000.0
 
 model:
   name: UGATITModel
@@ -25,57 +21,102 @@ model:
     input_nc: 3
     ndf: 64
     n_layers: 5
+  l1_criterion:
+    name: L1Loss
+  mse_criterion:
+    name: MSELoss
+  bce_criterion:
+    name: BCEWithLogitsLoss
+  adv_weight: 1.0
+  cycle_weight: 10.0
+  identity_weight: 10.0
+  cam_weight: 1000.0
 
 dataset:
   train:
     name: UnpairedDataset
-    dataroot: data/selfie2anime
+    dataroot_a: data/cityscapes/trainA
+    dataroot_b: data/cityscapes/trainB
     num_workers: 0
-    phase: train
-    max_dataset_size: inf
-    direction: AtoB
-    input_nc: 3
-    output_nc: 3
-    serial_batches: False
+    batch_size: 1
+    is_train: True
+    max_size: inf
+    load_pipeline:
+      - name: LoadImageFromFile
+        key: A
+      - name: LoadImageFromFile
+        key: B
     transforms:
-      - name: Resize
-        size: [286, 286]
-        interpolation: 'bilinear' #'bicubic' #cv2.INTER_CUBIC
-      - name: RandomCrop
-        size: [256, 256]
-      - name: RandomHorizontalFlip
-        prob: 0.5
-      - name: Transpose
-      - name: Normalize
-        mean: [127.5, 127.5, 127.5]
-        std: [127.5, 127.5, 127.5]
+      input_keys: [A, B]
+      pipeline:
+        - name: Resize
+          size: [286, 286]
+          interpolation: 'bicubic' #cv2.INTER_CUBIC
+          keys: ['image', 'image']
+        - name: RandomCrop
+          size: [256, 256]
+          keys: ['image', 'image']
+        - name: RandomHorizontalFlip
+          prob: 0.5
+          keys: ['image', 'image']
+        - name: Transpose
+          keys: ['image', 'image']
+        - name: Normalize
+          mean: [127.5, 127.5, 127.5]
+          std: [127.5, 127.5, 127.5]
+          keys: ['image', 'image']
   test:
-    name: SingleDataset
-    dataroot: data/selfie2anime/testA
-    max_dataset_size: inf
-    direction: AtoB
-    input_nc: 3
-    output_nc: 3
-    serial_batches: False
+    name: UnpairedDataset
+    dataroot_a: data/cityscapes/testA
+    dataroot_b: data/cityscapes/testB
+    num_workers: 0
+    batch_size: 1
+    max_size: inf
+    is_train: False
+    load_pipeline:
+      - name: LoadImageFromFile
+        key: A
+      - name: LoadImageFromFile
+        key: B
     transforms:
-      - name: Resize
-        size: [256, 256]
-        interpolation: 'bilinear' #cv2.INTER_CUBIC
-      - name: Transpose
-      - name: Normalize
-        mean: [127.5, 127.5, 127.5]
-        std: [127.5, 127.5, 127.5]
-
-optimizer:
-  name: Adam
-  beta1: 0.5
-  weight_decay: 0.0001
+      input_keys: [A, B]
+      pipeline:
+        - name: Resize
+          size: [256, 256]
+          interpolation: 'bicubic' #cv2.INTER_CUBIC
+          keys: ['image', 'image']
+        - name: Transpose
+          keys: ['image', 'image']
+        - name: Normalize
+          mean: [127.5, 127.5, 127.5]
+          std: [127.5, 127.5, 127.5]
+          keys: ['image', 'image']
 
 lr_scheduler:
-  name: linear
+  name: LinearDecay
   learning_rate: 0.0001
   start_epoch: 150
   decay_epochs: 150
+  # will get from real dataset
+  iters_per_epoch: 1
+
+optimizer:
+  optimG:
+    name: Adam
+    net_names:
+      - genA2B
+      - genB2A
+    weight_decay: 0.0001
+    beta1: 0.5
+  optimD:
+    name: Adam
+    net_names:
+      - disGA
+      - disGB
+      - disLA
+      - disLB
+    weight_decay: 0.0001
+    beta1: 0.5
 
 log_config:
   interval: 10

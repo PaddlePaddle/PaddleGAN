@@ -1,6 +1,5 @@
 epochs: 200
 output_dir: output_dir
-lambda_L1: 100
 
 model:
   name: Pix2PixModel
@@ -18,70 +17,83 @@ model:
     n_layers: 3
     input_nc: 6
     norm_type: batch
-  gan_mode: vanilla
+  direction: b2a
+  pixel_criterion:
+    name: L1Loss
+    loss_weight: 100
+  gan_criterion:
+    name: GANLoss
+    gan_mode: vanilla
 
 dataset:
   train:
     name: PairedDataset
-    dataroot: data/cityscapes
+    dataroot: data/cityscapes/train
     num_workers: 4
     batch_size: 1
-    phase: train
-    max_dataset_size: inf
-    direction: BtoA
-    input_nc: 3
-    output_nc: 3
-    serial_batches: False
-    pool_size: 0
+    load_pipeline:
+      - name: LoadImageFromFile
+        key: pair
     transforms:
-      - name: Resize
-        size: [286, 286]
-        interpolation: 'bicubic' #cv2.INTER_CUBIC
-        keys: [image, image]
-      - name: PairedRandomCrop
-        size: [256, 256]
-        keys: [image, image]
-      - name: PairedRandomHorizontalFlip
-        prob: 0.5
-        keys: [image, image]
-      - name: Transpose
-        keys: [image, image]
-      - name: Normalize
-        mean: [127.5, 127.5, 127.5]
-        std: [127.5, 127.5, 127.5]
-        keys: [image, image]
+      input_keys: [A, B]
+      pipeline:
+        - name: Resize
+          size: [286, 286]
+          interpolation: 'bicubic' #cv2.INTER_CUBIC
+          keys: [image, image]
+        - name: PairedRandomCrop
+          size: [256, 256]
+          keys: [image, image]
+        - name: PairedRandomHorizontalFlip
+          prob: 0.5
+          keys: [image, image]
+        - name: Transpose
+          keys: [image, image]
+        - name: Normalize
+          mean: [127.5, 127.5, 127.5]
+          std: [127.5, 127.5, 127.5]
+          keys: [image, image]
   test:
     name: PairedDataset
-    dataroot: data/cityscapes/
-    phase: test
-    max_dataset_size: inf
-    direction: BtoA
-    input_nc: 3
-    output_nc: 3
-    serial_batches: True
-    pool_size: 50
+    dataroot: data/cityscapes/test
+    num_workers: 4
+    batch_size: 1
+    load_pipeline:
+      - name: LoadImageFromFile
+        key: pair
     transforms:
-      - name: Resize
-        size: [256, 256]
-        interpolation: 'bicubic' #cv2.INTER_CUBIC
-        keys: [image, image]
-      - name: Transpose
-        keys: [image, image]
-      - name: Normalize
-        mean: [127.5, 127.5, 127.5]
-        std: [127.5, 127.5, 127.5]
-        keys: [image, image]
-
-
-optimizer:
-  name: Adam
-  beta1: 0.5
+      input_keys: [A, B]
+      pipeline:
+        - name: Resize
+          size: [256, 256]
+          interpolation: 'bicubic' #cv2.INTER_CUBIC
+          keys: [image, image]
+        - name: Transpose
+          keys: [image, image]
+        - name: Normalize
+          mean: [127.5, 127.5, 127.5]
+          std: [127.5, 127.5, 127.5]
+          keys: [image, image]
 
 lr_scheduler:
-  name: linear
+  name: LinearDecay
   learning_rate: 0.0002
   start_epoch: 100
   decay_epochs: 100
+  # will get from real dataset
+  iters_per_epoch: 1
+
+optimizer:
+  optimG:
+    name: Adam
+    net_names:
+      - netG
+    beta1: 0.5
+  optimD:
+    name: Adam
+    net_names:
+      - netD
+    beta1: 0.5
 
 log_config:
   interval: 100
