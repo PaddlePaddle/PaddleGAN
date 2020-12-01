@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import os.path as osp
 
 import numpy as np
@@ -19,17 +20,9 @@ from PIL import Image
 import dlib
 import cv2
 from ..image import resize_by_max
-from ppgan.utils.logger import get_logger
-logger = get_logger()
+from paddle.utils.download import get_weights_path_from_url
 
-detector = dlib.get_frontal_face_detector()
-
-try:
-    predictor = dlib.shape_predictor(
-        osp.split(osp.realpath(__file__))[0] + '/lms.dat')
-except Exception as e:
-    predictor = None
-    logger.warning(e)
+LANDMARKS_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/lms.dat'
 
 
 def detect(image: Image):
@@ -37,6 +30,7 @@ def detect(image: Image):
     h, w = image.shape[:2]
     image = resize_by_max(image, 361)
     actual_h, actual_w = image.shape[:2]
+    detector = dlib.get_frontal_face_detector()
     faces_on_small = detector(image, 1)
     faces = dlib.rectangles()
     for face in faces_on_small:
@@ -129,6 +123,8 @@ def crop_by_image_size(image: Image, face):
 
 
 def landmarks(image: Image, face):
+    weight_path = get_weights_path_from_url(LANDMARKS_WEIGHT_URL)
+    predictor = dlib.shape_predictor(weight_path)
     shape = predictor(np.asarray(image), face).parts()
     return np.array([[p.y, p.x] for p in shape])
 
