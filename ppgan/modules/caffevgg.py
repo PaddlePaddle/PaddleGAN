@@ -1,7 +1,11 @@
 import paddle
 import paddle.nn as nn
-import paddle.nn.functional as F
 import numpy as np
+from ppgan.utils.download import get_path_from_url
+model_urls = {
+    'caffevgg19': ('https://paddlegan.bj.bcebos.com/models/vgg19_no_fc.npy',
+                   '8ea1ef2374f8684b6cea9f300849be81')
+}
 
 
 class CaffeVGG19(nn.Layer):
@@ -10,30 +14,24 @@ class CaffeVGG19(nn.Layer):
         'M', 512, 512, 512, 512, 'M'
     ]
 
-    def __init__(self,
-                 weights_path: str = 'output_dir/vgg19.npy',
-                 output_index: int = 26) -> None:
+    def __init__(self, output_index: int = 26) -> None:
         super().__init__()
-        try:
-            data_dict: dict = np.load(weights_path,
-                                      encoding='latin1',
-                                      allow_pickle=True).item()
-            self.features = self.make_layers(self.cfg, data_dict)
-            del data_dict
-        except FileNotFoundError as e:
-            print(
-                'ERROR: ', "weights_path:", weights_path,
-                'does not exits!, if you want to training must download pretrained weights'
-            )
+        arch = 'caffevgg19'
+        weights_path = get_path_from_url(model_urls[arch][0],
+                                         model_urls[arch][1])
+        data_dict: dict = np.load(weights_path,
+                                  encoding='latin1',
+                                  allow_pickle=True).item()
+        self.features = self.make_layers(self.cfg, data_dict)
+        del data_dict
         self.features = nn.Sequential(*self.features.sublayers()[:output_index])
         mean = paddle.to_tensor([103.939, 116.779, 123.68])
         self.mean = mean.unsqueeze(0).unsqueeze(-1).unsqueeze(-1)
 
     def _process(self, x):
-        # NOTE 图像范围为[-1~1]，先denormalize到0-1再归一化
-        rgb = (x * 0.5 + 0.5) * 255  # to 255
+        rgb = (x * 0.5 + 0.5) * 255  # value to 255
         bgr = paddle.stack((rgb[:, 2, :, :], rgb[:, 1, :, :], rgb[:, 0, :, :]),
-                           1)
+                           1)  # rgb to bgr
         return bgr - self.mean  # vgg norm
 
     def _forward_impl(self, x):

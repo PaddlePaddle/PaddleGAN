@@ -21,7 +21,7 @@ dataset:
     name: AnimeGANV2Dataset
     num_workers: 4
     batch_size: 4
-    dataroot: /home/zqh/workspace/animedataset
+    dataroot: data/animedataset
     style: Hayao
     phase: train
     direction: AtoB
@@ -46,7 +46,7 @@ dataset:
         std: [127.5, 127.5, 127.5]
   test:
     name: SingleDataset
-    dataroot: /home/zqh/workspace/animedataset/test/HR_photo
+    dataroot: data/animedataset/test/HR_photo
     max_dataset_size: inf
     direction: BtoA
     input_nc: 3

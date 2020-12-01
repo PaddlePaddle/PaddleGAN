@@ -351,3 +351,24 @@ ppgan.apps.FaceParsePredictor(output_path='output')
 > ```
 > **返回值:**
 > > - mask(numpy.ndarray): 返回解析完成的人脸成分mask矩阵, 数据类型为numpy.ndarray
+
+## ppgan.apps.AnimeGANPredictor
+
+```pyhton
+ppgan.apps.AnimeGANPredictor(output_path='output_dir',weight_path=None,use_adjust_brightness=True)
+```
+> 利用animeganv2来对景物图像进行动漫风格化。论文是 AnimeGAN: A Novel Lightweight GAN for Photo Animation, 论文链接: https://link.springer.com/chapter/10.1007/978-981-15-5577-0_18.
+
+> **参数:**
+>
+> > - input_image: 输入待解析的图片文件路径
+
+> **示例:**
+>
+> ```
+> from ppgan.apps import AnimeGANPredictor
+> predictor = AnimeGANPredictor()
+> predictor.run('docs/imgs/animeganv2_test.jpg')
+> ```
+> **返回值:**
+> > - anime_image(numpy.ndarray): 返回风格化后的景色图像
