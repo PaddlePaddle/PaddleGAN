@@ -28,7 +28,7 @@ def setup(args, cfg):
     cfg.timestamp = time.strftime('-%Y-%m-%d-%H-%M', time.localtime())
     cfg.output_dir = os.path.join(cfg.output_dir,
                                   str(cfg.model.name) + cfg.timestamp)
-    print('setup logger')
+
     logger = setup_logger(cfg.output_dir)
 
     logger.info('Configs: {}'.format(cfg))

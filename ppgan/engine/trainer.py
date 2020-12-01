@@ -163,7 +163,6 @@ class Trainer:
 
             if temp % self.weight_interval == 0:
                 self.save(temp, 'weight', keep=-1)
-                # if temp % self.ckpt_interval == 0:
                 self.save(temp)
 
             self.current_iter += 1
@@ -216,7 +215,6 @@ class Trainer:
         else:
             message += 'Iter: %d/%d ' % (self.current_iter, self.total_iters)
 
-        # message += '%s: %.6f ' % ('lr', self.current_learning_rate)
         message += f'lr: {self.current_learning_rate:.3e} '
 
         for k, v in losses.items():
@@ -232,8 +230,6 @@ class Trainer:
             message += 'ips: %.5f images/s ' % self.ips
 
         if hasattr(self, 'step_time'):
-            # cur_step = self.iters_per_epoch * (self.current_epoch -
-            #                                    1) + self.batch_id
             eta = self.step_time * (self.total_iters - self.current_iter - 1)
             eta_str = str(datetime.timedelta(seconds=int(eta)))
             message += f'eta: {eta_str}'
