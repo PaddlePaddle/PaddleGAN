@@ -43,7 +43,6 @@ def detect(net, img):
     bboxlist = []
     for i in range(len(olist) // 2):
         olist[i * 2] = F.softmax(olist[i * 2], axis=1)
-    #olist = [oelem.data.cpu() for oelem in olist]
     for i in range(len(olist) // 2):
         ocls, oreg = olist[i * 2], olist[i * 2 + 1]
         FB, FC, FH, FW = ocls.shape  # feature map size
@@ -59,7 +58,6 @@ def detect(net, img):
             variances = [0.1, 0.2]
             box = decode(paddle.to_tensor(loc), priors, variances)
             x1, y1, x2, y2 = box[0] * 1.0
-            # cv2.rectangle(imgshow,(int(x1),int(y1)),(int(x2),int(y2)),(0,0,255),1)
             bboxlist.append([x1, y1, x2, y2, score])
     bboxlist = np.array(bboxlist)
     if 0 == len(bboxlist):
@@ -80,7 +78,6 @@ def batch_detect(net, imgs):
     bboxlist = []
     for i in range(len(olist) // 2):
         olist[i * 2] = F.softmax(olist[i * 2], axis=1)
-    #olist = [oelem.data.cpu() for oelem in olist]
     for i in range(len(olist) // 2):
         ocls, oreg = olist[i * 2], olist[i * 2 + 1]
         FB, FC, FH, FW = ocls.shape  # feature map size
@@ -97,7 +94,6 @@ def batch_detect(net, imgs):
             variances = [0.1, 0.2]
             box = batch_decode(paddle.to_tensor(loc), priors, variances)
             box = box[:, 0] * 1.0
-            # cv2.rectangle(imgshow,(int(x1),int(y1)),(int(x2),int(y2)),(0,0,255),1)
             bboxlist.append(
                 paddle.concat([box, paddle.to_tensor(score).unsqueeze(1)],
                               1).numpy())
