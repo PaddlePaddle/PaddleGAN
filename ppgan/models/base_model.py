@@ -28,10 +28,27 @@ from ..utils.visual import tensor2img
 class BaseModel(ABC):
     """This class is an abstract base class (ABC) for models.
     To create a subclass, you need to implement the following five functions:
-        -- <__init__>:                      initialize the class.
-        -- <setup_input>:                     unpack data from dataset and apply preprocessing.
-        -- <forward>:                       produce intermediate results.
-        -- <train_iter>:           calculate losses, gradients, and update network weights.
+        -- <__init__>:          initialize the class.
+        -- <setup_input>:       unpack data from dataset and apply preprocessing.
+        -- <forward>:           produce intermediate results.
+        -- <train_iter>:        calculate losses, gradients, and update network weights.
+
+    # trainer training logic:
+    #
+    #                build_model                               ||    model(BaseModel)
+    #                     |                                    ||
+    #               build_dataloader                           ||    dataloader
+    #                     |                                    ||
+    #               model.setup_lr_schedulers                  ||    lr_scheduler
+    #                     |                                    ||
+    #               model.setup_optimizers                     ||    optimizers
+    #                     |                                    ||
+    #     train loop (model.setup_input + model.train_iter)    ||    train loop
+    #                     |                                    ||
+    #         print log (model.get_current_losses)             ||
+    #                     |                                    ||
+    #         save checkpoint (model.nets)                     \/
+
     """
     def __init__(self):
         """Initialize the BaseModel class.
@@ -48,7 +65,6 @@ class BaseModel(ABC):
         """
 
         self.nets = OrderedDict()
-        self.criterions = OrderedDict()
         self.optimizers = OrderedDict()
         self.metrics = OrderedDict()
         self.losses = OrderedDict()

@@ -27,7 +27,6 @@ from ..models.builder import build_model
 from ..utils.visual import tensor2img, save_image
 from ..utils.filesystem import makedirs, save, load
 from ..utils.timer import TimeAverager
-from ..metric.psnr_ssim import calculate_psnr, calculate_ssim
 
 
 class IterLoader:
@@ -55,6 +54,23 @@ class IterLoader:
 
 
 class Trainer:
+    """
+    # trainer calling logic:
+    #
+    #                build_model                               ||    model(BaseModel)
+    #                     |                                    ||
+    #               build_dataloader                           ||    dataloader
+    #                     |                                    ||
+    #               model.setup_lr_schedulers                  ||    lr_scheduler
+    #                     |                                    ||
+    #               model.setup_optimizers                     ||    optimizers
+    #                     |                                    ||
+    #     train loop (model.setup_input + model.train_iter)    ||    train loop
+    #                     |                                    ||
+    #         print log (model.get_current_losses)             ||
+    #                     |                                    ||
+    #         save checkpoint (model.nets)                     \/
+    """
     def __init__(self, cfg):
 
         # build model
