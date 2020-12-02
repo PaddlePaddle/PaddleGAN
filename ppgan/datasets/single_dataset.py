@@ -25,8 +25,7 @@ class SingleDataset(BaseDataset):
 
         Args:
             dataroot (str): Directory of dataset.
-            load_pipeline (list[dict]): A sequence of data loading config.
-            transforms (list[dict]): A sequence of data transform config.
+            preprocess (list[dict]): A sequence of data preprocess config.
         """
         super(SingleDataset).__init__(self, preprocess)
         self.dataroot = dataroot

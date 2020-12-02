@@ -12,12 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from collections import OrderedDict
 import paddle
 import paddle.nn as nn
 
 from .generators.builder import build_generator
-from .discriminators.builder import build_discriminator
 from .criterions.builder import build_criterion
 from .base_model import BaseModel
 from .builder import MODELS

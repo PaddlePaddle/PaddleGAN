@@ -1,6 +1,5 @@
 import paddle.nn as nn
 
-# from ...modules.norm import build_norm_layer
 from .builder import DISCRIMINATORS
 
 

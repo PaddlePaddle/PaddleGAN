@@ -72,12 +72,12 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
     All datasets should subclass it.
     All subclasses should overwrite:
 
-        ``load_annotations``, supporting to load information and generate
+        ``prepare_data_infos``, supporting to load information and generate
         image lists.
 
     Args:
-        load_pipeline (list[dict]): A sequence of data loading config.
-        transforms (list[dict]): A sequence of data transform config.
+        preprocess (list[dict]): A sequence of data preprocess config.
+
     """
     def __init__(self, preprocess=None):
         super(BaseDataset, self).__init__()
@@ -85,16 +85,13 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
         if preprocess:
             self.preprocess = build_preprocess(preprocess)
 
-        # if transforms:
-        #     self.transforms = build_transforms(transforms)
-
     @abstractmethod
     def prepare_data_infos(self):
         """Abstract function for loading annotation.
 
         All subclasses should overwrite this function
         should set self.annotations in this fucntion
-        annotations shourld construct:
+        data_infos should be as list of dict:
         [{key_path: file_path}, {key_path: file_path}, {key_path: file_path}]
         """
         self.data_infos = None
@@ -126,8 +123,6 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
 
         if hasattr(self, 'preprocess') and self.preprocess:
             datas = self.preprocess(datas)
-        # if hasattr(self, 'transforms') and self.transforms:
-        #     datas = self.transforms(datas)
 
         return datas
 

@@ -15,7 +15,6 @@
 import cv2
 import numpy as np
 
-from paddle.metric import Metric
 from .builder import METRICS
 
 
@@ -202,9 +201,6 @@ def calculate_ssim(img1,
     return np.array(ssims).mean()
 
 
-import numpy as np
-
-
 def reorder_image(img, input_order='HWC'):
     """Reorder images to 'HWC' order.
 
@@ -257,14 +253,13 @@ def bgr2ycbcr(img, y_only=False):
             and range as input image.
     """
     img_type = img.dtype
-    #img = _convert_input_type_range(img)
+
     if y_only:
         out_img = np.dot(img, [24.966, 128.553, 65.481]) + 16.0
     else:
         out_img = np.matmul(
             img, [[24.966, 112.0, -18.214], [128.553, -74.203, -93.786],
                   [65.481, -37.797, 112.0]]) + [16, 128, 128]
-    #out_img = _convert_output_type_range(out_img, img_type)
     return out_img
 
 
