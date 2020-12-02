@@ -79,6 +79,11 @@ class PairedRandomHorizontalFlip(T.RandomHorizontalFlip):
 @TRANSFORMS.register()
 class Add(T.BaseTransform):
     def __init__(self, value, keys=None):
+        """Initialize Add Transform
+
+        Parameters:
+            value (List[int]) -- the [r,g,b] value will add to image by pixel wise.
+        """
         super().__init__(keys=keys)
         self.value = value
 
@@ -98,6 +103,13 @@ class ResizeToScale(T.BaseTransform):
                  scale: int,
                  interpolation='bilinear',
                  keys=None):
+        """Initialize ResizeToScale Transform
+
+        Parameters:
+            size (List[int]) -- the minimum target size
+            scale (List[int]) -- the stride scale
+            interpolation (Optional[str]) -- interpolation method
+        """
         super().__init__(keys=keys)
         if isinstance(size, int):
             self.size = (size, size)
