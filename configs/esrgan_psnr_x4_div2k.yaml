@@ -54,10 +54,9 @@ dataset:
         key: lq
       - name: LoadImageFromFile
         key: gt
-    # transforms:
       - name: Transforms
         input_keys: [lq, gt]
-        transforms:
+        pipeline:
           - name: Transpose
             keys: [image, image]
           - name: Normalize
