@@ -23,8 +23,7 @@ from .builder import DATASETS
 class UnpairedDataset(BaseDataset):
     """
     """
-    def __init__(self, dataroot_a, dataroot_b, max_size, is_train,
-                 load_pipeline, transforms):
+    def __init__(self, dataroot_a, dataroot_b, max_size, is_train, preprocess):
         """Initialize unpaired dataset class.
 
         Args:
@@ -32,19 +31,19 @@ class UnpairedDataset(BaseDataset):
             dataroot_b (str): Directory of dataset b.
             max_size (int): max size of dataset size.
             is_train (int): whether in train mode.
-            load_pipeline (list[dict]): A sequence of data loading config.
-            transforms (list[dict]): A sequence of data transform config.
+            preprocess (list[dict]): A sequence of data preprocess config.
+
         """
-        BaseDataset.__init__(self, load_pipeline, transforms)
+        super(UnpairedDataset, self).__init__(preprocess)
         self.dir_A = os.path.join(dataroot_a)
         self.dir_B = os.path.join(dataroot_b)
         self.is_train = is_train
-        self.data_infos_a = self.load_annotations(self.dir_A)
-        self.data_infos_b = self.load_annotations(self.dir_B)
+        self.data_infos_a = self.prepare_data_infos(self.dir_A)
+        self.data_infos_b = self.prepare_data_infos(self.dir_B)
         self.size_a = len(self.data_infos_a)
         self.size_b = len(self.data_infos_b)
 
-    def load_annotations(self, dataroot):
+    def prepare_data_infos(self, dataroot):
         """Load unpaired image paths of one domain.
 
         Args:
@@ -71,10 +70,8 @@ class UnpairedDataset(BaseDataset):
             img_b_path = self.data_infos_b[idx % self.size_b]['path']
             datas = dict(A_path=img_a_path, B_path=img_b_path)
 
-        if hasattr(self, 'load_pipeline') and self.load_pipeline:
-            datas = self.load_pipeline(datas)
-        if hasattr(self, 'transforms') and self.transforms:
-            datas = self.transforms(datas)
+        if self.preprocess:
+            datas = self.preprocess(datas)
 
         return datas
 

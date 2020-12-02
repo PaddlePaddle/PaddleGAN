@@ -16,12 +16,12 @@ import sys
 import random
 import numbers
 import collections
-import numpy as np
 
 import paddle.vision.transforms as T
 import paddle.vision.transforms.functional as F
 
-from .builder import TRANSFORMS
+from .builder import TRANSFORMS, build_from_config
+from .builder import PREPROCESS
 
 if sys.version_info < (3, 3):
     Sequence = collections.Sequence
@@ -36,6 +36,54 @@ TRANSFORMS.register(T.RandomHorizontalFlip)
 TRANSFORMS.register(T.RandomVerticalFlip)
 TRANSFORMS.register(T.Normalize)
 TRANSFORMS.register(T.Transpose)
+
+
+@PREPROCESS.register()
+class Transforms():
+    def __init__(self, pipeline, input_keys):
+        self.input_keys = input_keys
+        self.transforms = []
+        for transform_cfg in pipeline:
+            self.transforms.append(build_from_config(transform_cfg, TRANSFORMS))
+
+    def __call__(self, datas):
+        data = []
+        for k in self.input_keys:
+            data.append(datas[k])
+        data = tuple(data)
+        for transform in self.transforms:
+            data = transform(data)
+
+            if hasattr(transform, 'params') and isinstance(
+                    transform.params, dict):
+                datas.update(transform.params)
+
+        for i, k in enumerate(self.input_keys):
+            datas[k] = data[i]
+
+        return datas
+
+
+@PREPROCESS.register()
+class SplitPairedImage:
+    def __init__(self, key, paired_keys=['A', 'B']):
+        self.key = key
+        self.paired_keys = paired_keys
+
+    def __call__(self, datas):
+        # split AB image into A and B
+        h, w = datas[self.key].shape[:2]
+        # w, h = AB.size
+        w2 = int(w / 2)
+
+        a, b = self.paired_keys
+        datas[a] = datas[self.key][:h, :w2, :]
+        datas[b] = datas[self.key][:h, w2:, :]
+
+        datas[a + '_path'] = datas[self.key + '_path']
+        datas[b + '_path'] = datas[self.key + '_path']
+
+        return datas
 
 
 @TRANSFORMS.register()

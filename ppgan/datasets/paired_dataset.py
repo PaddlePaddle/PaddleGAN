@@ -20,47 +20,27 @@ from .base_dataset import BaseDataset
 class PairedDataset(BaseDataset):
     """A dataset class for paired image dataset.
     """
-    def __init__(self, dataroot, load_pipeline, transforms):
+    def __init__(self, dataroot, preprocess):
         """Initialize this dataset class.
 
         Args:
             dataroot (str): Directory of dataset.
-            load_pipeline (list[dict]): A sequence of data loading config.
-            transforms (list[dict]): A sequence of data transform config.
-        """
-        BaseDataset.__init__(self, load_pipeline, transforms)
-        self.dataroot = dataroot
-        self.annotations = self.load_annotations()
+            preprocess (list[dict]): A sequence of data preprocess config.
 
-    def load_annotations(self):
+        """
+        super(PairedDataset, self).__init__(preprocess)
+        self.dataroot = dataroot
+        self.data_infos = self.prepare_data_infos()
+
+    def prepare_data_infos(self):
         """Load paired image paths.
 
         Returns:
             list[dict]: List that contains paired image paths.
         """
-        annotations = []
+        data_infos = []
         pair_paths = sorted(self.scan_folder(self.dataroot))
         for pair_path in pair_paths:
-            annotations.append(dict(pair_path=pair_path))
+            data_infos.append(dict(pair_path=pair_path))
 
-        return annotations
-
-    def __getitem__(self, idx):
-        datas = self.annotations[idx]
-
-        datas = self.load_pipeline(datas)
-
-        pair_img = datas['pair']
-        # split AB image into A and B
-        h, w = pair_img.shape[:2]
-        # w, h = AB.size
-        w2 = int(w / 2)
-
-        datas['A'] = pair_img[:h, :w2, :]
-        datas['B'] = pair_img[:h, w2:, :]
-        datas['A_path'] = datas['pair_path']
-        datas['B_path'] = datas['pair_path']
-
-        datas = self.transforms(datas)
-
-        return datas
+        return data_infos

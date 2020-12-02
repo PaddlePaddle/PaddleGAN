@@ -19,6 +19,7 @@ from ...utils.registry import Registry, build_from_config
 
 LOAD_PIPELINE = Registry("LOAD_PIPELINE")
 TRANSFORMS = Registry("TRANSFORM")
+PREPROCESS = Registry("PREPROCESS")
 
 
 class Compose(object):
@@ -34,60 +35,30 @@ class Compose(object):
         object will call each given :attr:`transforms` sequencely.
 
     """
-    def __init__(self, functions, input_keys=None):
+    def __init__(self, functions):
         self.functions = functions
-        self.input_keys = input_keys
 
     def __call__(self, datas):
-        if self.input_keys:
-            data = [datas[key] for key in self.input_keys]
-            data = tuple(data)
-        else:
-            data = datas
 
         for func in self.functions:
             try:
-                data = func(data)
+                datas = func(datas)
             except Exception as e:
                 stack_info = traceback.format_exc()
                 print("fail to perform fuction [{}] with error: "
                       "{} and stack:\n{}".format(func, e, str(stack_info)))
                 raise RuntimeError
-
-        if self.input_keys:
-            for i, key in enumerate(self.input_keys):
-                datas[key] = data[i]
-        else:
-            datas = data
         return datas
 
 
-def build_load_pipeline(cfg):
-    load_pipeline = []
+def build_preprocess(cfg):
+    preproccess = []
     if not isinstance(cfg, (list, tuple)):
         cfg = [cfg]
 
     for cfg_ in cfg:
-        load_func = build_from_config(cfg_, LOAD_PIPELINE)
-        load_pipeline.append(load_func)
+        process = build_from_config(cfg_, PREPROCESS)
+        preproccess.append(process)
 
-    load_pipeline = Compose(load_pipeline)
-    return load_pipeline
-
-
-def build_transforms(cfg):
-    transforms = []
-    cfg_ = cfg.copy()
-    input_keys = None
-    if 'input_keys' in cfg_:
-        input_keys = cfg_.pop('input_keys')
-        trans_cfg = cfg_['pipeline']
-    else:
-        trans_cfg = cfg_
-
-    for trans_cfg_ in trans_cfg:
-        transform = build_from_config(trans_cfg_, TRANSFORMS)
-        transforms.append(transform)
-
-    transforms = Compose(transforms, input_keys=input_keys)
-    return transforms
+    preproccess = Compose(preproccess)
+    return preproccess

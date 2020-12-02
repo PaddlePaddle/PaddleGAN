@@ -47,9 +47,8 @@ class PerceptualVGG(nn.Layer):
 
         num_layers = max(map(int, layer_name_list)) + 1
         assert len(_vgg.features) >= num_layers
-        # only borrow layers that will be used from _vgg to avoid unused params
-        print('num layers:', num_layers, _vgg.features, len(_vgg.features))
 
+        # only borrow layers that will be used from _vgg to avoid unused params
         self.vgg_layers = nn.Sequential(
             *list(_vgg.features.children())[:num_layers])
 

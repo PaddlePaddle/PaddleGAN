@@ -18,7 +18,7 @@ from abc import ABCMeta, abstractmethod
 
 from paddle.io import Dataset
 
-from .preprocess import build_transforms, build_load_pipeline
+from .preprocess import build_preprocess
 
 IMG_EXTENSIONS = ('.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG', '.ppm',
                   '.PPM', '.bmp', '.BMP')
@@ -79,17 +79,17 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
         load_pipeline (list[dict]): A sequence of data loading config.
         transforms (list[dict]): A sequence of data transform config.
     """
-    def __init__(self, load_pipeline=None, transforms=None):
+    def __init__(self, preprocess=None):
         super(BaseDataset, self).__init__()
 
-        if load_pipeline:
-            self.load_pipeline = build_load_pipeline(load_pipeline)
+        if preprocess:
+            self.preprocess = build_preprocess(preprocess)
 
-        if transforms:
-            self.transforms = build_transforms(transforms)
+        # if transforms:
+        #     self.transforms = build_transforms(transforms)
 
     @abstractmethod
-    def load_annotations(self):
+    def prepare_data_infos(self):
         """Abstract function for loading annotation.
 
         All subclasses should overwrite this function
@@ -97,7 +97,7 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
         annotations shourld construct:
         [{key_path: file_path}, {key_path: file_path}, {key_path: file_path}]
         """
-        self.annotations = None
+        self.data_infos = None
 
     @staticmethod
     def scan_folder(path):
@@ -122,12 +122,12 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
         return samples
 
     def __getitem__(self, idx):
-        datas = self.annotations[idx]
+        datas = self.data_infos[idx]
 
-        if hasattr(self, 'load_pipeline') and self.load_pipeline:
-            datas = self.load_pipeline(datas)
-        if hasattr(self, 'transforms') and self.transforms:
-            datas = self.transforms(datas)
+        if hasattr(self, 'preprocess') and self.preprocess:
+            datas = self.preprocess(datas)
+        # if hasattr(self, 'transforms') and self.transforms:
+        #     datas = self.transforms(datas)
 
         return datas
 
@@ -137,4 +137,4 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
         Returns:
             int: Length of the dataset.
         """
-        return len(self.annotations)
+        return len(self.data_infos)

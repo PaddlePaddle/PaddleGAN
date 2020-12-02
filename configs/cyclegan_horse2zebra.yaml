@@ -40,25 +40,25 @@ dataset:
         key: A
       - name: LoadImageFromFile
         key: B
-    transforms:
-      input_keys: [A, B]
-      pipeline:
-        - name: Resize
-          size: [286, 286]
-          interpolation: 'bicubic' #cv2.INTER_CUBIC
-          keys: ['image', 'image']
-        - name: RandomCrop
-          size: [256, 256]
-          keys: ['image', 'image']
-        - name: RandomHorizontalFlip
-          prob: 0.5
-          keys: ['image', 'image']
-        - name: Transpose
-          keys: ['image', 'image']
-        - name: Normalize
-          mean: [127.5, 127.5, 127.5]
-          std: [127.5, 127.5, 127.5]
-          keys: ['image', 'image']
+      - name: Transforms
+        input_keys: [A, B]
+        pipeline:
+          - name: Resize
+            size: [286, 286]
+            interpolation: 'bicubic' #cv2.INTER_CUBIC
+            keys: ['image', 'image']
+          - name: RandomCrop
+            size: [256, 256]
+            keys: ['image', 'image']
+          - name: RandomHorizontalFlip
+            prob: 0.5
+            keys: ['image', 'image']
+          - name: Transpose
+            keys: ['image', 'image']
+          - name: Normalize
+            mean: [127.5, 127.5, 127.5]
+            std: [127.5, 127.5, 127.5]
+            keys: ['image', 'image']
   test:
     name: UnpairedDataset
     dataroot_a: data/horse2zebra/testA
@@ -72,19 +72,19 @@ dataset:
         key: A
       - name: LoadImageFromFile
         key: B
-    transforms:
-      input_keys: [A, B]
-      pipeline:
-        - name: Resize
-          size: [256, 256]
-          interpolation: 'bicubic' #cv2.INTER_CUBIC
-          keys: ['image', 'image']
-        - name: Transpose
-          keys: ['image', 'image']
-        - name: Normalize
-          mean: [127.5, 127.5, 127.5]
-          std: [127.5, 127.5, 127.5]
-          keys: ['image', 'image']
+      - name: Transforms
+        input_keys: [A, B]
+        pipeline:
+          - name: Resize
+            size: [256, 256]
+            interpolation: 'bicubic' #cv2.INTER_CUBIC
+            keys: ['image', 'image']
+          - name: Transpose
+            keys: ['image', 'image']
+          - name: Normalize
+            mean: [127.5, 127.5, 127.5]
+            std: [127.5, 127.5, 127.5]
+            keys: ['image', 'image']
 
 lr_scheduler:
   name: LinearDecay

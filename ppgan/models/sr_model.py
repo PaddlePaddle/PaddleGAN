@@ -20,7 +20,6 @@ from .generators.builder import build_generator
 from .discriminators.builder import build_discriminator
 from .criterions.builder import build_criterion
 from .base_model import BaseModel
-from .losses import GANLoss
 from .builder import MODELS
 from ..utils.visual import tensor2img
 
@@ -81,6 +80,3 @@ class BaseSRModel(BaseModel):
         if metrics is not None:
             for metric in metrics.values():
                 metric.update(out_img, gt_img)
-
-    def optimize_parameters(self):
-        pass

@@ -35,62 +35,62 @@ model:
 dataset:
   train:
     name: UnpairedDataset
-    dataroot_a: data/cityscapes/trainA
-    dataroot_b: data/cityscapes/trainB
+    dataroot_a: data/selfie2anime/trainA
+    dataroot_b: data/selfie2anime/trainB
     num_workers: 0
     batch_size: 1
     is_train: True
     max_size: inf
-    load_pipeline:
+    preprocess:
       - name: LoadImageFromFile
         key: A
       - name: LoadImageFromFile
         key: B
-    transforms:
-      input_keys: [A, B]
-      pipeline:
-        - name: Resize
-          size: [286, 286]
-          interpolation: 'bicubic' #cv2.INTER_CUBIC
-          keys: ['image', 'image']
-        - name: RandomCrop
-          size: [256, 256]
-          keys: ['image', 'image']
-        - name: RandomHorizontalFlip
-          prob: 0.5
-          keys: ['image', 'image']
-        - name: Transpose
-          keys: ['image', 'image']
-        - name: Normalize
-          mean: [127.5, 127.5, 127.5]
-          std: [127.5, 127.5, 127.5]
-          keys: ['image', 'image']
+      - name: Transforms
+        input_keys: [A, B]
+        pipeline:
+          - name: Resize
+            size: [286, 286]
+            interpolation: 'bicubic' #cv2.INTER_CUBIC
+            keys: ['image', 'image']
+          - name: RandomCrop
+            size: [256, 256]
+            keys: ['image', 'image']
+          - name: RandomHorizontalFlip
+            prob: 0.5
+            keys: ['image', 'image']
+          - name: Transpose
+            keys: ['image', 'image']
+          - name: Normalize
+            mean: [127.5, 127.5, 127.5]
+            std: [127.5, 127.5, 127.5]
+            keys: ['image', 'image']
   test:
     name: UnpairedDataset
-    dataroot_a: data/cityscapes/testA
-    dataroot_b: data/cityscapes/testB
+    dataroot_a: data/selfie2anime/testA
+    dataroot_b: data/selfie2anime/testB
     num_workers: 0
     batch_size: 1
     max_size: inf
     is_train: False
-    load_pipeline:
+    preprocess:
       - name: LoadImageFromFile
         key: A
       - name: LoadImageFromFile
         key: B
-    transforms:
-      input_keys: [A, B]
-      pipeline:
-        - name: Resize
-          size: [256, 256]
-          interpolation: 'bicubic' #cv2.INTER_CUBIC
-          keys: ['image', 'image']
-        - name: Transpose
-          keys: ['image', 'image']
-        - name: Normalize
-          mean: [127.5, 127.5, 127.5]
-          std: [127.5, 127.5, 127.5]
-          keys: ['image', 'image']
+      - name: Transfroms
+        input_keys: [A, B]
+        pipeline:
+          - name: Resize
+            size: [256, 256]
+            interpolation: 'bicubic' #cv2.INTER_CUBIC
+            keys: ['image', 'image']
+          - name: Transpose
+            keys: ['image', 'image']
+          - name: Normalize
+            mean: [127.5, 127.5, 127.5]
+            std: [127.5, 127.5, 127.5]
+            keys: ['image', 'image']
 
 lr_scheduler:
   name: LinearDecay

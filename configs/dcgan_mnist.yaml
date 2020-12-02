@@ -24,41 +24,41 @@ dataset:
     name: SingleDataset
     dataroot: data/mnist/train
     batch_size: 128
-    load_pipeline:
+    preprocess:
       - name: LoadImageFromFile
         key: A
-    transforms:
-      input_keys: [A]
-      pipeline:
-        - name: Resize
-          size: [64, 64]
-          interpolation: 'bicubic' #cv2.INTER_CUBIC
-          keys: [image, image]
-        - name: Transpose
-          keys: [image, image]
-        - name: Normalize
-          mean: [127.5, 127.5, 127.5]
-          std: [127.5, 127.5, 127.5]
-          keys: [image, image]
+      - name: Transfroms
+        input_keys: [A]
+        pipeline:
+          - name: Resize
+            size: [64, 64]
+            interpolation: 'bicubic' #cv2.INTER_CUBIC
+            keys: [image, image]
+          - name: Transpose
+            keys: [image, image]
+          - name: Normalize
+            mean: [127.5, 127.5, 127.5]
+            std: [127.5, 127.5, 127.5]
+            keys: [image, image]
   test:
     name: SingleDataset
     dataroot: data/mnist/test
-    load_pipeline:
+    preprocess:
       - name: LoadImageFromFile
         key: A
-    transforms:
-      input_keys: [A]
-      pipeline:
-        - name: Resize
-          size: [64, 64]
-          interpolation: 'bicubic' #cv2.INTER_CUBIC
-          keys: [image, image]
-        - name: Transpose
-          keys: [image, image]
-        - name: Normalize
-          mean: [127.5, 127.5, 127.5]
-          std: [127.5, 127.5, 127.5]
-          keys: [image, image]
+      - name: Transforms
+        input_keys: [A]
+        pipeline:
+          - name: Resize
+            size: [64, 64]
+            interpolation: 'bicubic' #cv2.INTER_CUBIC
+            keys: [image, image]
+          - name: Transpose
+            keys: [image, image]
+          - name: Normalize
+            mean: [127.5, 127.5, 127.5]
+            std: [127.5, 127.5, 127.5]
+            keys: [image, image]
 
 lr_scheduler:
   name: LinearDecay

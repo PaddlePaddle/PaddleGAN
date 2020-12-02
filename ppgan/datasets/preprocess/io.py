@@ -1,9 +1,9 @@
 import cv2
 
-from .builder import LOAD_PIPELINE
+from .builder import PREPROCESS
 
 
-@LOAD_PIPELINE.register()
+@PREPROCESS.register()
 class LoadImageFromFile(object):
     """Load image from file.
 

@@ -20,49 +20,50 @@ dataset:
     num_workers: 6
     batch_size: 32
     scale: 4
-    load_pipeline:
+    preprocess:
       - name: LoadImageFromFile
         key: lq
       - name: LoadImageFromFile
         key: gt
-    transforms:
-      input_keys: [lq, gt]
-      pipeline:
-        - name: SRPairedRandomCrop
-          gt_patch_size: 128
-          scale: 4
-          keys: [image, image]
-        - name: PairedRandomHorizontalFlip
-          keys: [image, image]
-        - name: PairedRandomVerticalFlip
-          keys: [image, image]
-        - name: PairedRandomTransposeHW
-          keys: [image, image]
-        - name: Transpose
-          keys: [image, image]
-        - name: Normalize
-          mean: [0., .0, 0.]
-          std: [255., 255., 255.]
-          keys: [image, image]
+      - name: Transforms
+        input_keys: [lq, gt]
+        pipeline:
+          - name: SRPairedRandomCrop
+            gt_patch_size: 128
+            scale: 4
+            keys: [image, image]
+          - name: PairedRandomHorizontalFlip
+            keys: [image, image]
+          - name: PairedRandomVerticalFlip
+            keys: [image, image]
+          - name: PairedRandomTransposeHW
+            keys: [image, image]
+          - name: Transpose
+            keys: [image, image]
+          - name: Normalize
+            mean: [0., .0, 0.]
+            std: [255., 255., 255.]
+            keys: [image, image]
   test:
     name: SRDataset
     gt_folder: data/DIV2K/val_set14/Set14
     lq_folder: data/DIV2K/val_set14/Set14_bicLRx4
     scale: 4
-    load_pipeline:
+    preprocess:
       - name: LoadImageFromFile
         key: lq
       - name: LoadImageFromFile
         key: gt
-    transforms:
-      input_keys: [lq, gt]
-      pipeline:
-        - name: Transpose
-          keys: [image, image]
-        - name: Normalize
-          mean: [0., .0, 0.]
-          std: [255., 255., 255.]
-          keys: [image, image]
+    # transforms:
+      - name: Transforms
+        input_keys: [lq, gt]
+        transforms:
+          - name: Transpose
+            keys: [image, image]
+          - name: Normalize
+            mean: [0., .0, 0.]
+            std: [255., 255., 255.]
+            keys: [image, image]
 
 lr_scheduler:
   name: CosineAnnealingRestartLR

@@ -34,14 +34,13 @@ dataset:
     dataroot: data/MT-Dataset
     cls_list: [non-makeup, makeup]
     phase: train
-    # pool_size: 16
   test:
     name: MakeupDataset
     trans_size: 256
     dataroot: data/MT-Dataset
     cls_list: [non-makeup, makeup]
     phase: test
-    # pool_size: 16
+
 
 lr_scheduler:
   name: LinearDecay

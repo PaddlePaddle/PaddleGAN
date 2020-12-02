@@ -20,7 +20,7 @@ from .builder import DATASETS
 class SingleDataset(BaseDataset):
     """
     """
-    def __init__(self, dataroot, load_pipeline, transforms):
+    def __init__(self, dataroot, preprocess):
         """Initialize single dataset class.
 
         Args:
@@ -28,19 +28,19 @@ class SingleDataset(BaseDataset):
             load_pipeline (list[dict]): A sequence of data loading config.
             transforms (list[dict]): A sequence of data transform config.
         """
-        BaseDataset.__init__(self, load_pipeline, transforms)
+        super(SingleDataset).__init__(self, preprocess)
         self.dataroot = dataroot
-        self.annotations = self.load_annotations()
+        self.data_infos = self.prepare_data_infos()
 
-    def load_annotations(self):
-        """Load paired image paths.
+    def prepare_data_infos(self):
+        """prepare image paths from a folder.
 
         Returns:
             list[dict]: List that contains paired image paths.
         """
-        annotations = []
+        data_infos = []
         paths = sorted(self.scan_folder(self.dataroot))
         for path in paths:
-            annotations.append(dict(A_path=path))
+            data_infos.append(dict(A_path=path))
 
-        return annotations
+        return data_infos

@@ -1,4 +1,6 @@
 from .io import LoadImageFromFile
-from .transforms import PairedRandomCrop, PairedRandomHorizontalFlip, PairedRandomVerticalFlip, PairedRandomTransposeHW, SRPairedRandomCrop
+from .transforms import (PairedRandomCrop, PairedRandomHorizontalFlip,
+                         PairedRandomVerticalFlip, PairedRandomTransposeHW,
+                         SRPairedRandomCrop, SplitPairedImage)
 
-from .builder import build_load_pipeline, build_transforms
+from .builder import build_preprocess
