@@ -64,48 +64,35 @@ dataset:
   train:
     name: FirstOrderDataset
     phase: train
-    # 数据集路径，请保证该目录下有train和test两个子文件夹，并将数据与对应置入
     dataroot: /home/aistudio/work/dataset/moving-gif
     num_repeats: 10
     id_sampling: False
     pairs_list: None
     frame_shape: [ 256, 256, 3 ]
-    process_time: False
     create_frames_folder: True
+    time_flip: True
     num_workers: 4
-    batch_size: 1
+    batch_size: 8
     max_dataset_size: inf
     direction: BtoA
     input_nc: 3
     output_nc: 3
-# TODO:
-#    augmentation_params:
-#      flip_param:
-#        horizontal_flip: True
-#        time_flip: True
-#      crop_param:
-#        size: [ 256, 256 ]
-#      resize_param:
-#        ratio: [ 0.9, 1.1 ]
-#      jitter_param:
-#        hue: 0.5
-#    transforms:
-#      - name: Resize
-#        size: [286, 286]
-#        interpolation: 'bicubic' #cv2.INTER_CUBIC
-#        keys: [image, image]
-#      - name: PairedRandomCrop
-#        size: [256, 256]
-#        keys: [image, image]
-#      - name: PairedRandomHorizontalFlip
-#        prob: 0.5
-#        keys: [image, image]
-#      - name: Transpose
-#        keys: [image, image]
-#      - name: Normalize
-#        mean: [127.5, 127.5, 127.5]
-#        std: [127.5, 127.5, 127.5]
-#        keys: [image, image]
+    transforms:
+      - name: PairedRandomHorizontalFlip
+        prob: 0.5
+        keys: [image, image]
+      - name: PairedRandomResizedCrop
+        size: [256, 256]
+        scale: [0.9, 1.1]
+        ratio: [1.0, 1.0]
+        keys: [image, image]
+      - name: PairedColorJitter
+        brightness: 0
+        contrast: 0
+        saturation: 0
+        hue: 0.5
+        keys: [image, image]
+# TODO: add test mode
 #  test:
 #    name: PairedDataset
 #    dataroot: data/cityscapes/
@@ -135,6 +122,7 @@ log_config:
 snapshot_config:
   interval: 5
 
+# For pytorch Checkpoint
 pytorch_ckpt:
   vgg19_model: /home/aistudio/work/pre-trained/vgg19_np.npz
   generator: /home/aistudio/work/pre-trained/mgif/G_param.npz

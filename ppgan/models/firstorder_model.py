@@ -73,6 +73,19 @@ class FirstOrderModel(BaseModel):
                                     milestones=lr_cfg['epoch_milestones'], gamma=0.1)
             self.dis_lr = MultiStepDecay(learning_rate=lr_cfg['lr_discriminator'],
                                     milestones=lr_cfg['epoch_milestones'], gamma=0.1)
+            
+            class lr_scheduler():
+                def __init__(self, kp_lr, gen_lr, dis_lr):
+                    self.kp_lr = kp_lr
+                    self.gen_lr = gen_lr
+                    self.dis_lr = dis_lr
+                
+                def step(self):
+                    self.kp_lr.step()
+                    self.gen_lr.step()
+                    self.dis_lr.step()
+            self.lr_scheduler = lr_scheduler(self.kp_lr, self.gen_lr, self.dis_lr)
+            
             self.optimizers['optimizer_KP'] = build_optimizer(
                 cfg.optimizer,
                 self.kp_lr,
@@ -99,7 +112,12 @@ class FirstOrderModel(BaseModel):
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
         self.losses_generator, self.generated = self.nets['Gen_Full'](self.input_data.copy(), self.nets['Dis'].discriminator)
-        self.visual_items['generated'] = self.generated['prediction'].detach()
+        
+        self.visual_items['driving_source_gen'] = paddle.concat((
+            self.input_data['driving'].detach(),
+            self.input_data['source'].detach(),
+            self.generated['prediction'].detach()),
+            axis=-1)
     
     def backward_G(self):
         loss_values = [val.sum() for val in self.losses_generator.values()]
