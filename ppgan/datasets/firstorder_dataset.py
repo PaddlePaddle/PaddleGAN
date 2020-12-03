@@ -2,18 +2,17 @@ import glob
 import logging
 import os
 import pathlib
-import time
 
 import numpy as np
 import pandas as pd
 from imageio import mimread, imwrite
-from matplotlib.colors import rgb_to_hsv, hsv_to_rgb
 from paddle.io import Dataset
 from skimage import io
 from skimage.color import gray2rgb
 from sklearn.model_selection import train_test_split
 
 from .builder import DATASETS
+from .transforms.builder import build_transforms
 
 
 @DATASETS.register()
@@ -40,7 +39,6 @@ def read_video(name, frame_shape, saveto='folder'):
       - an image of concatenated frames
       - '.mp4' and'.gif'
       - folder with videos
-      - saveto: 若为'folder',则会在数据集同目录下创建与视频文件同名的文件夹，并向其写入jpg图像序列，最后删除源视频文件
     """
     Name = name
     if os.path.isdir(name):
@@ -94,6 +92,9 @@ class FramesDataset(Dataset):
         self.pairs_list = cfg['pairs_list']
         self.process_time = cfg['process_time']
         self.create_frames_folder = cfg['create_frames_folder']
+        self.transform = None
+        self.transform = build_transforms(cfg.transforms)
+        
         if os.path.exists(os.path.join(self.root_dir, 'train')):
             assert os.path.exists(os.path.join(self.root_dir, 'test'))
             logging.info("Use predefined train-test split.")
@@ -115,25 +116,11 @@ class FramesDataset(Dataset):
         else:
             self.videos = test_videos
             self.transform = None
-        self.buffed = [None] * len(self.videos)
 
     def __len__(self):
         return len(self.videos)
-    
-    def colorize(self, image, hue):
-        """Hue disturbance
-        input range: [-1, 1]
-        """
-        res = rgb_to_hsv(image)
-        res[:, :, 0] = res[:, :, 0] + hue
-        res[:, :, 0][res[:, :, 0] < 0] = res[:, :, 0][res[:, :, 0] < 0] + 1
-        res[:, :, 0][res[:, :, 0] > 1] = res[:, :, 0][res[:, :, 0] > 1] - 1
-        res = hsv_to_rgb(res)
-        return res
-    
+     
     def __getitem__(self, idx):
-        if self.process_time:
-            a0 = time.process_time()
         if self.is_train and self.id_sampling:
             # id_sampling=True is not tested, because id_sampling in mgif/bair/fashion are False
             name = self.videos[idx]
@@ -148,79 +135,40 @@ class FramesDataset(Dataset):
             num_frames = len(frames)
             frame_idx = np.sort(np.random.choice(num_frames, replace=True, size=2))
             video_array = [io.imread(os.path.join(path, frames[idx])) for idx in frame_idx]
-            
-            # convert to 3-channel image
-            if video_array[0].shape[-1] == 4:
-                video_array = [i[..., :3] for i in video_array]
-            elif video_array[0].shape[-1] == 1:
-                video_array = [np.tile(i, (1, 1, 3)) for i in video_array]
-            elif len(video_array[0].shape) == 2:
-                video_array = [np.tile(i[..., np.newaxis], (1, 1, 3)) for i in video_array]
         else:
-            if self.buffed[idx] is None:
-                if self.create_frames_folder:
-                    video_array = read_video(path, frame_shape=self.frame_shape, saveto='folder')
-                    self.videos[idx] = name.split('.')[0]
-                else:
-                    video_array = read_video(path, frame_shape=self.frame_shape, saveto=None)
+            if self.create_frames_folder:
+                video_array = read_video(path, frame_shape=self.frame_shape, saveto='folder')
+                self.videos[idx] = name.split('.')[0]  # rename ./xx/xx/xx.gif -> ./xx/xx/xx
             else:
-                video_array = self.buffed[idx]
+                video_array = read_video(path, frame_shape=self.frame_shape, saveto=None)
             num_frames = len(video_array)
             frame_idx = np.sort(np.random.choice(num_frames, replace=True, size=2)) if self.is_train else range(
                 num_frames)
             video_array = [video_array[i] for i in frame_idx]
-        if self.process_time:
-            a1 = time.process_time()
-            print('Load T:%1.5f' % (a1 - a0))
+
+        # convert to 3-channel image
+        if video_array[0].shape[-1] == 4:
+            video_array = [i[..., :3] for i in video_array]
+        elif video_array[0].shape[-1] == 1:
+            video_array = [np.tile(i, (1, 1, 3)) for i in video_array]
+        elif len(video_array[0].shape) == 2:
+            video_array = [np.tile(i[..., np.newaxis], (1, 1, 3)) for i in video_array]
         out = {}
         
-        # Dataset enhancement
         if self.is_train:
-            source = np.array(video_array[0], dtype='float32') / 255.0  # shape is [H, W, C]
-            driving = np.array(video_array[1], dtype='float32') / 255.0  # shape is [H, W, C]
-            if len(driving.shape) == 2:
-                driving = driving[..., np.newaxis]
-                driving = np.tile(driving, (1, 1, 3))
-            if len(source.shape) == 2:
-                source = source[..., np.newaxis]
-                source = np.tile(source, (1, 1, 3))
-            # if self.process_time:
-            #     a11 = time.process_time()
-            # # random_flip_left_right
-            # if 'flip_param' in self.transform.keys() and self.transform['flip_param']['horizontal_flip']:
-            #     if np.random.random() >= 0.5:
-            #         driving = driving[:, ::-1, :]
-            #         source = source[:, ::-1, :]
-            # if self.process_time:
-            #     a12 = time.process_time()
-            #     print('A11-12 T:%1.5f' % (a12 - a11))
-            # # time_flip
-            # if 'flip_param' in self.transform.keys() and self.transform['flip_param']['time_flip']:
-            #     if np.random.random() >= 0.5:
-            #         buf = driving
-            #         driving = source
-            #         source = buf
-            # if self.process_time:
-            #     a13 = time.process_time()
-            #     print('A12-13 T:%1.5f' % (a13 - a12))
-            # # jitter_param 只写了hue
-            # if 'jitter_param' in self.transform.keys():
-            #     if 'hue' in self.transform['jitter_param'].keys():
-            #         jitter_value = (np.random.random() * 2 - 1) * self.transform['jitter_param']['hue']
-            #         driving = self.colorize(driving, jitter_value)
-            #         source = self.colorize(source, jitter_value)
-            # if self.process_time:
-            #     a14 = time.process_time()
-            #     print('A13-14 T:%1.5f' % (a14 - a13))
-            out['driving'] = driving.transpose((2, 0, 1))
-            out['source'] = source.transpose((2, 0, 1))
+            if self.transform is not None:
+                t = self.transform(video_array)
+                out['driving'] = t[0]
+                out['source'] = t[1]
+            else:
+                source = np.array(video_array[0], dtype='float32') / 255.0  # shape is [H, W, C]
+                driving = np.array(video_array[1], dtype='float32') / 255.0  # shape is [H, W, C]
+                out['driving'] = driving.transpose((2, 0, 1))
+                out['source'] = source.transpose((2, 0, 1))
         else:
             video = np.stack(video_array, axis=0).astype(np.float32) / 255.0
             out['video'] = video.transpose((3, 0, 1, 2))
             return out['video']
-        if self.process_time:
-            a2 = time.process_time()
-            print('Trans T:%1.5f' % (a2 - a14))
         out['name'] = video_name
         return out
     

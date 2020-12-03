@@ -73,11 +73,26 @@ dataset:
     process_time: False
     create_frames_folder: True
     num_workers: 4
-    batch_size: 1
+    batch_size: 8
     max_dataset_size: inf
     direction: BtoA
     input_nc: 3
     output_nc: 3
+    transforms:
+      - name: PairedRandomHorizontalFlip
+        prob: 0.5
+        keys: [image, image]
+      - name: PairedRandomResizedCrop
+        size: [256, 256]
+        scale: [0.9, 1.1]
+        ratio: [1.0, 1.0]
+        keys: [image, image]
+      - name: PairedColorJitter
+        brightness: 0
+        contrast: 0
+        saturation: 0
+        hue: 0.5
+        keys: [image, image]
 # TODO:
 #    augmentation_params:
 #      flip_param:
@@ -89,23 +104,7 @@ dataset:
 #        ratio: [ 0.9, 1.1 ]
 #      jitter_param:
 #        hue: 0.5
-#    transforms:
-#      - name: Resize
-#        size: [286, 286]
-#        interpolation: 'bicubic' #cv2.INTER_CUBIC
-#        keys: [image, image]
-#      - name: PairedRandomCrop
-#        size: [256, 256]
-#        keys: [image, image]
-#      - name: PairedRandomHorizontalFlip
-#        prob: 0.5
-#        keys: [image, image]
-#      - name: Transpose
-#        keys: [image, image]
-#      - name: Normalize
-#        mean: [127.5, 127.5, 127.5]
-#        std: [127.5, 127.5, 127.5]
-#        keys: [image, image]
+
 #  test:
 #    name: PairedDataset
 #    dataroot: data/cityscapes/
