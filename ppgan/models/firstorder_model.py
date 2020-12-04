@@ -33,6 +33,8 @@ class FirstOrderModel(BaseModel):
         init_weights(self.nets['Gen_Full'].generator)
         init_weights(self.nets['Gen_Full'].kp_extractor)
         init_weights(self.nets['Dis'].discriminator)
+        # A pre-trained vgg19 model should be loaded to self.nets['Gen_Full'].generator.vgg before training
+        
         if self.is_train:
             # define loss functions
             self.losses = {}
