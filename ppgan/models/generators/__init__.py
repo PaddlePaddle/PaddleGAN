@@ -19,3 +19,4 @@ from .makeup import GeneratorPSGANAttention
 from .resnet_ugatit import ResnetUGATITGenerator
 from .dcgenerator import DCGenerator
 from .wav2lip import Wav2Lip
+from .firstorder_gen import FirstOrderGenerator

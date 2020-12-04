@@ -17,6 +17,30 @@ import paddle.nn as nn
 import paddle.nn.functional as F
 
 
+class ImagePyramide(paddle.nn.Layer):
+    """
+    Create image pyramide for computing pyramide perceptual loss. See Sec 3.3
+    """
+    
+    def __init__(self, scales, num_channels):
+        super(ImagePyramide, self).__init__()
+        self.downs = paddle.nn.LayerList()
+        self.name_list = []
+        for scale in scales:
+            self.downs.add_sublayer(str(scale).replace('.', '-'), AntiAliasInterpolation2d(num_channels, scale))
+            self.name_list.append(str(scale).replace('.', '-'))
+    
+    def forward(self, x):
+        out_dict = {}
+        for scale, down_module in zip(self.name_list, self.downs):
+            out_dict['prediction_' + str(scale).replace('-', '.')] = down_module(x)
+        return out_dict
+
+
+def detach_kp(kp):
+    return {key: value.detach() for key, value in kp.items()}
+
+
 def kp2gaussian(kp, spatial_size, kp_variance):
     """
     Transform a keypoint into gaussian like representation
@@ -26,9 +50,9 @@ def kp2gaussian(kp, spatial_size, kp_variance):
     coordinate_grid = make_coordinate_grid(spatial_size, mean.dtype)
     number_of_leading_dimensions = len(mean.shape) - 1
     shape = (1, ) * number_of_leading_dimensions + tuple(coordinate_grid.shape)
-    coordinate_grid = coordinate_grid.reshape([*shape])
     repeats = tuple(mean.shape[:number_of_leading_dimensions]) + (1, 1, 1)
-    coordinate_grid = paddle.tile(coordinate_grid, [*repeats])
+    coordinate_grid = coordinate_grid.reshape(shape)
+    coordinate_grid = coordinate_grid.tile(repeats)
 
     # Preprocess kp shape
     shape = tuple(mean.shape[:number_of_leading_dimensions]) + (1, 1, 2)
@@ -41,7 +65,7 @@ def kp2gaussian(kp, spatial_size, kp_variance):
     return out
 
 
-def make_coordinate_grid(spatial_size, type):
+def make_coordinate_grid(spatial_size, type='float32'):
     """
     Create a meshgrid [-1,1] x [-1,1] of given spatial_size.
     """
@@ -267,7 +291,7 @@ class AntiAliasInterpolation2d(nn.Layer):
             [paddle.arange(size, dtype='float32') for size in kernel_size])
         for size, std, mgrid in zip(kernel_size, sigma, meshgrids):
             mean = (size - 1) / 2
-            kernel *= paddle.exp(-(mgrid - mean)**2 / (2 * std**2))
+            kernel *= paddle.exp(-(mgrid - mean) ** 2 / (2 * std ** 2 + 1e-9))
 
         # Make sure sum of values in gaussian kernel equals 1.
         kernel = kernel / paddle.sum(kernel)
@@ -282,9 +306,22 @@ class AntiAliasInterpolation2d(nn.Layer):
     def forward(self, input):
         if self.scale == 1.0:
             return input
-
+    
         out = F.pad(input, [self.ka, self.kb, self.ka, self.kb])
         out = F.conv2d(out, weight=self.weight, groups=self.groups)
-        out = F.interpolate(out, scale_factor=[self.scale, self.scale])
-
+        out.stop_gradient = False
+        # The high version of pytorch has a bug that affects the convergence of this model
+        
+        # original code
+        # out = F.interpolate(out, scale_factor=[self.scale, self.scale])
+        # original code end
+        
+        # a patch 'might be' work for this bug.
+        # see https://github.com/AliaksandrSiarohin/first-order-model/issues/146#issue-624354694
+        inv_scale = 1 / self.scale
+        int_inv_scale = int(inv_scale)
+        assert (inv_scale == int_inv_scale)
+        out = out[:, :, ::int_inv_scale, ::int_inv_scale]
+        # patch end
+        
         return out

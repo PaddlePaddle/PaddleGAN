@@ -51,8 +51,8 @@ class KPDetector(nn.Layer):
                                       out_channels=4 * self.num_jacobian_maps,
                                       kernel_size=(7, 7),
                                       padding=pad)
-            # self.jacobian.weight.data.zero_()
-            # self.jacobian.bias.data.copy_(paddle.tensor([1, 0, 0, 1] * self.num_jacobian_maps, dtype='float32'))
+            self.jacobian.weight.set_value(paddle.zeros(self.jacobian.weight.shape, dtype='float32'))
+            self.jacobian.bias.set_value(paddle.to_tensor([1, 0, 0, 1] * self.num_jacobian_maps).astype('float32'))
         else:
             self.jacobian = None
 
@@ -68,12 +68,9 @@ class KPDetector(nn.Layer):
         """
         shape = heatmap.shape
         heatmap = heatmap.unsqueeze(-1)
-        grid = make_coordinate_grid(shape[2:],
-                                    heatmap.dtype).unsqueeze(0).unsqueeze(0)
+        grid = make_coordinate_grid(shape[2:]).unsqueeze([0, 1])
         value = (heatmap * grid).sum(axis=(2, 3))
-
         kp = {'value': value}
-
         return kp
 
     def forward(self, x):
@@ -86,8 +83,7 @@ class KPDetector(nn.Layer):
         final_shape = prediction.shape
         heatmap = prediction.reshape([final_shape[0], final_shape[1], -1])
         heatmap = F.softmax(heatmap / self.temperature, axis=2)
-        heatmap = heatmap.reshape([*final_shape])
-
+        heatmap = heatmap.reshape(final_shape)
         out = self.gaussian2kp(heatmap)
 
         if self.jacobian is not None:

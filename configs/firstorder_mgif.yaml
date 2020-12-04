@@ -1,0 +1,124 @@
+# config is transformed from https://github.com/AliaksandrSiarohin/first-order-model/tree/master/config
+epochs: 200
+output_dir: output_dir
+
+model:
+  name: FirstOrderModel
+  common_params:
+    num_kp: 10
+    num_channels: 3
+    estimate_jacobian: True
+  generator:
+    name: FirstOrderGenerator
+    kp_detector_cfg:
+      temperature: 0.1
+      block_expansion: 32
+      max_features: 1024
+      scale_factor: 0.25
+      num_blocks: 5
+      single_jacobian_map: True
+    generator_cfg:
+      block_expansion: 64
+      max_features: 512
+      num_down_blocks: 2
+      num_bottleneck_blocks: 6
+      estimate_occlusion_map: True
+      dense_motion_params:
+        block_expansion: 64
+        max_features: 1024
+        num_blocks: 5
+        scale_factor: 0.25
+  discriminator:
+    name: FirstOrder_Discriminator
+    discriminator_cfg:
+      scales: [1]
+      block_expansion: 32
+      max_features: 512
+      num_blocks: 4
+      sn: True
+#  gan_mode: vanilla # the loss function is not controlled by this parameter
+
+train_params:
+  scales: [1, 0.5, 0.25, 0.125]
+  transform_params:
+    sigma_affine: 0.05
+    sigma_tps: 0.005
+    points_tps: 5
+  loss_weights:
+    generator_gan: 1
+    discriminator_gan: 1
+    feature_matching: [10, 10, 10, 10]
+    perceptual: [10, 10, 10, 10, 10]
+    equivariance_value: 10
+    equivariance_jacobian: 10
+
+optimizer:
+  name: Adam
+
+lr_scheduler:
+  epoch_milestones: [60, 90]
+  lr_generator: 2.0e-4
+  lr_discriminator: 2.0e-4
+  lr_kp_detector: 2.0e-4
+
+dataset:
+  train:
+    name: FirstOrderDataset
+    phase: train
+    dataroot: /home/aistudio/work/dataset/moving-gif
+    num_repeats: 25
+    id_sampling: False
+    pairs_list: None
+    frame_shape: [ 256, 256, 3 ]
+    create_frames_folder: True
+    time_flip: True
+    num_workers: 4
+    batch_size: 8
+    max_dataset_size: inf
+    direction: BtoA
+    input_nc: 3
+    output_nc: 3
+    transforms:
+      - name: PairedRandomHorizontalFlip
+        prob: 0.5
+        keys: [image, image]
+      - name: PairedRandomResizedCrop
+        size: [256, 256]
+        scale: [0.9, 1.1]
+        ratio: [1.0, 1.0]
+        keys: [image, image]
+      - name: PairedColorJitter
+        brightness: 0
+        contrast: 0
+        saturation: 0
+        hue: 0.5
+        keys: [image, image]
+# TODO: add test mode
+#  test:
+#    name: PairedDataset
+#    dataroot: data/cityscapes/
+#    phase: test
+#    max_dataset_size: inf
+#    direction: BtoA
+#    input_nc: 3
+#    output_nc: 3
+#    serial_batches: True
+#    pool_size: 50
+#    transforms:
+#      - name: Resize
+#        size: [256, 256]
+#        interpolation: 'bicubic' #cv2.INTER_CUBIC
+#        keys: [image, image]
+#      - name: Transpose
+#        keys: [image, image]
+#      - name: Normalize
+#        mean: [127.5, 127.5, 127.5]
+#        std: [127.5, 127.5, 127.5]
+#        keys: [image, image]
+
+log_config:
+  interval: 100
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 5
