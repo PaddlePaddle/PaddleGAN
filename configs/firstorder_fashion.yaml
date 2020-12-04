@@ -1,3 +1,4 @@
+# config is transformed from https://github.com/AliaksandrSiarohin/first-order-model/tree/master/config
 epochs: 100
 output_dir: output_dir
 
@@ -63,9 +64,9 @@ dataset:
   train:
     name: FirstOrderDataset
     phase: train
-    # 数据集路径，请保证该目录下有train和test两个子文件夹，并将数据与对应置入
     dataroot: /home/aistudio/work/dataset/moving-gif
     num_repeats: 50
+    time_flip: True
     batch_size: 27
     id_sampling: False
     pairs_list: None
@@ -134,6 +135,7 @@ log_config:
 snapshot_config:
   interval: 5
 
+# pytorch_ckpt is transformed from https://github.com/AliaksandrSiarohin/first-order-model/
 pytorch_ckpt:
   generator: /home/aistudio/work/pre-trained/fashion/G_param.npz
   discriminator: /home/aistudio/work/pre-trained/fashion/D_param.npz

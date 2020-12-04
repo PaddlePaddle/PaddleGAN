@@ -10,8 +10,8 @@ from ..modules.init import init_weights
 from ..solver import build_optimizer
 
 TEST_MODE = False
+import numpy as np
 if TEST_MODE:
-    import numpy as np
     logging.warning('TEST MODE')
     fake_batch_size = 2
     fake_input = np.transpose(np.tile(np.load('/home/aistudio/work/src/img.npy')[:1, ...], (fake_batch_size, 1, 1, 1)).astype(np.float32)/255, (0, 3, 1, 2))  #Shape:[fake_batch_size, 3, 256, 256]

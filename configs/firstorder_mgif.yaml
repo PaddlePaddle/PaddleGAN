@@ -1,3 +1,4 @@
+# config is transformed from https://github.com/AliaksandrSiarohin/first-order-model/tree/master/config
 epochs: 200
 output_dir: output_dir
 
@@ -65,7 +66,7 @@ dataset:
     name: FirstOrderDataset
     phase: train
     dataroot: /home/aistudio/work/dataset/moving-gif
-    num_repeats: 10
+    num_repeats: 25
     id_sampling: False
     pairs_list: None
     frame_shape: [ 256, 256, 3 ]
