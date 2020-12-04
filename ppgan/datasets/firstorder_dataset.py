@@ -40,8 +40,8 @@ class FirstOrderDataset(Dataset):
                             bar.update(POOL_SIZE * 2)
                     bar.close()
                     
-                    # rewrite video path
-                    self.frameDataset.videos = [i.with_suffix('') for i in self.frameDataset.videos]
+                # rewrite video path
+                self.frameDataset.videos = [i.with_suffix('') for i in self.frameDataset.videos]
         
         if cfg['phase'] == 'train':
             self.outDataset = DatasetRepeater(self.frameDataset, cfg['num_repeats'])
