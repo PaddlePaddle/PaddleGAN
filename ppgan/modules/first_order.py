@@ -310,9 +310,18 @@ class AntiAliasInterpolation2d(nn.Layer):
         out = F.pad(input, [self.ka, self.kb, self.ka, self.kb])
         out = F.conv2d(out, weight=self.weight, groups=self.groups)
         out.stop_gradient = False
+        # The high version of pytorch has a bug that affects the convergence of this model
+        
+        # original code
         # out = F.interpolate(out, scale_factor=[self.scale, self.scale])
+        # original code end
+        
+        # a patch 'might be' work for this bug.
+        # see https://github.com/AliaksandrSiarohin/first-order-model/issues/146#issue-624354694
         inv_scale = 1 / self.scale
         int_inv_scale = int(inv_scale)
         assert (inv_scale == int_inv_scale)
         out = out[:, :, ::int_inv_scale, ::int_inv_scale]
+        # patch end
+        
         return out

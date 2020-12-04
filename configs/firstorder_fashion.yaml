@@ -34,8 +34,8 @@ model:
       block_expansion: 32
       max_features: 512
       num_blocks: 4
-      sn: True # 此处原本未开启谱正则化. 因模型文件中有谱正则化相关参数，故开启
-#  gan_mode: vanilla #  Loss较难分离，不使用gan_mode参数设置
+      sn: False
+#  gan_mode: vanilla # the loss function is not controlled by this parameter
 
 train_params:
   scales: [1, 0.5, 0.25, 0.125]

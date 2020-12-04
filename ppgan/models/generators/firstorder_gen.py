@@ -75,11 +75,12 @@ class FirstOrderGenerator(nn.Layer):
             generated['transformed_frame'] = transformed_frame
             generated['transformed_kp'] = transformed_kp
         
-            ## Value loss part
+            # Value loss part
             if self.loss_weights['equivariance_value'] != 0:
                 value = paddle.abs(kp_driving['value'] - transform.warp_coordinates(transformed_kp['value'])).mean()
                 loss_values['equivariance_value'] = self.loss_weights['equivariance_value'] * value
-            ## jacobian loss part
+            
+            # jacobian loss part
             if self.loss_weights['equivariance_jacobian'] != 0:
                 jacobian_transformed = paddle.matmul(
                     *broadcast_v1(transform.jacobian(transformed_kp['value']), transformed_kp['jacobian']))
@@ -98,6 +99,7 @@ class conv_block(nn.Layer):
         super(conv_block, self).__init__()
         self._layers = []
         i = 0
+        
         # 'act' is not a parameter of nn.Conv2D
         self.conv_in = paddle.fluid.dygraph.Conv2D(
             input_channels,
@@ -200,11 +202,13 @@ class Transform:
         theta = self.theta.astype('float32')
         theta = theta.unsqueeze(1)
         coordinates = coordinates.unsqueeze(-1)
+        
         # If x1:(1, 5, 2, 2), x2:(10, 100, 2, 1)
         # torch.matmul can broadcast x1, x2 to (10, 100, ...)
         # In PDPD, it should be done manually
         theta_part_a = theta[:, :, :, :2]
         theta_part_b = theta[:, :, :, 2:]
+        
         # TODO: paddle.matmul have no double_grad_op, use 'paddle.fluid.layers.matmul'
         transformed = paddle.fluid.layers.matmul(*broadcast_v1(theta_part_a, coordinates)) + theta_part_b
         transformed = transformed.squeeze(-1)
@@ -222,8 +226,7 @@ class Transform:
         return transformed
     
     def jacobian(self, coordinates):
-        new_coordinates = self.warp_coordinates(
-            coordinates)  # When batch_size is 5, the shape of coordinates and new_coordinates is (5, 10, 2)
+        new_coordinates = self.warp_coordinates(coordinates)
         # PDPD cannot use new_coordinates[..., 0]
         assert len(new_coordinates.shape) == 3
         grad_x = paddle.grad(new_coordinates[:, :, 0].sum(), coordinates, create_graph=True)

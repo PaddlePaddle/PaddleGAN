@@ -37,7 +37,6 @@ class FirstOrderModel(BaseModel):
             # define loss functions
             self.losses = {}
             
-
             # build optimizers
             from paddle.optimizer.lr import MultiStepDecay
             lr_cfg = cfg.lr_scheduler
