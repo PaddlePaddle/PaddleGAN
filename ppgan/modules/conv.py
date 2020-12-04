@@ -59,7 +59,7 @@ class Conv2dTransposeRelu(nn.Layer):
                  **kwargs):
         super().__init__(*args, **kwargs)
         self.conv_block = nn.Sequential(
-            nn.ConvTranspose2D(cin, cout, kernel_size, stride, padding,
+            nn.Conv2DTranspose(cin, cout, kernel_size, stride, padding,
                                output_padding), nn.BatchNorm2D(cout))
         self.act = nn.ReLU()
 

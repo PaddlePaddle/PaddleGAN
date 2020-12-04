@@ -33,8 +33,7 @@ class SFDDetector(FaceDetector):
 
         # Initialise the face detector
         if path_to_detector is None:
-            model_weights_path = get_weights_path_from_url(
-                models_urls['s3fd'], cur_path)
+            model_weights_path = get_weights_path_from_url(models_urls['s3fd'])
             model_weights = paddle.load(model_weights_path)
         else:
             model_weights = paddle.load(path_to_detector)
