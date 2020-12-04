@@ -6,12 +6,6 @@ from .builder import DISCRIMINATORS
 from ...modules.first_order import ImagePyramide, detach_kp, kp2gaussian
 
 
-# discriminator_cfg:
-#     scales: [1]
-#     block_expansion: 32
-#     max_features: 512
-#     num_blocks: 4
-#     sn: True
 @DISCRIMINATORS.register()
 class FirstOrder_Discriminator(paddle.nn.Layer):
     """

@@ -122,10 +122,3 @@ log_config:
 
 snapshot_config:
   interval: 5
-
-# For pytorch Checkpoint
-pytorch_ckpt:
-  vgg19_model: /home/aistudio/work/pre-trained/vgg19_np.npz
-  generator: /home/aistudio/work/pre-trained/mgif/G_param.npz
-  discriminator: /home/aistudio/work/pre-trained/mgif/D_param.npz
-  kp: /home/aistudio/work/pre-trained/mgif/KP_param.npz

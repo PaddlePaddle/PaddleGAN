@@ -1,5 +1,3 @@
-import logging
-
 import numpy as np
 import paddle
 import paddle.nn.functional as F
@@ -9,29 +7,6 @@ from ppgan.models.generators.builder import GENERATORS
 from .occlusion_aware import OcclusionAwareGenerator
 from ...modules.first_order import make_coordinate_grid, ImagePyramide, detach_kp
 from ...modules.keypoint_detector import KPDetector
-
-TEST_MODE = False
-if TEST_MODE:
-    logging.getLogger().setLevel(logging.WARNING)
-    logging.warning('firstorder_gen.py: Enter TEST_MODE')
-# kp_detector:
-#   temperature: 0.1
-#   block_expansion: 32
-#   max_features: 1024
-#   scale_factor: 0.25
-#   num_blocks: 5
-#   single_jacobian_map: True
-# generator:
-#   block_expansion: 64
-#   max_features: 512
-#   num_down_blocks: 2
-#   num_bottleneck_blocks: 6
-#   estimate_occlusion_map: True
-#   dense_motion_params:
-#     block_expansion: 64
-#     max_features: 1024
-#     num_blocks: 5
-#     scale_factor: 0.25
 
 
 @GENERATORS.register()
@@ -195,75 +170,23 @@ class Vgg19(paddle.nn.Layer):
         return [feat_1, feat_2, feat_3, feat_4, feat_5]
 
 
-# TODO: switch to first_order.py
-# class AntiAliasInterpolation2d(paddle.nn.Layer):
-#     """
-#     Band-limited downsampling, for better preservation of the input signal.
-#     """
-#     def __init__(self, channels, scale):
-#         super(AntiAliasInterpolation2d, self).__init__()
-#         sigma = (1 / scale - 1) / 2
-#         kernel_size = 2 * round(sigma * 4) + 1
-#         self.ka = kernel_size // 2
-#         self.kb = self.ka - 1 if kernel_size % 2 == 0 else self.ka
-#
-#         kernel_size = [kernel_size, kernel_size]
-#         sigma = [sigma, sigma]
-#         # The gaussian kernel is the product of the
-#         # gaussian function of each dimension.
-#         kernel = 1
-#         meshgrids = paddle.meshgrid([paddle.arange(size, dtype='float32') for size in kernel_size])
-#         for size, std, mgrid in zip(kernel_size, sigma, meshgrids):
-#             mean = (size - 1) / 2
-#             kernel *= paddle.exp(-(mgrid - mean) ** 2 / (2 * std ** 2 + 1e-9))
-#
-#         # Make sure sum of values in gaussian kernel equals 1.
-#         kernel = kernel / paddle.sum(kernel)
-#         # Reshape to depthwise convolutional weight
-#         kernel = kernel.reshape((1, 1, *kernel.shape))
-#         kernel = kernel.tile((channels, *((1,)*(len(kernel.shape)-1))))  # [1, 1, *kernel.shape] -> [channels, 1, *kernel.shape]
-#         self.kernel_attr = paddle.ParamAttr(initializer=paddle.nn.initializer.Assign(kernel), trainable=False)
-#         self.groups = channels
-#         self.scale = scale
-#         self.conv = nn.Conv2D(channels, channels, kernel_size=kernel.shape[-1], groups=self.groups,
-#                               weight_attr=self.kernel_attr,
-#                               bias_attr=False
-#                               )
-#         self.conv.weight.set_value(kernel)
-#
-#     def forward(self, input):
-#         if self.scale == 1.0:
-#             return input
-#         out = F.pad(input, [self.ka, self.kb, self.ka, self.kb], mode='constant')
-#         out = self.conv(out)
-#         out = F.interpolate(out, scale_factor=self.scale, mode='NEAREST', align_corners=False)
-#         return out
-
-
 class Transform:
     """
     Random tps transformation for equivariance constraints. See Sec 3.3
     """
     
     def __init__(self, bs, **kwargs):
-        # noise = np.random.normal(loc=0, scale=kwargs['sigma_affine'], size=(bs, 2, 3))
         noise = paddle.distribution.Normal(loc=[0], scale=[kwargs['sigma_affine']]).sample([bs, 2, 3])
         noise = noise.reshape((bs, 2, 3))
-        if TEST_MODE:
-            noise = paddle.to_tensor(np.ones((bs, 2, 3)).astype(np.float32))
-        
         self.theta = noise + paddle.tensor.eye(2, 3, dtype='float32').reshape((1, 2, 3))
         self.bs = bs
         
         if ('sigma_tps' in kwargs) and ('points_tps' in kwargs):
             self.tps = True
             self.control_points = make_coordinate_grid((kwargs['points_tps'], kwargs['points_tps'])).unsqueeze(0)
-            if TEST_MODE:
-                self.control_params = paddle.to_tensor(np.ones((bs, 1, kwargs['points_tps'] ** 2)).astype(np.float32))
-            else:
-                buf = paddle.distribution.Normal(loc=[0], scale=[kwargs['sigma_tps']]).sample(
-                    [bs, 1, kwargs['points_tps'] ** 2])
-                self.control_params = buf.reshape((bs, 1, kwargs['points_tps'] ** 2))
+            buf = paddle.distribution.Normal(loc=[0], scale=[kwargs['sigma_tps']]).sample(
+                [bs, 1, kwargs['points_tps'] ** 2])
+            self.control_params = buf.reshape((bs, 1, kwargs['points_tps'] ** 2))
         else:
             self.tps = False
     
