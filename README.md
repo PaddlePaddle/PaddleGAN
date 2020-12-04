@@ -13,6 +13,10 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 [![License](https://img.shields.io/badge/license-Apache%202-red.svg)](LICENSE)![python version](https://img.shields.io/badge/python-3.6+-orange.svg)
 
+## 近期贡献者
+
+[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/0)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/0)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/1)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/1)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/2)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/2)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/3)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/3)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/4)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/4)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/5)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/5)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/6)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/6)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/7)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/7)
+
 ## 快速开始
 
 * 请确保您按照[安装文档](./docs/zh_CN/install.md)的说明正确安装了PaddlePaddle和PaddleGAN
