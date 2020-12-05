@@ -15,3 +15,4 @@
 from .nlayers import NLayerDiscriminator
 from .discriminator_ugatit import UGATITDiscriminator
 from .dcdiscriminator import DCDiscriminator
+from .discriminator_animegan import AnimeDiscriminator

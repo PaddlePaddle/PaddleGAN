@@ -19,6 +19,7 @@ import collections
 import numpy as np
 
 import paddle.vision.transforms as T
+import ppgan.datasets.transforms.functional as custom_F
 import paddle.vision.transforms.functional as F
 
 from .builder import TRANSFORMS
@@ -35,6 +36,7 @@ TRANSFORMS.register(T.RandomCrop)
 TRANSFORMS.register(T.RandomHorizontalFlip)
 TRANSFORMS.register(T.Normalize)
 TRANSFORMS.register(T.Transpose)
+TRANSFORMS.register(T.Grayscale)
 
 
 @TRANSFORMS.register()
@@ -72,3 +74,73 @@ class PairedRandomHorizontalFlip(T.RandomHorizontalFlip):
         if self.params['flip']:
             return F.hflip(image)
         return image
+
+
+@TRANSFORMS.register()
+class Add(T.BaseTransform):
+    def __init__(self, value, keys=None):
+        """Initialize Add Transform
+
+        Parameters:
+            value (List[int]) -- the [r,g,b] value will add to image by pixel wise.
+        """
+        super().__init__(keys=keys)
+        self.value = value
+
+    def _get_params(self, inputs):
+        params = {}
+        params['value'] = self.value
+        return params
+
+    def _apply_image(self, image):
+        return custom_F.add(image, self.params['value'])
+
+
+@TRANSFORMS.register()
+class ResizeToScale(T.BaseTransform):
+    def __init__(self,
+                 size: int,
+                 scale: int,
+                 interpolation='bilinear',
+                 keys=None):
+        """Initialize ResizeToScale Transform
+
+        Parameters:
+            size (List[int]) -- the minimum target size
+            scale (List[int]) -- the stride scale
+            interpolation (Optional[str]) -- interpolation method
+        """
+        super().__init__(keys=keys)
+        if isinstance(size, int):
+            self.size = (size, size)
+        else:
+            self.size = size
+        self.scale = scale
+        self.interpolation = interpolation
+
+    def _get_params(self, inputs):
+        image = inputs[self.keys.index('image')]
+        hw = image.shape[:2]
+        params = {}
+        params['taget_size'] = self.reduce_to_scale(hw, self.size[::-1],
+                                                    self.scale)
+        return params
+
+    @staticmethod
+    def reduce_to_scale(img_hw, min_hw, scale):
+        im_h, im_w = img_hw
+        if im_h <= min_hw[0]:
+            im_h = min_hw[0]
+        else:
+            x = im_h % scale
+            im_h = im_h - x
+
+        if im_w < min_hw[1]:
+            im_w = min_hw[1]
+        else:
+            y = im_w % scale
+            im_w = im_w - y
+        return (im_h, im_w)
+
+    def _apply_image(self, image):
+        return F.resize(image, self.params['taget_size'], self.interpolation)
