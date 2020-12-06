@@ -48,7 +48,7 @@ class GANModel(BaseModel):
         self.nets['netG'] = build_generator(cfg.model.generator)
         init_weights(self.nets['netG'])
 
-        # define a discriminator; conditional GANs need to take both input and output images; Therefore, #channels for D is input_nc + output_nc
+        # define a discriminator
         if self.is_train:
             self.nets['netD'] = build_discriminator(cfg.model.discriminator)
             init_weights(self.nets['netD'])
