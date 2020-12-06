@@ -21,7 +21,7 @@ from .transforms.builder import build_transforms
 
 
 @DATASETS.register()
-class CommonDataset(BaseDataset):
+class CommonVisionDataset(BaseDataset):
     """
     Dataset for using paddle vision default datasets
     """
@@ -31,7 +31,7 @@ class CommonDataset(BaseDataset):
         Args:
             cfg (dict) -- stores all the experiment flags
         """
-        super(CommonDataset, self).__init__(cfg)
+        super(CommonVisionDataset, self).__init__(cfg)
 
         dataset_cls = getattr(paddle.vision.datasets, cfg.pop('class_name'))
         transform = build_transforms(cfg.pop('transforms', None))
@@ -59,7 +59,7 @@ class CommonDataset(BaseDataset):
                 return_dict['img'] = return_list[0]
         else:
             return_dict['img'] = return_list
-        
+
         return return_dict
 
     def __len__(self):

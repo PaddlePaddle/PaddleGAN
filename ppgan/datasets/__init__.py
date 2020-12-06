@@ -12,10 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .image_folder import ImageFolder, ImageFolderWithClassification
 from .unpaired_dataset import UnpairedDataset
 from .single_dataset import SingleDataset
 from .paired_dataset import PairedDataset
 from .sr_image_dataset import SRImageDataset
 from .makeup_dataset import MakeupDataset
-from .common_dataset import CommonDataset
+from .common_vision_dataset import CommonVisionDataset

@@ -44,10 +44,6 @@ class GANModel(BaseModel):
         self.visual_interval = cfg.log_config.visiual_interval
         self.samples_every_row = cfg.model.get('samples_every_row', 8)
 
-        # define a layer to store status 
-        self.nets['status'] = self.status = paddle.nn.Layer()
-        self.status.register_buffer('step', paddle.zeros([1], dtype='int64'))
-        
         # define networks (both generator and discriminator)
         self.nets['netG'] = build_generator(cfg.model.generator)
         init_weights(self.nets['netG'])
@@ -131,7 +127,7 @@ class GANModel(BaseModel):
         # combine loss and calculate gradients
         if self.cfg.model.gan_mode in ['vanilla', 'lsgan']:
             self.loss_D = self.loss_D + (self.loss_D_fake + self.loss_D_real) * 0.5
-        else: 
+        else:
             self.loss_D = self.loss_D + self.loss_D_fake + self.loss_D_real
 
         self.loss_D.backward()
@@ -157,8 +153,6 @@ class GANModel(BaseModel):
         self.losses['G_adv_loss'] = self.loss_G_GAN
 
     def optimize_parameters(self):
-        if self.step == 0:
-            self.step = int(self.status.step.numpy()[0])
 
         # compute fake images: G(imgs)
         self.forward()
@@ -189,5 +183,3 @@ class GANModel(BaseModel):
                 )
 
         self.step += 1
-        if self.step % 100 == 0:
-            self.status.step[:] = self.step

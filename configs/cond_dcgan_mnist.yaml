@@ -22,7 +22,7 @@ model:
 
 dataset:
   train:
-    name: CommonDataset
+    name: CommonVisionDataset
     class_name: MNIST
     dataroot: None
     num_workers: 4
@@ -35,7 +35,7 @@ dataset:
         std: [127.5]
         keys: [image]
   test:
-    name: CommonDataset
+    name: CommonVisionDataset
     class_name: MNIST
     dataroot: None
     num_workers: 0
