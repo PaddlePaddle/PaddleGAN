@@ -207,7 +207,7 @@ class TNetDown(paddle.nn.Layer):
         return out
 
 
-class GetMatrix(paddle.fluid.dygraph.Layer):
+class GetMatrix(paddle.nn.Layer):
     def __init__(self, dim_in, dim_out):
         super(GetMatrix, self).__init__()
         self.get_gamma = nn.Conv2D(dim_in,

@@ -12,24 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import os.path as osp
 
 import numpy as np
 from PIL import Image
-import dlib
+from paddle.utils import try_import
 import cv2
 from ..image import resize_by_max
+from paddle.utils.download import get_weights_path_from_url
 
-detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor(
-    osp.split(osp.realpath(__file__))[0] + '/lms.dat')
+LANDMARKS_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/lms.dat'
 
 
 def detect(image: Image):
+    dlib = try_import('dlib')
     image = np.asarray(image)
     h, w = image.shape[:2]
     image = resize_by_max(image, 361)
     actual_h, actual_w = image.shape[:2]
+    detector = dlib.get_frontal_face_detector()
     faces_on_small = detector(image, 1)
     faces = dlib.rectangles()
     for face in faces_on_small:
@@ -42,6 +44,7 @@ def detect(image: Image):
 
 
 def crop(image: Image, face, up_ratio, down_ratio, width_ratio):
+    dlib = try_import('dlib')
     width, height = image.size
     face_height = face.height()
     face_width = face.width()
@@ -95,6 +98,7 @@ def crop(image: Image, face, up_ratio, down_ratio, width_ratio):
 
 
 def crop_by_image_size(image: Image, face):
+    dlib = try_import('dlib')
     center = face.center()
     width, height = image.size
     if width > height:
@@ -122,11 +126,15 @@ def crop_by_image_size(image: Image, face):
 
 
 def landmarks(image: Image, face):
+    dlib = try_import('dlib')
+    weight_path = get_weights_path_from_url(LANDMARKS_WEIGHT_URL)
+    predictor = dlib.shape_predictor(weight_path)
     shape = predictor(np.asarray(image), face).parts()
     return np.array([[p.y, p.x] for p in shape])
 
 
 def crop_from_array(image: np.array, face):
+    dlib = try_import('dlib')
     ratio = 0.20 / 0.85  # delta_size / face_size
     height, width = image.shape[:2]
     face_height = face.height()

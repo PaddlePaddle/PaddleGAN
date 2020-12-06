@@ -17,8 +17,9 @@ import time
 import copy
 
 import logging
-import paddle
+import datetime
 
+import paddle
 from paddle.distributed import ParallelEnv
 
 from ..datasets.builder import build_dataloader
@@ -64,6 +65,9 @@ class Trainer:
         self.local_rank = ParallelEnv().local_rank
 
         # time count
+        self.steps_per_epoch = len(self.train_dataloader)
+        self.total_steps = self.epochs * self.steps_per_epoch
+
         self.time_count = {}
         self.best_metric = {}
 
@@ -219,7 +223,14 @@ class Trainer:
             message += 'reader_cost: %.5f sec ' % self.data_time
 
         if hasattr(self, 'ips'):
-            message += 'ips: %.5f images/s' % self.ips
+            message += 'ips: %.5f images/s ' % self.ips
+
+        if hasattr(self, 'step_time'):
+            cur_step = self.steps_per_epoch * (self.current_epoch -
+                                               1) + self.batch_id
+            eta = self.step_time * (self.total_steps - cur_step - 1)
+            eta_str = str(datetime.timedelta(seconds=int(eta)))
+            message += f'eta: {eta_str}'
 
         # print the message
         self.logger.info(message)

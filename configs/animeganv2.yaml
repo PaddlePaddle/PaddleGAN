@@ -1,0 +1,81 @@
+epochs: 30
+output_dir: output_dir
+pretrain_ckpt: output_dir/AnimeGANV2PreTrainModel-2020-11-29-17-02/epoch_2_checkpoint.pdparams
+g_adv_weight: 300.
+d_adv_weight: 300.
+con_weight: 1.5
+sty_weight: 2.5
+color_weight: 10.
+tv_weight: 1.
+
+model:
+  name: AnimeGANV2Model
+  generator:
+    name: AnimeGenerator
+  discriminator:
+    name: AnimeDiscriminator
+  gan_mode: lsgan
+
+dataset:
+  train:
+    name: AnimeGANV2Dataset
+    num_workers: 4
+    batch_size: 4
+    dataroot: data/animedataset
+    style: Hayao
+    phase: train
+    direction: AtoB
+    transform_real:
+      - name: Transpose
+      - name: Normalize
+        mean: [127.5, 127.5, 127.5]
+        std: [127.5, 127.5, 127.5]
+    transform_anime:
+      - name: Add
+        value: [-4.4346957, -8.665916, 13.100612]
+      - name: Transpose
+      - name: Normalize
+        mean: [127.5, 127.5, 127.5]
+        std: [127.5, 127.5, 127.5]
+    transform_gray:
+      - name: Grayscale
+        num_output_channels: 3
+      - name: Transpose
+      - name: Normalize
+        mean: [127.5, 127.5, 127.5]
+        std: [127.5, 127.5, 127.5]
+  test:
+    name: SingleDataset
+    dataroot: data/animedataset/test/HR_photo
+    max_dataset_size: inf
+    direction: BtoA
+    input_nc: 3
+    output_nc: 3
+    serial_batches: False
+    pool_size: 50
+    transforms:
+      - name: ResizeToScale
+        size: [256, 256]
+        scale: 32
+        interpolation: bilinear
+      - name: Transpose
+      - name: Normalize
+        mean: [127.5, 127.5, 127.5]
+        std: [127.5, 127.5, 127.5]
+
+optimizer:
+  name: Adam
+  beta1: 0.5
+
+lr_scheduler:
+  name: linear
+  learning_rate: 0.00002
+  start_epoch: 100
+  decay_epochs: 100
+
+log_config:
+  interval: 100
+  visiual_interval: 100
+
+snapshot_config:
+  interval: 5
