@@ -17,7 +17,7 @@
     -   id: detect-private-key
     -   id: check-symlinks
     -   id: check-added-large-files
-        args: ['--maxkb=700']
+        args: ['--maxkb=1800']
 
 -   repo: local
     hooks:

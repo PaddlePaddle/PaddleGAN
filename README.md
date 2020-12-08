@@ -40,6 +40,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 * [PSGAN](./docs/zh_CN/tutorials/psgan.md)
 * [First Order Motion Model](./docs/zh_CN/tutorials/motion_driving.md)
 * [FaceParsing](./docs/zh_CN/tutorials/face_parse.md)
+* [AnimeGANv2](./docs/zh_CN/tutorials/animegan.md)
 
 ## 复合应用
 
@@ -95,6 +96,11 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   <img src='./docs/imgs/ugatit.png'width='700' height='250'/>
 </div>
 
+### 照片动漫化
+
+<div align='center'>
+  <img src='./docs/imgs/animeganv2.png'width='700' height='250'/>
+</div>
 
 ## 版本更新
 
@@ -117,6 +123,12 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 PaddleGAN SIG就是这样一个汇集对GAN感兴趣小伙伴们的开发者组织，在这里，有百度飞桨的一线开发人员、有来自世界500强的资深工程师、有国内外顶尖高校的学生。
 
 我们正在持续招募有兴趣、有能力的开发者加入我们一起共同建设本项目，并一起探索更多有用、有趣的应用。欢迎大家在加入群后联系我们讨论加入SIG并参与共建事宜。
+
+SIG贡献:
+
+- [zhen8838](https://github.com/zhen8838): 贡献AnimeGANv2.
+- [Jay9z](https://github.com/Jay9z): 贡献DCGAN的示例、修改安装文档等。
+
 
 ## 贡献代码
 
