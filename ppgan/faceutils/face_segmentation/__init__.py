@@ -12,13 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .resnet import ResnetGenerator
-from .unet import UnetGenerator
-from .rrdb_net import RRDBNet
-from .makeup import GeneratorPSGANAttention
-from .deep_conv import DeepConvGenerator, ConditionalDeepConvGenerator
-from .resnet_ugatit import ResnetUGATITGenerator
-from .dcgenerator import DCGenerator
-from .generater_animegan import AnimeGenerator, AnimeGeneratorLite
-from .wav2lip import Wav2Lip
-from .resnet_ugatit_p2c import ResnetUGATITP2CGenerator
+from .face_seg import FaceSeg
