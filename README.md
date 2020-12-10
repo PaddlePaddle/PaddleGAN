@@ -34,7 +34,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   * [数据准备](./docs/zh_CN/data_prepare.md)
   * [训练/评估/推理教程](./docs/zh_CN/get_started.md)
 
-## 经典模型
+## 经典模型实现
 
 * [Pixel2Pixel](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
 * [CycleGAN](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
