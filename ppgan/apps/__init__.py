@@ -20,3 +20,5 @@ from .edvr_predictor import EDVRPredictor
 from .first_order_predictor import FirstOrderPredictor
 from .face_parse_predictor import FaceParsePredictor
 from .animegan_predictor import AnimeGANPredictor
+from .styleganv2_predictor import StyleGANv2Predictor
+from .pixel2style2pixel_predictor import Pixel2Style2PixelPredictor
