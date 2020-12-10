@@ -372,3 +372,47 @@ ppgan.apps.AnimeGANPredictor(output_path='output_dir',weight_path=None,use_adjus
 > ```
 > **返回值:**
 > > - anime_image(numpy.ndarray): 返回风格化后的景色图像
+
+
+## ppgan.apps.MiDaSPredictor
+
+```pyhton
+ppgan.apps.MiDaSPredictor(output=None, weight_path=None)
+```
+
+> 单目深度估计模型MiDaSv2, 参考 https://github.com/intel-isl/MiDaS, 论文是 Towards Robust Monocular Depth Estimation: Mixing Datasets for Zero-shot Cross-dataset Transfer , 论文链接: https://arxiv.org/abs/1907.01341v3
+
+> **示例**
+>
+> ```python
+> from ppgan.apps import MiDaSPredictor
+> # if set output, will write depth pfm and png file in output/MiDaS
+> model = MiDaSPredictor()
+> prediction = model.run()
+> ```
+>
+> 深度图彩色显示:
+>
+> ```python
+> import numpy as np
+> import PIL.Image as Image
+> import matplotlib as mpl
+> import matplotlib.cm as cm
+>
+> vmax = np.percentile(prediction, 95)
+> normalizer = mpl.colors.Normalize(vmin=prediction.min(), vmax=vmax)
+> mapper = cm.ScalarMappable(norm=normalizer, cmap='magma')
+> colormapped_im = (mapper.to_rgba(prediction)[:, :, :3] * 255).astype(np.uint8)
+> im = Image.fromarray(colormapped_im)
+> im.save('test_disp.jpeg')
+> ```
+>
+> **参数:**
+>
+> > - output (str): 输出路径，如果是None，则不保存pfm和png的深度图文件。
+> > - weight_path (str): 指定模型路径，默认是None，则会自动下载内置的已经训练好的模型。
+
+> **返回值:**
+> > - prediction (numpy.ndarray): 返回预测结果。
+> > - pfm_f (str): 如果设置output路径，返回pfm文件保存路径。
+> > - png_f (str): 如果设置output路径，返回png文件保存路径。
