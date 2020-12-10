@@ -2,6 +2,21 @@
 
 ppgan.apps包含超分、插针、上色、换妆、图像动画生成、人脸解析等应用，接口使用简洁，并内置了已训练好的模型，可以直接用来做应用。
 
+- 超分:
+  * [RealSR](#ppgan.apps.DeOldifyPredictor)
+  * [EDVR](#ppgan.apps.EDVRPredictor)
+- 上色:
+  * [DeOldify](#ppgan.apps.DeOldifyPredictor)
+  * [DeepRemaster](#ppgan.apps.DeepRemasterPredictor)
+- 插针:
+  * [DAIN](#ppgan.apps.DAINPredictor)
+- 图像工作驱动:
+  * [FirstOrder](#ppgan.apps.FirstOrderPredictor)
+- 人脸:
+  * [FaceFaceParse](#ppgan.apps.FaceParsePredictor)
+- 动漫画:
+  * [AnimeGAN](#ppgan.apps.AnimeGANPredictor)
+
 ## 公共用法
 
 ### CPU和GPU的切换

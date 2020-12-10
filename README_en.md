@@ -23,12 +23,12 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 * Get started through ppgan.app interface:
 
- ```python
- from ppgan.apps import RealSRPredictor
- sr = RealSRPredictor()
- sr.run("docs/imgs/monarch.png")
- ```
-* More usage of pre-trained models, please refer to [ppgan.apps apis](./docs/en_US/apis/apps.md)
+   ```python
+   from ppgan.apps import RealSRPredictor
+   sr = RealSRPredictor()
+   sr.run("docs/imgs/monarch.png")
+   ```
+* More applications, please refer to [ppgan.apps apis](./docs/en_US/apis/apps.md)
 * More tutorials:
   - [Data preparation](./docs/en_US/data_prepare.md)
   - [Training/Evaluating/Testing basic usage](./docs/zh_CN/get_started.md)
@@ -41,6 +41,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 * [First Order Motion Model](./docs/en_US/tutorials/motion_driving.md)
 * [FaceParsing](./docs/en_US/tutorials/face_parse.md)
 * [AnimeGANv2](./docs/en_US/tutorials/animegan.md)
+* [U-GAT-IT](./docs/en_US/tutorials/ugatit.md)
 
 ## Composite Application
 
@@ -117,6 +118,7 @@ SIG contributions:
 
 - [zhen8838](https://github.com/zhen8838): contributed to AnimeGANv2.
 - [Jay9z](https://github.com/Jay9z): contributed to DCGAN and updated install docs, etc.
+- [HighCWu](https://github.com/HighCWu): contributed to c-DCGAN and WGAN. Support to use `paddle.vision.datasets`.
 
 
 ## Contributing

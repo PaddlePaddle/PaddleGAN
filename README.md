@@ -21,19 +21,20 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 * 请确保您按照[安装文档](./docs/zh_CN/install.md)的说明正确安装了PaddlePaddle和PaddleGAN
 
-* 通过ppgan.apps接口使用预训练模型:
+* 通过ppgan.apps接口直接使用应用:
 
- ```python
- from ppgan.apps import RealSRPredictor
- sr = RealSRPredictor()
- sr.run("docs/imgs/monarch.png")
- ```
-* 更多预训练模型的使用请参考[ppgan.apps apis](./docs/zh_CN/apis/apps.md)
+  ```python
+  from ppgan.apps import RealSRPredictor
+  sr = RealSRPredictor()
+  sr.run("docs/imgs/monarch.png")
+  ```
+
+* 更多应用的使用请参考[ppgan.apps API](./docs/zh_CN/apis/apps.md)
 * 更多训练、评估教程:
   * [数据准备](./docs/zh_CN/data_prepare.md)
   * [训练/评估/推理教程](./docs/zh_CN/get_started.md)
 
-## 经典模型实现
+## 经典模型
 
 * [Pixel2Pixel](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
 * [CycleGAN](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
@@ -41,6 +42,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 * [First Order Motion Model](./docs/zh_CN/tutorials/motion_driving.md)
 * [FaceParsing](./docs/zh_CN/tutorials/face_parse.md)
 * [AnimeGANv2](./docs/zh_CN/tutorials/animegan.md)
+* [U-GAT-IT](./docs/zh_CN/tutorials/ugatit.md)
 
 ## 复合应用
 
@@ -128,6 +130,7 @@ SIG贡献:
 
 - [zhen8838](https://github.com/zhen8838): 贡献AnimeGANv2.
 - [Jay9z](https://github.com/Jay9z): 贡献DCGAN的示例、修改安装文档等。
+- [HighCWu](https://github.com/HighCWu): 贡献c-DCGAN和WGAN，以及对`paddle.vision.datasets`数据集的支持。
 
 
 ## 贡献代码
