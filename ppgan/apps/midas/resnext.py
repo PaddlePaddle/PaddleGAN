@@ -26,26 +26,7 @@ __all__ = ['resnext101_32x8d_wsl']
 
 
 class ResNetEx(ResNet):
-    """ResNet model from
-    `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
-
-    Args:
-        Block (BasicBlock|BottleneckBlock): block module of model.
-        depth (int): layers of resnet, default: 50.
-        num_classes (int): output dim of last fc layer. If num_classes <=0, last fc layer
-                            will not be defined. Default: 1000.
-        with_pool (bool): use pool before the last fc layer or not. Default: True.
-
-    Examples:
-        .. code-block:: python
-
-            from paddle.vision.models import ResNet
-            from paddle.vision.models.resnet import BottleneckBlock, BasicBlock
-
-            resnet50 = ResNet(BottleneckBlock, 50)
-
-            resnet18 = ResNet(BasicBlock, 18)
-
+    """ResNet extention model, support ResNeXt.
     """
     def __init__(self,
                  block,
@@ -92,29 +73,14 @@ class ResNetEx(ResNet):
         return nn.Sequential(*layers)
 
 
-def _resnext(arch, Block, depth, pretrained, **kwargs):
+def _resnext(arch, Block, depth, **kwargs):
     model = ResNetEx(Block, depth, **kwargs)
     return model
 
 
-def resnext101_32x8d_wsl(pretrained=False, **kwargs):
+def resnext101_32x8d_wsl(**kwargs):
     """ResNet101 32x8d wsl model
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-
-    Examples:
-        .. code-block:: python
-
-            from paddle.vision.models import resnet18
-
-            # build model
-            model = resnet18()
-
-            # build model and load imagenet pretrained weight
-            # model = resnet18(pretrained=True)
     """
     kwargs['groups'] = 32
     kwargs['width_per_group'] = 8
-    return _resnext('resnet101_32x8d', BottleneckBlock, 101, pretrained,
-                    **kwargs)
+    return _resnext('resnet101_32x8d', BottleneckBlock, 101, **kwargs)

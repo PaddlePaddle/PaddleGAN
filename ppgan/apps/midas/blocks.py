@@ -86,40 +86,6 @@ def _make_pretrained_resnext101_wsl(use_pretrained):
     return _make_resnet_backbone(resnet)
 
 
-class Interpolate(nn.Layer):
-    """Interpolation module.
-    """
-    def __init__(self, scale_factor, mode):
-        """Init.
-
-        Args:
-            scale_factor (float): scaling
-            mode (str): interpolation mode
-        """
-        super(Interpolate, self).__init__()
-
-        self.interp = nn.functional.interpolate
-        self.scale_factor = scale_factor
-        self.mode = mode
-
-    def forward(self, x):
-        """Forward pass.
-
-        Args:
-            x (tensor): input
-
-        Returns:
-            tensor: interpolated data
-        """
-
-        x = self.interp(x,
-                        scale_factor=self.scale_factor,
-                        mode=self.mode,
-                        align_corners=False)
-
-        return x
-
-
 class ResidualConvUnit(nn.Layer):
     """Residual convolution module.
     """

@@ -5,7 +5,7 @@ import numpy as np
 import paddle
 import paddle.nn as nn
 
-from .blocks import FeatureFusionBlock, Interpolate, _make_encoder
+from .blocks import FeatureFusionBlock, _make_encoder
 
 
 class BaseModel(paddle.nn.Layer):
@@ -48,7 +48,7 @@ class MidasNet(BaseModel):
 
         output_conv = [
             nn.Conv2D(features, 128, kernel_size=3, stride=1, padding=1),
-            Interpolate(scale_factor=2, mode="bilinear"),
+            nn.Upsample(scale_factor=2, mode="bilinear"),
             nn.Conv2D(128, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.Conv2D(32, 1, kernel_size=1, stride=1, padding=0),

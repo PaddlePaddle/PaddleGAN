@@ -5,7 +5,6 @@ import sys
 import re
 import numpy as np
 import cv2
-import torch
 
 
 def write_pfm(path, image, scale=1):
