@@ -333,9 +333,6 @@ class SoftAdaLIN(nn.Layer):
         content_gamma, content_beta = self.c_gamma(content_features), self.c_beta(content_features)
         style_gamma, style_beta = self.s_gamma(style_features), self.s_beta(style_features)
 
-        # w_gamma_ = nn.clip(self.w_gamma, 0, 1)
-        # w_beta_ = nn.clip(self.w_beta, 0, 1)
-
         w_gamma_, w_beta_ = self.w_gamma.expand([x.shape[0], -1]), self.w_beta.expand([x.shape[0], -1])
         soft_gamma = (1. - w_gamma_) * style_gamma + w_gamma_ * content_gamma
         soft_beta = (1. - w_beta_) * style_beta + w_beta_ * content_beta
