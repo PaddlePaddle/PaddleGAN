@@ -82,7 +82,7 @@ def make_kernel(k):
     return k
  
  
-class Upsample(nn.Layer):
+class Upfirdn2dUpsample(nn.Layer):
     def __init__(self, kernel, factor=2):
         super().__init__()
  
@@ -103,7 +103,7 @@ class Upsample(nn.Layer):
         return out
  
  
-class Downsample(nn.Layer):
+class Upfirdn2dDownsample(nn.Layer):
     def __init__(self, kernel, factor=2):
         super().__init__()
  
@@ -124,7 +124,7 @@ class Downsample(nn.Layer):
         return out
  
  
-class Blur(nn.Layer):
+class Upfirdn2dBlur(nn.Layer):
     def __init__(self, kernel, pad, upsample_factor=1):
         super().__init__()
  

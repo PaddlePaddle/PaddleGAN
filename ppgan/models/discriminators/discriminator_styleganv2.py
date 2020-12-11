@@ -20,7 +20,7 @@ import paddle.nn.functional as F
 from .builder import DISCRIMINATORS
 from ...modules.equalized import EqualLinear, EqualConv2D
 from ...modules.fused_act import FusedLeakyReLU
-from ...modules.upfirdn2d import Blur
+from ...modules.upfirdn2d import Upfirdn2dBlur
 
 
 class ConvLayer(nn.Sequential):
@@ -42,7 +42,7 @@ class ConvLayer(nn.Sequential):
             pad0 = (p + 1) // 2
             pad1 = p // 2
  
-            layers.append(Blur(blur_kernel, pad=(pad0, pad1)))
+            layers.append(Upfirdn2dBlur(blur_kernel, pad=(pad0, pad1)))
  
             stride = 2
             self.padding = 0

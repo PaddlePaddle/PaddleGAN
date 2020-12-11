@@ -21,7 +21,7 @@ import paddle.nn.functional as F
 from .builder import GENERATORS
 from ...modules.equalized import EqualLinear
 from ...modules.fused_act import FusedLeakyReLU
-from ...modules.upfirdn2d import Upsample, Blur
+from ...modules.upfirdn2d import Upfirdn2dUpsample, Upfirdn2dBlur
 
 
 class PixelNorm(nn.Layer):
@@ -59,7 +59,7 @@ class ModulatedConv2D(nn.Layer):
             pad0 = (p + 1) // 2 + factor - 1
             pad1 = p // 2 + 1
  
-            self.blur = Blur(blur_kernel, pad=(pad0, pad1), upsample_factor=factor)
+            self.blur = Upfirdn2dBlur(blur_kernel, pad=(pad0, pad1), upsample_factor=factor)
  
         if downsample:
             factor = 2
@@ -67,7 +67,7 @@ class ModulatedConv2D(nn.Layer):
             pad0 = (p + 1) // 2
             pad1 = p // 2
  
-            self.blur = Blur(blur_kernel, pad=(pad0, pad1))
+            self.blur = Upfirdn2dBlur(blur_kernel, pad=(pad0, pad1))
  
         fan_in = in_channel * kernel_size ** 2
         self.scale = 1 / math.sqrt(fan_in)
@@ -197,7 +197,7 @@ class ToRGB(nn.Layer):
         super().__init__()
  
         if upsample:
-            self.upsample = Upsample(blur_kernel)
+            self.upsample = Upfirdn2dUpsample(blur_kernel)
  
         self.conv = ModulatedConv2D(in_channel, 3, 1, style_dim, demodulate=False)
         self.bias = self.create_parameter((1, 3, 1, 1), nn.initializer.Constant(0.0))
