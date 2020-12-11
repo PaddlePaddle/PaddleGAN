@@ -19,7 +19,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 ## Quick Start
 
-* Please refer [install](./docs/en_US/install.md) to ensure you sucessfully installed PaddlePaddle and PaddleGAN.
+* Please refer to the [installation document](./docs/en_US/install.md) to make sure you have installed PaddlePaddle and PaddleGAN correctly.
 
 * Get started through ppgan.app interface:
 
