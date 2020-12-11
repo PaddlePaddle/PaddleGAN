@@ -27,7 +27,7 @@ cd applications/
 python -u tools/styleganv2.py \
        --output_path <DIRECTORY TO STORE OUTPUT IMAGE> \
        --weight_path <YOUR PRETRAINED MODEL PATH> \
-       --model_type "" \
+       --model_type ffhq-config-f \
        --seed 233 \
        --size 1024 \
        --style_dim 512 \
@@ -41,7 +41,8 @@ python -u tools/styleganv2.py \
 **params:**
 - output_path: the directory where the generated images are stored
 - weight_path: pretrained model path
-- model_type: inner model type in PaddleGAN. If you use an existing model type, `weight_path` will have no effect
+- model_type: inner model type in PaddleGAN. If you use an existing model type, `weight_path` will have no effect.
+  Currently available: `ffhq-config-f`, `animeface-512`
 - seed: random number seed
 - size: model parameters, output image resolution
 - style_dim: model parameters, dimensions of style z

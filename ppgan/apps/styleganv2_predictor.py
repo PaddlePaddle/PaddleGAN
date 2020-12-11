@@ -22,22 +22,21 @@ from ppgan.utils.download import get_path_from_url
 from ppgan.utils.visual import make_grid, tensor2img, save_image
 
 
-# TODO(highcwu): bos cloud pretrained model needed
 model_cfgs = {
-    # 'ffhq-config-f': {
-    #     'model_urls': 'https://paddlegan.bj.bcebos.com/models/stylegan2-ffhq-config-f.pdparams',
-    #     'size': 1024,
-    #     'style_dim': 512,
-    #     'n_mlp': 8,
-    #     'channel_multiplier': 2
-    # },
-    # 'animeface-512': {
-    #     'model_urls': 'https://paddlegan.bj.bcebos.com/models/stylegan2-animeface-512.pdparams',
-    #     'size': 512,
-    #     'style_dim': 512,
-    #     'n_mlp': 8,
-    #     'channel_multiplier': 2
-    # }
+    'ffhq-config-f': {
+        'model_urls': 'https://paddlegan.bj.bcebos.com/models/stylegan2-ffhq-config-f.pdparams',
+        'size': 1024,
+        'style_dim': 512,
+        'n_mlp': 8,
+        'channel_multiplier': 2
+    },
+    'animeface-512': {
+        'model_urls': 'https://paddlegan.bj.bcebos.com/models/stylegan2-animeface-512.pdparams',
+        'size': 512,
+        'style_dim': 512,
+        'n_mlp': 8,
+        'channel_multiplier': 2
+    }
 }
 
 

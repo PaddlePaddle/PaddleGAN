@@ -25,32 +25,32 @@ from ppgan.models.generators import Pixel2Style2Pixel
 from ppgan.utils.download import get_path_from_url
 from PIL import Image
 
-# TODO(highcwu): bos cloud pretrained model needed
+
 model_cfgs = {
-    # 'ffhq-inversion': {
-    #     'model_urls': 'https://paddlegan.bj.bcebos.com/models/pSp-ffhq-inversion.pdparams',
-    #     'transform': T.Compose([
-    #         T.Resize((256, 256)),
-    #         T.Transpose(),
-    #         T.Normalize([127.5, 127.5, 127.5], [127.5, 127.5, 127.5])
-    #     ]),
-    #     'size': 1024,
-    #     'style_dim': 512,
-    #     'n_mlp': 8,
-    #     'channel_multiplier': 2
-    # },
-    # 'ffhq-toonify': {
-    #     'model_urls': 'https://paddlegan.bj.bcebos.com/models/pSp-ffhq-toonify.pdparams',
-    #     'transform': T.Compose([
-    #         T.Resize((256, 256)),
-    #         T.Transpose(),
-    #         T.Normalize([127.5, 127.5, 127.5], [127.5, 127.5, 127.5])
-    #     ]),
-    #     'size': 1024,
-    #     'style_dim': 512,
-    #     'n_mlp': 8,
-    #     'channel_multiplier': 2
-    # },
+    'ffhq-inversion': {
+        'model_urls': 'https://paddlegan.bj.bcebos.com/models/pSp-ffhq-inversion.pdparams',
+        'transform': T.Compose([
+            T.Resize((256, 256)),
+            T.Transpose(),
+            T.Normalize([127.5, 127.5, 127.5], [127.5, 127.5, 127.5])
+        ]),
+        'size': 1024,
+        'style_dim': 512,
+        'n_mlp': 8,
+        'channel_multiplier': 2
+    },
+    'ffhq-toonify': {
+        'model_urls': 'https://paddlegan.bj.bcebos.com/models/pSp-ffhq-toonify.pdparams',
+        'transform': T.Compose([
+            T.Resize((256, 256)),
+            T.Transpose(),
+            T.Normalize([127.5, 127.5, 127.5], [127.5, 127.5, 127.5])
+        ]),
+        'size': 1024,
+        'style_dim': 512,
+        'n_mlp': 8,
+        'channel_multiplier': 2
+    },
     'default': {
         'transform': T.Compose([
             T.Resize((256, 256)),

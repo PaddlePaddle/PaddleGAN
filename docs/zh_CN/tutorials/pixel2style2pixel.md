@@ -29,7 +29,7 @@ python -u tools/styleganv2.py \
        --input_image <替换为输入的图像路径> \
        --output_path <替换为生成图片存放的文件夹> \
        --weight_path <替换为你的预训练模型路径> \
-       --model_type "" \
+       --model_type ffhq-inversion \
        --seed 233 \
        --size 1024 \
        --style_dim 512 \
@@ -42,7 +42,8 @@ python -u tools/styleganv2.py \
 - input_image: 输入的图像路径
 - output_path: 生成图片存放的文件夹
 - weight_path: 预训练模型路径
-- model_type: PaddleGAN内置模型类型，若输入PaddleGAN已存在的模型类型，`weight_path`将失效
+- model_type: PaddleGAN内置模型类型，若输入PaddleGAN已存在的模型类型，`weight_path`将失效。
+  当前可用: `ffhq-inversion`， `ffhq-toonify`
 - seed: 随机数种子
 - size: 模型参数，输出图片的分辨率
 - style_dim: 模型参数，风格z的维度
