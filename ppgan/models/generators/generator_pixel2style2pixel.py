@@ -25,7 +25,7 @@ from .generator_styleganv2 import StyleGANv2Generator
 from ...modules.equalized import EqualLinear
 
 
-class Flatten(Layer):
+class Flatten(nn.Layer):
     def forward(self, input):
         return input.reshape((input.shape[0], -1))
 
@@ -71,7 +71,7 @@ def get_blocks(num_layers):
     return blocks
 
 
-class SEModule(Layer):
+class SEModule(nn.Layer):
     def __init__(self, channels, reduction):
         super(SEModule, self).__init__()
         self.avg_pool = nn.AdaptiveAvgPool2D(1)
@@ -90,7 +90,7 @@ class SEModule(Layer):
         return module_input * x
 
 
-class bottleneck_IR(Layer):
+class bottleneck_IR(nn.Layer):
     def __init__(self, in_channel, depth, stride):
         super(bottleneck_IR, self).__init__()
         if in_channel == depth:
@@ -112,7 +112,7 @@ class bottleneck_IR(Layer):
         return res + shortcut
 
 
-class bottleneck_IR_SE(Layer):
+class bottleneck_IR_SE(nn.Layer):
     def __init__(self, in_channel, depth, stride):
         super(bottleneck_IR_SE, self).__init__()
         if in_channel == depth:
@@ -137,7 +137,7 @@ class bottleneck_IR_SE(Layer):
         return res + shortcut
 
 
-class GradualStyleBlock(Layer):
+class GradualStyleBlock(nn.Layer):
     def __init__(self, in_c, out_c, spatial):
         super(GradualStyleBlock, self).__init__()
         self.out_c = out_c
@@ -161,7 +161,7 @@ class GradualStyleBlock(Layer):
         return x
 
 
-class GradualStyleEncoder(Layer):
+class GradualStyleEncoder(nn.Layer):
     def __init__(self, num_layers, mode='ir', opts=None):
         super(GradualStyleEncoder, self).__init__()
         assert num_layers in [50, 100, 152], 'num_layers should be 50,100, or 152'
@@ -245,7 +245,7 @@ class GradualStyleEncoder(Layer):
         return out
 
 
-class BackboneEncoderUsingLastLayerIntoW(Layer):
+class BackboneEncoderUsingLastLayerIntoW(nn.Layer):
     def __init__(self, num_layers, mode='ir', opts=None):
         super(BackboneEncoderUsingLastLayerIntoW, self).__init__()
         print('Using BackboneEncoderUsingLastLayerIntoW')
@@ -278,7 +278,7 @@ class BackboneEncoderUsingLastLayerIntoW(Layer):
         return x
 
 
-class BackboneEncoderUsingLastLayerIntoWPlus(Layer):
+class BackboneEncoderUsingLastLayerIntoWPlus(nn.Layer):
     def __init__(self, num_layers, mode='ir', opts=None):
         super(BackboneEncoderUsingLastLayerIntoWPlus, self).__init__()
         print('Using BackboneEncoderUsingLastLayerIntoWPlus')
