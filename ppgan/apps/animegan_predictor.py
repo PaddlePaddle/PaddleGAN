@@ -26,7 +26,7 @@ from ppgan.utils.download import get_path_from_url
 
 class AnimeGANPredictor(BasePredictor):
     def __init__(self,
-                 output_path='output_dir',
+                 output_path='output',
                  weight_path=None,
                  use_adjust_brightness=True):
         self.output_path = output_path
