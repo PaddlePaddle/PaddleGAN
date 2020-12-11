@@ -3,9 +3,9 @@ English | [简体中文](./README_cn.md)
 
 # PaddleGAN
 
-PaddleGAN provides developers with high-performance implementation of classic and SOTA Generative Adversarial Networks, and support developers to quickly build, train and deploy GANs for academic, entertainment and industrial usage.
+PaddleGAN provides developers with high-performance implementation of classic and SOTA Generative Adversarial Networks, and supports developers to quickly build, train and deploy GANs for academic, entertainment and industrial usage.
 
-GAN-Generative Adversarial Network, was praised by "the Father of Convolutional Networks"  **Yann LeCun (Yang Likun)**  as **[One of the most interesting ideas in the field of computer science in the past decade]**. It's one the research area in deep learning that AI researchers are most concerned about.
+GAN-Generative Adversarial Network, was praised by "the Father of Convolutional Networks"  **Yann LeCun (Yang Likun)**  as **[One of the most interesting ideas in the field of computer science in the past decade]**. It's the one research area in deep learning that AI researchers are most concerned about.
 
 <div align='center'>
   <img src='./docs/imgs/ppgan.jpg'>
@@ -19,7 +19,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 ## Quick Start
 
-* Please refer [install](./docs/en_US/install.md) to ensure you sucessfully installed PaddlePaddle and PaddleGAN.
+* Please refer to the [installation document](./docs/en_US/install.md) to make sure you have installed PaddlePaddle and PaddleGAN correctly.
 
 * Get started through ppgan.app interface:
 
