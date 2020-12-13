@@ -47,7 +47,7 @@ def main(args, cfg):
         trainer.train()
     except KeyboardInterrupt as e:
         trainer.save(trainer.current_epoch)
-        trainer.vdl_logger.close()
+    trainer.close()
 
 
 if __name__ == '__main__':

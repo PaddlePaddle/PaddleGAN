@@ -48,7 +48,9 @@ class Trainer:
             self.distributed_data_parallel()
 
         self.logger = logging.getLogger(__name__)
-        self.vdl_logger = visualdl.LogWriter(logdir=cfg.output_dir)
+        self.enable_visualdl = cfg.get('enable_visualdl', False)
+        if self.enable_visualdl:
+            self.vdl_logger = visualdl.LogWriter(logdir=cfg.output_dir)
 
         # base config
         self.output_dir = cfg.output_dir
@@ -223,23 +225,17 @@ class Trainer:
 
         for k, v in losses.items():
             message += '%s: %.3f ' % (k, v)
-            self.vdl_logger.add_scalar(k, v, step=self.global_steps)
+            if self.enable_visualdl:
+                self.vdl_logger.add_scalar(k, v, step=self.global_steps)
 
         if hasattr(self, 'step_time'):
             message += 'batch_cost: %.5f sec ' % self.step_time
-            self.vdl_logger.add_scalar('batch_cost',
-                                       self.step_time,
-                                       step=self.global_steps)
 
         if hasattr(self, 'data_time'):
             message += 'reader_cost: %.5f sec ' % self.data_time
-            self.vdl_logger.add_scalar('reader_cost',
-                                       self.data_time,
-                                       step=self.global_steps)
 
         if hasattr(self, 'ips'):
             message += 'ips: %.5f images/s ' % self.ips
-            self.vdl_logger.add_scalar('ips', self.ips, step=self.global_steps)
 
         if hasattr(self, 'step_time'):
             cur_step = self.steps_per_epoch * (self.current_epoch -
@@ -279,21 +275,24 @@ class Trainer:
         if min_max is None:
             min_max = (-1., 1.)
         image_num = self.cfg.get('image_num', None)
-        if image_num is None:
+        if (image_num is None) or (not self.enable_visualdl):
             image_num = 1
-
         for label, image in visual_results.items():
             image_numpy = tensor2img(image, min_max, image_num)
-            if not is_save_image:
+            if (not is_save_image) and self.enable_visualdl:
                 self.vdl_logger.add_image(
                     results_dir + '/' + label,
                     image_numpy,
                     step=step if step else self.global_steps,
                     dataformats="HWC" if image_num == 1 else "NCHW")
             else:
+                if self.cfg.is_train:
+                    msg = 'epoch%.3d_' % self.current_epoch
+                else:
+                    msg = ''
                 makedirs(os.path.join(self.output_dir, results_dir))
                 img_path = os.path.join(self.output_dir, results_dir,
-                                        '%s.png' % (label))
+                                        msg + '%s.png' % (label))
                 save_image(image_numpy, img_path)
 
     def save(self, epoch, name='checkpoint', keep=1):
@@ -347,3 +346,11 @@ class Trainer:
 
         for net_name, net in self.model.nets.items():
             net.set_state_dict(state_dicts[net_name])
+
+    def close(self):
+        """
+        when finish the training need close file handler or other.
+
+        """
+        if self.enable_visualdl:
+            self.vdl_logger.close()

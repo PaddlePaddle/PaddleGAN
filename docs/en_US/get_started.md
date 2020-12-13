@@ -46,6 +46,12 @@ output_dir
         ├── epoch002_rec_A.png
         └── epoch002_rec_B.png
 ```
+
+Also, you can add the parameter ```enable_visualdl: true``` in the configuration file, use [PaddlePaddle VisualDL](https://github.com/PaddlePaddle/VisualDL) record the metrics or images generated in the training process, and run the command to monitor the training process:
+```
+visualdl --logdir output_dir/CycleGANModel-2020-10-29-09-21/
+```
+
 #### Recovery of training
 
 The checkpoint of the previous epoch will be saved by default during the training process to facilitate the recovery of training
