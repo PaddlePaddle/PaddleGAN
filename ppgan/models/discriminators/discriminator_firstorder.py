@@ -7,7 +7,7 @@ from ...modules.first_order import ImagePyramide, detach_kp, kp2gaussian
 
 
 @DISCRIMINATORS.register()
-class FirstOrder_Discriminator(paddle.nn.Layer):
+class FirstOrder_Discriminator(nn.Layer):
     """
     Merge all discriminator related updates into single model for better multi-gpu usage
     """

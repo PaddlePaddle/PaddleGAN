@@ -83,10 +83,10 @@ class FirstOrderGenerator(nn.Layer):
             # jacobian loss part
             if self.loss_weights['equivariance_jacobian'] != 0:
                 jacobian_transformed = paddle.matmul(
-                    *broadcast_v1(transform.jacobian(transformed_kp['value']), transformed_kp['jacobian']))
+                    *broadcast(transform.jacobian(transformed_kp['value']), transformed_kp['jacobian']))
                 normed_driving = paddle.inverse(kp_driving['jacobian'])
                 normed_transformed = jacobian_transformed
-                value = paddle.matmul(*broadcast_v1(normed_driving, normed_transformed))
+                value = paddle.matmul(*broadcast(normed_driving, normed_transformed))
                 eye = paddle.tensor.eye(2, dtype='float32').reshape((1, 1, 2, 2))
             
                 value = paddle.abs(eye - value).mean()
@@ -101,39 +101,40 @@ class conv_block(nn.Layer):
         i = 0
         
         # 'act' is not a parameter of nn.Conv2D
-        self.conv_in = paddle.fluid.dygraph.Conv2D(
+        self.conv_in = nn.Conv2D(
             input_channels,
             num_filter,
             filter_size=3,
             stride=1,
             padding=1,
-            act='relu',
             param_attr=paddle.ParamAttr(name=name + str(i + 1) + "_weights"),
             bias_attr=False if not use_bias else paddle.ParamAttr(name=name + str(i + 1) + "_bias")
         )
+        self.conv_in_act = nn.Relu()
         if groups == 1:
             return
         for i in range(1, groups):
-            _a = paddle.fluid.dygraph.Conv2D(
+            _a = nn.Conv2D(
                 num_filter,
                 num_filter,
                 filter_size=3,
                 stride=1,
                 padding=1,
-                act='relu',
                 param_attr=paddle.ParamAttr(name=name + str(i + 1) + "_weights"),
                 bias_attr=False if not use_bias else paddle.ParamAttr(name=name + str(i + 1) + "_bias")
             )
             self._layers.append(_a)
+            self._layers.append(nn.Relu())
         self.conv = nn.Sequential(*self._layers)
     
     def forward(self, x):
         feat = self.conv_in(x)
+        feat = self.conv_in_act(feat)
         out = F.max_pool2d(self.conv(feat), kernel_size=2, stride=2)
         return out, feat
 
 
-class Vgg19(paddle.nn.Layer):
+class Vgg19(nn.Layer):
     """
     Vgg19 network for perceptual loss. See Sec 3.3.
     """
@@ -210,7 +211,7 @@ class Transform:
         theta_part_b = theta[:, :, :, 2:]
         
         # TODO: paddle.matmul have no double_grad_op, use 'paddle.fluid.layers.matmul'
-        transformed = paddle.fluid.layers.matmul(*broadcast_v1(theta_part_a, coordinates)) + theta_part_b
+        transformed = paddle.fluid.layers.matmul(*broadcast(theta_part_a, coordinates)) + theta_part_b
         transformed = transformed.squeeze(-1)
         if self.tps:
             control_points = self.control_points.astype('float32')
@@ -235,13 +236,12 @@ class Transform:
         return jacobian
 
 
-def broadcast_v1(x, y):
+def broadcast(x, y):
     """
     Broadcast before matmul
     """
     if len(x.shape) != len(y.shape):
-        print(x.shape, '!=', y.shape)
-        raise ValueError()
+        raise ValueError(x.shape, '!=', y.shape)
     *dim_x, _, _ = x.shape
     *dim_y, _, _ = y.shape
     max_shape = np.max(np.stack([dim_x, dim_y], axis=0), axis=0)

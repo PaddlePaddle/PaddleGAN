@@ -17,7 +17,7 @@ import paddle.nn as nn
 import paddle.nn.functional as F
 
 
-class ImagePyramide(paddle.nn.Layer):
+class ImagePyramide(nn.Layer):
     """
     Create image pyramide for computing pyramide perceptual loss. See Sec 3.3
     """

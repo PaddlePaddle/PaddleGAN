@@ -1,4 +1,5 @@
 import paddle
+from paddle.optimizer.lr import MultiStepDecay
 
 from .base_model import BaseModel
 from .builder import MODELS
@@ -40,7 +41,6 @@ class FirstOrderModel(BaseModel):
             self.losses = {}
             
             # build optimizers
-            from paddle.optimizer.lr import MultiStepDecay
             lr_cfg = cfg.lr_scheduler
             self.kp_lr = MultiStepDecay(learning_rate=lr_cfg['lr_kp_detector'],
                                         milestones=lr_cfg['epoch_milestones'], gamma=0.1)
