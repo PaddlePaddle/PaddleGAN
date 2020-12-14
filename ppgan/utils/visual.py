@@ -36,10 +36,8 @@ def make_grid(tensor, nrow=8, normalize=False, range=None, scale_each=False):
             images separately rather than the (min, max) over all images. Default: ``False``.
     """
     if not (isinstance(tensor, paddle.Tensor) or
-            (isinstance(tensor, list)
-             and all(isinstance(tensor, t) for t in tensor))):
-        raise TypeError('tensor or list of tensors expected, got {}'.format(
-            type(tensor)))
+            (isinstance(tensor, list) and all(isinstance(t, paddle.Tensor) for t in tensor))):
+        raise TypeError('tensor or list of tensors expected, got {}'.format(type(tensor)))
 
     # if list of tensors, convert to a 4D mini-batch Tensor
     if isinstance(tensor, list):

@@ -120,7 +120,7 @@ class DAINPredictor(BasePredictor):
         if not os.path.exists(os.path.join(frame_path_combined, vidname)):
             os.makedirs(os.path.join(frame_path_combined, vidname))
 
-        for i in range(frame_num - 1):
+        for i in tqdm(range(frame_num - 1)):
             first = frames[i]
             second = frames[i + 1]
             first_index = int(first.split('/')[-1].split('.')[-2])
