@@ -17,8 +17,8 @@ dataset:
     name: SRDataset
     gt_folder: data/DIV2K/DIV2K_train_HR_sub
     lq_folder: data/DIV2K/DIV2K_train_LR_bicubic/X4_sub
-    num_workers: 6
-    batch_size: 32
+    num_workers: 4
+    batch_size: 16
     scale: 4
     preprocess:
       - name: LoadImageFromFile
@@ -95,7 +95,7 @@ validate:
       test_y_channel: false
 
 log_config:
-  interval: 100
+  interval: 10
   visiual_interval: 500
 
 snapshot_config:

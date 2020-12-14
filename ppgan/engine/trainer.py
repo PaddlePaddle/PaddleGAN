@@ -218,7 +218,7 @@ class Trainer:
 
         if self.metrics:
             for metric_name, metric in self.metrics.items():
-                print(metric_name, metric.get())
+                self.logger.info(metric_name, metric.get())
 
     def print_log(self):
         losses = self.model.get_current_losses()
