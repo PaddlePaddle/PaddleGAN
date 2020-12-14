@@ -14,12 +14,13 @@
 
 import cv2
 import numpy as np
+import paddle
 
 from .builder import METRICS
 
 
 @METRICS.register()
-class PSNR(object):
+class PSNR(paddle.metric.Metric):
     def __init__(self, crop_border, input_order='HWC', test_y_channel=False):
         self.crop_border = crop_border
         self.input_order = input_order
@@ -41,10 +42,13 @@ class PSNR(object):
                                    self.test_y_channel)
             self.results.append(value)
 
-    def get(self):
+    def accumulate(self):
         if len(self.results) <= 0:
             return 0.
         return np.mean(self.results)
+
+    def name(self):
+        return 'PSNR'
 
 
 @METRICS.register()
@@ -60,6 +64,9 @@ class SSIM(PSNR):
             value = calculate_ssim(pred, gt, self.crop_border, self.input_order,
                                    self.test_y_channel)
             self.results.append(value)
+
+    def name(self):
+        return 'SSIM'
 
 
 def calculate_psnr(img1,

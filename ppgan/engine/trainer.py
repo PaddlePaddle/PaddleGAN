@@ -218,7 +218,8 @@ class Trainer:
 
         if self.metrics:
             for metric_name, metric in self.metrics.items():
-                self.logger.info(metric_name, metric.get())
+                self.logger.info("Metric {}: {:.4f}".format(
+                    metric_name, metric.accumulate()))
 
     def print_log(self):
         losses = self.model.get_current_losses()

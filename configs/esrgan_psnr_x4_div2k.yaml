@@ -84,7 +84,7 @@ optimizer:
   beta2: 0.99
 
 validate:
-  interval: 500
+  interval: 5000
   save_img: false
 
   metrics:
