@@ -21,7 +21,6 @@ import datetime
 
 import paddle
 from paddle.distributed import ParallelEnv
-import visualdl
 
 from ..datasets.builder import build_dataloader
 from ..models.builder import build_model
@@ -50,6 +49,7 @@ class Trainer:
         self.logger = logging.getLogger(__name__)
         self.enable_visualdl = cfg.get('enable_visualdl', False)
         if self.enable_visualdl:
+            import visualdl
             self.vdl_logger = visualdl.LogWriter(logdir=cfg.output_dir)
 
         # base config
