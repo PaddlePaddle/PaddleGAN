@@ -1,5 +1,8 @@
 total_iters: 1000000
 output_dir: output_dir
+# tensor range for function tensor2img
+min_max:
+  (0., 1.)
 
 model:
   name: BaseSRModel
@@ -100,6 +103,3 @@ log_config:
 
 snapshot_config:
   interval: 5000
-
-min_max:
-  (0., 1.)

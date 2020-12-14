@@ -2,6 +2,21 @@
 
 ppgan.apps包含超分、插针、上色、换妆、图像动画生成、人脸解析等应用，接口使用简洁，并内置了已训练好的模型，可以直接用来做应用。
 
+* 超分:
+  * [RealSR](#ppgan.apps.DeOldifyPredictor)
+  * [EDVR](#ppgan.apps.EDVRPredictor)
+* 上色:
+  * [DeOldify](#ppgan.apps.DeOldifyPredictor)
+  * [DeepRemaster](#ppgan.apps.DeepRemasterPredictor)
+* 插针:
+  * [DAIN](#ppgan.apps.DAINPredictor)
+* 图像工作驱动:
+  * [FirstOrder](#ppgan.apps.FirstOrderPredictor)
+* 人脸:
+  * [FaceFaceParse](#ppgan.apps.FaceParsePredictor)
+* 动漫画:
+  * [AnimeGAN](#ppgan.apps.AnimeGANPredictor)
+
 ## 公共用法
 
 ### CPU和GPU的切换
@@ -351,3 +366,68 @@ ppgan.apps.FaceParsePredictor(output_path='output')
 > ```
 > **返回值:**
 > > - mask(numpy.ndarray): 返回解析完成的人脸成分mask矩阵, 数据类型为numpy.ndarray
+
+## ppgan.apps.AnimeGANPredictor
+
+```pyhton
+ppgan.apps.AnimeGANPredictor(output_path='output_dir',weight_path=None,use_adjust_brightness=True)
+```
+> 利用animeganv2来对景物图像进行动漫风格化。论文是 AnimeGAN: A Novel Lightweight GAN for Photo Animation, 论文链接: https://link.springer.com/chapter/10.1007/978-981-15-5577-0_18.
+
+> **参数:**
+>
+> > - input_image: 输入待解析的图片文件路径
+
+> **示例:**
+>
+> ```
+> from ppgan.apps import AnimeGANPredictor
+> predictor = AnimeGANPredictor()
+> predictor.run('docs/imgs/animeganv2_test.jpg')
+> ```
+> **返回值:**
+> > - anime_image(numpy.ndarray): 返回风格化后的景色图像
+
+
+## ppgan.apps.MiDaSPredictor
+
+```pyhton
+ppgan.apps.MiDaSPredictor(output=None, weight_path=None)
+```
+
+> 单目深度估计模型MiDaSv2, 参考 https://github.com/intel-isl/MiDaS, 论文是 Towards Robust Monocular Depth Estimation: Mixing Datasets for Zero-shot Cross-dataset Transfer , 论文链接: https://arxiv.org/abs/1907.01341v3
+
+> **示例**
+>
+> ```python
+> from ppgan.apps import MiDaSPredictor
+> # if set output, will write depth pfm and png file in output/MiDaS
+> model = MiDaSPredictor()
+> prediction = model.run()
+> ```
+>
+> 深度图彩色显示:
+>
+> ```python
+> import numpy as np
+> import PIL.Image as Image
+> import matplotlib as mpl
+> import matplotlib.cm as cm
+>
+> vmax = np.percentile(prediction, 95)
+> normalizer = mpl.colors.Normalize(vmin=prediction.min(), vmax=vmax)
+> mapper = cm.ScalarMappable(norm=normalizer, cmap='magma')
+> colormapped_im = (mapper.to_rgba(prediction)[:, :, :3] * 255).astype(np.uint8)
+> im = Image.fromarray(colormapped_im)
+> im.save('test_disp.jpeg')
+> ```
+>
+> **参数:**
+>
+> > - output (str): 输出路径，如果是None，则不保存pfm和png的深度图文件。
+> > - weight_path (str): 指定模型路径，默认是None，则会自动下载内置的已经训练好的模型。
+
+> **返回值:**
+> > - prediction (numpy.ndarray): 返回预测结果。
+> > - pfm_f (str): 如果设置output路径，返回pfm文件保存路径。
+> > - png_f (str): 如果设置output路径，返回png文件保存路径。

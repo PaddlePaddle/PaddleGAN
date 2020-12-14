@@ -17,3 +17,5 @@ from .single_dataset import SingleDataset
 from .paired_dataset import PairedDataset
 from .base_sr_dataset import SRDataset
 from .makeup_dataset import MakeupDataset
+from .common_vision_dataset import CommonVisionDataset
+from .animeganv2_dataset import AnimeGANV2Dataset

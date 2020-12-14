@@ -1,0 +1,67 @@
+epochs: 200
+output_dir: output_dir
+
+model:
+  name: GANModel
+  generator:
+    name: ConditionalDeepConvGenerator
+    latent_dim: 128
+    output_nc: 1
+    size: 28
+    ngf: 64
+    n_class: 10
+  discriminator:
+    name: NLayerDiscriminatorWithClassification
+    ndf: 16
+    n_layers: 3
+    input_nc: 1
+    norm_type: batch
+    n_class: 10
+    use_sigmoid: True
+  gan_mode: vanilla
+
+dataset:
+  train:
+    name: CommonVisionDataset
+    class_name: MNIST
+    dataroot: None
+    num_workers: 4
+    batch_size: 64
+    mode: train
+    return_cls: True
+    transforms:
+      - name: Normalize
+        mean: [127.5]
+        std: [127.5]
+        keys: [image]
+  test:
+    name: CommonVisionDataset
+    class_name: MNIST
+    dataroot: None
+    num_workers: 0
+    batch_size: 64
+    mode: test
+    transforms:
+      - name: Normalize
+        mean: [127.5]
+        std: [127.5]
+        keys: [image]
+    return_cls: True
+
+
+optimizer:
+  name: Adam
+  beta1: 0.5
+
+lr_scheduler:
+  name: linear
+  learning_rate: 0.0002
+  start_epoch: 100
+  decay_epochs: 100
+
+log_config:
+  interval: 100
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 5

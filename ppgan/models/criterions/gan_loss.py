@@ -17,6 +17,7 @@ import numpy as np
 import paddle
 import paddle.nn as nn
 from .builder import CRITERIONS
+import paddle.nn.functional as F
 
 
 @CRITERIONS.register()
@@ -55,7 +56,7 @@ class GANLoss(nn.Layer):
             self.loss = nn.MSELoss()
         elif gan_mode == 'vanilla':
             self.loss = nn.BCEWithLogitsLoss()
-        elif gan_mode in ['wgangp']:
+        elif gan_mode in ['wgan', 'wgangp', 'hinge', 'logistic']:
             self.loss = None
         else:
             raise NotImplementedError('gan mode %s not implemented' % gan_mode)
@@ -87,12 +88,17 @@ class GANLoss(nn.Layer):
 
         return target_tensor
 
-    def __call__(self, prediction, target_is_real, is_disc=False):
+    def __call__(self,
+                 prediction,
+                 target_is_real,
+                 is_disc=False,
+                 is_updating_D=None):
         """Calculate loss given Discriminator's output and grount truth labels.
 
         Args:
             prediction (tensor) - - tpyically the prediction output from a discriminator
             target_is_real (bool) - - if the ground truth label is for real images or fake images
+            is_updating_D (bool)  - - if we are in updating D step or not
 
         Returns:
             the calculated loss.
@@ -100,9 +106,21 @@ class GANLoss(nn.Layer):
         if self.gan_mode in ['lsgan', 'vanilla']:
             target_tensor = self.get_target_tensor(prediction, target_is_real)
             loss = self.loss(prediction, target_tensor)
-        elif self.gan_mode == 'wgangp':
+        elif self.gan_mode.find('wgan') != -1:
             if target_is_real:
                 loss = -prediction.mean()
             else:
                 loss = prediction.mean()
+        elif self.gan_mode == 'hinge':
+            if target_is_real:
+                loss = F.relu(1 - prediction) if is_updating_D else -prediction
+            else:
+                loss = F.relu(1 + prediction) if is_updating_D else prediction
+            loss = loss.mean()
+        elif self.gan_mode == 'logistic':
+            if target_is_real:
+                loss = F.softplus(-prediction).mean()
+            else:
+                loss = F.softplus(prediction).mean()
+
         return loss if is_disc else loss * self.loss_weight

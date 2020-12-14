@@ -19,3 +19,5 @@ from .realsr_predictor import RealSRPredictor
 from .edvr_predictor import EDVRPredictor
 from .first_order_predictor import FirstOrderPredictor
 from .face_parse_predictor import FaceParsePredictor
+from .animegan_predictor import AnimeGANPredictor
+from .midas_predictor import MiDaSPredictor
