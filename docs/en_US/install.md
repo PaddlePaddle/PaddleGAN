@@ -3,7 +3,7 @@
 ### requirements
 
 * PaddlePaddle >= 2.0.0-rc
-* Python >= 3.5+
+* Python >= 3.6
 * CUDA >= 9.0
 
 ### 1. Install PaddlePaddle
