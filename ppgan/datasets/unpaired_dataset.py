@@ -12,80 +12,68 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import cv2
 import random
 import os.path
-from .base_dataset import BaseDataset, get_transform
-from .image_folder import make_dataset
 
+from .base_dataset import BaseDataset
 from .builder import DATASETS
-from .transforms.builder import build_transforms
 
 
 @DATASETS.register()
 class UnpairedDataset(BaseDataset):
     """
     """
-    def __init__(self, cfg):
-        """Initialize this dataset class.
+    def __init__(self, dataroot_a, dataroot_b, max_size, is_train, preprocess):
+        """Initialize unpaired dataset class.
 
         Args:
-            cfg (dict) -- stores all the experiment flags
+            dataroot_a (str): Directory of dataset a.
+            dataroot_b (str): Directory of dataset b.
+            max_size (int): max size of dataset size.
+            is_train (int): whether in train mode.
+            preprocess (list[dict]): A sequence of data preprocess config.
+
         """
-        BaseDataset.__init__(self, cfg)
-        self.dir_A = os.path.join(cfg.dataroot, cfg.phase +
-                                  'A')  # create a path '/path/to/data/trainA'
-        self.dir_B = os.path.join(cfg.dataroot, cfg.phase +
-                                  'B')  # create a path '/path/to/data/trainB'
+        super(UnpairedDataset, self).__init__(preprocess)
+        self.dir_A = os.path.join(dataroot_a)
+        self.dir_B = os.path.join(dataroot_b)
+        self.is_train = is_train
+        self.data_infos_a = self.prepare_data_infos(self.dir_A)
+        self.data_infos_b = self.prepare_data_infos(self.dir_B)
+        self.size_a = len(self.data_infos_a)
+        self.size_b = len(self.data_infos_b)
 
-        self.A_paths = sorted(make_dataset(
-            self.dir_A,
-            cfg.max_dataset_size))  # load images from '/path/to/data/trainA'
-        self.B_paths = sorted(make_dataset(
-            self.dir_B,
-            cfg.max_dataset_size))  # load images from '/path/to/data/trainB'
-        self.A_size = len(self.A_paths)  # get the size of dataset A
-        self.B_size = len(self.B_paths)  # get the size of dataset B
-        btoA = self.cfg.direction == 'BtoA'
-        input_nc = self.cfg.output_nc if btoA else self.cfg.input_nc  # get the number of channels of input image
-        output_nc = self.cfg.input_nc if btoA else self.cfg.output_nc  # get the number of channels of output image
+    def prepare_data_infos(self, dataroot):
+        """Load unpaired image paths of one domain.
 
-        self.transform_A = build_transforms(self.cfg.transforms)
-        self.transform_B = build_transforms(self.cfg.transforms)
+        Args:
+            dataroot (str): Path to the folder root for unpaired images of
+                one domain.
 
-        self.reset_paths()
-
-    def reset_paths(self):
-        self.path_dict = {}
-
-    def __getitem__(self, index):
-        """Return a data point and its metadata information.
-
-        Parameters:
-            index (int)      -- a random integer for data indexing
-
-        Returns a dictionary that contains A, B, A_paths and B_paths
-            A (tensor)       -- an image in the input domain
-            B (tensor)       -- its corresponding image in the target domain
-            A_paths (str)    -- image paths
-            B_paths (str)    -- image paths
+        Returns:
+            list[dict]: List that contains unpaired image paths of one domain.
         """
-        A_path = self.A_paths[
-            index % self.A_size]  # make sure index is within then range
-        if self.cfg.serial_batches:  # make sure index is within then range
-            index_B = index % self.B_size
-        else:  # randomize the index for domain B to avoid fixed pairs.
-            index_B = random.randint(0, self.B_size - 1)
-        B_path = self.B_paths[index_B]
+        data_infos = []
+        paths = sorted(self.scan_folder(dataroot))
+        for path in paths:
+            data_infos.append(dict(path=path))
+        return data_infos
 
-        A_img = cv2.cvtColor(cv2.imread(A_path), cv2.COLOR_BGR2RGB)
-        B_img = cv2.cvtColor(cv2.imread(B_path), cv2.COLOR_BGR2RGB)
-        # apply image transformation
-        A = self.transform_A(A_img)
-        B = self.transform_B(B_img)
+    def __getitem__(self, idx):
+        if self.is_train:
+            img_a_path = self.data_infos_a[idx % self.size_a]['path']
+            idx_b = random.randint(0, self.size_b)
+            img_b_path = self.data_infos_b[idx_b]['path']
+            datas = dict(A_path=img_a_path, B_path=img_b_path)
+        else:
+            img_a_path = self.data_infos_a[idx % self.size_a]['path']
+            img_b_path = self.data_infos_b[idx % self.size_b]['path']
+            datas = dict(A_path=img_a_path, B_path=img_b_path)
 
-        # return A, B
-        return {'A': A, 'B': B, 'A_paths': A_path, 'B_paths': B_path}
+        if self.preprocess:
+            datas = self.preprocess(datas)
+
+        return datas
 
     def __len__(self):
         """Return the total number of images in the dataset.
@@ -93,4 +81,4 @@ class UnpairedDataset(BaseDataset):
         As we have two datasets with potentially different number of images,
         we take a maximum of
         """
-        return max(self.A_size, self.B_size)
+        return max(self.size_a, self.size_b)

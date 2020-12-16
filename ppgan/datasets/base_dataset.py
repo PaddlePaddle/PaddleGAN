@@ -12,105 +12,124 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# code was heavily based on https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix
-import random
-import numpy as np
+import os
+from pathlib import Path
+from abc import ABCMeta, abstractmethod
 
 from paddle.io import Dataset
-from PIL import Image
-import cv2
 
-import paddle.vision.transforms as transforms
-from .transforms import transforms as T
-from abc import ABC, abstractmethod
+from .preprocess import build_preprocess
+
+IMG_EXTENSIONS = ('.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG', '.ppm',
+                  '.PPM', '.bmp', '.BMP')
 
 
-class BaseDataset(Dataset, ABC):
-    """This class is an abstract base class (ABC) for datasets.
+def scandir(dir_path, suffix=None, recursive=False):
+    """Scan a directory to find the interested files.
+
+    Args:
+        dir_path (str | obj:`Path`): Path of the directory.
+        suffix (str | tuple(str), optional): File suffix that we are
+            interested in. Default: None.
+        recursive (bool, optional): If set to True, recursively scan the
+            directory. Default: False.
+
+    Returns:
+        A generator for all the interested files with relative pathes.
     """
-    def __init__(self, cfg):
-        """Initialize the class; save the options in the class
+    if isinstance(dir_path, (str, Path)):
+        dir_path = str(dir_path)
+    else:
+        raise TypeError('"dir_path" must be a string or Path object')
+
+    if (suffix is not None) and not isinstance(suffix, (str, tuple)):
+        raise TypeError('"suffix" must be a string or tuple of strings')
+
+    root = dir_path
+
+    def _scandir(dir_path, suffix, recursive):
+        for entry in os.scandir(dir_path):
+            if not entry.name.startswith('.') and entry.is_file():
+                rel_path = os.path.relpath(entry.path, root)
+                if suffix is None:
+                    yield rel_path
+                elif rel_path.endswith(suffix):
+                    yield rel_path
+            else:
+                if recursive:
+                    yield from _scandir(entry.path,
+                                        suffix=suffix,
+                                        recursive=recursive)
+                else:
+                    continue
+
+    return _scandir(dir_path, suffix=suffix, recursive=recursive)
+
+
+class BaseDataset(Dataset, metaclass=ABCMeta):
+    """Base class for datasets.
+
+    All datasets should subclass it.
+    All subclasses should overwrite:
+
+        ``prepare_data_infos``, supporting to load information and generate
+        image lists.
+
+    Args:
+        preprocess (list[dict]): A sequence of data preprocess config.
+
+    """
+    def __init__(self, preprocess=None):
+        super(BaseDataset, self).__init__()
+
+        if preprocess:
+            self.preprocess = build_preprocess(preprocess)
+
+    @abstractmethod
+    def prepare_data_infos(self):
+        """Abstract function for loading annotation.
+
+        All subclasses should overwrite this function
+        should set self.annotations in this fucntion
+        data_infos should be as list of dict:
+        [{key_path: file_path}, {key_path: file_path}, {key_path: file_path}]
+        """
+        self.data_infos = None
+
+    @staticmethod
+    def scan_folder(path):
+        """Obtain sample path list (including sub-folders) from a given folder.
 
         Args:
-            cfg (dict) -- stores all the experiment flags
-        """
-        self.cfg = cfg
-        self.root = cfg.dataroot
-
-    @abstractmethod
-    def __len__(self):
-        """Return the total number of images in the dataset."""
-        return 0
-
-    @abstractmethod
-    def __getitem__(self, index):
-        """Return a data point and its metadata information.
-
-        Parameters:
-            index - - a random integer for data indexing
+            path (str|pathlib.Path): Folder path.
 
         Returns:
-            a dictionary of data with their names. It ususally contains the data itself and its metadata information.
+            list[str]: sample list obtained form given folder.
         """
-        pass
 
-
-def get_params(cfg, size):
-    w, h = size
-    new_h = h
-    new_w = w
-    if cfg.preprocess == 'resize_and_crop':
-        new_h = new_w = cfg.load_size
-    elif cfg.preprocess == 'scale_width_and_crop':
-        new_w = cfg.load_size
-        new_h = cfg.load_size * h // w
-
-    x = random.randint(0, np.maximum(0, new_w - cfg.crop_size))
-    y = random.randint(0, np.maximum(0, new_h - cfg.crop_size))
-
-    flip = random.random() > 0.5
-
-    return {'crop_pos': (x, y), 'flip': flip}
-
-
-def get_transform(cfg,
-                  params=None,
-                  grayscale=False,
-                  method=cv2.INTER_CUBIC,
-                  convert=True):
-    transform_list = []
-    if grayscale:
-        print('grayscale not support for now!!!')
-        pass
-    if 'resize' in cfg.preprocess:
-        osize = (cfg.load_size, cfg.load_size)
-        transform_list.append(transforms.Resize(osize, method))
-    elif 'scale_width' in cfg.preprocess:
-        print('scale_width not support for now!!!')
-        pass
-
-    if 'crop' in cfg.preprocess:
-
-        if params is None:
-            transform_list.append(T.RandomCrop(cfg.crop_size))
+        if isinstance(path, (str, Path)):
+            path = str(path)
         else:
-            transform_list.append(T.Crop(params['crop_pos'], cfg.crop_size))
+            raise TypeError("'path' must be a str or a Path object, "
+                            f'but received {type(path)}.')
 
-    if cfg.preprocess == 'none':
-        print('preprocess not support for now!!!')
-        pass
+        samples = list(scandir(path, suffix=IMG_EXTENSIONS, recursive=True))
+        samples = [os.path.join(path, v) for v in samples]
+        assert samples, '{} has no valid image file.'.format(path)
+        return samples
 
-    if not cfg.no_flip:
-        if params is None:
-            transform_list.append(transforms.RandomHorizontalFlip())
-        elif params['flip']:
-            transform_list.append(transforms.RandomHorizontalFlip(1.0))
+    def __getitem__(self, idx):
+        datas = self.data_infos[idx]
 
-    if convert:
-        transform_list += [transforms.Permute(to_rgb=True)]
-        if cfg.get('normalize', None):
-            transform_list += [
-                transforms.Normalize(cfg.normalize.mean, cfg.normalize.std)
-            ]
+        if hasattr(self, 'preprocess') and self.preprocess:
+            datas = self.preprocess(datas)
 
-    return transforms.Compose(transform_list)
+        return datas
+
+    def __len__(self):
+        """Length of the dataset.
+
+        Returns:
+            int: Length of the dataset.
+        """
+        return len(self.data_infos)

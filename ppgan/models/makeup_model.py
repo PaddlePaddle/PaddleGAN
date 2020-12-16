@@ -15,8 +15,7 @@ import os
 import numpy as np
 
 import paddle
-import paddle.nn as nn
-import paddle.nn.functional as F
+
 from paddle.vision.models import vgg16
 from paddle.utils.download import get_path_from_url
 from .base_model import BaseModel
@@ -24,12 +23,10 @@ from .base_model import BaseModel
 from .builder import MODELS
 from .generators.builder import build_generator
 from .discriminators.builder import build_discriminator
-from .losses import GANLoss
+from .criterions import build_criterion
 from ..modules.init import init_weights
-from ..solver import build_optimizer
 from ..utils.image_pool import ImagePool
 from ..utils.preprocess import *
-from ..datasets.makeup_dataset import MakeupDataset
 
 VGGFACE_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/vggface.pdparams'
 
@@ -39,18 +36,32 @@ class MakeupModel(BaseModel):
     """
     PSGAN paper: https://arxiv.org/pdf/1909.06956.pdf
     """
-    def __init__(self, cfg):
+    def __init__(self,
+                 generator,
+                 discriminator=None,
+                 cycle_criterion=None,
+                 idt_criterion=None,
+                 gan_criterion=None,
+                 l1_criterion=None,
+                 l2_criterion=None,
+                 pool_size=50,
+                 direction='a2b',
+                 lambda_a=10.,
+                 lambda_b=10.,
+                 is_train=True):
         """Initialize the PSGAN class.
 
         Parameters:
             cfg (dict)-- config of model.
         """
-        super(MakeupModel, self).__init__(cfg)
-
+        super(MakeupModel, self).__init__()
+        self.lambda_a = lambda_a
+        self.lambda_b = lambda_b
+        self.is_train = is_train
         # define networks (both Generators and discriminators)
         # The naming is different from those used in the paper.
         # Code (vs. paper): G_A (G), G_B (F), D_A (D_Y), D_B (D_X)
-        self.nets['netG'] = build_generator(cfg.model.generator)
+        self.nets['netG'] = build_generator(generator)
         init_weights(self.nets['netG'], init_type='xavier', init_gain=1.0)
 
         if self.is_train:  # define discriminators
@@ -61,46 +72,33 @@ class MakeupModel(BaseModel):
             param = paddle.load(vgg_weight_path)
             vgg.load_dict(param)
 
-            self.nets['netD_A'] = build_discriminator(cfg.model.discriminator)
-            self.nets['netD_B'] = build_discriminator(cfg.model.discriminator)
+            self.nets['netD_A'] = build_discriminator(discriminator)
+            self.nets['netD_B'] = build_discriminator(discriminator)
             init_weights(self.nets['netD_A'], init_type='xavier', init_gain=1.0)
             init_weights(self.nets['netD_B'], init_type='xavier', init_gain=1.0)
 
-            self.fake_A_pool = ImagePool(
-                cfg.dataset.train.pool_size
-            )  # create image buffer to store previously generated images
-            self.fake_B_pool = ImagePool(
-                cfg.dataset.train.pool_size
-            )  # create image buffer to store previously generated images
+            # create image buffer to store previously generated images
+            self.fake_A_pool = ImagePool(pool_size)
+            self.fake_B_pool = ImagePool(pool_size)
+
             # define loss functions
-            self.criterionGAN = GANLoss(
-                cfg.model.gan_mode)  #.to(self.device)  # define GAN loss.
-            self.criterionCycle = paddle.nn.L1Loss()
-            self.criterionIdt = paddle.nn.L1Loss()
-            self.criterionL1 = paddle.nn.L1Loss()
-            self.criterionL2 = paddle.nn.MSELoss()
+            if gan_criterion:
+                self.gan_criterion = build_criterion(gan_criterion)
+            if cycle_criterion:
+                self.cycle_criterion = build_criterion(cycle_criterion)
+            if idt_criterion:
+                self.idt_criterion = build_criterion(idt_criterion)
+            if l1_criterion:
+                self.l1_criterion = build_criterion(l1_criterion)
+            if l2_criterion:
+                self.l2_criterion = build_criterion(l2_criterion)
 
-            self.build_lr_scheduler()
-            self.optimizers['optimizer_G'] = build_optimizer(
-                cfg.optimizer,
-                self.lr_scheduler,
-                parameter_list=self.nets['netG'].parameters())
-            self.optimizers['optimizer_DA'] = build_optimizer(
-                cfg.optimizer,
-                self.lr_scheduler,
-                parameter_list=self.nets['netD_A'].parameters())
-            self.optimizers['optimizer_DB'] = build_optimizer(
-                cfg.optimizer,
-                self.lr_scheduler,
-                parameter_list=self.nets['netD_B'].parameters())
-
-    def set_input(self, input):
+    def setup_input(self, input):
         """Unpack input data from the dataloader and perform necessary pre-processing steps.
 
-        Parameters:
+        Args:
             input (dict): include the data itself and its metadata information.
 
-        The option 'direction' can be used to swap domain A and domain B.
         """
         self.real_A = paddle.to_tensor(input['image_A'])
         self.real_B = paddle.to_tensor(input['image_B'])
@@ -143,24 +141,6 @@ class MakeupModel(BaseModel):
         self.visual_items['fake_A'] = self.fake_A
         self.visual_items['rec_B'] = self.rec_B
 
-    def forward_test(self, input):
-        '''
-        not implement now
-        '''
-        return self.nets['netG'](input['image_A'], input['image_B'],
-                                 input['P_A'], input['P_B'],
-                                 input['consis_mask'], input['mask_A_aug'],
-                                 input['mask_B_aug'])
-
-    def test(self, input):
-        """Forward function used in test time.
-
-        This function wraps <forward> function in no_grad() so we don't save intermediate steps for backprop
-        It also calls <compute_visuals> to produce additional visualization results
-        """
-        with paddle.no_grad():
-            return self.forward_test(input)
-
     def backward_D_basic(self, netD, real, fake):
         """Calculate GAN loss for the discriminator
 
@@ -174,10 +154,10 @@ class MakeupModel(BaseModel):
         """
         # Real
         pred_real = netD(real)
-        loss_D_real = self.criterionGAN(pred_real, True)
+        loss_D_real = self.gan_criterion(pred_real, True)
         # Fake
         pred_fake = netD(fake.detach())
-        loss_D_fake = self.criterionGAN(pred_fake, False)
+        loss_D_fake = self.gan_criterion(pred_fake, False)
         # Combined loss and calculate gradients
         loss_D = (loss_D_real + loss_D_fake) * 0.5
         loss_D.backward()
@@ -200,24 +180,24 @@ class MakeupModel(BaseModel):
     def backward_G(self):
         """Calculate the loss for generators G_A and G_B"""
 
-        lambda_idt = self.cfg.lambda_identity
-        lambda_A = self.cfg.lambda_A
-        lambda_B = self.cfg.lambda_B
+        lambda_A = self.lambda_a
+        lambda_B = self.lambda_b
         lambda_vgg = 5e-3
+
         # Identity loss
-        if lambda_idt > 0:
+        if self.idt_criterion:
             self.idt_A, _ = self.nets['netG'](self.real_A, self.real_A,
                                               self.P_A, self.P_A,
                                               self.c_m_idt_a, self.mask_A_aug,
                                               self.mask_B_aug)  # G_A(A)
-            self.loss_idt_A = self.criterionIdt(
-                self.idt_A, self.real_A) * lambda_A * lambda_idt
+            self.loss_idt_A = self.idt_criterion(self.idt_A,
+                                                 self.real_A) * lambda_A
             self.idt_B, _ = self.nets['netG'](self.real_B, self.real_B,
                                               self.P_B, self.P_B,
                                               self.c_m_idt_b, self.mask_A_aug,
                                               self.mask_B_aug)  # G_A(A)
-            self.loss_idt_B = self.criterionIdt(
-                self.idt_B, self.real_B) * lambda_B * lambda_idt
+            self.loss_idt_B = self.idt_criterion(self.idt_B,
+                                                 self.real_B) * lambda_B
 
             # visual
             self.visual_items['idt_A'] = self.idt_A
@@ -227,17 +207,17 @@ class MakeupModel(BaseModel):
             self.loss_idt_B = 0
 
         # GAN loss D_A(G_A(A))
-        self.loss_G_A = self.criterionGAN(self.nets['netD_A'](self.fake_A),
-                                          True)
+        self.loss_G_A = self.gan_criterion(self.nets['netD_A'](self.fake_A),
+                                           True)
         # GAN loss D_B(G_B(B))
-        self.loss_G_B = self.criterionGAN(self.nets['netD_B'](self.fake_B),
-                                          True)
+        self.loss_G_B = self.gan_criterion(self.nets['netD_B'](self.fake_B),
+                                           True)
         # Forward cycle loss || G_B(G_A(A)) - A||
-        self.loss_cycle_A = self.criterionCycle(self.rec_A,
-                                                self.real_A) * lambda_A
+        self.loss_cycle_A = self.cycle_criterion(self.rec_A,
+                                                 self.real_A) * lambda_A
         # Backward cycle loss || G_A(G_B(B)) - B||
-        self.loss_cycle_B = self.criterionCycle(self.rec_B,
-                                                self.real_B) * lambda_B
+        self.loss_cycle_B = self.cycle_criterion(self.rec_B,
+                                                 self.real_B) * lambda_B
 
         self.losses['G_A_adv_loss'] = self.loss_G_A
         self.losses['G_B_adv_loss'] = self.loss_G_B
@@ -270,8 +250,10 @@ class MakeupModel(BaseModel):
         fake_match_lip_B = fake_match_lip_B.unsqueeze(0)
         fake_A_lip_masked = fake_A * mask_A_lip
         fake_B_lip_masked = fake_B * mask_B_lip
-        g_A_lip_loss_his = self.criterionL1(fake_A_lip_masked, fake_match_lip_A)
-        g_B_lip_loss_his = self.criterionL1(fake_B_lip_masked, fake_match_lip_B)
+        g_A_lip_loss_his = self.l1_criterion(fake_A_lip_masked,
+                                             fake_match_lip_A)
+        g_B_lip_loss_his = self.l1_criterion(fake_B_lip_masked,
+                                             fake_match_lip_B)
 
         #skin
         mask_A_skin = self.mask_A_aug[:, 1].unsqueeze(1)
@@ -294,10 +276,10 @@ class MakeupModel(BaseModel):
         fake_match_skin_B = fake_match_skin_B.unsqueeze(0)
         fake_A_skin_masked = fake_A * mask_A_skin
         fake_B_skin_masked = fake_B * mask_B_skin
-        g_A_skin_loss_his = self.criterionL1(fake_A_skin_masked,
-                                             fake_match_skin_A)
-        g_B_skin_loss_his = self.criterionL1(fake_B_skin_masked,
-                                             fake_match_skin_B)
+        g_A_skin_loss_his = self.l1_criterion(fake_A_skin_masked,
+                                              fake_match_skin_A)
+        g_B_skin_loss_his = self.l1_criterion(fake_B_skin_masked,
+                                              fake_match_skin_B)
 
         #eye
         mask_A_eye = self.mask_A_aug[:, 2].unsqueeze(1)
@@ -320,8 +302,10 @@ class MakeupModel(BaseModel):
         fake_match_eye_B = fake_match_eye_B.unsqueeze(0)
         fake_A_eye_masked = fake_A * mask_A_eye
         fake_B_eye_masked = fake_B * mask_B_eye
-        g_A_eye_loss_his = self.criterionL1(fake_A_eye_masked, fake_match_eye_A)
-        g_B_eye_loss_his = self.criterionL1(fake_B_eye_masked, fake_match_eye_B)
+        g_A_eye_loss_his = self.l1_criterion(fake_A_eye_masked,
+                                             fake_match_eye_A)
+        g_B_eye_loss_his = self.l1_criterion(fake_B_eye_masked,
+                                             fake_match_eye_B)
 
         self.loss_G_A_his = (g_A_eye_loss_his + g_A_lip_loss_his +
                              g_A_skin_loss_his * 0.1) * 0.1
@@ -335,14 +319,14 @@ class MakeupModel(BaseModel):
         vgg_s = self.vgg(self.real_A)
         vgg_s.stop_gradient = True
         vgg_fake_A = self.vgg(self.fake_A)
-        self.loss_A_vgg = self.criterionL2(vgg_fake_A,
-                                           vgg_s) * lambda_A * lambda_vgg
+        self.loss_A_vgg = self.l2_criterion(vgg_fake_A,
+                                            vgg_s) * lambda_A * lambda_vgg
 
         vgg_r = self.vgg(self.real_B)
         vgg_r.stop_gradient = True
         vgg_fake_B = self.vgg(self.fake_B)
-        self.loss_B_vgg = self.criterionL2(vgg_fake_B,
-                                           vgg_r) * lambda_B * lambda_vgg
+        self.loss_B_vgg = self.l2_criterion(vgg_fake_B,
+                                            vgg_r) * lambda_B * lambda_vgg
 
         self.loss_rec = (self.loss_cycle_A * 0.2 + self.loss_cycle_B * 0.2 +
                          self.loss_A_vgg + self.loss_B_vgg) * 0.5
@@ -359,15 +343,14 @@ class MakeupModel(BaseModel):
                 (self.mask_A == 10), dtype='float32') + paddle.cast(
                     (self.mask_A == 8), dtype='float32')
         mask_A_consis = paddle.unsqueeze(paddle.clip(mask_A_consis, 0, 1), 1)
-        self.loss_G_bg_consis = self.criterionL1(
+        self.loss_G_bg_consis = self.l1_criterion(
             self.real_A * mask_A_consis, self.fake_A * mask_A_consis) * 0.1
 
         # combined loss and calculate gradients
-
         self.loss_G = self.loss_G_A + self.loss_G_B + self.loss_rec + self.loss_idt + self.loss_G_A_his + self.loss_G_B_his + self.loss_G_bg_consis
         self.loss_G.backward()
 
-    def optimize_parameters(self):
+    def train_iter(self, optimizers=None):
         """Calculate losses, gradients, and update network weights; called in every training iteration"""
         # forward
         self.forward()  # compute fake images and reconstruction images.
@@ -392,5 +375,4 @@ class MakeupModel(BaseModel):
         self.backward_D_B()  # calculate graidents for D_B
         self.optimizers['optimizer_DB'].minimize(
             self.loss_D_B)  #step()  # update D_A and D_B's weights
-        self.optimizers['optimizer_DB'].clear_gradients(
-        )  #zero_grad()   # set D_A and D_B's gradients to zero
+        self.optimizers['optimizer_DB'].clear_gradients()

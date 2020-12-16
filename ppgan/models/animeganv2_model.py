@@ -19,7 +19,7 @@ from .base_model import BaseModel
 from .builder import MODELS
 from .generators.builder import build_generator
 from .discriminators.builder import build_discriminator
-from .losses import GANLoss
+from .criterions.gan_loss import GANLoss
 from ..modules.caffevgg import CaffeVGG19
 from ..solver import build_optimizer
 from ..modules.init import init_weights

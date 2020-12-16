@@ -1,0 +1,127 @@
+total_iters: 250000
+output_dir: output_dir
+# tensor range for function tensor2img
+min_max:
+  (0., 1.)
+
+model:
+  name: ESRGAN
+  generator:
+    name: RRDBNet
+    in_nc: 3
+    out_nc: 3
+    nf: 64
+    nb: 23
+  discriminator:
+    name: VGGDiscriminator128
+    in_channels: 3
+    num_feat: 64
+  pixel_criterion:
+    name: L1Loss
+    loss_weight: !!float 1e-2
+  perceptual_criterion:
+    name: PerceptualLoss
+    layer_weights:
+      '34': 1.0
+    perceptual_weight: 1.0
+    style_weight: 0.0
+    norm_img: False
+  gan_criterion:
+    name: GANLoss
+    gan_mode: vanilla
+    loss_weight: !!float 5e-3
+
+dataset:
+  train:
+    name: SRDataset
+    gt_folder: data/DIV2K/DIV2K_train_HR_sub
+    lq_folder: data/DIV2K/DIV2K_train_LR_bicubic/X4_sub
+    num_workers: 6
+    batch_size: 32
+    scale: 4
+    preprocess:
+      - name: LoadImageFromFile
+        key: lq
+      - name: LoadImageFromFile
+        key: gt
+      - name: Transforms
+        input_keys: [lq, gt]
+        pipeline:
+          - name: SRPairedRandomCrop
+            gt_patch_size: 128
+            scale: 4
+            keys: [image, image]
+          - name: PairedRandomHorizontalFlip
+            keys: [image, image]
+          - name: PairedRandomVerticalFlip
+            keys: [image, image]
+          - name: PairedRandomTransposeHW
+            keys: [image, image]
+          - name: Transpose
+            keys: [image, image]
+          - name: Normalize
+            mean: [0., .0, 0.]
+            std: [255., 255., 255.]
+            keys: [image, image]
+  test:
+    name: SRDataset
+    gt_folder: data/DIV2K/val_set14/Set14
+    lq_folder: data/DIV2K/val_set14/Set14_bicLRx4
+    scale: 4
+    preprocess:
+      - name: LoadImageFromFile
+        key: lq
+      - name: LoadImageFromFile
+        key: gt
+      - name: Transforms
+        input_keys: [lq, gt]
+        pipeline:
+          - name: Transpose
+            keys: [image, image]
+          - name: Normalize
+            mean: [0., .0, 0.]
+            std: [255., 255., 255.]
+            keys: [image, image]
+
+lr_scheduler:
+  name: MultiStepDecay
+  learning_rate: 0.0001
+  milestones: [50000, 100000, 200000, 300000]
+  gamma: 0.5
+
+optimizer:
+  optimG:
+    name: Adam
+    net_names:
+      - generator
+    weight_decay: 0.0
+    beta1: 0.9
+    beta2: 0.99
+  optimD:
+    name: Adam
+    net_names:
+      - discriminator
+    weight_decay: 0.0
+    beta1: 0.9
+    beta2: 0.99
+
+validate:
+  interval: 5000
+  save_img: false
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      name: PSNR
+      crop_border: 4
+      test_y_channel: false
+    ssim:
+      name: SSIM
+      crop_border: 4
+      test_y_channel: false
+
+log_config:
+  interval: 100
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 5000
