@@ -42,8 +42,12 @@ def main(args, cfg):
     if args.evaluate_only:
         trainer.test()
         return
-
-    trainer.train()
+    # training, when keyboard interrupt save weights
+    try:
+        trainer.train()
+    except KeyboardInterrupt as e:
+        trainer.save(trainer.current_epoch)
+    trainer.close()
 
 
 if __name__ == '__main__':

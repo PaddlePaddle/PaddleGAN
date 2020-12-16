@@ -61,3 +61,11 @@ pip install -v -e .  # or "python setup.py develop"
 ```
 conda install x264=='1!152.20180717' ffmpeg=4.0.2 -c conda-forge
 ```
+
+#### 4.2 Visual DL
+
+如果需要使用[飞桨VisualDL](https://github.com/PaddlePaddle/VisualDL)对训练过程进行可视化监控，请安装`VisualDL`(使用方法请参考[这里](./get_started.md)):
+
+```
+python -m pip install visualdl -i https://mirror.baidu.com/pypi/simple
+```

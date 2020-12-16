@@ -26,7 +26,7 @@ Note: command above will install paddle with cuda10.2，if your installed cuda i
 
 Visit home page of [paddlepaddle](https://www.paddlepaddle.org.cn/install/quick) for support of other systems, such as Windows10.
 
-### 2. Install paddleGAN 
+### 2. Install paddleGAN
 
 #### 2.1 Install through pip
 
@@ -58,4 +58,11 @@ If you need to use ppgan to handle video-related tasks, you need to install ffmp
 
 ```
 conda install x264=='1!152.20180717' ffmpeg=4.0.2 -c conda-forge
+```
+
+#### 4.2 Visual DL
+If you want to use [PaddlePaddle VisualDL](https://github.com/PaddlePaddle/VisualDL) to monitor the training process, Please install `VisualDL`(For more detail refer [here](./get_started.md)):
+
+```
+python -m pip install visualdl -i https://mirror.baidu.com/pypi/simple
 ```
