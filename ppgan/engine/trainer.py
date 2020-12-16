@@ -95,6 +95,9 @@ class Trainer:
                 batch_cost_averager.record(time.time() - step_start_time,
                                            num_samples=self.cfg.get(
                                                'batch_size', 1))
+
+                step_start_time = time.time()
+                
                 if i % self.log_interval == 0:
                     self.data_time = reader_cost_averager.get_average()
                     self.step_time = batch_cost_averager.get_average()
@@ -106,8 +109,6 @@ class Trainer:
 
                 if i % self.visual_interval == 0:
                     self.visual('visual_train')
-
-                step_start_time = time.time()
 
             self.logger.info(
                 'train one epoch use time: {:.3f} seconds.'.format(time.time() -
