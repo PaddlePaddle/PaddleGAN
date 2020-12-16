@@ -45,6 +45,10 @@ output_dir
         ├── epoch002_rec_A.png
         └── epoch002_rec_B.png
 ```
+同时可以通过在配置文件中添加参数```enable_visualdl: true```使用[飞桨VisualDL](https://github.com/PaddlePaddle/VisualDL)对训练过程产生的指标或生成的图像进行记录，并运行相应命令对训练过程进行实时监控：
+```
+visualdl --logdir output_dir/CycleGANModel-2020-10-29-09-21/
+```
 
 #### 恢复训练
 
