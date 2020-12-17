@@ -28,7 +28,6 @@ from ppgan.engine.trainer import Trainer
 def main(args, cfg):
     # init environment, include logger, dynamic graph, seed, device, train or test mode...
     setup(args, cfg)
-
     # build trainer
     trainer = Trainer(cfg)
 

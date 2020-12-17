@@ -319,7 +319,7 @@ class Wav2Lip(nn.Layer):
         x = self.output_block(x)
 
         if input_dim_size > 4:
-            x = paddle.split(x, B, axis=0)  # [(B, C, H, W)]
+            x = paddle.split(x, int(x.shape[0] / B), axis=0)  # [(B, C, H, W)]
             outputs = paddle.stack(x, axis=2)  # (B, C, T, H, W)
 
         else:

@@ -1,9 +1,15 @@
 import paddle
 from paddle import nn
 from paddle.nn import functional as F
+import sys
 from ...modules.conv import ConvBNRelu
+#from conv import ConvBNRelu
+from .builder import DISCRIMINATORS
+import torch
+import pickle
 
 
+@DISCRIMINATORS.register()
 class SyncNetColor(nn.Layer):
     def __init__(self):
         super(SyncNetColor, self).__init__()
@@ -143,3 +149,10 @@ class SyncNetColor(nn.Layer):
         face_embedding = F.normalize(face_embedding, p=2, axis=1)
 
         return audio_embedding, face_embedding
+
+
+if __name__ == '__main__':
+    model = SyncNetColor()
+    path = './lipsync_expert.pdparams'
+    params = paddle.load(path)
+    model.load_dict(params)
