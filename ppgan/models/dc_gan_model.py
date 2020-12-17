@@ -56,15 +56,26 @@ class DCGANModel(BaseModel):
             input (dict): include the data itself and its metadata information.
         """
         # get 1-channel gray image, or 3-channel color image
+<<<<<<< d76c74e4a648e2513b78eb5b460756b93958eb2f
         self.real = paddle.to_tensor(input['A'])
         self.image_paths = input['A_path']
+=======
+        self.real = paddle.to_tensor(
+            input['A'][:, 0:self.cfg.model.generator.input_nc, :, :])
+        self.image_paths = input['A_paths']
+>>>>>>> add wav2lip trainning code
 
     def forward(self):
         """Run forward pass; called by both functions <train_iter> and <test_iter>."""
 
         # generate random noise and fake image
+<<<<<<< d76c74e4a648e2513b78eb5b460756b93958eb2f
         self.z = paddle.rand(shape=(self.real.shape[0], self.gen_cfg.input_nz,
                                     1, 1))
+=======
+        self.z = paddle.rand(shape=(self.real.shape[0],
+                                    self.cfg.model.generator.input_nz, 1, 1))
+>>>>>>> add wav2lip trainning code
         self.fake = self.nets['netG'](self.z)
 
         # put items to visual dict

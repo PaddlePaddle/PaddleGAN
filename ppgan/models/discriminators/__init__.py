@@ -17,3 +17,4 @@ from .nlayers import NLayerDiscriminator, NLayerDiscriminatorWithClassification
 from .discriminator_ugatit import UGATITDiscriminator
 from .dcdiscriminator import DCDiscriminator
 from .discriminator_animegan import AnimeDiscriminator
+from .syncnet import SyncNetColor

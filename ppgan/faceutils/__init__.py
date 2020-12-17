@@ -15,3 +15,4 @@
 from . import dlibutils as dlib
 from . import mask
 from . import image
+from . import face_detection

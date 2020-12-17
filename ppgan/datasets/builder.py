@@ -31,7 +31,6 @@ class DictDataset(paddle.io.Dataset):
         self.tensor_keys_set = set()
         self.non_tensor_keys_set = set()
         self.non_tensor_dict = Manager().dict()
-
         single_item = dataset[0]
         self.keys = single_item.keys()
 
@@ -132,6 +131,7 @@ class DictDataLoader():
         return current_items
 
 
+<<<<<<< d76c74e4a648e2513b78eb5b460756b93958eb2f
 def build_dataloader(cfg, is_train=True, distributed=True):
     cfg_ = cfg.copy()
 
@@ -141,6 +141,12 @@ def build_dataloader(cfg, is_train=True, distributed=True):
     name = cfg_.pop('name')
 
     dataset = DATASETS.get(name)(**cfg_)
+=======
+def build_dataloader(cfg, is_train=True):
+    dataset = DATASETS.get(cfg.name)(cfg)
+    batch_size = cfg.get('batch_size', 1)
+    num_workers = cfg.get('num_workers', 0)
+>>>>>>> add wav2lip trainning code
 
     dataloader = DictDataLoader(dataset,
                                 batch_size,
