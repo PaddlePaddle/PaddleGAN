@@ -21,29 +21,38 @@ from .transforms.builder import build_transforms
 
 
 @DATASETS.register()
-class CommonVisionDataset(BaseDataset):
+class CommonVisionDataset(paddle.io.Dataset):
     """
-    Dataset for using paddle vision default datasets
+    Dataset for using paddle vision default datasets, such as mnist, flowers.
     """
-    def __init__(self, cfg):
+    def __init__(self,
+                 dataset_name,
+                 transforms=None,
+                 return_label=True,
+                 params=None):
         """Initialize this dataset class.
 
         Args:
-            cfg (dict) -- stores all the experiment flags
+            dataset_name (str): return a dataset from paddle.vision.datasets by this option.
+            transforms (list[dict]): A sequence of data transforms config.
+            return_label (bool): whether to retuan a label of a sample.
+            params (dict): paramters of paddle.vision.datasets.
         """
-        super(CommonVisionDataset, self).__init__(cfg)
+        super(CommonVisionDataset, self).__init__()
 
-        dataset_cls = getattr(paddle.vision.datasets, cfg.pop('class_name'))
-        transform = build_transforms(cfg.pop('transforms', None))
-        self.return_cls = cfg.pop('return_cls', True)
+        dataset_cls = getattr(paddle.vision.datasets, dataset_name)
+        transform = build_transforms(transforms)
+        self.return_label = return_label
 
         param_dict = {}
         param_names = list(dataset_cls.__init__.__code__.co_varnames)
         if 'transform' in param_names:
             param_dict['transform'] = transform
-        for name in param_names:
-            if name in cfg:
-                param_dict[name] = cfg.get(name)
+
+        if params is not None:
+            for name in param_names:
+                if name in params:
+                    param_dict[name] = params[name]
 
         self.dataset = dataset_cls(**param_dict)
 
@@ -53,7 +62,7 @@ class CommonVisionDataset(BaseDataset):
         if isinstance(return_list, (tuple, list)):
             if len(return_list) == 2:
                 return_dict['img'] = return_list[0]
-                if self.return_cls:
+                if self.return_label:
                     return_dict['class_id'] = np.asarray(return_list[1])
             else:
                 return_dict['img'] = return_list[0]
