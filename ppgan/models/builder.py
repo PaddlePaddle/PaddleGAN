@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import copy
 import paddle
 
 from ..utils.registry import Registry
@@ -20,5 +21,7 @@ MODELS = Registry("MODEL")
 
 
 def build_model(cfg):
-    model = MODELS.get(cfg.model.name)(cfg)
+    cfg_ = cfg.copy()
+    name = cfg_.pop('name', None)
+    model = MODELS.get(name)(**cfg_)
     return model

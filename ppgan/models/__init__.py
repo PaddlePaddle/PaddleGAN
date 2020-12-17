@@ -16,9 +16,9 @@ from .base_model import BaseModel
 from .gan_model import GANModel
 from .cycle_gan_model import CycleGANModel
 from .pix2pix_model import Pix2PixModel
-from .srgan_model import SRGANModel
-from .sr_model import SRModel
+from .sr_model import BaseSRModel
 from .makeup_model import MakeupModel
+from .esrgan_model import ESRGAN
 from .ugatit_model import UGATITModel
 from .dc_gan_model import DCGANModel
 from .animeganv2_model import AnimeGANV2Model, AnimeGANV2PreTrainModel

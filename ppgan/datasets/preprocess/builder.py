@@ -14,45 +14,51 @@
 
 import copy
 import traceback
-import paddle
-from ...utils.registry import Registry
 
-TRANSFORMS = Registry("TRANSFORMS")
+from ...utils.registry import Registry, build_from_config
+
+LOAD_PIPELINE = Registry("LOAD_PIPELINE")
+TRANSFORMS = Registry("TRANSFORM")
+PREPROCESS = Registry("PREPROCESS")
 
 
 class Compose(object):
     """
     Composes several transforms together use for composing list of transforms
     together for a dataset transform.
+
     Args:
-        transforms (list): List of transforms to compose.
+        functions (list[callable]): List of functions to compose.
+
     Returns:
         A compose object which is callable, __call__ for this Compose
         object will call each given :attr:`transforms` sequencely.
+
     """
-    def __init__(self, transforms):
-        self.transforms = transforms
+    def __init__(self, functions):
+        self.functions = functions
 
-    def __call__(self, data):
-        for f in self.transforms:
+    def __call__(self, datas):
+
+        for func in self.functions:
             try:
-                data = f(data)
+                datas = func(datas)
             except Exception as e:
-                print(f)
                 stack_info = traceback.format_exc()
-                print("fail to perform transform [{}] with error: "
-                      "{} and stack:\n{}".format(f, e, str(stack_info)))
-                raise e
-        return data
+                print("fail to perform fuction [{}] with error: "
+                      "{} and stack:\n{}".format(func, e, str(stack_info)))
+                raise RuntimeError
+        return datas
 
 
-def build_transforms(cfg):
-    transforms = []
+def build_preprocess(cfg):
+    preproccess = []
+    if not isinstance(cfg, (list, tuple)):
+        cfg = [cfg]
 
-    for trans_cfg in cfg:
-        temp_trans_cfg = copy.deepcopy(trans_cfg)
-        name = temp_trans_cfg.pop('name')
-        transforms.append(TRANSFORMS.get(name)(**temp_trans_cfg))
+    for cfg_ in cfg:
+        process = build_from_config(cfg_, PREPROCESS)
+        preproccess.append(process)
 
-    transforms = Compose(transforms)
-    return transforms
+    preproccess = Compose(preproccess)
+    return preproccess

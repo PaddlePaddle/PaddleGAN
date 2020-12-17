@@ -36,8 +36,10 @@ def make_grid(tensor, nrow=8, normalize=False, range=None, scale_each=False):
             images separately rather than the (min, max) over all images. Default: ``False``.
     """
     if not (isinstance(tensor, paddle.Tensor) or
-            (isinstance(tensor, list) and all(isinstance(t, paddle.Tensor) for t in tensor))):
-        raise TypeError('tensor or list of tensors expected, got {}'.format(type(tensor)))
+            (isinstance(tensor, list)
+             and all(isinstance(t, paddle.Tensor) for t in tensor))):
+        raise TypeError('tensor or list of tensors expected, got {}'.format(
+            type(tensor)))
 
     # if list of tensors, convert to a 4D mini-batch Tensor
     if isinstance(tensor, list):
@@ -105,19 +107,20 @@ def tensor2img(input_image, min_max=(-1., 1.), image_num=1, imtype=np.uint8):
         image_num (int)      --  the convert iamge numbers
         imtype (type)        --  the desired type of the converted numpy array
     """
-    def processing(im, transpose=True):
+    def processing(img, transpose=True):
         """"processing one numpy image.
 
         Parameters:
             im (tensor) --  the input image numpy array
         """
-        if im.shape[0] == 1:  # grayscale to RGB
-            im = np.tile(im, (3, 1, 1))
-        im = im.clip(min_max[0], min_max[1])
-        im = (im - min_max[0]) / (min_max[1] - min_max[0])
-        im = im * 255.0  # scaling
-        im = np.transpose(im, (1, 2, 0)) if transpose else im  # tranpose
-        return im
+        if img.shape[0] == 1:  # grayscale to RGB
+            img = np.tile(img, (3, 1, 1))
+        img = img.clip(min_max[0], min_max[1])
+        img = (img - min_max[0]) / (min_max[1] - min_max[0])
+        if imtype == np.uint8:
+            img = img * 255.0  # scaling
+        img = np.transpose(img, (1, 2, 0)) if transpose else img  # tranpose
+        return img
 
     if not isinstance(input_image, np.ndarray):
         image_numpy = input_image.numpy()  # convert it into a numpy array
@@ -143,6 +146,7 @@ def tensor2img(input_image, min_max=(-1., 1.), image_num=1, imtype=np.uint8):
 
     else:  # if it is a numpy array, do nothing
         image_numpy = input_image
+    image_numpy = image_numpy.round()
     return image_numpy.astype(imtype)
 
 
