@@ -29,7 +29,7 @@ class PerceptualVGG(nn.Layer):
             layer_name_list,
             vgg_type='vgg19',
             use_input_norm=True,
-            pretrained_url='https://paddlegan.bj.bcebos.com/model/vgg19.pdparams'
+            pretrained_url='https://paddlegan.bj.bcebos.com/models/vgg19.pdparams'
     ):
         super(PerceptualVGG, self).__init__()
 
