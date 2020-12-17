@@ -211,12 +211,24 @@ class Trainer:
             current_paths = self.model.get_image_paths()
             current_visuals = self.model.get_current_visuals()
 
-            for j in range(len(current_paths)):
-                short_path = os.path.basename(current_paths[j])
-                basename = os.path.splitext(short_path)[0]
+            if len(current_visuals) > 0 and list(
+                    current_visuals.values())[0].shape == 4:
+                num_samples = list(current_visuals.values())[0].shape[0]
+            else:
+                num_samples = 1
+
+            for j in range(num_samples):
+                if j < len(current_paths):
+                    short_path = os.path.basename(current_paths[j])
+                    basename = os.path.splitext(short_path)[0]
+                else:
+                    basename = '{:04d}_{:04d}'.format(i, j)
                 for k, img_tensor in current_visuals.items():
                     name = '%s_%s' % (basename, k)
-                    visual_results.update({name: img_tensor[j]})
+                    if len(img_tensor.shape) == 4:
+                        visual_results.update({name: img_tensor[j]})
+                    else:
+                        visual_results.update({name: img_tensor})
 
             self.visual('visual_test',
                         visual_results=visual_results,
