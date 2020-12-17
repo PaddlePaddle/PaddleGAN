@@ -160,6 +160,9 @@ class Trainer:
             batch_cost_averager.record(time.time() - step_start_time,
                                        num_samples=self.cfg.get(
                                            'batch_size', 1))
+
+            step_start_time = time.time()
+
             if self.current_iter % self.log_interval == 0:
                 self.data_time = reader_cost_averager.get_average()
                 self.step_time = batch_cost_averager.get_average()
@@ -171,8 +174,6 @@ class Trainer:
 
             if self.current_iter % self.visual_interval == 0:
                 self.visual('visual_train')
-
-            step_start_time = time.time()
 
             self.model.lr_scheduler.step()
 
