@@ -1,0 +1,77 @@
+epochs: 200
+output_dir: output_dir
+
+model:
+  name: GANModel
+  generator:
+    name: DeepConvGenerator
+    latent_dim: 128
+    output_nc: 1
+    size: 28
+    ngf: 64
+  discriminator:
+    name: NLayerDiscriminator
+    ndf: 16
+    n_layers: 3
+    input_nc: 1
+    norm_type: instance
+  gan_criterion:
+    name: GANLoss
+    gan_mode: wgangp
+  params:
+    disc_iters: 5
+    visual_interval: 500
+    lambda_term: 1
+
+dataset:
+  train:
+    name: CommonVisionDataset
+    dataset_name: MNIST
+    num_workers: 4
+    batch_size: 64
+    return_label: False
+    transforms:
+      - name: Normalize
+        mean: [127.5]
+        std: [127.5]
+        keys: [image]
+  test:
+    name: CommonVisionDataset
+    dataset_name: MNIST
+    num_workers: 0
+    batch_size: 64
+    return_label: False
+    transforms:
+      - name: Normalize
+        mean: [127.5]
+        std: [127.5]
+        keys: [image]
+
+
+lr_scheduler:
+  name: LinearDecay
+  learning_rate: 0.0002
+  start_epoch: 100
+  decay_epochs: 100
+  # will get from real dataset
+  iters_per_epoch: 1
+
+optimizer:
+  optimizer_G:
+    name: Adam
+    net_names:
+      - netG
+    beta1: 0.5
+  optimizer_D:
+    name: Adam
+    net_names:
+      - netD
+    beta1: 0.5
+
+log_config:
+  interval: 100
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 5
+
