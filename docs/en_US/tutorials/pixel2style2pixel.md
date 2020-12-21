@@ -63,7 +63,7 @@ In the future, training scripts will be added to facilitate users to train more 
 Input portrait:
 
 <div align="center">
-    <img src="../../imgs/pSp-input.png" width="300"/> 
+    <img src="../../imgs/pSp-input.jpg" width="300"/> 
 </div>
 
 Cropped portrait-Reconstructed portrait-Cartoonized portrait:

@@ -63,7 +63,7 @@ python -u tools/styleganv2.py \
 输入人像:
 
 <div align="center">
-    <img src="../../imgs/pSp-input.png" width="300"/> 
+    <img src="../../imgs/pSp-input.jpg" width="300"/> 
 </div>
 
 裁剪人像-重建人像-卡通化人像:
