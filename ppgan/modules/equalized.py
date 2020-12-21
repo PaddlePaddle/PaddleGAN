@@ -21,6 +21,9 @@ from .fused_act import fused_leaky_relu
 
 
 class EqualConv2D(nn.Layer):
+    """This convolutional layer class stabilizes the learning rate changes of its parameters.
+    Equalizing learning rate keeps the weights in the network at a similar scale during training.
+    """
     def __init__(
         self, in_channel, out_channel, kernel_size, stride=1, padding=0, bias=True
     ):
@@ -59,6 +62,9 @@ class EqualConv2D(nn.Layer):
  
  
 class EqualLinear(nn.Layer):
+    """This linear layer class stabilizes the learning rate changes of its parameters.
+    Equalizing learning rate keeps the weights in the network at a similar scale during training.
+    """
     def __init__(
         self, in_dim, out_dim, bias=True, bias_init=0, lr_mul=1, activation=None
     ):

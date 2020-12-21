@@ -20,6 +20,8 @@ Compared with StyleGAN, its main improvement is:
 
 ## How to use
 
+### Generate
+
 The user can generate different results by replacing the value of the seed or removing the seed. Use the following command to generate images：
 
 ```
@@ -51,6 +53,10 @@ python -u tools/styleganv2.py \
 - n_row: the number of rows of the sampled image
 - n_col: the number of columns of the sampled picture
 - cpu: whether to use cpu inference, if not, please remove it from the command
+
+### Train (TODO)
+
+In the future, training scripts will be added to facilitate users to train more types of StyleGAN V2 image generators.
 
 
 ## Results

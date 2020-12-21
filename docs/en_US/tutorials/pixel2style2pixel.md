@@ -21,6 +21,8 @@ At present, only the models of portrait reconstruction and portrait cartoonizati
 
 ## How to use
 
+### Generate
+
 The user could use the following command to generate and select the local image as input：
 
 ```
@@ -50,6 +52,10 @@ python -u tools/styleganv2.py \
 - n_mlp: model parameters, the number of multi-layer perception layers for style z
 - channel_multiplier: model parameters, channel product, affect model size and the quality of generated pictures
 - cpu: whether to use cpu inference, if not, please remove it from the command
+
+### Train (TODO)
+
+In the future, training scripts will be added to facilitate users to train more types of Pixel2Style2Pixel image encoders.
 
 
 ## Results

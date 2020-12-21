@@ -90,9 +90,9 @@ class SEModule(nn.Layer):
         return module_input * x
 
 
-class bottleneck_IR(nn.Layer):
+class BottleneckIR(nn.Layer):
     def __init__(self, in_channel, depth, stride):
-        super(bottleneck_IR, self).__init__()
+        super(BottleneckIR, self).__init__()
         if in_channel == depth:
             self.shortcut_layer = nn.MaxPool2D(1, stride)
         else:
@@ -112,9 +112,9 @@ class bottleneck_IR(nn.Layer):
         return res + shortcut
 
 
-class bottleneck_IR_SE(nn.Layer):
+class BottleneckIRSE(nn.Layer):
     def __init__(self, in_channel, depth, stride):
-        super(bottleneck_IR_SE, self).__init__()
+        super(BottleneckIRSE, self).__init__()
         if in_channel == depth:
             self.shortcut_layer = nn.MaxPool2D(1, stride)
         else:
@@ -168,9 +168,9 @@ class GradualStyleEncoder(nn.Layer):
         assert mode in ['ir', 'ir_se'], 'mode should be ir or ir_se'
         blocks = get_blocks(num_layers)
         if mode == 'ir':
-            unit_module = bottleneck_IR
+            unit_module = BottleneckIR
         elif mode == 'ir_se':
-            unit_module = bottleneck_IR_SE
+            unit_module = BottleneckIRSE
         self.input_layer = nn.Sequential(nn.Conv2D(opts.input_nc, 64, (3, 3), 1, 1, bias_attr=False),
                                          nn.BatchNorm2D(64),
                                          nn.PReLU(64))
@@ -253,9 +253,9 @@ class BackboneEncoderUsingLastLayerIntoW(nn.Layer):
         assert mode in ['ir', 'ir_se'], 'mode should be ir or ir_se'
         blocks = get_blocks(num_layers)
         if mode == 'ir':
-            unit_module = bottleneck_IR
+            unit_module = BottleneckIR
         elif mode == 'ir_se':
-            unit_module = bottleneck_IR_SE
+            unit_module = BottleneckIRSE
         self.input_layer = nn.Sequential(nn.Conv2D(opts.input_nc, 64, (3, 3), 1, 1, bias_attr=False),
                                          nn.BatchNorm2D(64),
                                          nn.PReLU(64))
@@ -286,9 +286,9 @@ class BackboneEncoderUsingLastLayerIntoWPlus(nn.Layer):
         assert mode in ['ir', 'ir_se'], 'mode should be ir or ir_se'
         blocks = get_blocks(num_layers)
         if mode == 'ir':
-            unit_module = bottleneck_IR
+            unit_module = BottleneckIR
         elif mode == 'ir_se':
-            unit_module = bottleneck_IR_SE
+            unit_module = BottleneckIRSE
         self.input_layer = nn.Sequential(nn.Conv2D(opts.input_nc, 64, (3, 3), 1, 1, bias_attr=False),
                                          nn.BatchNorm2D(64),
                                          nn.PReLU(64))
