@@ -32,7 +32,7 @@
 
   数据准备：
   
-  模型使用非成对数据训练，数据准备请参见[photo2cartoon-paddle](https://github.com/minivision-ai/photo2cartoon-paddle)。
+  模型使用非成对数据训练，下载地址:[百度网盘](https://pan.baidu.com/s/1RqB4MNMAY_yyXAIS3KBXqw)，提取码：fo8u。
   数据集组成方式如下：
   ```
   ├── data
@@ -56,10 +56,10 @@
 ## 4 模型下载
 | 模型 | 下载地址 |
 |---|---|
-| photo2cartoon_genA2B  | [下载链接](https://paddlegan.bj.bcebos.com/models/photo2cartoon_genA2B_weight.pdparams)
+| photo2cartoon_genA2B | [下载链接](https://paddlegan.bj.bcebos.com/models/photo2cartoon_genA2B_weight.pdparams)
 
 
-# 参考：
+# 参考
 
 - [U-GAT-IT: Unsupervised Generative Attentional Networks with Adaptive Layer-Instance Normalization for Image-to-Image Translation](https://arxiv.org/abs/1907.10830)
 
@@ -72,3 +72,6 @@
   }
   ```
 
+
+# 作者
+[minivision-ai](https://github.com/minivision-ai)、[haoqiang](https://github.com/hao-qiang)

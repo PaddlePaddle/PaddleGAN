@@ -33,7 +33,7 @@
 
   Prepare Datasets:
   
-  Training data contains portrait photos (domain A) and cartoon images (domain B), please refer to [photo2cartoon-paddle](https://github.com/minivision-ai/photo2cartoon-paddle).
+  Training data contains portrait photos (domain A) and cartoon images (domain B), and can be downloaded from [baidu driver](https://pan.baidu.com/s/1RqB4MNMAY_yyXAIS3KBXqw)(password: fo8u).
   The structure of dataset is as following:
   
   ```
@@ -63,7 +63,7 @@
 | photo2cartoon_genA2B | [photo2cartoon_genA2B](https://paddlegan.bj.bcebos.com/models/photo2cartoon_genA2B_weight.pdparams)
 
 
-# References：
+# References
 
 - [U-GAT-IT: Unsupervised Generative Attentional Networks with Adaptive Layer-Instance Normalization for Image-to-Image Translation](https://arxiv.org/abs/1907.10830)
 
@@ -76,3 +76,6 @@
   }
   ```
 
+
+# Authors
+[minivision-ai](https://github.com/minivision-ai)、[haoqiang](https://github.com/hao-qiang)
