@@ -62,7 +62,7 @@ class UnpairedDataset(BaseDataset):
     def __getitem__(self, idx):
         if self.is_train:
             img_a_path = self.data_infos_a[idx % self.size_a]['path']
-            idx_b = random.randint(0, self.size_b)
+            idx_b = random.randint(0, self.size_b - 1)
             img_b_path = self.data_infos_b[idx_b]['path']
             datas = dict(A_path=img_a_path, B_path=img_b_path)
         else:
