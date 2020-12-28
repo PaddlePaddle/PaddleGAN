@@ -22,7 +22,5 @@ from .dcgenerator import DCGenerator
 from .generater_animegan import AnimeGenerator, AnimeGeneratorLite
 from .wav2lip import Wav2Lip
 from .lesrcnn import LESRCNNGenerator
-from .drn import DRNGenerator
-from .lesrcnn_custom import LESRCNNSCALESGenerator
-# from .lesrcnn_custom import LESRCNNSCALESGenerator
-from .lesrcnn_up import LESRCNNUPGenerator
+from .generator_styleganv2 import StyleGANv2Generator
+from .generator_pixel2style2pixel import Pixel2Style2Pixel

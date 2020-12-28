@@ -270,48 +270,6 @@ def bgr2ycbcr(img, y_only=False):
     return out_img
 
 
-def rgb2ycbcr(img, y_only=False):
-    """Convert a RGB image to YCbCr image.
-
-    The RGB version of rgb2ycbcr.
-    It implements the ITU-R BT.601 conversion for standard-definition
-    television. See more details in
-    https://en.wikipedia.org/wiki/YCbCr#ITU-R_BT.601_conversion.
-
-    It differs from a similar function in cv2.cvtColor: `RGB <-> YCrCb`.
-    In OpenCV, it implements a JPEG conversion. See more details in
-    https://en.wikipedia.org/wiki/YCbCr#JPEG_conversion.
-
-    Args:
-        img (ndarray): The input image. It accepts:
-            1. np.uint8 type with range [0, 255];
-            2. np.float32 type with range [0, 1].
-        y_only (bool): Whether to only return Y channel. Default: False.
-
-    Returns:
-        ndarray: The converted YCbCr image. The output image has the same type
-            and range as input image.
-    """
-    img_type = img.dtype
-
-    if img_type != np.uint8:
-        img *= 255.
-
-    if y_only:
-        out_img = np.dot(img, [65.481, 128.553, 24.966]) / 255. + 16.0
-    else:
-        out_img = np.matmul(
-            img, [[24.966, 112.0, -18.214], [128.553, -74.203, -93.786],
-                  [65.481, -37.797, 112.0]]) + [16, 128, 128]
-
-    if img_type != np.uint8:
-        out_img /= 255.
-    else:
-        out_img = out_img.round()
-
-    return out_img
-
-
 def to_y_channel(img):
     """Change to Y channel of YCbCr.
 
@@ -323,6 +281,6 @@ def to_y_channel(img):
     """
     img = img.astype(np.float32) / 255.
     if img.ndim == 3 and img.shape[2] == 3:
-        img = rgb2ycbcr(img, y_only=True)
+        img = bgr2ycbcr(img, y_only=True)
         img = img[..., None]
     return img * 255.

@@ -50,7 +50,7 @@ class BaseModel(ABC):
     #         save checkpoint (model.nets)                     \/
 
     """
-    def __init__(self):
+    def __init__(self, params=None):
         """Initialize the BaseModel class.
 
         When creating your custom class, you need to implement your own initialization.
@@ -62,7 +62,13 @@ class BaseModel(ABC):
             -- self.optimizers (dict):    define and initialize optimizers. You can define one optimizer for each network.
                                           If two networks are updated at the same time, you can use itertools.chain to group them.
                                           See cycle_gan_model.py for an example.
+
+        Args:
+            params (dict): Hyper params for train or test. Default: None.
         """
+        self.params = params
+        self.is_train = True if self.params is None else self.params.get(
+            'is_train', True)
 
         self.nets = OrderedDict()
         self.optimizers = OrderedDict()
@@ -149,7 +155,9 @@ class BaseModel(ABC):
 
     def get_image_paths(self):
         """ Return image paths that are used to load current data"""
-        return self.image_paths
+        if hasattr(self, 'image_paths'):
+            return self.image_paths
+        return []
 
     def get_current_visuals(self):
         """Return visualization images."""

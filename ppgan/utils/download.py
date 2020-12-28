@@ -18,15 +18,14 @@ from __future__ import print_function
 
 import os
 import sys
-import os.path as osp
+import time
 import shutil
-import requests
 import hashlib
 import tarfile
 import zipfile
-import time
+import requests
+import os.path as osp
 from tqdm import tqdm
-import logging
 
 from .logger import get_logger
 
@@ -74,6 +73,7 @@ def get_path_from_url(url, md5sum=None, check_exist=True):
 
     logger = get_logger('ppgan')
     if osp.exists(fullpath) and check_exist and _md5check(fullpath, md5sum):
+        logger = get_logger('ppgan')
         logger.info("Found {}".format(fullpath))
     else:
         if ParallelEnv().local_rank == 0:
@@ -110,6 +110,7 @@ def _download(url, path, md5sum=None):
             raise RuntimeError("Download from {} failed. "
                                "Retry limit reached".format(url))
 
+        logger = get_logger('ppgan')
         logger.info("Downloading {} from {} to {}".format(fname, url, fullname))
 
         req = requests.get(url, stream=True)
@@ -139,6 +140,7 @@ def _download(url, path, md5sum=None):
 def _md5check(fullname, md5sum=None):
     if md5sum is None:
         return True
+
     logger = get_logger('ppgan')
     logger.info("File {} md5 checking...".format(fullname))
     md5 = hashlib.md5()

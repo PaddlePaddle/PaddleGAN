@@ -100,6 +100,10 @@ class Trainer:
             self.metrics = self.model.setup_metrics(validate_cfg['metrics'])
 
         self.logger = logging.getLogger(__name__)
+        self.enable_visualdl = cfg.get('enable_visualdl', False)
+        if self.enable_visualdl:
+            import visualdl
+            self.vdl_logger = visualdl.LogWriter(logdir=cfg.output_dir)
 
         # base config
         self.output_dir = cfg.output_dir
@@ -115,6 +119,8 @@ class Trainer:
         self.current_epoch = 1
         self.current_iter = 1
         self.inner_iter = 1
+        self.batch_id = 0
+        self.global_steps = 0
         self.weight_interval = cfg.snapshot_config.interval
         self.log_interval = cfg.log_config.interval
         self.visual_interval = cfg.log_config.visiual_interval
@@ -154,6 +160,9 @@ class Trainer:
             batch_cost_averager.record(time.time() - step_start_time,
                                        num_samples=self.cfg.get(
                                            'batch_size', 1))
+
+            step_start_time = time.time()
+
             if self.current_iter % self.log_interval == 0:
                 self.data_time = reader_cost_averager.get_average()
                 self.step_time = batch_cost_averager.get_average()
@@ -165,8 +174,6 @@ class Trainer:
 
             if self.current_iter % self.visual_interval == 0:
                 self.visual('visual_train')
-
-            step_start_time = time.time()
 
             self.model.lr_scheduler.step()
 
@@ -204,14 +211,30 @@ class Trainer:
             current_paths = self.model.get_image_paths()
             current_visuals = self.model.get_current_visuals()
 
-            for j in range(len(current_paths)):
-                short_path = os.path.basename(current_paths[j])
-                basename = os.path.splitext(short_path)[0]
+            if len(current_visuals) > 0 and list(
+                    current_visuals.values())[0].shape == 4:
+                num_samples = list(current_visuals.values())[0].shape[0]
+            else:
+                num_samples = 1
+
+            for j in range(num_samples):
+                if j < len(current_paths):
+                    short_path = os.path.basename(current_paths[j])
+                    basename = os.path.splitext(short_path)[0]
+                else:
+                    basename = '{:04d}_{:04d}'.format(i, j)
                 for k, img_tensor in current_visuals.items():
                     name = '%s_%s' % (basename, k)
-                    visual_results.update({name: img_tensor[j]})
+                    if len(img_tensor.shape) == 4:
+                        visual_results.update({name: img_tensor[j]})
+                    else:
+                        visual_results.update({name: img_tensor})
 
-            self.visual('visual_test', visual_results=visual_results)
+            self.visual('visual_test',
+                        visual_results=visual_results,
+                        step=self.batch_id,
+                        is_save_image=True)
+
             if i % self.log_interval == 0:
                 self.logger.info('Test iter: [%d/%d]' %
                                  (i, len(self.test_dataloader)))
@@ -236,6 +259,8 @@ class Trainer:
 
         for k, v in losses.items():
             message += '%s: %.3f ' % (k, v)
+            if self.enable_visualdl:
+                self.vdl_logger.add_scalar(k, v, step=self.global_steps)
 
         if hasattr(self, 'step_time'):
             message += 'batch_cost: %.5f sec ' % self.step_time
@@ -259,28 +284,49 @@ class Trainer:
         for optimizer in self.model.optimizers.values():
             return optimizer.get_lr()
 
-    def visual(self, results_dir, visual_results=None):
+    def visual(self,
+               results_dir,
+               visual_results=None,
+               step=None,
+               is_save_image=False):
+        """
+        visual the images, use visualdl or directly write to the directory
+
+        Parameters:
+            results_dir (str)     --  directory name which contains saved images
+            visual_results (dict) --  the results images dict
+            step (int)            --  global steps, used in visualdl
+            is_save_image (bool)  --  weather write to the directory or visualdl
+        """
         self.model.compute_visuals()
 
         if visual_results is None:
             visual_results = self.model.get_current_visuals()
 
-        if self.cfg.is_train:
-            msg = 'epoch%.3d_' % self.current_epoch
-        else:
-            msg = ''
-
-        makedirs(os.path.join(self.output_dir, results_dir))
         min_max = self.cfg.get('min_max', None)
         if min_max is None:
             min_max = (-1., 1.)
 
+        image_num = self.cfg.get('image_num', None)
+        if (image_num is None) or (not self.enable_visualdl):
+            image_num = 1
         for label, image in visual_results.items():
-
-            image_numpy = tensor2img(image, min_max)
-            img_path = os.path.join(self.output_dir, results_dir,
-                                    msg + '%s.png' % (label))
-            save_image(image_numpy, img_path)
+            image_numpy = tensor2img(image, min_max, image_num)
+            if (not is_save_image) and self.enable_visualdl:
+                self.vdl_logger.add_image(
+                    results_dir + '/' + label,
+                    image_numpy,
+                    step=step if step else self.global_steps,
+                    dataformats="HWC" if image_num == 1 else "NCHW")
+            else:
+                if self.cfg.is_train:
+                    msg = 'epoch%.3d_' % self.current_epoch
+                else:
+                    msg = ''
+                makedirs(os.path.join(self.output_dir, results_dir))
+                img_path = os.path.join(self.output_dir, results_dir,
+                                        msg + '%s.png' % (label))
+                save_image(image_numpy, img_path)
 
     def save(self, epoch, name='checkpoint', keep=1):
         if self.local_rank != 0:
@@ -320,6 +366,7 @@ class Trainer:
         state_dicts = load(checkpoint_path)
         if state_dicts.get('epoch', None) is not None:
             self.start_epoch = state_dicts['epoch'] + 1
+            self.global_steps = self.steps_per_epoch * state_dicts['epoch']
 
         for net_name, net in self.model.nets.items():
             net.set_state_dict(state_dicts[net_name])
@@ -339,3 +386,11 @@ class Trainer:
                 self.logger.warning(
                     'Can not find state dict of net {}. Skip load pretrained weight for net {}'
                     .format(net_name, net_name))
+
+    def close(self):
+        """
+        when finish the training need close file handler or other.
+
+        """
+        if self.enable_visualdl:
+            self.vdl_logger.close()

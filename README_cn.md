@@ -110,6 +110,15 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   - 初版发布，支持Pixel2Pixel、CycleGAN、PSGAN模型，支持视频插针、超分、老照片/视频上色、视频动作生成等应用。
   - 模块化设计，接口简单易用。
 
+## 近期活动更新
+
+- 2020.12.10 
+
+  《大谷 Spitzer 手把手教你修复百年前老北京影像》b站直播中奖用户名单请点击[PaddleGAN直播中奖名单](./docs/luckydraw.md)查看~
+
+  想要看直播回放视频请点击链接：https://www.bilibili.com/video/BV1GZ4y1g7xc
+
+
 ## 欢迎加入PaddleGAN技术交流群
 
 扫描二维码加入PaddleGAN QQ群[群号：1058398620]，获得更高效的问题答疑，与各行业开发者交流讨论，我们期待您的加入！
