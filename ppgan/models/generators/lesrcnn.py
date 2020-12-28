@@ -22,7 +22,6 @@ class MeanShift(nn.Layer):
         self.shifter.bias.set_value(np.array([r, g, b]).astype('float32'))
         # Freeze the mean shift layer
         for params in self.shifter.parameters():
-            # params.requires_grad = False
             params.trainable = False
 
     def forward(self, x):

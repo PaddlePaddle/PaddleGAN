@@ -71,7 +71,6 @@ def get_path_from_url(url, md5sum=None, check_exist=True):
     # parse path after download to decompress under root_dir
     fullpath = _map_path(url, root_dir)
 
-    logger = get_logger('ppgan')
     if osp.exists(fullpath) and check_exist and _md5check(fullpath, md5sum):
         logger = get_logger('ppgan')
         logger.info("Found {}".format(fullpath))
@@ -102,7 +101,7 @@ def _download(url, path, md5sum=None):
     fname = osp.split(url)[-1]
     fullname = osp.join(path, fname)
     retry_cnt = 0
-    logger = get_logger('ppgan')
+
     while not (osp.exists(fullname) and _md5check(fullname, md5sum)):
         if retry_cnt < DOWNLOAD_RETRY_LIMIT:
             retry_cnt += 1
@@ -161,6 +160,7 @@ def _decompress(fname):
     Decompress for zip and tar file
     """
     logger = get_logger('ppgan')
+
     logger.info("Decompressing {}...".format(fname))
 
     # For protecting decompressing interupted,
