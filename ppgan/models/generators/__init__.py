@@ -21,3 +21,8 @@ from .resnet_ugatit import ResnetUGATITGenerator
 from .dcgenerator import DCGenerator
 from .generater_animegan import AnimeGenerator, AnimeGeneratorLite
 from .wav2lip import Wav2Lip
+from .lesrcnn import LESRCNNGenerator
+from .drn import DRNGenerator
+from .lesrcnn_custom import LESRCNNSCALESGenerator
+# from .lesrcnn_custom import LESRCNNSCALESGenerator
+from .lesrcnn_up import LESRCNNUPGenerator

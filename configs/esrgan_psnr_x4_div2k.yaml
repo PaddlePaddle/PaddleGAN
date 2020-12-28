@@ -91,11 +91,11 @@ validate:
     psnr: # metric name, can be arbitrary
       name: PSNR
       crop_border: 4
-      test_y_channel: false
+      test_y_channel: True
     ssim:
       name: SSIM
       crop_border: 4
-      test_y_channel: false
+      test_y_channel: True
 
 log_config:
   interval: 10

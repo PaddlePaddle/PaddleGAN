@@ -276,6 +276,7 @@ class Trainer:
             min_max = (-1., 1.)
 
         for label, image in visual_results.items():
+
             image_numpy = tensor2img(image, min_max)
             img_path = os.path.join(self.output_dir, results_dir,
                                     msg + '%s.png' % (label))

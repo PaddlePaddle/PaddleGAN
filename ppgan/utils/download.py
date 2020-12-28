@@ -30,8 +30,6 @@ import logging
 
 from .logger import get_logger
 
-logger = get_logger('ppgan')
-
 PPGAN_HOME = os.path.expanduser("~/.cache/ppgan/")
 
 DOWNLOAD_RETRY_LIMIT = 3
@@ -74,6 +72,7 @@ def get_path_from_url(url, md5sum=None, check_exist=True):
     # parse path after download to decompress under root_dir
     fullpath = _map_path(url, root_dir)
 
+    logger = get_logger('ppgan')
     if osp.exists(fullpath) and check_exist and _md5check(fullpath, md5sum):
         logger.info("Found {}".format(fullpath))
     else:
@@ -103,7 +102,7 @@ def _download(url, path, md5sum=None):
     fname = osp.split(url)[-1]
     fullname = osp.join(path, fname)
     retry_cnt = 0
-
+    logger = get_logger('ppgan')
     while not (osp.exists(fullname) and _md5check(fullname, md5sum)):
         if retry_cnt < DOWNLOAD_RETRY_LIMIT:
             retry_cnt += 1
@@ -140,7 +139,7 @@ def _download(url, path, md5sum=None):
 def _md5check(fullname, md5sum=None):
     if md5sum is None:
         return True
-
+    logger = get_logger('ppgan')
     logger.info("File {} md5 checking...".format(fullname))
     md5 = hashlib.md5()
     with open(fullname, 'rb') as f:
@@ -159,6 +158,7 @@ def _decompress(fname):
     """
     Decompress for zip and tar file
     """
+    logger = get_logger('ppgan')
     logger.info("Decompressing {}...".format(fname))
 
     # For protecting decompressing interupted,
