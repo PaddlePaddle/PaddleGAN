@@ -22,5 +22,3 @@ from .esrgan_model import ESRGAN
 from .ugatit_model import UGATITModel
 from .dc_gan_model import DCGANModel
 from .animeganv2_model import AnimeGANV2Model, AnimeGANV2PreTrainModel
-from .drn_model import DRN
-from .drn_model_custom import DRNCustom
