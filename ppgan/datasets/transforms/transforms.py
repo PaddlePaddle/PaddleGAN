@@ -19,9 +19,9 @@ import collections
 import numpy as np
 
 import paddle.vision.transforms as T
-import ppgan.datasets.transforms.functional as custom_F
 import paddle.vision.transforms.functional as F
 
+from . import functional as custom_F
 from .builder import TRANSFORMS
 
 if sys.version_info < (3, 3):

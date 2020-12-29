@@ -24,14 +24,11 @@ class Compose(object):
     """
     Composes several transforms together use for composing list of transforms
     together for a dataset transform.
-
     Args:
         transforms (list): List of transforms to compose.
-
     Returns:
         A compose object which is callable, __call__ for this Compose
         object will call each given :attr:`transforms` sequencely.
-
     """
     def __init__(self, transforms):
         self.transforms = transforms

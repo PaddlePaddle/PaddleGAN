@@ -1,8 +1,5 @@
 epochs: 200
 output_dir: output_dir
-lambda_A: 10.0
-lambda_B: 10.0
-lambda_identity: 0.5
 
 model:
   name: CycleGANModel
@@ -20,60 +17,96 @@ model:
     n_layers: 3
     norm_type: instance
     input_nc: 3
-  gan_mode: lsgan
+  cycle_criterion:
+    name: L1Loss
+  idt_criterion:
+    name: L1Loss
+    loss_weight: 0.5
+  gan_criterion:
+    name: GANLoss
+    gan_mode: lsgan
 
 dataset:
   train:
     name: UnpairedDataset
-    dataroot: data/horse2zebra
+    dataroot_a: data/horse2zebra/trainA
+    dataroot_b: data/horse2zebra/trainB
     num_workers: 0
     batch_size: 1
-    phase: train
-    max_dataset_size: inf
-    direction: AtoB
-    input_nc: 3
-    output_nc: 3
-    serial_batches: False
-    pool_size: 50
-    transforms:
-      - name: Resize
-        size: [286, 286]
-        interpolation: 'bicubic' #cv2.INTER_CUBIC
-      - name: RandomCrop
-        size: [256, 256]
-      - name: RandomHorizontalFlip
-        prob: 0.5
-      - name: Transpose
-      - name: Normalize
-        mean: [127.5, 127.5, 127.5]
-        std: [127.5, 127.5, 127.5]
+    is_train: True
+    max_size: inf
+    load_pipeline:
+      - name: LoadImageFromFile
+        key: A
+      - name: LoadImageFromFile
+        key: B
+      - name: Transforms
+        input_keys: [A, B]
+        pipeline:
+          - name: Resize
+            size: [286, 286]
+            interpolation: 'bicubic' #cv2.INTER_CUBIC
+            keys: ['image', 'image']
+          - name: RandomCrop
+            size: [256, 256]
+            keys: ['image', 'image']
+          - name: RandomHorizontalFlip
+            prob: 0.5
+            keys: ['image', 'image']
+          - name: Transpose
+            keys: ['image', 'image']
+          - name: Normalize
+            mean: [127.5, 127.5, 127.5]
+            std: [127.5, 127.5, 127.5]
+            keys: ['image', 'image']
   test:
-    name: SingleDataset
-    dataroot: data/horse2zebra/testA
-    max_dataset_size: inf
-    direction: AtoB
-    input_nc: 3
-    output_nc: 3
-    serial_batches: False
-    pool_size: 50
-    transforms:
-      - name: Resize
-        size: [256, 256]
-        interpolation: 'bicubic' #cv2.INTER_CUBIC
-      - name: Transpose
-      - name: Normalize
-        mean: [127.5, 127.5, 127.5]
-        std: [127.5, 127.5, 127.5]
-
-optimizer:
-  name: Adam
-  beta1: 0.5
+    name: UnpairedDataset
+    dataroot_a: data/horse2zebra/testA
+    dataroot_b: data/horse2zebra/testB
+    num_workers: 0
+    batch_size: 1
+    max_size: inf
+    is_train: False
+    load_pipeline:
+      - name: LoadImageFromFile
+        key: A
+      - name: LoadImageFromFile
+        key: B
+      - name: Transforms
+        input_keys: [A, B]
+        pipeline:
+          - name: Resize
+            size: [256, 256]
+            interpolation: 'bicubic' #cv2.INTER_CUBIC
+            keys: ['image', 'image']
+          - name: Transpose
+            keys: ['image', 'image']
+          - name: Normalize
+            mean: [127.5, 127.5, 127.5]
+            std: [127.5, 127.5, 127.5]
+            keys: ['image', 'image']
 
 lr_scheduler:
-  name: linear
+  name: LinearDecay
   learning_rate: 0.0002
   start_epoch: 100
   decay_epochs: 100
+  # will get from real dataset
+  iters_per_epoch: 1
+
+optimizer:
+  optimG:
+    name: Adam
+    net_names:
+      - netG_A
+      - netG_B
+    beta1: 0.5
+  optimD:
+    name: Adam
+    net_names:
+      - netD_A
+      - netD_B
+    beta1: 0.5
 
 log_config:
   interval: 100

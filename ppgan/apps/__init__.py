@@ -22,3 +22,5 @@ from .face_parse_predictor import FaceParsePredictor
 from .animegan_predictor import AnimeGANPredictor
 from .midas_predictor import MiDaSPredictor
 from .photo2cartoon_predictor import Photo2CartoonPredictor
+from .styleganv2_predictor import StyleGANv2Predictor
+from .pixel2style2pixel_predictor import Pixel2Style2PixelPredictor

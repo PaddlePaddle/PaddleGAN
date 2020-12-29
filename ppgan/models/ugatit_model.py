@@ -19,7 +19,7 @@ from .base_model import BaseModel
 from .builder import MODELS
 from .generators.builder import build_generator
 from .discriminators.builder import build_discriminator
-from .losses import GANLoss
+from .criterions import build_criterion
 
 from ..solver import build_optimizer
 from ..modules.nn import RhoClipper
@@ -34,54 +34,58 @@ class UGATITModel(BaseModel):
 
     UGATIT paper: https://arxiv.org/pdf/1907.10830.pdf
     """
-    def __init__(self, cfg):
+    def __init__(self,
+                 generator,
+                 discriminator_g=None,
+                 discriminator_l=None,
+                 l1_criterion=None,
+                 mse_criterion=None,
+                 bce_criterion=None,
+                 direction='a2b',
+                 adv_weight=1.0,
+                 cycle_weight=10.0,
+                 identity_weight=10.0,
+                 cam_weight=1000.0):
         """Initialize the CycleGAN class.
 
         Parameters:
             opt (config)-- stores all the experiment flags; needs to be a subclass of Dict
         """
-        super(UGATITModel, self).__init__(cfg)
-
+        super(UGATITModel, self).__init__()
+        self.adv_weight = adv_weight
+        self.cycle_weight = cycle_weight
+        self.identity_weight = identity_weight
+        self.cam_weight = cam_weight
+        self.direction = direction
         # define networks (both Generators and discriminators)
         # The naming is different from those used in the paper.
-        self.nets['genA2B'] = build_generator(cfg.model.generator)
-        self.nets['genB2A'] = build_generator(cfg.model.generator)
+        self.nets['genA2B'] = build_generator(generator)
+        self.nets['genB2A'] = build_generator(generator)
         init_weights(self.nets['genA2B'])
         init_weights(self.nets['genB2A'])
 
-        if self.is_train:
+        if discriminator_g and discriminator_l:
             # define discriminators
-            self.nets['disGA'] = build_discriminator(cfg.model.discriminator_g)
-            self.nets['disGB'] = build_discriminator(cfg.model.discriminator_g)
-            self.nets['disLA'] = build_discriminator(cfg.model.discriminator_l)
-            self.nets['disLB'] = build_discriminator(cfg.model.discriminator_l)
+            self.nets['disGA'] = build_discriminator(discriminator_g)
+            self.nets['disGB'] = build_discriminator(discriminator_g)
+            self.nets['disLA'] = build_discriminator(discriminator_l)
+            self.nets['disLB'] = build_discriminator(discriminator_l)
             init_weights(self.nets['disGA'])
             init_weights(self.nets['disGB'])
             init_weights(self.nets['disLA'])
             init_weights(self.nets['disLB'])
 
-        if self.is_train:
-            # define loss functions
-            self.BCE_loss = nn.BCEWithLogitsLoss()
-            self.L1_loss = nn.L1Loss()
-            self.MSE_loss = nn.MSELoss()
+        # define loss functions
+        if l1_criterion:
+            self.L1_loss = build_criterion(l1_criterion)
+        if bce_criterion:
+            self.BCE_loss = build_criterion(bce_criterion)
+        if mse_criterion:
+            self.MSE_loss = build_criterion(mse_criterion)
 
-            self.build_lr_scheduler()
-            self.optimizers['optimizer_G'] = build_optimizer(
-                cfg.optimizer,
-                self.lr_scheduler,
-                parameter_list=self.nets['genA2B'].parameters() +
-                self.nets['genB2A'].parameters())
-            self.optimizers['optimizer_D'] = build_optimizer(
-                cfg.optimizer,
-                self.lr_scheduler,
-                parameter_list=self.nets['disGA'].parameters() +
-                self.nets['disGB'].parameters() +
-                self.nets['disLA'].parameters() +
-                self.nets['disLB'].parameters())
-            self.Rho_clipper = RhoClipper(0, 1)
+        self.Rho_clipper = RhoClipper(0, 1)
 
-    def set_input(self, input):
+    def setup_input(self, input):
         """Unpack input data from the dataloader and perform necessary pre-processing steps.
 
         Args:
@@ -89,8 +93,7 @@ class UGATITModel(BaseModel):
 
         The option 'direction' can be used to swap domain A and domain B.
         """
-        mode = 'train' if self.is_train else 'test'
-        AtoB = self.cfg.dataset[mode].direction == 'AtoB'
+        AtoB = self.direction == 'a2b'
 
         if AtoB:
             if 'A' in input:
@@ -109,7 +112,7 @@ class UGATITModel(BaseModel):
             self.image_paths = input['B_paths']
 
     def forward(self):
-        """Run forward pass; called by both functions <optimize_parameters> and <test>."""
+        """Run forward pass; called by both functions <train_iter> and <test_iter>."""
         if hasattr(self, 'real_A'):
             self.fake_A2B, _, _ = self.nets['genA2B'](self.real_A)
 
@@ -124,7 +127,7 @@ class UGATITModel(BaseModel):
             self.visual_items['real_B'] = self.real_B
             self.visual_items['fake_B2A'] = self.fake_B2A
 
-    def test(self):
+    def test_iter(self, metrics=None):
         """Forward function used in test time.
 
         This function wraps <forward> function in no_grad() so we don't save intermediate steps for backprop
@@ -139,7 +142,7 @@ class UGATITModel(BaseModel):
         self.nets['genA2B'].train()
         self.nets['genB2A'].train()
 
-    def optimize_parameters(self):
+    def train_iter(self, optimizers=None):
         """Calculate losses, gradients, and update network weights; called in every training iteration"""
         def _criterion(loss_func, logit, is_real):
             if is_real:
@@ -153,7 +156,7 @@ class UGATITModel(BaseModel):
         self.forward()
 
         # update D
-        self.optimizers['optimizer_D'].clear_grad()
+        optimizers['optimD'].clear_grad()
         real_GA_logit, real_GA_cam_logit, _ = self.nets['disGA'](self.real_A)
         real_LA_logit, real_LA_cam_logit, _ = self.nets['disLA'](self.real_A)
         real_GB_logit, real_GB_cam_logit, _ = self.nets['disGB'](self.real_B)
@@ -196,17 +199,17 @@ class UGATITModel(BaseModel):
             self.MSE_loss, real_LB_cam_logit, True) + _criterion(
                 self.MSE_loss, fake_LB_cam_logit, False)
 
-        D_loss_A = self.cfg.adv_weight * (D_ad_loss_GA + D_ad_cam_loss_GA +
-                                          D_ad_loss_LA + D_ad_cam_loss_LA)
-        D_loss_B = self.cfg.adv_weight * (D_ad_loss_GB + D_ad_cam_loss_GB +
-                                          D_ad_loss_LB + D_ad_cam_loss_LB)
+        D_loss_A = self.adv_weight * (D_ad_loss_GA + D_ad_cam_loss_GA +
+                                      D_ad_loss_LA + D_ad_cam_loss_LA)
+        D_loss_B = self.adv_weight * (D_ad_loss_GB + D_ad_cam_loss_GB +
+                                      D_ad_loss_LB + D_ad_cam_loss_LB)
 
         Discriminator_loss = D_loss_A + D_loss_B
         Discriminator_loss.backward()
-        self.optimizers['optimizer_D'].step()
+        optimizers['optimD'].step()
 
         # update G
-        self.optimizers['optimizer_G'].clear_grad()
+        optimizers['optimG'].clear_grad()
 
         fake_A2B, fake_A2B_cam_logit, _ = self.nets['genA2B'](self.real_A)
         fake_B2A, fake_B2A_cam_logit, _ = self.nets['genB2A'](self.real_B)
@@ -245,16 +248,16 @@ class UGATITModel(BaseModel):
                                   fake_A2B_cam_logit, True) + _criterion(
                                       self.BCE_loss, fake_B2B_cam_logit, False)
 
-        G_loss_A = self.cfg.adv_weight * (
+        G_loss_A = self.adv_weight * (
             G_ad_loss_GA + G_ad_cam_loss_GA + G_ad_loss_LA + G_ad_cam_loss_LA
-        ) + self.cfg.cycle_weight * G_recon_loss_A + self.cfg.identity_weight * G_identity_loss_A + self.cfg.cam_weight * G_cam_loss_A
-        G_loss_B = self.cfg.adv_weight * (
+        ) + self.cycle_weight * G_recon_loss_A + self.identity_weight * G_identity_loss_A + self.cam_weight * G_cam_loss_A
+        G_loss_B = self.adv_weight * (
             G_ad_loss_GB + G_ad_cam_loss_GB + G_ad_loss_LB + G_ad_cam_loss_LB
-        ) + self.cfg.cycle_weight * G_recon_loss_B + self.cfg.identity_weight * G_identity_loss_B + self.cfg.cam_weight * G_cam_loss_B
+        ) + self.cycle_weight * G_recon_loss_B + self.identity_weight * G_identity_loss_B + self.cam_weight * G_cam_loss_B
 
         Generator_loss = G_loss_A + G_loss_B
         Generator_loss.backward()
-        self.optimizers['optimizer_G'].step()
+        optimizers['optimG'].step()
 
         # clip parameter of AdaILN and ILN, applied after optimizer step
         self.nets['genA2B'].apply(self.Rho_clipper)

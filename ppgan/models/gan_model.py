@@ -19,7 +19,7 @@ from .base_model import BaseModel
 from .builder import MODELS
 from .generators.builder import build_generator
 from .discriminators.builder import build_discriminator
-from .losses import GANLoss
+from .criterions.builder import build_criterion
 
 from ..solver import build_optimizer
 from ..modules.init import init_weights
@@ -32,44 +32,46 @@ class GANModel(BaseModel):
 
     vanilla GAN paper: https://arxiv.org/abs/1406.2661
     """
-    def __init__(self, cfg):
+    def __init__(self,
+                 generator,
+                 discriminator=None,
+                 gan_criterion=None,
+                 params=None):
         """Initialize the GAN Model class.
 
-        Parameters:
-            cfg (config dict)-- stores all the experiment flags; needs to be a subclass of Dict
+        Args:
+            generator (dict): config of generator.
+            discriminator (dict): config of discriminator.
+            gan_criterion (dict): config of gan criterion.
+            params (dict): hyper params for train or test. Default: None.
         """
-        super(GANModel, self).__init__(cfg)
-        self.step = 0
-        self.n_critic = cfg.model.get('n_critic', 1)
-        self.visual_interval = cfg.log_config.visiual_interval
-        self.samples_every_row = cfg.model.get('samples_every_row', 8)
+        super(GANModel, self).__init__(params)
+        self.iter = 0
 
-        # define networks (both generator and discriminator)
-        self.nets['netG'] = build_generator(cfg.model.generator)
+        self.disc_iters = 1 if self.params is None else self.params.get(
+            'disc_iters', 1)
+        self.disc_start_iters = (0 if self.params is None else self.params.get(
+            'disc_start_iters', 0))
+        self.samples_every_row = (8 if self.params is None else self.params.get(
+            'samples_every_row', 8))
+        self.visual_interval = (500 if self.params is None else self.params.get(
+            'visual_interval', 500))
+
+        # define generator
+        self.nets['netG'] = build_generator(generator)
         init_weights(self.nets['netG'])
 
         # define a discriminator
         if self.is_train:
-            self.nets['netD'] = build_discriminator(cfg.model.discriminator)
-            init_weights(self.nets['netD'])
+            if discriminator is not None:
+                self.nets['netD'] = build_discriminator(discriminator)
+                init_weights(self.nets['netD'])
 
-        if self.is_train:
-            self.losses = {}
             # define loss functions
-            self.criterionGAN = GANLoss(cfg.model.gan_mode)
+            if gan_criterion:
+                self.criterionGAN = build_criterion(gan_criterion)
 
-            # build optimizers
-            self.build_lr_scheduler()
-            self.optimizers['optimizer_G'] = build_optimizer(
-                cfg.optimizer,
-                self.lr_scheduler,
-                parameter_list=self.nets['netG'].parameters())
-            self.optimizers['optimizer_D'] = build_optimizer(
-                cfg.optimizer,
-                self.lr_scheduler,
-                parameter_list=self.nets['netD'].parameters())
-
-    def set_input(self, input):
+    def setup_input(self, input):
         """Unpack input data from the dataloader and perform necessary pre-processing steps.
 
         Parameters:
@@ -80,9 +82,11 @@ class GANModel(BaseModel):
         if not isinstance(input, dict):
             input = {'img': input}
         self.D_real_inputs = [paddle.to_tensor(input['img'])]
-        if 'class_id' in input: # n class input
+        if 'class_id' in input:  # n class input
             self.n_class = self.nets['netG'].n_class
-            self.D_real_inputs += [paddle.to_tensor(input['class_id'], dtype='int64')]
+            self.D_real_inputs += [
+                paddle.to_tensor(input['class_id'], dtype='int64')
+            ]
         else:
             self.n_class = 0
 
@@ -97,15 +101,18 @@ class GANModel(BaseModel):
                 rows_num = (batch_size - 1) // self.samples_every_row + 1
                 class_ids = paddle.randint(0, self.n_class, [rows_num, 1])
                 class_ids = class_ids.tile([1, self.samples_every_row])
-                class_ids = class_ids.reshape([-1,])[:batch_size].detach()
+                class_ids = class_ids.reshape([
+                    -1,
+                ])[:batch_size].detach()
                 self.G_fixed_inputs[1] = class_ids.detach()
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
-        self.fake_imgs =  self.nets['netG'](*self.G_inputs)  # G(img, class_id)
+        self.fake_imgs = self.nets['netG'](*self.G_inputs)  # G(img, class_id)
 
         # put items to visual dict
-        self.visual_items['fake_imgs'] = make_grid(self.fake_imgs, self.samples_every_row).detach()
+        self.visual_items['fake_imgs'] = make_grid(
+            self.fake_imgs, self.samples_every_row).detach()
 
     def backward_D(self):
         """Calculate GAN loss for the discriminator"""
@@ -118,15 +125,17 @@ class GANModel(BaseModel):
         pred_fake = self.nets['netD'](*self.D_fake_inputs)
         # Real
         real_imgs = self.D_real_inputs[0]
-        self.visual_items['real_imgs'] = make_grid(real_imgs, self.samples_every_row).detach()
+        self.visual_items['real_imgs'] = make_grid(
+            real_imgs, self.samples_every_row).detach()
         pred_real = self.nets['netD'](*self.D_real_inputs)
 
         self.loss_D_fake = self.criterionGAN(pred_fake, False, True)
         self.loss_D_real = self.criterionGAN(pred_real, True, True)
 
         # combine loss and calculate gradients
-        if self.cfg.model.gan_mode in ['vanilla', 'lsgan']:
-            self.loss_D = self.loss_D + (self.loss_D_fake + self.loss_D_real) * 0.5
+        if self.criterionGAN.gan_mode in ['vanilla', 'lsgan']:
+            self.loss_D = self.loss_D + (self.loss_D_fake +
+                                         self.loss_D_real) * 0.5
         else:
             self.loss_D = self.loss_D + self.loss_D_fake + self.loss_D_real
 
@@ -152,34 +161,34 @@ class GANModel(BaseModel):
 
         self.losses['G_adv_loss'] = self.loss_G_GAN
 
-    def optimize_parameters(self):
+    def train_iter(self, optimizers=None):
 
         # compute fake images: G(imgs)
         self.forward()
 
         # update D
         self.set_requires_grad(self.nets['netD'], True)
-        self.optimizers['optimizer_D'].clear_grad()
+        optimizers['optimizer_D'].clear_grad()
         self.backward_D()
-        self.optimizers['optimizer_D'].step()
+        optimizers['optimizer_D'].step()
         self.set_requires_grad(self.nets['netD'], False)
 
         # weight clip
-        if self.cfg.model.gan_mode == 'wgan':
+        if self.criterionGAN.gan_mode == 'wgan':
             with paddle.no_grad():
                 for p in self.nets['netD'].parameters():
                     p[:] = p.clip(-0.01, 0.01)
 
-        if self.step % self.n_critic == 0:
+        if self.iter > self.disc_start_iters and self.iter % self.disc_iters == 0:
             # update G
-            self.optimizers['optimizer_G'].clear_grad()
+            optimizers['optimizer_G'].clear_grad()
             self.backward_G()
-            self.optimizers['optimizer_G'].step()
+            optimizers['optimizer_G'].step()
 
-        if self.step % self.visual_interval == 0:
+        if self.iter % self.visual_interval == 0:
             with paddle.no_grad():
                 self.visual_items['fixed_generated_imgs'] = make_grid(
-                    self.nets['netG'](*self.G_fixed_inputs), self.samples_every_row
-                )
+                    self.nets['netG'](*self.G_fixed_inputs),
+                    self.samples_every_row)
 
-        self.step += 1
+        self.iter += 1

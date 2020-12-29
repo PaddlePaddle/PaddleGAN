@@ -11,3 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+from ..utils.registry import Registry
+
+LRSCHEDULERS = Registry("LRSCHEDULER")
+OPTIMIZERS = Registry("OPTIMIZER")
+
+
+def build_lr_scheduler(cfg):
+    cfg_ = cfg.copy()
+    name = cfg_.pop('name')
+    return LRSCHEDULERS.get(name)(**cfg_)
+
+
+def build_optimizer(cfg, lr_scheduler, parameters=None):
+    cfg_ = cfg.copy()
+    name = cfg_.pop('name')
+    return OPTIMIZERS.get(name)(lr_scheduler, parameters=parameters, **cfg_)

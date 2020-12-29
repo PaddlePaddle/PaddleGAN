@@ -27,33 +27,100 @@ from ..models.builder import build_model
 from ..utils.visual import tensor2img, save_image
 from ..utils.filesystem import makedirs, save, load
 from ..utils.timer import TimeAverager
-from ..metric.psnr_ssim import calculate_psnr, calculate_ssim
+
+
+class IterLoader:
+    def __init__(self, dataloader):
+        self._dataloader = dataloader
+        self.iter_loader = iter(self._dataloader)
+        self._epoch = 1
+
+    @property
+    def epoch(self):
+        return self._epoch
+
+    def __next__(self):
+        try:
+            data = next(self.iter_loader)
+        except StopIteration:
+            self._epoch += 1
+            self.iter_loader = iter(self._dataloader)
+            data = next(self.iter_loader)
+
+        return data
+
+    def __len__(self):
+        return len(self._dataloader)
 
 
 class Trainer:
+    """
+    # trainer calling logic:
+    #
+    #                build_model                               ||    model(BaseModel)
+    #                     |                                    ||
+    #               build_dataloader                           ||    dataloader
+    #                     |                                    ||
+    #               model.setup_lr_schedulers                  ||    lr_scheduler
+    #                     |                                    ||
+    #               model.setup_optimizers                     ||    optimizers
+    #                     |                                    ||
+    #     train loop (model.setup_input + model.train_iter)    ||    train loop
+    #                     |                                    ||
+    #         print log (model.get_current_losses)             ||
+    #                     |                                    ||
+    #         save checkpoint (model.nets)                     \/
+    """
     def __init__(self, cfg):
 
-        # build train dataloader
-        self.train_dataloader = build_dataloader(cfg.dataset.train)
-
-        if 'lr_scheduler' in cfg.optimizer:
-            cfg.optimizer.lr_scheduler.step_per_epoch = len(
-                self.train_dataloader)
-
         # build model
-        self.model = build_model(cfg)
+        self.model = build_model(cfg.model)
         # multiple gpus prepare
         if ParallelEnv().nranks > 1:
             self.distributed_data_parallel()
 
+        # build train dataloader
+        self.train_dataloader = build_dataloader(cfg.dataset.train)
+        self.iters_per_epoch = len(self.train_dataloader)
+
+        # build lr scheduler
+        # TODO: has a better way?
+        if 'lr_scheduler' in cfg and 'iters_per_epoch' in cfg.lr_scheduler:
+            cfg.lr_scheduler.iters_per_epoch = self.iters_per_epoch
+        self.lr_schedulers = self.model.setup_lr_schedulers(cfg.lr_scheduler)
+
+        # build optimizers
+        self.optimizers = self.model.setup_optimizers(self.lr_schedulers,
+                                                      cfg.optimizer)
+
+        # build metrics
+        self.metrics = None
+        validate_cfg = cfg.get('validate', None)
+        if validate_cfg and 'metrics' in validate_cfg:
+            self.metrics = self.model.setup_metrics(validate_cfg['metrics'])
+
         self.logger = logging.getLogger(__name__)
+        self.enable_visualdl = cfg.get('enable_visualdl', False)
+        if self.enable_visualdl:
+            import visualdl
+            self.vdl_logger = visualdl.LogWriter(logdir=cfg.output_dir)
 
         # base config
         self.output_dir = cfg.output_dir
-        self.epochs = cfg.epochs
+        self.epochs = cfg.get('epochs', None)
+        if self.epochs:
+            self.total_iters = self.epochs * self.iters_per_epoch
+            self.by_epoch = True
+        else:
+            self.by_epoch = False
+            self.total_iters = cfg.total_iters
+
         self.start_epoch = 1
         self.current_epoch = 1
+        self.current_iter = 1
+        self.inner_iter = 1
         self.batch_id = 0
+        self.global_steps = 0
         self.weight_interval = cfg.snapshot_config.interval
         self.log_interval = cfg.log_config.interval
         self.visual_interval = cfg.log_config.visiual_interval
@@ -63,10 +130,6 @@ class Trainer:
         self.cfg = cfg
 
         self.local_rank = ParallelEnv().local_rank
-
-        # time count
-        self.steps_per_epoch = len(self.train_dataloader)
-        self.total_steps = self.epochs * self.steps_per_epoch
 
         self.time_count = {}
         self.best_metric = {}
@@ -80,141 +143,124 @@ class Trainer:
         reader_cost_averager = TimeAverager()
         batch_cost_averager = TimeAverager()
 
-        for epoch in range(self.start_epoch, self.epochs + 1):
-            self.current_epoch = epoch
+        iter_loader = IterLoader(self.train_dataloader)
+
+        while self.current_iter < (self.total_iters + 1):
+            self.current_epoch = iter_loader.epoch
+            self.inner_iter = self.current_iter % self.iters_per_epoch
+
             start_time = step_start_time = time.time()
-            for i, data in enumerate(self.train_dataloader):
-                reader_cost_averager.record(time.time() - step_start_time)
+            data = next(iter_loader)
+            reader_cost_averager.record(time.time() - step_start_time)
+            # unpack data from dataset and apply preprocessing
+            # data input should be dict
+            self.model.setup_input(data)
+            self.model.train_iter(self.optimizers)
 
-                self.batch_id = i
-                # unpack data from dataset and apply preprocessing
-                # data input should be dict
-                self.model.set_input(data)
-                self.model.optimize_parameters()
+            batch_cost_averager.record(time.time() - step_start_time,
+                                       num_samples=self.cfg.get(
+                                           'batch_size', 1))
 
-                batch_cost_averager.record(time.time() - step_start_time,
-                                           num_samples=self.cfg.get(
-                                               'batch_size', 1))
-                if i % self.log_interval == 0:
-                    self.data_time = reader_cost_averager.get_average()
-                    self.step_time = batch_cost_averager.get_average()
-                    self.ips = batch_cost_averager.get_ips_average()
-                    self.print_log()
+            step_start_time = time.time()
 
-                    reader_cost_averager.reset()
-                    batch_cost_averager.reset()
+            if self.current_iter % self.log_interval == 0:
+                self.data_time = reader_cost_averager.get_average()
+                self.step_time = batch_cost_averager.get_average()
+                self.ips = batch_cost_averager.get_ips_average()
+                self.print_log()
 
-                if i % self.visual_interval == 0:
-                    self.visual('visual_train')
+                reader_cost_averager.reset()
+                batch_cost_averager.reset()
 
-                step_start_time = time.time()
+            if self.current_iter % self.visual_interval == 0:
+                self.visual('visual_train')
 
-            self.logger.info(
-                'train one epoch use time: {:.3f} seconds.'.format(time.time() -
-                                                                   start_time))
-            if self.validate_interval > -1 and epoch % self.validate_interval:
-                self.validate()
             self.model.lr_scheduler.step()
-            if epoch % self.weight_interval == 0:
-                self.save(epoch, 'weight', keep=-1)
-            self.save(epoch)
 
-    def validate(self):
-        if not hasattr(self, 'val_dataloader'):
-            self.val_dataloader = build_dataloader(self.cfg.dataset.val,
-                                                   is_train=False)
+            if self.by_epoch:
+                temp = self.current_epoch
+            else:
+                temp = self.current_iter
+            if self.validate_interval > -1 and temp % self.validate_interval == 0:
+                self.test()
 
-        metric_result = {}
+            if temp % self.weight_interval == 0:
+                self.save(temp, 'weight', keep=-1)
+                self.save(temp)
 
-        for i, data in enumerate(self.val_dataloader):
-            self.batch_id = i
-
-            self.model.set_input(data)
-            self.model.test()
-
-            visual_results = {}
-            current_paths = self.model.get_image_paths()
-            current_visuals = self.model.get_current_visuals()
-
-            for j in range(len(current_paths)):
-                short_path = os.path.basename(current_paths[j])
-                basename = os.path.splitext(short_path)[0]
-                for k, img_tensor in current_visuals.items():
-                    name = '%s_%s' % (basename, k)
-                    visual_results.update({name: img_tensor[j]})
-                if 'psnr' in self.cfg.validate.metrics:
-                    if 'psnr' not in metric_result:
-                        metric_result['psnr'] = calculate_psnr(
-                            tensor2img(current_visuals['output'][j], (0., 1.)),
-                            tensor2img(current_visuals['gt'][j], (0., 1.)),
-                            **self.cfg.validate.metrics.psnr)
-                    else:
-                        metric_result['psnr'] += calculate_psnr(
-                            tensor2img(current_visuals['output'][j], (0., 1.)),
-                            tensor2img(current_visuals['gt'][j], (0., 1.)),
-                            **self.cfg.validate.metrics.psnr)
-                if 'ssim' in self.cfg.validate.metrics:
-                    if 'ssim' not in metric_result:
-                        metric_result['ssim'] = calculate_ssim(
-                            tensor2img(current_visuals['output'][j], (0., 1.)),
-                            tensor2img(current_visuals['gt'][j], (0., 1.)),
-                            **self.cfg.validate.metrics.ssim)
-                    else:
-                        metric_result['ssim'] += calculate_ssim(
-                            tensor2img(current_visuals['output'][j], (0., 1.)),
-                            tensor2img(current_visuals['gt'][j], (0., 1.)),
-                            **self.cfg.validate.metrics.ssim)
-
-            self.visual('visual_val', visual_results=visual_results)
-
-            if i % self.log_interval == 0:
-                self.logger.info('val iter: [%d/%d]' %
-                                 (i, len(self.val_dataloader)))
-
-        for metric_name in metric_result.keys():
-            metric_result[metric_name] /= len(self.val_dataloader.dataset)
-
-        self.logger.info('Epoch {} validate end: {}'.format(
-            self.current_epoch, metric_result))
+            self.current_iter += 1
 
     def test(self):
         if not hasattr(self, 'test_dataloader'):
             self.test_dataloader = build_dataloader(self.cfg.dataset.test,
-                                                    is_train=False)
+                                                    is_train=False,
+                                                    distributed=False)
+
+        if self.metrics:
+            for metric in self.metrics.values():
+                metric.reset()
 
         # data[0]: img, data[1]: img path index
         # test batch size must be 1
         for i, data in enumerate(self.test_dataloader):
-            self.batch_id = i
 
-            self.model.set_input(data)
-            self.model.test()
+            self.model.setup_input(data)
+            self.model.test_iter(metrics=self.metrics)
 
             visual_results = {}
             current_paths = self.model.get_image_paths()
             current_visuals = self.model.get_current_visuals()
 
-            for j in range(len(current_paths)):
-                short_path = os.path.basename(current_paths[j])
-                basename = os.path.splitext(short_path)[0]
+            if len(current_visuals) > 0 and list(
+                    current_visuals.values())[0].shape == 4:
+                num_samples = list(current_visuals.values())[0].shape[0]
+            else:
+                num_samples = 1
+
+            for j in range(num_samples):
+                if j < len(current_paths):
+                    short_path = os.path.basename(current_paths[j])
+                    basename = os.path.splitext(short_path)[0]
+                else:
+                    basename = '{:04d}_{:04d}'.format(i, j)
                 for k, img_tensor in current_visuals.items():
                     name = '%s_%s' % (basename, k)
-                    visual_results.update({name: img_tensor[j]})
+                    if len(img_tensor.shape) == 4:
+                        visual_results.update({name: img_tensor[j]})
+                    else:
+                        visual_results.update({name: img_tensor})
 
-            self.visual('visual_test', visual_results=visual_results)
+            self.visual('visual_test',
+                        visual_results=visual_results,
+                        step=self.batch_id,
+                        is_save_image=True)
 
             if i % self.log_interval == 0:
                 self.logger.info('Test iter: [%d/%d]' %
                                  (i, len(self.test_dataloader)))
 
+        if self.metrics:
+            for metric_name, metric in self.metrics.items():
+                self.logger.info("Metric {}: {:.4f}".format(
+                    metric_name, metric.accumulate()))
+
     def print_log(self):
         losses = self.model.get_current_losses()
-        message = 'Epoch: %d, iters: %d ' % (self.current_epoch, self.batch_id)
 
-        message += '%s: %.6f ' % ('lr', self.current_learning_rate)
+        message = ''
+        if self.by_epoch:
+            message += 'Epoch: %d/%d, iter: %d/%d ' % (
+                self.current_epoch, self.epochs, self.inner_iter,
+                self.iters_per_epoch)
+        else:
+            message += 'Iter: %d/%d ' % (self.current_iter, self.total_iters)
+
+        message += f'lr: {self.current_learning_rate:.3e} '
 
         for k, v in losses.items():
             message += '%s: %.3f ' % (k, v)
+            if self.enable_visualdl:
+                self.vdl_logger.add_scalar(k, v, step=self.global_steps)
 
         if hasattr(self, 'step_time'):
             message += 'batch_cost: %.5f sec ' % self.step_time
@@ -226,9 +272,7 @@ class Trainer:
             message += 'ips: %.5f images/s ' % self.ips
 
         if hasattr(self, 'step_time'):
-            cur_step = self.steps_per_epoch * (self.current_epoch -
-                                               1) + self.batch_id
-            eta = self.step_time * (self.total_steps - cur_step - 1)
+            eta = self.step_time * (self.total_iters - self.current_iter - 1)
             eta_str = str(datetime.timedelta(seconds=int(eta)))
             message += f'eta: {eta_str}'
 
@@ -240,26 +284,49 @@ class Trainer:
         for optimizer in self.model.optimizers.values():
             return optimizer.get_lr()
 
-    def visual(self, results_dir, visual_results=None):
+    def visual(self,
+               results_dir,
+               visual_results=None,
+               step=None,
+               is_save_image=False):
+        """
+        visual the images, use visualdl or directly write to the directory
+
+        Parameters:
+            results_dir (str)     --  directory name which contains saved images
+            visual_results (dict) --  the results images dict
+            step (int)            --  global steps, used in visualdl
+            is_save_image (bool)  --  weather write to the directory or visualdl
+        """
         self.model.compute_visuals()
 
         if visual_results is None:
             visual_results = self.model.get_current_visuals()
 
-        if self.cfg.is_train:
-            msg = 'epoch%.3d_' % self.current_epoch
-        else:
-            msg = ''
-
-        makedirs(os.path.join(self.output_dir, results_dir))
         min_max = self.cfg.get('min_max', None)
         if min_max is None:
             min_max = (-1., 1.)
+
+        image_num = self.cfg.get('image_num', None)
+        if (image_num is None) or (not self.enable_visualdl):
+            image_num = 1
         for label, image in visual_results.items():
-            image_numpy = tensor2img(image, min_max)
-            img_path = os.path.join(self.output_dir, results_dir,
-                                    msg + '%s.png' % (label))
-            save_image(image_numpy, img_path)
+            image_numpy = tensor2img(image, min_max, image_num)
+            if (not is_save_image) and self.enable_visualdl:
+                self.vdl_logger.add_image(
+                    results_dir + '/' + label,
+                    image_numpy,
+                    step=step if step else self.global_steps,
+                    dataformats="HWC" if image_num == 1 else "NCHW")
+            else:
+                if self.cfg.is_train:
+                    msg = 'epoch%.3d_' % self.current_epoch
+                else:
+                    msg = ''
+                makedirs(os.path.join(self.output_dir, results_dir))
+                img_path = os.path.join(self.output_dir, results_dir,
+                                        msg + '%s.png' % (label))
+                save_image(image_numpy, img_path)
 
     def save(self, epoch, name='checkpoint', keep=1):
         if self.local_rank != 0:
@@ -299,6 +366,7 @@ class Trainer:
         state_dicts = load(checkpoint_path)
         if state_dicts.get('epoch', None) is not None:
             self.start_epoch = state_dicts['epoch'] + 1
+            self.global_steps = self.steps_per_epoch * state_dicts['epoch']
 
         for net_name, net in self.model.nets.items():
             net.set_state_dict(state_dicts[net_name])
@@ -310,4 +378,20 @@ class Trainer:
         state_dicts = load(weight_path)
 
         for net_name, net in self.model.nets.items():
+            if net_name in state_dicts:
+                net.set_state_dict(state_dicts[net_name])
+                self.logger.info(
+                    'Loaded pretrained weight for net {}'.format(net_name))
+            else:
+                self.logger.warning(
+                    'Can not find state dict of net {}. Skip load pretrained weight for net {}'
+                    .format(net_name, net_name))
             net.set_state_dict(state_dicts[net_name])
+
+    def close(self):
+        """
+        when finish the training need close file handler or other.
+
+        """
+        if self.enable_visualdl:
+            self.vdl_logger.close()

@@ -12,54 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import cv2
-import paddle
-from .base_dataset import BaseDataset, get_transform
-from .image_folder import make_dataset
-
+from .base_dataset import BaseDataset
 from .builder import DATASETS
-from .transforms.builder import build_transforms
 
 
 @DATASETS.register()
 class SingleDataset(BaseDataset):
     """
     """
-    def __init__(self, cfg):
-        """Initialize this dataset class.
+    def __init__(self, dataroot, preprocess):
+        """Initialize single dataset class.
 
         Args:
-            cfg (dict) -- stores all the experiment flags
+            dataroot (str): Directory of dataset.
+            preprocess (list[dict]): A sequence of data preprocess config.
         """
-        BaseDataset.__init__(self, cfg)
-        self.A_paths = sorted(make_dataset(cfg.dataroot, cfg.max_dataset_size))
-        input_nc = self.cfg.output_nc if self.cfg.direction == 'BtoA' else self.cfg.input_nc
-        self.transform = build_transforms(self.cfg.transforms)
+        super(SingleDataset).__init__(self, preprocess)
+        self.dataroot = dataroot
+        self.data_infos = self.prepare_data_infos()
 
-    def __getitem__(self, index):
-        """Return a data point and its metadata information.
+    def prepare_data_infos(self):
+        """prepare image paths from a folder.
 
-        Parameters:
-            index - - a random integer for data indexing
-
-        Returns a dictionary that contains A and A_paths
-            A(tensor) - - an image in one domain
-            A_paths(str) - - the path of the image
+        Returns:
+            list[dict]: List that contains paired image paths.
         """
-        A_path = self.A_paths[index]
-        A_img = cv2.cvtColor(cv2.imread(A_path), cv2.COLOR_BGR2RGB)
-        A = self.transform(A_img)
+        data_infos = []
+        paths = sorted(self.scan_folder(self.dataroot))
+        for path in paths:
+            data_infos.append(dict(A_path=path))
 
-        return {'A': A, 'A_paths': A_path}
-
-    def __len__(self):
-        """Return the total number of images in the dataset."""
-        return len(self.A_paths)
-
-    def get_path_by_indexs(self, indexs):
-        if isinstance(indexs, paddle.Tensor):
-            indexs = indexs.numpy()
-        current_paths = []
-        for index in indexs:
-            current_paths.append(self.A_paths[index])
-        return current_paths
+        return data_infos

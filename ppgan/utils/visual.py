@@ -18,6 +18,8 @@ import numpy as np
 from PIL import Image
 
 irange = range
+
+
 def make_grid(tensor, nrow=8, normalize=False, range=None, scale_each=False):
     """Make a grid of images.
     Args:
@@ -34,8 +36,10 @@ def make_grid(tensor, nrow=8, normalize=False, range=None, scale_each=False):
             images separately rather than the (min, max) over all images. Default: ``False``.
     """
     if not (isinstance(tensor, paddle.Tensor) or
-            (isinstance(tensor, list) and all(isinstance(tensor, t) for t in tensor))):
-        raise TypeError('tensor or list of tensors expected, got {}'.format(type(tensor)))
+            (isinstance(tensor, list)
+             and all(isinstance(t, paddle.Tensor) for t in tensor))):
+        raise TypeError('tensor or list of tensors expected, got {}'.format(
+            type(tensor)))
 
     # if list of tensors, convert to a 4D mini-batch Tensor
     if isinstance(tensor, list):
@@ -82,37 +86,67 @@ def make_grid(tensor, nrow=8, normalize=False, range=None, scale_each=False):
     ymaps = int(math.ceil(float(nmaps) / xmaps))
     height, width = int(tensor.shape[2]), int(tensor.shape[3])
     num_channels = tensor.shape[1]
-    canvas = paddle.zeros((num_channels, height * ymaps, width * xmaps), dtype=tensor.dtype)
+    canvas = paddle.zeros((num_channels, height * ymaps, width * xmaps),
+                          dtype=tensor.dtype)
     k = 0
     for y in irange(ymaps):
         for x in irange(xmaps):
             if k >= nmaps:
                 break
-            canvas[:, y * height:(y + 1) * height, x * width:(x + 1) * width] = tensor[k]
+            canvas[:, y * height:(y + 1) * height,
+                   x * width:(x + 1) * width] = tensor[k]
             k = k + 1
     return canvas
 
 
-def tensor2img(input_image, min_max=(-1., 1.), imtype=np.uint8):
+def tensor2img(input_image, min_max=(-1., 1.), image_num=1, imtype=np.uint8):
     """"Converts a Tensor array into a numpy image array.
 
     Parameters:
         input_image (tensor) --  the input image tensor array
+        image_num (int)      --  the convert iamge numbers
         imtype (type)        --  the desired type of the converted numpy array
     """
+    def processing(img, transpose=True):
+        """"processing one numpy image.
+
+        Parameters:
+            im (tensor) --  the input image numpy array
+        """
+        if img.shape[0] == 1:  # grayscale to RGB
+            img = np.tile(img, (3, 1, 1))
+        img = img.clip(min_max[0], min_max[1])
+        img = (img - min_max[0]) / (min_max[1] - min_max[0])
+        if imtype == np.uint8:
+            img = img * 255.0  # scaling
+        img = np.transpose(img, (1, 2, 0)) if transpose else img  # tranpose
+        return img
+
     if not isinstance(input_image, np.ndarray):
         image_numpy = input_image.numpy()  # convert it into a numpy array
-        if len(image_numpy.shape) == 4:
-            image_numpy = image_numpy[0]
-        if image_numpy.shape[0] == 1:  # grayscale to RGB
-            image_numpy = np.tile(image_numpy, (3, 1, 1))
-        image_numpy = image_numpy.clip(min_max[0], min_max[1])
-        image_numpy = (image_numpy - min_max[0]) / (min_max[1] - min_max[0])
-        image_numpy = (np.transpose(
-            image_numpy,
-            (1, 2, 0))) * 255.0  # post-processing: tranpose and scaling
+        ndim = image_numpy.ndim
+        if ndim == 4:
+            image_numpy = image_numpy[0:image_num]
+        elif ndim == 3:
+            # NOTE for eval mode, need add dim
+            image_numpy = np.expand_dims(image_numpy, 0)
+            image_num = 1
+        else:
+            raise ValueError(
+                "Image numpy ndim is {} not 3 or 4, Please check data".format(
+                    ndim))
+
+        if image_num == 1:
+            # for one image, log HWC image
+            image_numpy = processing(image_numpy[0])
+        else:
+            # for more image, log NCHW image
+            image_numpy = np.stack(
+                [processing(im, transpose=False) for im in image_numpy])
+
     else:  # if it is a numpy array, do nothing
         image_numpy = input_image
+    image_numpy = image_numpy.round()
     return image_numpy.astype(imtype)
 
 

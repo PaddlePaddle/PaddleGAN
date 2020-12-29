@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import inspect
+import traceback
+
 
 class Registry(object):
     """
@@ -72,3 +75,53 @@ class Registry(object):
                     name, self._name))
 
         return ret
+
+
+def build_from_config(cfg, registry, default_args=None):
+    """Build a class from config dict.
+
+    Args:
+        cfg (dict): Config dict. It should at least contain the key "name".
+        registry (ppgan.utils.Registry): The registry to search the name from.
+        default_args (dict, optional): Default initialization arguments.
+
+    Returns:
+        class: The constructed class.
+    """
+    if not isinstance(cfg, dict):
+        raise TypeError(f'cfg must be a dict, but got {type(cfg)}')
+    if 'name' not in cfg:
+        if default_args is None or 'name' not in default_args:
+            raise KeyError(
+                '`cfg` or `default_args` must contain the key "name", '
+                f'but got {cfg}\n{default_args}')
+    if not isinstance(registry, Registry):
+        raise TypeError('registry must be an mmcv.Registry object, '
+                        f'but got {type(registry)}')
+    if not (isinstance(default_args, dict) or default_args is None):
+        raise TypeError('default_args must be a dict or None, '
+                        f'but got {type(default_args)}')
+
+    args = cfg.copy()
+
+    if default_args is not None:
+        for name, value in default_args.items():
+            args.setdefault(name, value)
+
+    cls_name = args.pop('name')
+    if isinstance(cls_name, str):
+        obj_cls = registry.get(cls_name)
+    elif inspect.isclass(cls_name):
+        obj_cls = obj_cls
+    else:
+        raise TypeError(
+            f'name must be a str or valid name, but got {type(cls_name)}')
+
+    try:
+        instance = obj_cls(**args)
+    except Exception as e:
+        stack_info = traceback.format_exc()
+        print("Fail to initial class [{}] with error: "
+              "{} and stack:\n{}".format(cls_name, e, str(stack_info)))
+        raise e
+    return instance

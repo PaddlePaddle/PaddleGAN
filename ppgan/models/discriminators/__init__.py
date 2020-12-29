@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from .vgg_discriminator import VGGDiscriminator128
 from .nlayers import NLayerDiscriminator, NLayerDiscriminatorWithClassification
 from .discriminator_ugatit import UGATITDiscriminator
 from .dcdiscriminator import DCDiscriminator
 from .discriminator_animegan import AnimeDiscriminator
+from .discriminator_styleganv2 import StyleGANv2Discriminator
