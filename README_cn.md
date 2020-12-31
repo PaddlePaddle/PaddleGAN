@@ -43,6 +43,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 * [FaceParsing](./docs/zh_CN/tutorials/face_parse.md)
 * [AnimeGANv2](./docs/zh_CN/tutorials/animegan.md)
 * [U-GAT-IT](./docs/zh_CN/tutorials/ugatit.md)
+* [Photo2Cartoon](docs/zh_CN/tutorials/photo2cartoon.md)
 
 ## 复合应用
 
@@ -120,7 +121,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 ## 近期活动更新
 
-- 2020.12.10 
+- 2020.12.10
 
   《大谷 Spitzer 手把手教你修复百年前老北京影像》b站直播中奖用户名单请点击[PaddleGAN直播中奖名单](./docs/luckydraw.md)查看~
 
@@ -148,6 +149,7 @@ SIG贡献:
 - [zhen8838](https://github.com/zhen8838): 贡献AnimeGANv2.
 - [Jay9z](https://github.com/Jay9z): 贡献DCGAN的示例、修改安装文档等。
 - [HighCWu](https://github.com/HighCWu): 贡献c-DCGAN和WGAN，以及对`paddle.vision.datasets`数据集的支持。
+- [hao-qiang](https://github.com/hao-qiang) & [ minivision-ai ](https://github.com/minivision-ai): 贡献人像卡通化photo2cartoon项目。
 
 
 ## 贡献代码
