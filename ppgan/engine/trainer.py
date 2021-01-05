@@ -386,7 +386,6 @@ class Trainer:
                 self.logger.warning(
                     'Can not find state dict of net {}. Skip load pretrained weight for net {}'
                     .format(net_name, net_name))
-            net.set_state_dict(state_dicts[net_name])
 
     def close(self):
         """

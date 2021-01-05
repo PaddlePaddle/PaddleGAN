@@ -61,7 +61,6 @@ class ESRGAN(BaseSRModel):
             self.gan_criterion = build_criterion(gan_criterion)
 
     def train_iter(self, optimizers=None):
-        self.set_requires_grad(self.nets['discriminator'], False)
         optimizers['optimG'].clear_grad()
         l_total = 0
         self.output = self.nets['generator'](self.lq)
@@ -83,41 +82,48 @@ class ESRGAN(BaseSRModel):
                 self.losses['loss_style'] = l_g_style
 
         # gan loss (relativistic gan)
-        real_d_pred = self.nets['discriminator'](self.gt).detach()
-        fake_g_pred = self.nets['discriminator'](self.output)
-        l_g_real = self.gan_criterion(real_d_pred - paddle.mean(fake_g_pred),
-                                      False,
-                                      is_disc=False)
-        l_g_fake = self.gan_criterion(fake_g_pred - paddle.mean(real_d_pred),
-                                      True,
-                                      is_disc=False)
-        l_g_gan = (l_g_real + l_g_fake) / 2
+        if hasattr(self, 'gan_criterion'):
+            self.set_requires_grad(self.nets['discriminator'], False)
+            real_d_pred = self.nets['discriminator'](self.gt).detach()
+            fake_g_pred = self.nets['discriminator'](self.output)
+            l_g_real = self.gan_criterion(real_d_pred -
+                                          paddle.mean(fake_g_pred),
+                                          False,
+                                          is_disc=False)
+            l_g_fake = self.gan_criterion(fake_g_pred -
+                                          paddle.mean(real_d_pred),
+                                          True,
+                                          is_disc=False)
+            l_g_gan = (l_g_real + l_g_fake) / 2
 
-        l_total += l_g_gan
-        self.losses['l_g_gan'] = l_g_gan
+            l_total += l_g_gan
+            self.losses['l_g_gan'] = l_g_gan
+            l_total.backward()
+            optimizers['optimG'].step()
 
-        l_total.backward()
-        optimizers['optimG'].step()
+            self.set_requires_grad(self.nets['discriminator'], True)
+            optimizers['optimD'].clear_grad()
+            # real
+            fake_d_pred = self.nets['discriminator'](self.output).detach()
+            real_d_pred = self.nets['discriminator'](self.gt)
+            l_d_real = self.gan_criterion(
+                real_d_pred - paddle.mean(fake_d_pred), True,
+                is_disc=True) * 0.5
 
-        self.set_requires_grad(self.nets['discriminator'], True)
-        optimizers['optimD'].clear_grad()
-        # real
-        fake_d_pred = self.nets['discriminator'](self.output).detach()
-        real_d_pred = self.nets['discriminator'](self.gt)
-        l_d_real = self.gan_criterion(
-            real_d_pred - paddle.mean(fake_d_pred), True, is_disc=True) * 0.5
+            # fake
+            fake_d_pred = self.nets['discriminator'](self.output.detach())
+            l_d_fake = self.gan_criterion(
+                fake_d_pred - paddle.mean(real_d_pred.detach()),
+                False,
+                is_disc=True) * 0.5
 
-        # fake
-        fake_d_pred = self.nets['discriminator'](self.output.detach())
-        l_d_fake = self.gan_criterion(
-            fake_d_pred - paddle.mean(real_d_pred.detach()),
-            False,
-            is_disc=True) * 0.5
+            (l_d_real + l_d_fake).backward()
+            optimizers['optimD'].step()
 
-        (l_d_real + l_d_fake).backward()
-        optimizers['optimD'].step()
-
-        self.losses['l_d_real'] = l_d_real
-        self.losses['l_d_fake'] = l_d_fake
-        self.losses['out_d_real'] = paddle.mean(real_d_pred.detach())
-        self.losses['out_d_fake'] = paddle.mean(fake_d_pred.detach())
+            self.losses['l_d_real'] = l_d_real
+            self.losses['l_d_fake'] = l_d_fake
+            self.losses['out_d_real'] = paddle.mean(real_d_pred.detach())
+            self.losses['out_d_fake'] = paddle.mean(fake_d_pred.detach())
+        else:
+            l_total.backward()
+            optimizers['optimG'].step()
