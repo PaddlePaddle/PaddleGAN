@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import sys
+import cv2
 import glob
 import random
 import numbers
@@ -44,8 +45,9 @@ TRANSFORMS.register(T.Transpose)
 
 @PREPROCESS.register()
 class Transforms():
-    def __init__(self, pipeline, input_keys):
+    def __init__(self, pipeline, input_keys, output_keys=None):
         self.input_keys = input_keys
+        self.output_keys = output_keys
         self.transforms = []
         for transform_cfg in pipeline:
             self.transforms.append(build_from_config(transform_cfg, TRANSFORMS))
@@ -61,6 +63,11 @@ class Transforms():
             if hasattr(transform, 'params') and isinstance(
                     transform.params, dict):
                 datas.update(transform.params)
+
+        if self.output_keys is not None:
+            for i, k in enumerate(self.output_keys):
+                datas[k] = data[i]
+            return datas
 
         for i, k in enumerate(self.input_keys):
             datas[k] = data[i]
@@ -187,10 +194,11 @@ class SRPairedRandomCrop(T.BaseTransform):
         scale (int): model upscale factor.
         gt_patch_size (int): cropped gt patch size.
     """
-    def __init__(self, scale, gt_patch_size, keys=None):
+    def __init__(self, scale, gt_patch_size, scale_list=False, keys=None):
         self.gt_patch_size = gt_patch_size
         self.scale = scale
         self.keys = keys
+        self.scale_list = scale_list
 
     def __call__(self, inputs):
         """inputs must be (lq_img, gt_img)"""
@@ -217,6 +225,12 @@ class SRPairedRandomCrop(T.BaseTransform):
         top_gt, left_gt = int(top * scale), int(left * scale)
         gt = gt[top_gt:top_gt + self.gt_patch_size,
                 left_gt:left_gt + self.gt_patch_size, ...]
+
+        if self.scale_list and self.scale == 4:
+            lqx2 = F.resize(gt, (lq_patch_size * 2, lq_patch_size * 2),
+                            'bicubic')
+            outputs = (lq, lqx2, gt)
+            return outputs
 
         outputs = (lq, gt)
         return outputs

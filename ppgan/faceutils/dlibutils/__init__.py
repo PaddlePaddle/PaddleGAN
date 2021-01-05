@@ -13,3 +13,4 @@
 # limitations under the License.
 
 from .dlib_utils import detect, crop, landmarks, crop_from_array
+from .face_align import align_crop

@@ -7,11 +7,7 @@ min_max:
 model:
   name: BaseSRModel
   generator:
-    name: RRDBNet
-    in_nc: 3
-    out_nc: 3
-    nf: 64
-    nb: 23
+    name: LESRCNNGenerator
   pixel_criterion:
     name: L1Loss
 
@@ -98,8 +94,8 @@ validate:
       test_y_channel: True
 
 log_config:
-  interval: 10
-  visiual_interval: 500
+  interval: 100
+  visiual_interval: 5000
 
 snapshot_config:
   interval: 5000
