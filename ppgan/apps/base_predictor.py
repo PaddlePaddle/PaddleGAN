@@ -38,11 +38,10 @@ class BasePredictor(object):
                     param_file = file_name
 
             self.program, self.feed_names, self.fetch_targets = paddle.static.load_inference_model(
-                dirname=self.weight_path,
+                self.weight_path,
                 executor=self.exe,
                 model_filename=model_file,
                 params_filename=param_file)
-            print(self.feed_names)
 
     def base_forward(self, inputs):
         if paddle.in_dynamic_mode():
