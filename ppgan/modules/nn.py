@@ -79,3 +79,14 @@ class RhoClipper(object):
             w = module.rho
             w = w.clip(self.clip_min, self.clip_max)
             module.rho.set_value(w)
+
+        # used for photo2cartoon training
+        if hasattr(module, 'w_gamma'):
+            w = module.w_gamma
+            w = w.clip(self.clip_min, self.clip_max)
+            module.w_gamma.set_value(w)
+
+        if hasattr(module, 'w_beta'):
+            w = module.w_beta
+            w = w.clip(self.clip_min, self.clip_max)
+            module.w_beta.set_value(w)
