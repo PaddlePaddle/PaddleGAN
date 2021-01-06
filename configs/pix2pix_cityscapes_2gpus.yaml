@@ -61,7 +61,7 @@ dataset:
     dataroot: data/cityscapes/test
     num_workers: 4
     batch_size: 1
-    load_pipeline:
+    preprocess:
       - name: LoadImageFromFile
         key: pair
     - name: Transforms

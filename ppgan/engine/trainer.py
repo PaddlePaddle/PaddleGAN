@@ -126,7 +126,6 @@ class Trainer:
         self.visual_interval = cfg.log_config.visiual_interval
         if self.by_epoch:
             self.weight_interval *= self.iters_per_epoch
-            self.visual_interval *= self.iters_per_epoch
 
         self.validate_interval = -1
         if cfg.get('validate', None) is not None:
