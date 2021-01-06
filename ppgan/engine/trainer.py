@@ -124,6 +124,9 @@ class Trainer:
         self.weight_interval = cfg.snapshot_config.interval
         self.log_interval = cfg.log_config.interval
         self.visual_interval = cfg.log_config.visiual_interval
+        if self.by_epoch:
+            self.weight_interval *= self.iters_per_epoch
+
         self.validate_interval = -1
         if cfg.get('validate', None) is not None:
             self.validate_interval = cfg.validate.get('interval', -1)
@@ -177,16 +180,12 @@ class Trainer:
 
             self.model.lr_scheduler.step()
 
-            if self.by_epoch:
-                temp = self.current_epoch
-            else:
-                temp = self.current_iter
-            if self.validate_interval > -1 and temp % self.validate_interval == 0:
+            if self.validate_interval > -1 and self.current_iter % self.validate_interval == 0:
                 self.test()
 
-            if temp % self.weight_interval == 0:
-                self.save(temp, 'weight', keep=-1)
-                self.save(temp)
+            if self.current_iter % self.weight_interval == 0:
+                self.save(self.current_iter, 'weight', keep=-1)
+                self.save(self.current_iter)
 
             self.current_iter += 1
 
@@ -335,7 +334,12 @@ class Trainer:
         assert name in ['checkpoint', 'weight']
 
         state_dicts = {}
-        save_filename = 'epoch_%s_%s.pdparams' % (epoch, name)
+        if self.by_epoch:
+            save_filename = 'epoch_%s_%s.pdparams' % (
+                epoch // self.iters_per_epoch, name)
+        else:
+            save_filename = 'iter_%s_%s.pdparams' % (epoch, name)
+
         save_path = os.path.join(self.output_dir, save_filename)
         for net_name, net in self.model.nets.items():
             state_dicts[net_name] = net.state_dict()
@@ -353,9 +357,16 @@ class Trainer:
 
         if keep > 0:
             try:
-                checkpoint_name_to_be_removed = os.path.join(
-                    self.output_dir,
-                    'epoch_%s_%s.pdparams' % (epoch - keep, name))
+                if self.by_epoch:
+                    checkpoint_name_to_be_removed = os.path.join(
+                        self.output_dir, 'epoch_%s_%s.pdparams' %
+                        ((epoch - keep * self.weight_interval) //
+                         self.iters_per_epoch, name))
+                else:
+                    checkpoint_name_to_be_removed = os.path.join(
+                        self.output_dir, 'iter_%s_%s.pdparams' %
+                        (epoch - keep * self.weight_interval, name))
+
                 if os.path.exists(checkpoint_name_to_be_removed):
                     os.remove(checkpoint_name_to_be_removed)
 
@@ -366,7 +377,7 @@ class Trainer:
         state_dicts = load(checkpoint_path)
         if state_dicts.get('epoch', None) is not None:
             self.start_epoch = state_dicts['epoch'] + 1
-            self.global_steps = self.steps_per_epoch * state_dicts['epoch']
+            self.global_steps = self.iters_per_epoch * state_dicts['epoch']
 
         for net_name, net in self.model.nets.items():
             net.set_state_dict(state_dicts[net_name])

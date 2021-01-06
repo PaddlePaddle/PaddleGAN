@@ -67,7 +67,7 @@ dataset:
     batch_size: 1
     max_size: inf
     is_train: False
-    load_pipeline:
+    preprocess:
       - name: LoadImageFromFile
         key: A
       - name: LoadImageFromFile
