@@ -60,7 +60,8 @@ class RealSRPredictor(BasePredictor):
 
         img = self.norm(ori_img)
         x = paddle.to_tensor(img[np.newaxis, ...])
-        out = self.model(x)
+        with paddle.no_grad():
+            out = self.model(x)
 
         pred_img = self.denorm(out.numpy()[0])
         pred_img = Image.fromarray(pred_img)
