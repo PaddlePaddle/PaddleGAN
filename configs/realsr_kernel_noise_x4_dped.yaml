@@ -34,10 +34,8 @@ model:
 dataset:
   train:
     name: SRDataset
-    gt_folder: /workspace/codes/Real-SR/datasets/DPED/generated/clean/train_tdsr/HR/
-    lq_folder: /workspace/codes/Real-SR/datasets/DPED/generated/clean/train_tdsr/LR/
-    # gt_folder: /workspace/codes/Real-SR/datasets/DF2K/generated/tdsr/HR_sub/
-    # lq_folder: /workspace/codes/Real-SR/datasets/DF2K/generated/tdsr/LR_sub/
+    gt_folder: data/realsr_preprocess/DPED/generated/clean/train_tdsr/HR/
+    lq_folder: data/realsr_preprocess/DPED/generated/clean/train_tdsr/LR/
     num_workers: 4
     batch_size: 16
     scale: 4
@@ -66,7 +64,7 @@ dataset:
             std: [255., 255., 255.]
             keys: [image, image]
           - name: SRNoise
-            noise_path: /workspace/codes/Real-SR/datasets/DPED/DPEDiphone_noise/
+            noise_path: data/realsr_preprocess/DPED/DPEDiphone_noise/
             size: 32
             keys: [image]
   test:
