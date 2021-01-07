@@ -125,6 +125,7 @@ class Trainer:
         self.log_interval = cfg.log_config.interval
         self.visual_interval = cfg.log_config.visiual_interval
         self.validate_interval = -1
+        self.model_name = cfg.model.name
         if cfg.get('validate', None) is not None:
             self.validate_interval = cfg.validate.get('interval', -1)
         self.cfg = cfg
@@ -199,37 +200,41 @@ class Trainer:
             for metric in self.metrics.values():
                 metric.reset()
 
-        # data[0]: img, data[1]: img path index
-        # test batch size must be 1
-        for i, data in enumerate(self.test_dataloader):
+        if self.model_name in ['Wav2LipModel', 'Wav2LipModelHq']:
+            self.model.test(self.test_dataloader)
+        else:
 
-            self.model.setup_input(data)
-            self.model.test_iter(metrics=self.metrics)
+            # data[0]: img, data[1]: img path index
+            # test batch size must be 1
+            for i, data in enumerate(self.test_dataloader):
 
-            visual_results = {}
-            current_paths = self.model.get_image_paths()
-            current_visuals = self.model.get_current_visuals()
+                self.model.setup_input(data)
+                self.model.test_iter(metrics=self.metrics)
 
-            for j in range(len(current_paths)):
-                short_path = os.path.basename(current_paths[j])
-                basename = os.path.splitext(short_path)[0]
-                for k, img_tensor in current_visuals.items():
-                    name = '%s_%s' % (basename, k)
-                    visual_results.update({name: img_tensor[j]})
+                visual_results = {}
+                current_paths = self.model.get_image_paths()
+                current_visuals = self.model.get_current_visuals()
 
-            self.visual('visual_test',
-                        visual_results=visual_results,
-                        step=self.batch_id,
-                        is_save_image=True)
+                for j in range(len(current_paths)):
+                    short_path = os.path.basename(current_paths[j])
+                    basename = os.path.splitext(short_path)[0]
+                    for k, img_tensor in current_visuals.items():
+                        name = '%s_%s' % (basename, k)
+                        visual_results.update({name: img_tensor[j]})
 
-            if i % self.log_interval == 0:
-                self.logger.info('Test iter: [%d/%d]' %
-                                 (i, len(self.test_dataloader)))
+                self.visual('visual_test',
+                            visual_results=visual_results,
+                            step=self.batch_id,
+                            is_save_image=True)
 
-        if self.metrics:
-            for metric_name, metric in self.metrics.items():
-                self.logger.info("Metric {}: {:.4f}".format(
-                    metric_name, metric.accumulate()))
+                if i % self.log_interval == 0:
+                    self.logger.info('Test iter: [%d/%d]' %
+                                     (i, len(self.test_dataloader)))
+
+            if self.metrics:
+                for metric_name, metric in self.metrics.items():
+                    self.logger.info("Metric {}: {:.4f}".format(
+                        metric_name, metric.accumulate()))
 
     def print_log(self):
         losses = self.model.get_current_losses()
@@ -323,6 +328,7 @@ class Trainer:
 
         state_dicts = {}
         save_filename = 'epoch_%s_%s.pdparams' % (epoch, name)
+        os.makedirs(self.output_dir, exist_ok=True)
         save_path = os.path.join(self.output_dir, save_filename)
         for net_name, net in self.model.nets.items():
             state_dicts[net_name] = net.state_dict()
@@ -353,7 +359,8 @@ class Trainer:
         state_dicts = load(checkpoint_path)
         if state_dicts.get('epoch', None) is not None:
             self.start_epoch = state_dicts['epoch'] + 1
-            self.global_steps = self.steps_per_epoch * state_dicts['epoch']
+            self.global_steps = self.iters_per_epoch * state_dicts['epoch']
+            self.current_iter = state_dicts['epoch'] + 1
 
         for net_name, net in self.model.nets.items():
             net.set_state_dict(state_dicts[net_name])

@@ -299,7 +299,7 @@ def init_weights(net, init_type='normal', init_gain=0.02):
             elif init_type == 'xavier':
                 xavier_normal_(m.weight, gain=init_gain)
             elif init_type == 'kaiming':
-                kaiming_normal_(m.weight, a=0, mode='fan_in')
+                kaiming_uniform_(m.weight, a=0, mode='fan_in')
             else:
                 raise NotImplementedError(
                     'initialization method [%s] is not implemented' % init_type)
