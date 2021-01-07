@@ -203,11 +203,9 @@ class Trainer:
         if self.model_name in ['Wav2LipModel', 'Wav2LipModelHq']:
             self.model.test(self.test_dataloader)
         else:
-
             # data[0]: img, data[1]: img path index
             # test batch size must be 1
             for i, data in enumerate(self.test_dataloader):
-
                 self.model.setup_input(data)
                 self.model.test_iter(metrics=self.metrics)
 
