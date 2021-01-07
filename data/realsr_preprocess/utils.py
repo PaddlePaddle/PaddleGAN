@@ -1,8 +1,6 @@
-from PIL import Image
-# from torchvision.transforms import Compose, ToTensor, ToPILImage, CenterCrop, Resize
-import numpy as np
-# import torch
 import math
+import numpy as np
+from PIL import Image
 
 import paddle
 
@@ -87,18 +85,13 @@ def calculate_weights_indices(in_length, out_length, scale, kernel,
     # If a column in weights is all zero, get rid of it. only consider the first and last column.
     weights_zero_tmp = np.sum((weights.numpy() == 0), 0)
     if not math.isclose(weights_zero_tmp[0], 0, rel_tol=1e-6):
-        # print('debug index shape', indices.shape)
         indices = indices[:, 1:1 + P - 2]
         weights = weights[:, 1:1 + P - 2]
-        # indices = indices.narrow(1, 1, P - 2)
-        # weights = weights.narrow(1, 1, P - 2)
+
     if not math.isclose(weights_zero_tmp[-1], 0, rel_tol=1e-6):
         indices = indices[:, 0:P - 2]
         weights = weights[:, 0:P - 2]
-        # indices = indices.narrow(1, 0, P - 2)
-        # weights = weights.narrow(1, 0, P - 2)
-    # weights = weights.contiguous()
-    # indices = indices.contiguous()
+
     sym_len_s = -indices.min() + 1
     sym_len_e = indices.max() - in_length
     indices = indices + sym_len_s - 1
@@ -129,29 +122,25 @@ def imresize(img, scale, antialiasing=True):
     # symmetric copying
     img_aug = paddle.zeros([in_C, in_H + sym_len_Hs + sym_len_He, in_W])
     img_aug[:, sym_len_Hs:sym_len_Hs + in_H, :] = img
-    # img_aug.narrow(1, sym_len_Hs, in_H).copy_(img)
 
     sym_patch = img[:, :sym_len_Hs, :]
     inv_idx = paddle.arange(sym_patch.shape[1] - 1, -1, -1)
-    sym_patch_inv = paddle.index_select(sym_patch, inv_idx,
-                                        1)  #sym_patch.index_select(1, inv_idx)
-    # sym_patch_inv = sym_patch.index_select(1, inv_idx)
+    sym_patch_inv = paddle.index_select(sym_patch, inv_idx, 1)
+
     img_aug[:, :sym_len_Hs, :] = sym_patch_inv
-    # img_aug.narrow(1, 0, sym_len_Hs).copy_(sym_patch_inv)
 
     sym_patch = img[:, -sym_len_He:, :]
-    inv_idx = paddle.arange(sym_patch.shape[1] - 1, -1, -1)  #.long()
+    inv_idx = paddle.arange(sym_patch.shape[1] - 1, -1, -1)
     sym_patch_inv = paddle.index_select(sym_patch, inv_idx, 1)
-    # sym_patch_inv = sym_patch.index_select(1, inv_idx)
+
     img_aug[:,
             sym_len_Hs + in_H:sym_len_Hs + in_H + sym_len_He, :] = sym_patch_inv
-    # img_aug.narrow(1, sym_len_Hs + in_H, sym_len_He).copy_(sym_patch_inv)
 
     out_1 = paddle.zeros([in_C, out_H, in_W])
     kernel_width = weights_H.shape[1]
     for i in range(out_H):
         idx = int(indices_H[i][0])
-        # print('deubg shape:', img_aug[0, idx:idx + kernel_width, :].shape, img_aug[0, idx:idx + kernel_width, :].transpose([0, 1]).shape, weights_H[i].shape)
+
         out_1[0, i, :] = paddle.mv(
             img_aug[0, idx:idx + kernel_width, :].transpose([1, 0]),
             (weights_H[i]))
@@ -161,28 +150,22 @@ def imresize(img, scale, antialiasing=True):
         out_1[2, i, :] = paddle.mv(
             img_aug[2, idx:idx + kernel_width, :].transpose([1, 0]),
             (weights_H[i]))
-        # out_1[0, i, :] = img_aug[0, idx:idx + kernel_width, :].transpose([0, 1]).mv(weights_H[i])
-        # out_1[1, i, :] = img_aug[1, idx:idx + kernel_width, :].transpose([0, 1]).mv(weights_H[i])
-        # out_1[2, i, :] = img_aug[2, idx:idx + kernel_width, :].transpose([0, 1]).mv(weights_H[i])
 
     # process W dimension
     # symmetric copying
     out_1_aug = paddle.zeros([in_C, out_H, in_W + sym_len_Ws + sym_len_We])
     out_1_aug[:, :, sym_len_Ws:sym_len_Ws + in_W] = out_1
-    # out_1_aug.narrow(2, sym_len_Ws, in_W).copy_(out_1)
 
     sym_patch = out_1[:, :, :sym_len_Ws]
-    inv_idx = paddle.arange(sym_patch.shape[2] - 1, -1, -1)  #.long()
+    inv_idx = paddle.arange(sym_patch.shape[2] - 1, -1, -1)
     sym_patch_inv = paddle.index_select(sym_patch, inv_idx, 2)
     out_1_aug[:, :, 0:sym_len_Ws] = sym_patch_inv
-    # out_1_aug.narrow(2, 0, sym_len_Ws).copy_(sym_patch_inv)
 
     sym_patch = out_1[:, :, -sym_len_We:]
-    inv_idx = paddle.arange(sym_patch.shape[2] - 1, -1, -1)  #.long()
+    inv_idx = paddle.arange(sym_patch.shape[2] - 1, -1, -1)
     sym_patch_inv = paddle.index_select(sym_patch, inv_idx, 2)
     out_1_aug[:, :,
               sym_len_Ws + in_W:sym_len_Ws + in_W + sym_len_We] = sym_patch_inv
-    # out_1_aug.narrow(2, sym_len_Ws + in_W, sym_len_We).copy_(sym_patch_inv)
 
     out_2 = paddle.zeros([in_C, out_H, out_W])
     kernel_width = weights_W.shape[1]
@@ -201,10 +184,8 @@ def imresize(img, scale, antialiasing=True):
 def to_pil_image(pic, mode=None):
     """Convert a tensor or an ndarray to PIL Image.
 
-    See :class:`~torchvision.transforms.ToPILImage` for more details.
-
     Args:
-        pic (Tensor or numpy.ndarray): Image to be converted to PIL Image.
+        pic (paddle.Tensor or numpy.ndarray): Image to be converted to PIL Image.
         mode (`PIL.Image mode`_): color space and pixel depth of input data (optional).
 
     .. _PIL.Image mode: https://pillow.readthedocs.io/en/latest/handbook/concepts.html#concept-modes
@@ -238,13 +219,10 @@ def to_pil_image(pic, mode=None):
 
     npimg = pic
     if isinstance(pic, paddle.Tensor) and mode != 'F':
-        # pic = pic.mul(255).byte()
         pic = pic.numpy()
 
     if pic.dtype == 'float32':
         npimg = np.transpose((pic * 255.).astype('uint8'), (1, 2, 0))
-    # if isinstance(pic, torch.Tensor):
-    #     npimg = np.transpose(pic.numpy(), (1, 2, 0))
 
     if not isinstance(npimg, np.ndarray):
         raise TypeError('Input pic must be a torch.Tensor or NumPy ndarray, ' +
