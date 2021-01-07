@@ -87,7 +87,8 @@ class DictDataLoader():
             self.dataloader = paddle.io.DataLoader(self.dataset,
                                                    batch_sampler=sampler,
                                                    places=place,
-                                                   num_workers=num_workers)
+                                                   num_workers=num_workers,
+                                                   use_shared_memory=False)
         else:
             self.dataloader = paddle.io.DataLoader(
                 self.dataset,
@@ -95,6 +96,7 @@ class DictDataLoader():
                 shuffle=True if is_train else False,
                 drop_last=True if is_train else False,
                 places=place,
+                use_shared_memory=False,
                 num_workers=num_workers)
 
         self.batch_size = batch_size
@@ -131,7 +133,6 @@ class DictDataLoader():
         return current_items
 
 
-<<<<<<< d76c74e4a648e2513b78eb5b460756b93958eb2f
 def build_dataloader(cfg, is_train=True, distributed=True):
     cfg_ = cfg.copy()
 
@@ -141,13 +142,6 @@ def build_dataloader(cfg, is_train=True, distributed=True):
     name = cfg_.pop('name')
 
     dataset = DATASETS.get(name)(**cfg_)
-=======
-def build_dataloader(cfg, is_train=True):
-    dataset = DATASETS.get(cfg.name)(cfg)
-    batch_size = cfg.get('batch_size', 1)
-    num_workers = cfg.get('num_workers', 0)
->>>>>>> add wav2lip trainning code
-
     dataloader = DictDataLoader(dataset,
                                 batch_size,
                                 is_train,
