@@ -211,37 +211,28 @@ class Trainer:
                 self.model.setup_input(data)
                 self.model.test_iter(metrics=self.metrics)
 
-<<<<<<< 6d4adbf80a18b7fff0192bbdbacc36009a3867a3
-            if len(current_visuals) > 0 and list(
-                    current_visuals.values())[0].shape == 4:
-                num_samples = list(current_visuals.values())[0].shape[0]
-            else:
-                num_samples = 1
-
-            for j in range(num_samples):
-                if j < len(current_paths):
-                    short_path = os.path.basename(current_paths[j])
-                    basename = os.path.splitext(short_path)[0]
-                else:
-                    basename = '{:04d}_{:04d}'.format(i, j)
-                for k, img_tensor in current_visuals.items():
-                    name = '%s_%s' % (basename, k)
-                    if len(img_tensor.shape) == 4:
-                        visual_results.update({name: img_tensor[j]})
-                    else:
-                        visual_results.update({name: img_tensor})
-=======
                 visual_results = {}
                 current_paths = self.model.get_image_paths()
                 current_visuals = self.model.get_current_visuals()
->>>>>>> add wav2lip train code
 
-                for j in range(len(current_paths)):
-                    short_path = os.path.basename(current_paths[j])
-                    basename = os.path.splitext(short_path)[0]
+                if len(current_visuals) > 0 and list(
+                        current_visuals.values())[0].shape == 4:
+                    num_samples = list(current_visuals.values())[0].shape[0]
+                else:
+                    num_samples = 1
+
+                for j in range(num_samples):
+                    if j < len(current_paths):
+                        short_path = os.path.basename(current_paths[j])
+                        basename = os.path.splitext(short_path)[0]
+                    else:
+                        basename = '{:04d}_{:04d}'.format(i, j)
                     for k, img_tensor in current_visuals.items():
                         name = '%s_%s' % (basename, k)
-                        visual_results.update({name: img_tensor[j]})
+                        if len(img_tensor.shape) == 4:
+                            visual_results.update({name: img_tensor[j]})
+                        else:
+                            visual_results.update({name: img_tensor})
 
                 self.visual('visual_test',
                             visual_results=visual_results,
@@ -348,17 +339,13 @@ class Trainer:
         assert name in ['checkpoint', 'weight']
 
         state_dicts = {}
-<<<<<<< 6d4adbf80a18b7fff0192bbdbacc36009a3867a3
         if self.by_epoch:
             save_filename = 'epoch_%s_%s.pdparams' % (
                 epoch // self.iters_per_epoch, name)
         else:
             save_filename = 'iter_%s_%s.pdparams' % (epoch, name)
 
-=======
-        save_filename = 'epoch_%s_%s.pdparams' % (epoch, name)
         os.makedirs(self.output_dir, exist_ok=True)
->>>>>>> add wav2lip train code
         save_path = os.path.join(self.output_dir, save_filename)
         for net_name, net in self.model.nets.items():
             state_dicts[net_name] = net.state_dict()
@@ -397,10 +384,8 @@ class Trainer:
         if state_dicts.get('epoch', None) is not None:
             self.start_epoch = state_dicts['epoch'] + 1
             self.global_steps = self.iters_per_epoch * state_dicts['epoch']
-<<<<<<< 6d4adbf80a18b7fff0192bbdbacc36009a3867a3
-=======
+
             self.current_iter = state_dicts['epoch'] + 1
->>>>>>> add wav2lip train code
 
         for net_name, net in self.model.nets.items():
             net.set_state_dict(state_dicts[net_name])
