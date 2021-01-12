@@ -108,7 +108,6 @@ class Trainer:
         # base config
         self.output_dir = cfg.output_dir
         self.max_eval_steps = cfg.model.get('max_eval_steps', None)
-        print('max_eval_steps: ', self.max_eval_steps)
         self.epochs = cfg.get('epochs', None)
         if self.epochs:
             self.total_iters = self.epochs * self.iters_per_epoch
@@ -197,7 +196,6 @@ class Trainer:
                                                     is_train=False,
                                                     distributed=False)
         iter_loader = IterLoader(self.test_dataloader)
-        print('in test max_eval_steps: ', self.max_eval_steps)
         if self.max_eval_steps is None:
             self.max_eval_steps = len(self.test_dataloader)
 
