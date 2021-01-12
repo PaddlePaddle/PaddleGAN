@@ -107,6 +107,8 @@ class Trainer:
 
         # base config
         self.output_dir = cfg.output_dir
+        self.max_eval_steps = cfg.model.get('max_eval_steps', None)
+        print('max_eval_steps: ', self.max_eval_steps)
         self.epochs = cfg.get('epochs', None)
         if self.epochs:
             self.total_iters = self.epochs * self.iters_per_epoch
@@ -128,7 +130,6 @@ class Trainer:
             self.weight_interval *= self.iters_per_epoch
 
         self.validate_interval = -1
-        self.model_name = cfg.model.name
         if cfg.get('validate', None) is not None:
             self.validate_interval = cfg.validate.get('interval', -1)
         self.cfg = cfg
@@ -195,56 +196,56 @@ class Trainer:
             self.test_dataloader = build_dataloader(self.cfg.dataset.test,
                                                     is_train=False,
                                                     distributed=False)
+        iter_loader = IterLoader(self.test_dataloader)
+        print('in test max_eval_steps: ', self.max_eval_steps)
+        if self.max_eval_steps is None:
+            self.max_eval_steps = len(self.test_dataloader)
 
         if self.metrics:
             for metric in self.metrics.values():
                 metric.reset()
 
-        if self.model_name in ['Wav2LipModel', 'Wav2LipModelHq']:
-            self.model.test(self.test_dataloader)
-        else:
-            # data[0]: img, data[1]: img path index
-            # test batch size must be 1
-            for i, data in enumerate(self.test_dataloader):
-                self.model.setup_input(data)
-                self.model.test_iter(metrics=self.metrics)
+        for i in range(self.max_eval_steps):
+            data = next(iter_loader)
+            self.model.setup_input(data)
+            self.model.test_iter(metrics=self.metrics)
 
-                visual_results = {}
-                current_paths = self.model.get_image_paths()
-                current_visuals = self.model.get_current_visuals()
+            visual_results = {}
+            current_paths = self.model.get_image_paths()
+            current_visuals = self.model.get_current_visuals()
 
-                if len(current_visuals) > 0 and list(
-                        current_visuals.values())[0].shape == 4:
-                    num_samples = list(current_visuals.values())[0].shape[0]
+            if len(current_visuals) > 0 and list(
+                    current_visuals.values())[0].shape == 4:
+                num_samples = list(current_visuals.values())[0].shape[0]
+            else:
+                num_samples = 1
+
+            for j in range(num_samples):
+                if j < len(current_paths):
+                    short_path = os.path.basename(current_paths[j])
+                    basename = os.path.splitext(short_path)[0]
                 else:
-                    num_samples = 1
-
-                for j in range(num_samples):
-                    if j < len(current_paths):
-                        short_path = os.path.basename(current_paths[j])
-                        basename = os.path.splitext(short_path)[0]
+                    basename = '{:04d}_{:04d}'.format(i, j)
+                for k, img_tensor in current_visuals.items():
+                    name = '%s_%s' % (basename, k)
+                    if len(img_tensor.shape) == 4:
+                        visual_results.update({name: img_tensor[j]})
                     else:
-                        basename = '{:04d}_{:04d}'.format(i, j)
-                    for k, img_tensor in current_visuals.items():
-                        name = '%s_%s' % (basename, k)
-                        if len(img_tensor.shape) == 4:
-                            visual_results.update({name: img_tensor[j]})
-                        else:
-                            visual_results.update({name: img_tensor})
+                        visual_results.update({name: img_tensor})
 
-                self.visual('visual_test',
-                            visual_results=visual_results,
-                            step=self.batch_id,
-                            is_save_image=True)
+            self.visual('visual_test',
+                        visual_results=visual_results,
+                        step=self.batch_id,
+                        is_save_image=True)
 
-                if i % self.log_interval == 0:
-                    self.logger.info('Test iter: [%d/%d]' %
-                                     (i, len(self.test_dataloader)))
+            if i % self.log_interval == 0:
+                self.logger.info('Test iter: [%d/%d]' %
+                                 (i, self.max_eval_steps))
 
-            if self.metrics:
-                for metric_name, metric in self.metrics.items():
-                    self.logger.info("Metric {}: {:.4f}".format(
-                        metric_name, metric.accumulate()))
+        if self.metrics:
+            for metric_name, metric in self.metrics.items():
+                self.logger.info("Metric {}: {:.4f}".format(
+                    metric_name, metric.accumulate()))
 
     def print_log(self):
         losses = self.model.get_current_losses()

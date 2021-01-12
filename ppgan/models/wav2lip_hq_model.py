@@ -28,30 +28,6 @@ syncnet_T = 5
 syncnet_mel_step_size = 16
 
 
-class IterLoader:
-    def __init__(self, dataloader):
-        self._dataloader = dataloader
-        self.iter_loader = iter(self._dataloader)
-        self._epoch = 1
-
-    @property
-    def epoch(self):
-        return self._epoch
-
-    def __next__(self):
-        try:
-            data = next(self.iter_loader)
-        except StopIteration:
-            self._epoch += 1
-            self.iter_loader = iter(self._dataloader)
-            data = next(self.iter_loader)
-
-        return data
-
-    def __len__(self):
-        return len(self._dataloader)
-
-
 def cosine_loss(a, v, y):
     logloss = paddle.nn.BCELoss()
     d = paddle.nn.functional.cosine_similarity(a, v)
@@ -85,6 +61,7 @@ class Wav2LipModelHq(BaseModel):
                  discriminator_hq=None,
                  syncnet_wt=1.0,
                  disc_wt=0.07,
+                 max_eval_steps=700,
                  is_train=True):
         """Initialize the Wav2lip class.
 
@@ -95,11 +72,12 @@ class Wav2LipModelHq(BaseModel):
         self.syncnet_wt = syncnet_wt
         self.disc_wt = disc_wt
         self.is_train = is_train
+        self.eval_step = 0
+        self.max_eval_steps = max_eval_steps
+        self.eval_sync_losses, self.eval_recon_losses, self.eval_disc_real_losses, self.eval_disc_fake_losses, self.eval_perceptual_losses = [], [], [], [], []
         # define networks (both generator and discriminator)
         self.nets['netG'] = build_generator(generator)
         init_weights(self.nets['netG'], 'kaiming')
-        #params_G = paddle.load(wav2lip_weight_path)
-        #self.nets['netG'].load_dict(params_G)
         if self.is_train:
             self.nets['netDS'] = build_discriminator(discriminator_sync)
             params = paddle.load(lipsync_weight_path)
@@ -185,68 +163,61 @@ class Wav2LipModelHq(BaseModel):
         self.backward_D()
         self.optimizers['optimizer_DH'].step()
 
-    def test(self, test_dataloader):
-        eval_steps = 700
-        sync_losses, recon_losses, disc_real_losses, disc_fake_losses, perceptual_losses = [], [], [], [], []
-        step = 0
-        iter_loader = IterLoader(test_dataloader)
-        data = next(iter_loader)
-        while 1:
-            step += 1
-            self.setup_input(data)
-            self.nets['netG'].eval()
-            self.nets['netDH'].eval()
-            with paddle.no_grad():
-                self.forward()
+    def test_iter(self, metrics=None):
+        self.eval_step += 1
+        self.nets['netG'].eval()
+        self.nets['netDH'].eval()
+        with paddle.no_grad():
+            self.forward()
+            sync_loss = get_sync_loss(self.mel, self.g, self.nets['netDS'])
+            l1loss = self.recon_loss(self.g, self.y)
 
-                sync_loss = get_sync_loss(self.mel, self.g, self.nets['netDS'])
-                l1loss = self.recon_loss(self.g, self.y)
+            pred_real = self.nets['netDH'](self.y)
+            pred_fake = self.nets['netDH'](self.g)
+            disc_real_loss = F.binary_cross_entropy(
+                pred_real, paddle.ones((len(pred_real), 1)))
+            disc_fake_loss = F.binary_cross_entropy(
+                pred_fake, paddle.zeros((len(pred_fake), 1)))
 
-                pred_real = self.nets['netDH'](self.y)
-                pred_fake = self.nets['netDH'](self.g)
-                disc_real_loss = F.binary_cross_entropy(
-                    pred_real, paddle.ones((len(pred_real), 1)))
-                disc_fake_loss = F.binary_cross_entropy(
-                    pred_fake, paddle.zeros((len(pred_fake), 1)))
+            self.eval_disc_fake_losses.append(disc_fake_loss.numpy().item())
+            self.eval_disc_real_losses.append(disc_real_loss.numpy().item())
 
-                disc_fake_losses.append(disc_fake_loss.numpy().item())
-                disc_real_losses.append(disc_real_loss.numpy().item())
+            self.eval_sync_losses.append(sync_loss.numpy().item())
+            self.eval_recon_losses.append(l1loss.numpy().item())
 
-                sync_losses.append(sync_loss.numpy().item())
-                recon_losses.append(l1loss.numpy().item())
-
-                if self.disc_wt > 0.:
-                    if isinstance(
-                            self.nets['netDH'], paddle.DataParallel
-                    ):  #paddle.fluid.dygraph.parallel.DataParallel)
-                        perceptual_loss = self.nets[
-                            'netDH']._layers.perceptual_forward(
-                                self.g).numpy().item()
-                    else:
-                        perceptual_loss = self.nets['netDH'].perceptual_forward(
+            if self.disc_wt > 0.:
+                if isinstance(self.nets['netDH'], paddle.DataParallel
+                              ):  #paddle.fluid.dygraph.parallel.DataParallel)
+                    perceptual_loss = self.nets[
+                        'netDH']._layers.perceptual_forward(
                             self.g).numpy().item()
                 else:
-                    perceptual_loss = 0.
-                perceptual_losses.append(perceptual_loss)
+                    perceptual_loss = self.nets['netDH'].perceptual_forward(
+                        self.g).numpy().item()
+            else:
+                perceptual_loss = 0.
+            self.eval_perceptual_losses.append(perceptual_loss)
 
-                if step > eval_steps:
-                    averaged_sync_loss = sum(sync_losses) / len(sync_losses)
-                    averaged_recon_loss = sum(recon_losses) / len(recon_losses)
-                    averaged_perceptual_loss = sum(perceptual_losses) / len(
-                        perceptual_losses)
-                    averaged_disc_fake_loss = sum(disc_fake_losses) / len(
-                        disc_fake_losses)
-                    averaged_disc_real_loss = sum(disc_real_losses) / len(
-                        disc_real_losses)
-                    if averaged_sync_loss < .75:
-                        self.syncnet_wt = 0.01
+        if self.eval_step == self.max_eval_steps:
+            averaged_sync_loss = sum(self.eval_sync_losses) / len(
+                self.eval_sync_losses)
+            averaged_recon_loss = sum(self.eval_recon_losses) / len(
+                self.eval_recon_losses)
+            averaged_perceptual_loss = sum(self.eval_perceptual_losses) / len(
+                self.eval_perceptual_losses)
+            averaged_disc_fake_loss = sum(self.eval_disc_fake_losses) / len(
+                self.eval_disc_fake_losses)
+            averaged_disc_real_loss = sum(self.eval_disc_real_losses) / len(
+                self.eval_disc_real_losses)
+            if averaged_sync_loss < .75:
+                self.syncnet_wt = 0.01
 
-                    print(
-                        'L1: {}, Sync loss: {}, Percep: {}, Fake: {}, Real: {}'.
-                        format(averaged_recon_loss, averaged_sync_loss,
-                               averaged_perceptual_loss,
-                               averaged_disc_fake_loss,
-                               averaged_disc_real_loss))
-                    break
+            print(
+                'L1: {}, Sync loss: {}, Percep: {}, Fake: {}, Real: {}'.format(
+                    averaged_recon_loss, averaged_sync_loss,
+                    averaged_perceptual_loss, averaged_disc_fake_loss,
+                    averaged_disc_real_loss))
+            self.eval_sync_losses, self.eval_recon_losses, self.eval_disc_real_losses, self.eval_disc_fake_losses, self.eval_perceptual_losses = [], [], [], [], []
+            self.eval_step = 0
         self.nets['netG'].train()
         self.nets['netDH'].train()

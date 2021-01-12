@@ -5,6 +5,7 @@ checkpoints_dir: checkpoints
 model:
   name: Wav2LipModel
   syncnet_wt: 0.0
+  max_eval_steps: 700
   generator:
     name: Wav2Lip
   discriminator:

@@ -26,30 +26,6 @@ syncnet_T = 5
 syncnet_mel_step_size = 16
 
 
-class IterLoader:
-    def __init__(self, dataloader):
-        self._dataloader = dataloader
-        self.iter_loader = iter(self._dataloader)
-        self._epoch = 1
-
-    @property
-    def epoch(self):
-        return self._epoch
-
-    def __next__(self):
-        try:
-            data = next(self.iter_loader)
-        except StopIteration:
-            self._epoch += 1
-            self.iter_loader = iter(self._dataloader)
-            data = next(self.iter_loader)
-
-        return data
-
-    def __len__(self):
-        return len(self._dataloader)
-
-
 def cosine_loss(a, v, y):
     logloss = paddle.nn.BCELoss()
     d = paddle.nn.functional.cosine_similarity(a, v)
@@ -66,7 +42,6 @@ def get_sync_loss(mel, g, netD):
 
 
 lipsync_weight_path = '/workspace/PaddleGAN/lipsync_expert.pdparams'
-wav2lip_weight_path = '/workspace/PaddleGAN/wav2lip.pdparams'
 
 
 @MODELS.register()
@@ -81,6 +56,7 @@ class Wav2LipModel(BaseModel):
                  generator,
                  discriminator=None,
                  syncnet_wt=1.0,
+                 max_eval_steps=700,
                  is_train=True):
         """Initialize the Wav2lip class.
 
@@ -90,11 +66,12 @@ class Wav2LipModel(BaseModel):
         super(Wav2LipModel, self).__init__()
         self.syncnet_wt = syncnet_wt
         self.is_train = is_train
+        self.eval_step = 0
+        self.max_eval_steps = max_eval_steps
+        self.eval_sync_losses, self.eval_recon_losses = [], []
         # define networks (both generator and discriminator)
         self.nets['netG'] = build_generator(generator)
         init_weights(self.nets['netG'])
-        #params_G = paddle.load(wav2lip_weight_path)
-        #self.nets['netG'].load_dict(params_G)
         if self.is_train:
             self.nets['netD'] = build_discriminator(discriminator)
             params = paddle.load(lipsync_weight_path)
@@ -146,30 +123,26 @@ class Wav2LipModel(BaseModel):
         self.optimizers['optimizer_G'].step()
 
     def test(self, test_dataloader):
-        eval_steps = 700
-        sync_losses, recon_losses = [], []
-        step = 0
-        iter_loader = IterLoader(test_dataloader)
-        data = next(iter_loader)
-        while 1:
-            step += 1
-            self.setup_input(data)
-            self.nets['netG'].eval()
-            with paddle.no_grad():
-                self.forward()
+        self.eval_step += 1
+        self.nets['netG'].eval()
+        with paddle.no_grad():
+            self.forward()
 
-                sync_loss = get_sync_loss(self.mel, self.g, self.nets['netD'])
-                l1loss = self.recon_loss(self.g, self.y)
+            sync_loss = get_sync_loss(self.mel, self.g, self.nets['netD'])
+            l1loss = self.recon_loss(self.g, self.y)
 
-                sync_losses.append(sync_loss.numpy().item())
-                recon_losses.append(l1loss.numpy().item())
-                if step > eval_steps:
-                    averaged_sync_loss = sum(sync_losses) / len(sync_losses)
-                    averaged_recon_loss = sum(recon_losses) / len(recon_losses)
-                    if averaged_sync_loss < .75:
-                        self.syncnet_wt = 0.01
+            self.eval_sync_losses.append(sync_loss.numpy().item())
+        self.eval_recon_losses.append(l1loss.numpy().item())
+        if self.eval_step == self.max_eval_steps:
+            averaged_sync_loss = sum(self.eval_sync_losses) / len(
+                self.eval_sync_losses)
+            averaged_recon_loss = sum(self.eval_recon_losses) / len(
+                self.eval_recon_losses)
+            if averaged_sync_loss < .75:
+                self.syncnet_wt = 0.01
 
-                    print('L1: {}, Sync loss: {}'.format(
-                        averaged_recon_loss, averaged_sync_loss))
-                    break
+            print('L1: {}, Sync loss: {}'.format(averaged_recon_loss,
+                                                 averaged_sync_loss))
+            self.eval_step = 0
+            self.eval_sync_losses, self.eval_recon_losses = [], []
         self.nets['netG'].train()

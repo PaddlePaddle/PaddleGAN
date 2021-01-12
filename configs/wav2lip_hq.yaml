@@ -1,16 +1,12 @@
 total_iters: 200000000
-output_dir: /workspace_data/hq
-checkpoints_dir: checkpoints
-eval_interval: 3000
-save_optimizer_state: True
-
-disc_initial_learning_rate: 1e-4
-
+output_dir: /workspace_data/hq_test
+checkpoints_dir: test_checkpoints
 
 model:
   name: Wav2LipModelHq
   syncnet_wt: 0.
   disc_wt: 0.07
+  max_eval_steps: 700
   generator:
     name: Wav2Lip
   discriminator_sync:
