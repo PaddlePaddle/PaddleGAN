@@ -300,12 +300,16 @@ def init_weights(net,
             if init_type == 'normal':
                 normal_(m.weight, 0.0, init_gain)
             elif init_type == 'xavier':
-                xavier_init(m.weight, gain=init_gain, distribution=distribution)
+                if distribution == 'normal':
+                    xavier_normal_(m.weight, gain=init_gain)
+                else:
+                    xavier_uniform_(m.weight, gain=init_gain)
+
             elif init_type == 'kaiming':
-                kaiming_init(m.weight,
-                             a=0,
-                             mode='fan_in',
-                             distribution=distribution)
+                if distribution == 'normal':
+                    kaiming_normal_(m.weight, a=0, mode='fan_in')
+                else:
+                    kaiming_uniform_(m.weight, a=0, mode='fan_in')
             else:
                 raise NotImplementedError(
                     'initialization method [%s] is not implemented' % init_type)

@@ -94,7 +94,7 @@ class Wav2LipDataset(paddle.io.Dataset):
         else:
             start_frame_num = self.get_frame_id(
                 start_frame)  # 0-indexing ---> 1-indexing
-        start_idx = int(80. * (start_frame_num / float(audio_cfg.fps)))
+        start_idx = int(80. * (start_frame_num / float(audio_cfg["fps"])))
 
         end_idx = start_idx + syncnet_mel_step_size
 
@@ -154,7 +154,7 @@ class Wav2LipDataset(paddle.io.Dataset):
 
             try:
                 wavpath = join(vidname, "audio.wav")
-                wav = audio.load_wav(wavpath, audio_cfg.sample_rate)
+                wav = audio.load_wav(wavpath, audio_cfg["sample_rate"])
 
                 orig_mel = audio.melspectrogram(wav).T
             except Exception as e:
