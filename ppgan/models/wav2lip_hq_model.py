@@ -77,14 +77,18 @@ class Wav2LipModelHq(BaseModel):
         self.eval_sync_losses, self.eval_recon_losses, self.eval_disc_real_losses, self.eval_disc_fake_losses, self.eval_perceptual_losses = [], [], [], [], []
         # define networks (both generator and discriminator)
         self.nets['netG'] = build_generator(generator)
-        init_weights(self.nets['netG'], 'kaiming')
+        init_weights(self.nets['netG'],
+                     init_type='kaiming',
+                     distribution='uniform')
         if self.is_train:
             self.nets['netDS'] = build_discriminator(discriminator_sync)
             params = paddle.load(lipsync_weight_path)
             self.nets['netDS'].load_dict(params)
 
             self.nets['netDH'] = build_discriminator(discriminator_hq)
-            init_weights(self.nets['netDH'], 'kaiming')
+            init_weights(self.nets['netDH'],
+                         init_type='kaiming',
+                         distribution='uniform')
 
         if self.is_train:
             self.recon_loss = paddle.nn.L1Loss()

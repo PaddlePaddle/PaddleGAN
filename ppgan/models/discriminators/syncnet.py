@@ -5,8 +5,6 @@ import sys
 from ...modules.conv import ConvBNRelu
 #from conv import ConvBNRelu
 from .builder import DISCRIMINATORS
-import torch
-import pickle
 
 
 @DISCRIMINATORS.register()
@@ -149,33 +147,3 @@ class SyncNetColor(nn.Layer):
         face_embedding = F.normalize(face_embedding, p=2, axis=1)
 
         return audio_embedding, face_embedding
-
-
-if __name__ == '__main__':
-    model = SyncNetColor()
-    path = './lipsync_expert.pth'
-    #params = paddle.load(path)
-    #model.load_dict(params)
-    print(model.state_dict().keys())
-    net = torch.load(path)
-    dic = net['state_dict']
-    print(dic.keys())
-    weights = dict()
-    for k, v in dic.items():
-        if 'running_mean' in k:
-            new_key = k.replace('running_mean', '_mean')
-            weights[new_key] = v.cpu().numpy()
-        elif 'running_var' in k:
-            new_key = k.replace('running_var', '_variance')
-            weights[new_key] = v.cpu().numpy()
-        elif 'tracked' in k:
-            continue
-        else:
-            weights[k] = v.cpu().numpy()
-
-    with open('lipsync_expert.pdparams', 'wb') as f:
-        pickle.dump(weights, f)
-    with open('lipsync_expert.pdparams', 'rb') as f:
-        data = pickle.load(f)
-        print(data.keys())
-    print('done!!!!')

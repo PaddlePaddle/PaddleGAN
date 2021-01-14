@@ -70,6 +70,7 @@ class DictDataLoader():
                  batch_size,
                  is_train,
                  num_workers=4,
+                 use_shared_memory=True,
                  distributed=True):
 
         self.dataset = DictDataset(dataset)
@@ -84,11 +85,12 @@ class DictDataLoader():
                 shuffle=True if is_train else False,
                 drop_last=True if is_train else False)
 
-            self.dataloader = paddle.io.DataLoader(self.dataset,
-                                                   batch_sampler=sampler,
-                                                   places=place,
-                                                   num_workers=num_workers,
-                                                   use_shared_memory=False)
+            self.dataloader = paddle.io.DataLoader(
+                self.dataset,
+                batch_sampler=sampler,
+                places=place,
+                num_workers=num_workers,
+                use_shared_memory=use_shared_memory)
         else:
             self.dataloader = paddle.io.DataLoader(
                 self.dataset,
@@ -138,6 +140,7 @@ def build_dataloader(cfg, is_train=True, distributed=True):
 
     batch_size = cfg_.pop('batch_size', 1)
     num_workers = cfg_.pop('num_workers', 0)
+    use_shared_memory = cfg_.pop('use_shared_memory', True)
 
     name = cfg_.pop('name')
 
@@ -146,6 +149,7 @@ def build_dataloader(cfg, is_train=True, distributed=True):
                                 batch_size,
                                 is_train,
                                 num_workers,
+                                use_shared_memory=use_shared_memory,
                                 distributed=distributed)
 
     return dataloader

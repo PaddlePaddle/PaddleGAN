@@ -281,7 +281,10 @@ def kaiming_init(layer,
         constant_(layer.bias, bias)
 
 
-def init_weights(net, init_type='normal', init_gain=0.02):
+def init_weights(net,
+                 init_type='normal',
+                 init_gain=0.02,
+                 distribution='normal'):
     """Initialize network weights.
     Args:
         net (nn.Layer): network to be initialized
@@ -297,9 +300,12 @@ def init_weights(net, init_type='normal', init_gain=0.02):
             if init_type == 'normal':
                 normal_(m.weight, 0.0, init_gain)
             elif init_type == 'xavier':
-                xavier_normal_(m.weight, gain=init_gain)
+                xavier_init(m.weight, gain=init_gain, distribution=distribution)
             elif init_type == 'kaiming':
-                kaiming_uniform_(m.weight, a=0, mode='fan_in')
+                kaiming_init(m.weight,
+                             a=0,
+                             mode='fan_in',
+                             distribution=distribution)
             else:
                 raise NotImplementedError(
                     'initialization method [%s] is not implemented' % init_type)

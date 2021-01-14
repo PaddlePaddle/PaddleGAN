@@ -71,7 +71,7 @@ class Wav2LipModel(BaseModel):
         self.eval_sync_losses, self.eval_recon_losses = [], []
         # define networks (both generator and discriminator)
         self.nets['netG'] = build_generator(generator)
-        init_weights(self.nets['netG'])
+        init_weights(self.nets['netG'], distribution='uniform')
         if self.is_train:
             self.nets['netD'] = build_discriminator(discriminator)
             params = paddle.load(lipsync_weight_path)
@@ -122,7 +122,7 @@ class Wav2LipModel(BaseModel):
         self.backward_G()
         self.optimizers['optimizer_G'].step()
 
-    def test(self, test_dataloader):
+    def test_iter(self, metrics=None):
         self.eval_step += 1
         self.nets['netG'].eval()
         with paddle.no_grad():

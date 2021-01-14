@@ -1,5 +1,5 @@
 total_iters: 200000000
-output_dir: /workspace_data/tmp
+output_dir: output
 checkpoints_dir: checkpoints
 
 model:
@@ -14,20 +14,22 @@ model:
 dataset:
   train:
     name: Wav2LipDataset
-    dataroot: /workspace_data/lrs2_preprocessed
-    filelists_path: /workspace/PaddleGAN
+    dataroot: data/lrs2_preprocessed
+    filelists_path: ./
     img_size: 96
     split: train
     batch_size: 8
     num_workers: 4
+    use_shared_memory: False
   test:
     name: Wav2LipDataset
-    dataroot: /workspace_data/lrs2_preprocessed
-    filelists_path: /workspace/PaddleGAN
+    dataroot: data/lrs2_preprocessed
+    filelists_path: ./
     img_size: 96
     split: val
     batch_size: 16
     num_workers: 4
+    use_shared_memory: False
 
 optimizer:
   optimizer_G:
