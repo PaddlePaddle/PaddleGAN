@@ -20,31 +20,12 @@ from .builder import MODELS
 from .generators.builder import build_generator
 from .discriminators.builder import build_discriminator
 from .criterions import build_criterion
+from .wav2lip_model import cosine_loss, get_sync_loss
 
 from ..solver import build_optimizer
 from ..modules.init import init_weights
 
-syncnet_T = 5
-syncnet_mel_step_size = 16
-
-
-def cosine_loss(a, v, y):
-    logloss = paddle.nn.BCELoss()
-    d = paddle.nn.functional.cosine_similarity(a, v)
-    loss = logloss(d.unsqueeze(1), y)
-    return loss
-
-
-def get_sync_loss(mel, g, netD):
-    g = g[:, :, :, g.shape[3] // 2:]
-    g = paddle.concat([g[:, :, i] for i in range(syncnet_T)], axis=1)
-    a, v = netD(mel, g)
-    y = paddle.ones((g.shape[0], 1)).astype('float32')
-    return cosine_loss(a, v, y)
-
-
 lipsync_weight_path = '/workspace/PaddleGAN/lipsync_expert.pdparams'
-wav2lip_weight_path = '/workspace/PaddleGAN/wav2lip.pdparams'
 
 
 @MODELS.register()
