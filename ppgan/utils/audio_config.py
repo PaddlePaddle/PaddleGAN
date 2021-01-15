@@ -1,9 +1,6 @@
-import functools
-import inspect
-import logging
-from fvcore.common.config import CfgNode
+from easydict import EasyDict as edict
 
-_C = CfgNode()
+_C = edict()
 
 _C.num_mels = 80
 _C.rescale = True
