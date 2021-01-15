@@ -1,9 +1,13 @@
 import paddle
 from paddle import nn
 from paddle.nn import functional as F
+import sys
 from ...modules.conv import ConvBNRelu
+#from conv import ConvBNRelu
+from .builder import DISCRIMINATORS
 
 
+@DISCRIMINATORS.register()
 class SyncNetColor(nn.Layer):
     def __init__(self):
         super(SyncNetColor, self).__init__()

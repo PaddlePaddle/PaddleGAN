@@ -22,3 +22,5 @@ from .esrgan_model import ESRGAN
 from .ugatit_model import UGATITModel
 from .dc_gan_model import DCGANModel
 from .animeganv2_model import AnimeGANV2Model, AnimeGANV2PreTrainModel
+from .wav2lip_model import Wav2LipModel
+from .wav2lip_hq_model import Wav2LipModelHq

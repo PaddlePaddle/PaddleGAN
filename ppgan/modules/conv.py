@@ -40,7 +40,7 @@ class NonNormConv2d(nn.Layer):
         super().__init__(*args, **kwargs)
         self.conv_block = nn.Sequential(
             nn.Conv2D(cin, cout, kernel_size, stride, padding), )
-        self.act = nn.LeakyReLU(0.01, inplace=True)
+        self.act = nn.LeakyReLU(0.01)
 
     def forward(self, x):
         out = self.conv_block(x)

@@ -107,6 +107,7 @@ class Trainer:
 
         # base config
         self.output_dir = cfg.output_dir
+        self.max_eval_steps = cfg.model.get('max_eval_steps', None)
         self.epochs = cfg.get('epochs', None)
         if self.epochs:
             self.total_iters = self.epochs * self.iters_per_epoch
@@ -194,15 +195,16 @@ class Trainer:
             self.test_dataloader = build_dataloader(self.cfg.dataset.test,
                                                     is_train=False,
                                                     distributed=False)
+        iter_loader = IterLoader(self.test_dataloader)
+        if self.max_eval_steps is None:
+            self.max_eval_steps = len(self.test_dataloader)
 
         if self.metrics:
             for metric in self.metrics.values():
                 metric.reset()
 
-        # data[0]: img, data[1]: img path index
-        # test batch size must be 1
-        for i, data in enumerate(self.test_dataloader):
-
+        for i in range(self.max_eval_steps):
+            data = next(iter_loader)
             self.model.setup_input(data)
             self.model.test_iter(metrics=self.metrics)
 
@@ -236,7 +238,7 @@ class Trainer:
 
             if i % self.log_interval == 0:
                 self.logger.info('Test iter: [%d/%d]' %
-                                 (i, len(self.test_dataloader)))
+                                 (i, self.max_eval_steps))
 
         if self.metrics:
             for metric_name, metric in self.metrics.items():
@@ -340,6 +342,7 @@ class Trainer:
         else:
             save_filename = 'iter_%s_%s.pdparams' % (epoch, name)
 
+        os.makedirs(self.output_dir, exist_ok=True)
         save_path = os.path.join(self.output_dir, save_filename)
         for net_name, net in self.model.nets.items():
             state_dicts[net_name] = net.state_dict()
@@ -378,6 +381,8 @@ class Trainer:
         if state_dicts.get('epoch', None) is not None:
             self.start_epoch = state_dicts['epoch'] + 1
             self.global_steps = self.iters_per_epoch * state_dicts['epoch']
+
+            self.current_iter = state_dicts['epoch'] + 1
 
         for net_name, net in self.model.nets.items():
             net.set_state_dict(state_dicts[net_name])
