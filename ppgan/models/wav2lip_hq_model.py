@@ -74,7 +74,9 @@ class Wav2LipModelHq(BaseModel):
         self.is_train = is_train
         self.eval_step = 0
         self.max_eval_steps = max_eval_steps
-        self.eval_sync_losses, self.eval_recon_losses, self.eval_disc_real_losses, self.eval_disc_fake_losses, self.eval_perceptual_losses = [], [], [], [], []
+        self.eval_sync_losses, self.eval_recon_losses = [], []
+        self.eval_disc_real_losses, self.eval_disc_fake_losses = [], []
+        self.eval_perceptual_losses = []
         # define networks (both generator and discriminator)
         self.nets['netG'] = build_generator(generator)
         init_weights(self.nets['netG'],
@@ -221,7 +223,9 @@ class Wav2LipModelHq(BaseModel):
                     averaged_recon_loss, averaged_sync_loss,
                     averaged_perceptual_loss, averaged_disc_fake_loss,
                     averaged_disc_real_loss))
-            self.eval_sync_losses, self.eval_recon_losses, self.eval_disc_real_losses, self.eval_disc_fake_losses, self.eval_perceptual_losses = [], [], [], [], []
+            self.eval_sync_losses, self.eval_recon_losses = [], []
+            self.eval_disc_real_losses, self.eval_disc_fake_losses = [], []
+            self.eval_perceptual_losses = []
             self.eval_step = 0
         self.nets['netG'].train()
         self.nets['netDH'].train()

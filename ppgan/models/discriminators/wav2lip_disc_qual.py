@@ -66,12 +66,9 @@ class Wav2LipDiscQual(nn.Layer):
 
         binary_pred = self.binary_pred(false_feats).reshape(
             (len(false_feats), -1))
-        #print('binary_pred shape: ', binary_pred.shape)
-        #print(binary_pred)
 
         false_pred_loss = F.binary_cross_entropy(
             binary_pred, paddle.ones((len(false_feats), 1)))
-        #print('false_pred_loss: ',false_pred_loss)
 
         return false_pred_loss
 
