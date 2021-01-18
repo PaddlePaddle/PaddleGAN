@@ -6,11 +6,13 @@ import json, subprocess, random, string
 from tqdm import tqdm
 from glob import glob
 import paddle
+from paddle.utils.download import get_weights_path_from_url
 from ppgan.faceutils import face_detection
 from ppgan.utils import audio
 from ppgan.models.generators.wav2lip import Wav2Lip
 from .base_predictor import BasePredictor
 
+WAV2LIP_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/wav2lip_hq.pdparams'
 mel_step_size = 16
 
 
@@ -216,7 +218,11 @@ class Wav2LipPredictor(BasePredictor):
         gen = self.datagen(full_frames.copy(), mel_chunks)
 
         model = Wav2Lip()
-        weights = paddle.load(self.args.checkpoint_path)
+        if self.args.checkpoint_path is None:
+            model_weights_path = get_weights_path_from_url(WAV2LIP_WEIGHT_URL)
+            weights = paddle.load(model_weights_path)
+        else:
+            weights = paddle.load(self.args.checkpoint_path)
         model.load_dict(weights)
         model.eval()
         print("Model loaded")
