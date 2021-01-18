@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import paddle
+from paddle.utils.download import get_weights_path_from_url
 from .base_model import BaseModel
 
 from .builder import MODELS
@@ -22,6 +23,7 @@ from .discriminators.builder import build_discriminator
 from ..solver import build_optimizer
 from ..modules.init import init_weights
 
+SYNCNET_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/syncnet.pdparams'
 syncnet_T = 5
 syncnet_mel_step_size = 16
 
@@ -74,7 +76,8 @@ class Wav2LipModel(BaseModel):
         init_weights(self.nets['netG'], distribution='uniform')
         if self.is_train:
             self.nets['netD'] = build_discriminator(discriminator)
-            params = paddle.load(lipsync_weight_path)
+            weights_path = get_weights_path_from_url(SYNCNET_WEIGHT_URL)
+            params = paddle.load(weights_path)
             self.nets['netD'].load_dict(params)
 
         if self.is_train:
