@@ -14,6 +14,7 @@
 
 import paddle
 import paddle.nn.functional as F
+from paddle.utils.download import get_weights_path_from_url
 from .base_model import BaseModel
 
 from .builder import MODELS
@@ -25,7 +26,7 @@ from .wav2lip_model import cosine_loss, get_sync_loss
 from ..solver import build_optimizer
 from ..modules.init import init_weights
 
-lipsync_weight_path = '/workspace/PaddleGAN/lipsync_expert.pdparams'
+SYNCNET_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/syncnet.pdparams'
 
 
 @MODELS.register()
@@ -65,7 +66,8 @@ class Wav2LipModelHq(BaseModel):
                      distribution='uniform')
         if self.is_train:
             self.nets['netDS'] = build_discriminator(discriminator_sync)
-            params = paddle.load(lipsync_weight_path)
+            weights_path = get_weights_path_from_url(SYNCNET_WEIGHT_URL)
+            params = paddle.load(weights_path)
             self.nets['netDS'].load_dict(params)
 
             self.nets['netDH'] = build_discriminator(discriminator_hq)
