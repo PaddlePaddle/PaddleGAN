@@ -19,25 +19,6 @@ ppgan.apps包含超分、插针、上色、换妆、图像动画生成、人脸�
 * 唇形合成:
   * [Wav2Lip](#ppgan.apps.Wav2LipPredictor)
 
-## 公共用法
-
-### CPU和GPU的切换
-
-默认情况下，如果是GPU设备、并且安装了PaddlePaddle的GPU环境包，则默认使用GPU进行推理。否则，如果安装的是CPU环境包，则使用CPU进行推理。如果需要手动切换CPU、GPU，可以通过以下方式:
-
-
-```
-import paddle
-paddle.set_device('cpu')
-#paddle.set_device('gpu')
-
-# from ppgan.apps import DeOldifyPredictor
-# deoldify = DeOldifyPredictor()
-# deoldify.run("docs/imgs/test_old.jpeg")
-```
-
-## ppgan.apps.DeOldifyPredictor
-
 
 ## 公共用法
 
