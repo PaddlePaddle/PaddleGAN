@@ -192,7 +192,6 @@ class Trainer:
             if self.current_iter % self.visual_interval == 0:
                 self.visual('visual_train')
 
-            # self.model.lr_scheduler.step()
             self.learning_rate_scheduler_step()
 
             if self.validate_interval > -1 and self.current_iter % self.validate_interval == 0:

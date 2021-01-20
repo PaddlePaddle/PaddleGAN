@@ -91,11 +91,8 @@ class ResBlock(nn.Layer):
         return out
 
 
+# temporally solve pow double grad problem
 def var(x, axis=None, unbiased=True, keepdim=False, name=None):
-    """
-    """
-    # if not paddle.in_dygraph_mode():
-    #     check_variable_and_dtype(x, 'x', ['float32', 'float64'], 'var')
 
     u = paddle.mean(x, axis, True, name)
     out = paddle.sum((x - u) * (x - u), axis, keepdim=keepdim, name=name)
