@@ -68,7 +68,7 @@ python -m paddle.distributed.launch \
 
 Model|Dataset|BatchSize|Inference speed|Download
 ---|:--:|:--:|:--:|:--:
-wa2lip_hq|LRS2| 1 | 0.2853s/image (GPU:P40) | [model](https://paddlegan.bj.bcebos.com/models/psgan_weight.pdparam://paddlegan.bj.bcebos.com/models/wav2lip_hq.pdparams)
+wa2lip_hq|LRS2| 1 | 0.2853s/image (GPU:P40) | [model](https://paddlegan.bj.bcebos.com/models/wav2lip_hq.pdparams)
 
 ## Results
 ![](../../imgs/mona.gif)
