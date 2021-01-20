@@ -8,7 +8,7 @@ ppgan.apps包含超分、插针、上色、换妆、图像动画生成、人脸�
 * 上色:
   * [DeOldify](#ppgan.apps.DeOldifyPredictor)
   * [DeepRemaster](#ppgan.apps.DeepRemasterPredictor)
-* 插针:
+* 插帧:
   * [DAIN](#ppgan.apps.DAINPredictor)
 * 图像工作驱动:
   * [FirstOrder](#ppgan.apps.FirstOrderPredictor)
@@ -16,6 +16,28 @@ ppgan.apps包含超分、插针、上色、换妆、图像动画生成、人脸�
   * [FaceFaceParse](#ppgan.apps.FaceParsePredictor)
 * 动漫画:
   * [AnimeGAN](#ppgan.apps.AnimeGANPredictor)
+* 唇形合成:
+  * [Wav2Lip](#ppgan.apps.Wav2LipPredictor)
+
+## 公共用法
+
+### CPU和GPU的切换
+
+默认情况下，如果是GPU设备、并且安装了PaddlePaddle的GPU环境包，则默认使用GPU进行推理。否则，如果安装的是CPU环境包，则使用CPU进行推理。如果需要手动切换CPU、GPU，可以通过以下方式:
+
+
+```
+import paddle
+paddle.set_device('cpu')
+#paddle.set_device('gpu')
+
+# from ppgan.apps import DeOldifyPredictor
+# deoldify = DeOldifyPredictor()
+# deoldify.run("docs/imgs/test_old.jpeg")
+```
+
+## ppgan.apps.DeOldifyPredictor
+
 
 ## 公共用法
 
@@ -431,3 +453,33 @@ ppgan.apps.MiDaSPredictor(output=None, weight_path=None)
 > > - prediction (numpy.ndarray): 返回预测结果。
 > > - pfm_f (str): 如果设置output路径，返回pfm文件保存路径。
 > > - png_f (str): 如果设置output路径，返回png文件保存路径。
+
+
+## ppgan.apps.Wav2lipPredictor
+
+```python
+ppgan.apps.FirstOrderPredictor(args)
+```
+
+> 构建Wav2lip模型的实例，此模型用来做唇形合成，即给定一个人物视频和一个音频，实现人物口型与输入语音同步。论文是A Lip Sync Expert Is All You Need for Speech to Lip Generation In the Wild，论文链接: http://arxiv.org/abs/2008.10010.
+>
+> **示例**
+>
+> ```
+> from ppgan.apps import Wav2LipPredictor
+> # The args parameter should be specified by argparse
+> predictor = Wav2LipPredictor(args)
+> predictor.run()
+> ```
+
+> **参数**
+> args(ArgumentParser): 参数包含所有的输入参数，用户在运行程序时需要通过argparse指定，主要的参数主要包含以下几项：`
+> > - checkpoint_path (str):  指定模型路径，默认是None，不指定则会自动下载内置的已经训练好的模型。
+> > - face (str): 指定的包含人物的图片或者视频的文件路径。
+> > - audio (str): 指定的输入音频的文件路径，它的格式可以是 `.wav`, `.mp3`, `.m4a`等，任何ffmpeg可以处理的文件格式都可以。
+> > - outfile (str): 指定的输出视频文件路径。
+
+>
+> **返回值**
+>
+> > 无。
