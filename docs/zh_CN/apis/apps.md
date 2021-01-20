@@ -453,8 +453,9 @@ ppgan.apps.FirstOrderPredictor(args)
 > predictor.run()
 > ```
 
-> **参数**
-> args(ArgumentParser): 参数包含所有的输入参数，用户在运行程序时需要通过argparse指定，主要的参数主要包含以下几项：`
+> **参数:**
+
+> - args(ArgumentParser): 参数包含所有的输入参数，用户在运行程序时需要通过argparse指定，主要的参数主要包含以下几项：`
 > > - checkpoint_path (str):  指定模型路径，默认是None，不指定则会自动下载内置的已经训练好的模型。
 > > - face (str): 指定的包含人物的图片或者视频的文件路径。
 > > - audio (str): 指定的输入音频的文件路径，它的格式可以是 `.wav`, `.mp3`, `.m4a`等，任何ffmpeg可以处理的文件格式都可以。
