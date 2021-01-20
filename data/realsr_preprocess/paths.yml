@@ -1,0 +1,13 @@
+df2k:
+  tdsr:
+    source: '/workspace/datasets/ntire20/Corrupted-tr-x'
+    target: '/workspace/datasets/ntire20/Corrupted-tr-y'
+    valid:
+dped:
+  clean:
+    hr:
+      train: '/workspace/datasets/ntire20/DPEDiphone-tr-x'
+      valid: '/workspace/datasets/ntire20/DPEDiphone-va'
+datasets:
+  df2k: 'DF2K'
+  dped: 'DPED'

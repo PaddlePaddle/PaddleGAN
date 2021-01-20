@@ -13,9 +13,14 @@
 # limitations under the License.
 
 import sys
+import cv2
+import glob
 import random
 import numbers
 import collections
+import numpy as np
+
+from PIL import Image
 
 import paddle.vision.transforms as T
 import paddle.vision.transforms.functional as F
@@ -40,8 +45,9 @@ TRANSFORMS.register(T.Transpose)
 
 @PREPROCESS.register()
 class Transforms():
-    def __init__(self, pipeline, input_keys):
+    def __init__(self, pipeline, input_keys, output_keys=None):
         self.input_keys = input_keys
+        self.output_keys = output_keys
         self.transforms = []
         for transform_cfg in pipeline:
             self.transforms.append(build_from_config(transform_cfg, TRANSFORMS))
@@ -62,6 +68,11 @@ class Transforms():
                 datas[k] = data[i]
         else:
             datas[k] = data
+
+        if self.output_keys is not None:
+            for i, k in enumerate(self.output_keys):
+                datas[k] = data[i]
+            return datas
 
         return datas
 
@@ -185,10 +196,11 @@ class SRPairedRandomCrop(T.BaseTransform):
         scale (int): model upscale factor.
         gt_patch_size (int): cropped gt patch size.
     """
-    def __init__(self, scale, gt_patch_size, keys=None):
+    def __init__(self, scale, gt_patch_size, scale_list=False, keys=None):
         self.gt_patch_size = gt_patch_size
         self.scale = scale
         self.keys = keys
+        self.scale_list = scale_list
 
     def __call__(self, inputs):
         """inputs must be (lq_img, gt_img)"""
@@ -216,5 +228,39 @@ class SRPairedRandomCrop(T.BaseTransform):
         gt = gt[top_gt:top_gt + self.gt_patch_size,
                 left_gt:left_gt + self.gt_patch_size, ...]
 
+        if self.scale_list and self.scale == 4:
+            lqx2 = F.resize(gt, (lq_patch_size * 2, lq_patch_size * 2),
+                            'bicubic')
+            outputs = (lq, lqx2, gt)
+            return outputs
+
         outputs = (lq, gt)
         return outputs
+
+
+@TRANSFORMS.register()
+class SRNoise(T.BaseTransform):
+    """Super resolution noise.
+
+    Args:
+        noise_path (str): directory of noise image.
+        size (int): cropped noise patch size.
+    """
+    def __init__(self, noise_path, size, keys=None):
+        self.noise_path = noise_path
+        self.noise_imgs = sorted(glob.glob(noise_path + '*.png'))
+        self.size = size
+        self.keys = keys
+        self.transform = T.Compose([
+            T.RandomCrop(size),
+            T.Transpose(),
+            T.Normalize([0., 0., 0.], [255., 255., 255.])
+        ])
+
+    def _apply_image(self, image):
+        idx = np.random.randint(0, len(self.noise_imgs))
+        noise = self.transform(Image.open(self.noise_imgs[idx]))
+        normed_noise = noise - np.mean(noise, axis=(1, 2), keepdims=True)
+        image = image + normed_noise
+        image = np.clip(image, 0., 1.)
+        return image

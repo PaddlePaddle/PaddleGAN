@@ -17,7 +17,8 @@ import argparse
 
 def parse_args():
     parser = argparse.ArgumentParser(description='PaddleGAN')
-    parser.add_argument('--config-file',
+    parser.add_argument('-c',
+                        '--config-file',
                         metavar="FILE",
                         help='config file path')
     # cuda setting
