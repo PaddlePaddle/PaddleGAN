@@ -43,6 +43,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 * [AnimeGANv2](./docs/en_US/tutorials/animegan.md)
 * [U-GAT-IT](./docs/en_US/tutorials/ugatit.md)
 * [Photo2Cartoon](./docs/en_US/tutorials/photo2cartoon.md)
+* [Wav2Lip](./docs/en_US/tutorials/wav2lip.md)
 
 ## Composite Application
 
@@ -100,6 +101,14 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 <div align='center'>
   <img src='./docs/imgs/animeganv2.png'width='700' height='250'/>
 </div>
+
+
+### Lip-syncing
+
+<div align='center'>
+  <img src='./docs/imgs/mona.gif'width='700'>
+</div>
+
 
 ## Changelog
 
