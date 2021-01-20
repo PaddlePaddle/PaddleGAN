@@ -27,7 +27,7 @@ class SingleDataset(BaseDataset):
             dataroot (str): Directory of dataset.
             preprocess (list[dict]): A sequence of data preprocess config.
         """
-        super(SingleDataset).__init__(self, preprocess)
+        super(SingleDataset, self).__init__(preprocess)
         self.dataroot = dataroot
         self.data_infos = self.prepare_data_infos()
 

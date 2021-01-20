@@ -53,13 +53,15 @@ class Transforms():
         data = tuple(data)
         for transform in self.transforms:
             data = transform(data)
-
             if hasattr(transform, 'params') and isinstance(
                     transform.params, dict):
                 datas.update(transform.params)
 
-        for i, k in enumerate(self.input_keys):
-            datas[k] = data[i]
+        if len(self.input_keys) > 1:
+            for i, k in enumerate(self.input_keys):
+                datas[k] = data[i]
+        else:
+            datas[k] = data
 
         return datas
 

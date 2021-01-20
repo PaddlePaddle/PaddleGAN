@@ -122,6 +122,8 @@ class Trainer:
         self.batch_id = 0
         self.global_steps = 0
         self.weight_interval = cfg.snapshot_config.interval
+        if self.by_epoch:
+            self.weight_interval *= self.iters_per_epoch
         self.log_interval = cfg.log_config.interval
         self.visual_interval = cfg.log_config.visiual_interval
         self.validate_interval = -1
@@ -138,6 +140,17 @@ class Trainer:
         strategy = paddle.distributed.prepare_context()
         for net_name, net in self.model.nets.items():
             self.model.nets[net_name] = paddle.DataParallel(net, strategy)
+
+    def learning_rate_scheduler_step(self):
+        if isinstance(self.model.lr_scheduler, dict):
+            for lr_scheduler in self.model.lr_scheduler.values():
+                lr_scheduler.step()
+        elif isinstance(self.model.lr_scheduler,
+                        paddle.optimizer.lr.LRScheduler):
+            self.model.lr_scheduler.step()
+        else:
+            raise ValueError(
+                'lr schedulter must be a dict or an instance of LRScheduler')
 
     def train(self):
         reader_cost_averager = TimeAverager()
@@ -175,7 +188,8 @@ class Trainer:
             if self.current_iter % self.visual_interval == 0:
                 self.visual('visual_train')
 
-            self.model.lr_scheduler.step()
+            # self.model.lr_scheduler.step()
+            self.learning_rate_scheduler_step()
 
             if self.by_epoch:
                 temp = self.current_epoch
