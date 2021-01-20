@@ -21,6 +21,7 @@ python tools/wav2lip.py --face ../../imgs/mona7s.mp4 --audio ../../imgs/guangqua
 
 ### 2.2 Training
 1. Our model are trained on LRS2. See [here](https://github.com/Rudrabha/Wav2Lip#training-on-datasets-other-than-lrs2) for a few suggestions regarding training on other datasets.
+
 Preprocessed LRS2 dataset folder structure should be like:
 ```
 preprocessed_root (lrs2_preprocessed)
@@ -30,6 +31,7 @@ preprocessed_root (lrs2_preprocessed)
 |    │   ├── audio.wav
 ```
 Place the LRS2 filelists(train, val, test) `.txt` files in the `filelists/` folder.
+
 2. You can eigher train the model without the additional visual quality discriminator or use the discriminator. For the former, run:
 - For single GPU:
 ```
