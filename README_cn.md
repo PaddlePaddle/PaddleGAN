@@ -44,6 +44,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 * [AnimeGANv2](./docs/zh_CN/tutorials/animegan.md)
 * [U-GAT-IT](./docs/zh_CN/tutorials/ugatit.md)
 * [Photo2Cartoon](docs/zh_CN/tutorials/photo2cartoon.md)
+* [Wav2Lip](docs/zh_CN/tutorials/wav2lip.md)
 
 ## 复合应用
 
@@ -112,6 +113,14 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 <div align='center'>
   <img src='./docs/imgs/animeganv2.png'width='700' height='250'/>
 </div>
+
+
+### 唇形同步
+
+<div align='center'>
+  <img src='./docs/imgs/mona.gif'width='700'>
+</div>
+
 
 ## 版本更新
 
