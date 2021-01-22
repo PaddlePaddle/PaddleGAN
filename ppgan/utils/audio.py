@@ -1,14 +1,14 @@
-import librosa
-import librosa.filters
 import numpy as np
 from scipy import signal
 from scipy.io import wavfile
+from paddle.utils import try_import
 from .audio_config import get_audio_config
 
 audio_config = get_audio_config()
 
 
 def load_wav(path, sr):
+    librosa = try_import('librosa')
     return librosa.core.load(path, sr=sr)[0]
 
 
@@ -19,6 +19,7 @@ def save_wav(wav, path, sr):
 
 
 def save_wavenet_wav(wav, path, sr):
+    librosa = try_import('librosa')
     librosa.output.write_wav(path, wav, sr=sr)
 
 
@@ -75,6 +76,7 @@ def _stft(y):
     if audio_config.use_lws:
         return _lws_processor(audio_config).stft(y).T
     else:
+        librosa = try_import('librosa')
         return librosa.stft(y=y,
                             n_fft=audio_config.n_fft,
                             hop_length=get_hop_size(),
@@ -123,6 +125,7 @@ def _linear_to_mel(spectogram):
 
 def _build_mel_basis():
     assert audio_config.fmax <= audio_config.sample_rate // 2
+    librosa = try_import('librosa')
     return librosa.filters.mel(audio_config.sample_rate,
                                audio_config.n_fft,
                                n_mels=audio_config.num_mels,

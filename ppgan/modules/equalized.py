@@ -24,25 +24,30 @@ class EqualConv2D(nn.Layer):
     """This convolutional layer class stabilizes the learning rate changes of its parameters.
     Equalizing learning rate keeps the weights in the network at a similar scale during training.
     """
-    def __init__(
-        self, in_channel, out_channel, kernel_size, stride=1, padding=0, bias=True
-    ):
+    def __init__(self,
+                 in_channel,
+                 out_channel,
+                 kernel_size,
+                 stride=1,
+                 padding=0,
+                 bias=True):
         super().__init__()
- 
+
         self.weight = self.create_parameter(
-            (out_channel, in_channel, kernel_size, kernel_size), default_initializer=nn.initializer.Normal()
-        )
-        self.scale = 1 / math.sqrt(in_channel * kernel_size ** 2)
- 
+            (out_channel, in_channel, kernel_size, kernel_size),
+            default_initializer=nn.initializer.Normal())
+        self.scale = 1 / math.sqrt(in_channel * (kernel_size * kernel_size))
+
         self.stride = stride
         self.padding = padding
- 
+
         if bias:
-            self.bias = self.create_parameter((out_channel,), nn.initializer.Constant(0.0))
- 
+            self.bias = self.create_parameter((out_channel, ),
+                                              nn.initializer.Constant(0.0))
+
         else:
             self.bias = None
- 
+
     def forward(self, input):
         out = F.conv2d(
             input,
@@ -51,51 +56,57 @@ class EqualConv2D(nn.Layer):
             stride=self.stride,
             padding=self.padding,
         )
- 
+
         return out
- 
+
     def __repr__(self):
         return (
             f"{self.__class__.__name__}({self.weight.shape[1]}, {self.weight.shape[0]},"
             f" {self.weight.shape[2]}, stride={self.stride}, padding={self.padding})"
         )
- 
- 
+
+
 class EqualLinear(nn.Layer):
     """This linear layer class stabilizes the learning rate changes of its parameters.
     Equalizing learning rate keeps the weights in the network at a similar scale during training.
     """
-    def __init__(
-        self, in_dim, out_dim, bias=True, bias_init=0, lr_mul=1, activation=None
-    ):
+    def __init__(self,
+                 in_dim,
+                 out_dim,
+                 bias=True,
+                 bias_init=0,
+                 lr_mul=1,
+                 activation=None):
         super().__init__()
- 
-        self.weight = self.create_parameter((in_dim, out_dim), default_initializer=nn.initializer.Normal())
-        self.weight[:] = (self.weight / lr_mul).detach()
- 
+
+        self.weight = self.create_parameter(
+            (in_dim, out_dim), default_initializer=nn.initializer.Normal())
+        self.weight.set_value((self.weight / lr_mul))
+
         if bias:
-            self.bias = self.create_parameter((out_dim,), nn.initializer.Constant(bias_init))
- 
+            self.bias = self.create_parameter(
+                (out_dim, ), nn.initializer.Constant(bias_init))
+
         else:
             self.bias = None
- 
+
         self.activation = activation
- 
+
         self.scale = (1 / math.sqrt(in_dim)) * lr_mul
         self.lr_mul = lr_mul
- 
+
     def forward(self, input):
         if self.activation:
             out = F.linear(input, self.weight * self.scale)
             out = fused_leaky_relu(out, self.bias * self.lr_mul)
- 
+
         else:
-            out = F.linear(
-                input, self.weight * self.scale, bias=self.bias * self.lr_mul
-            )
- 
+            out = F.linear(input,
+                           self.weight * self.scale,
+                           bias=self.bias * self.lr_mul)
+
         return out
- 
+
     def __repr__(self):
         return (
             f"{self.__class__.__name__}({self.weight.shape[0]}, {self.weight.shape[1]})"
