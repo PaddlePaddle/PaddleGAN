@@ -1,0 +1,117 @@
+total_iters: 1000000
+output_dir: output_dir
+# tensor range for function tensor2img
+min_max:
+  (0., 255.)
+
+model:
+  name: DRN
+  generator:
+    name: DRNGenerator
+    scale: (2, 4)
+    n_blocks: 30
+    n_feats: 16
+    n_colors: 3
+    rgb_range: 255
+    negval: 0.2
+  pixel_criterion:
+    name: L1Loss
+
+dataset:
+  train:
+    name: SRDataset
+    gt_folder: data/DIV2K/DIV2K_train_HR_sub
+    lq_folder: data/DIV2K/DIV2K_train_LR_bicubic/X4_sub
+    num_workers: 4
+    batch_size: 8
+    scale: 4
+    preprocess:
+      - name: LoadImageFromFile
+        key: lq
+      - name: LoadImageFromFile
+        key: gt
+      - name: Transforms
+        input_keys: [lq, gt]
+        output_keys: [lq, lqx2, gt]
+        pipeline:
+          - name: SRPairedRandomCrop
+            gt_patch_size: 384
+            scale: 4
+            scale_list: True
+            keys: [image, image]
+          - name: PairedRandomHorizontalFlip
+            keys: [image, image, image]
+          - name: PairedRandomVerticalFlip
+            keys: [image, image, image]
+          - name: PairedRandomTransposeHW
+            keys: [image, image, image]
+          - name: Transpose
+            keys: [image, image, image]
+          - name: Normalize
+            mean: [0., 0., 0.]
+            std: [1., 1., 1.]
+            keys: [image, image, image]
+  test:
+    name: SRDataset
+    gt_folder: data/DIV2K/val_set14/Set14
+    lq_folder: data/DIV2K/val_set14/Set14_bicLRx4
+    scale: 4
+    preprocess:
+      - name: LoadImageFromFile
+        key: lq
+      - name: LoadImageFromFile
+        key: gt
+      - name: Transforms
+        input_keys: [lq, gt]
+        pipeline:
+          - name: Transpose
+            keys: [image, image]
+          - name: Normalize
+            mean: [0., 0., 0.]
+            std: [1., 1., 1.]
+            keys: [image, image]
+
+lr_scheduler:
+  name: CosineAnnealingRestartLR
+  learning_rate: 0.0001
+  periods: [1000000]
+  restart_weights: [1]
+  eta_min: !!float 1e-7
+
+optimizer:
+  optimG:
+    name: Adam
+    net_names:
+      - generator
+    weight_decay: 0.0
+    beta1: 0.9
+    beta2: 0.999
+  optimD:
+    name: Adam
+    net_names:
+      - dual_model_0
+      - dual_model_1
+    weight_decay: 0.0
+    beta1: 0.9
+    beta2: 0.999
+
+validate:
+  interval: 5000
+  save_img: false
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      name: PSNR
+      crop_border: 4
+      test_y_channel: True
+    ssim:
+      name: SSIM
+      crop_border: 4
+      test_y_channel: True
+
+log_config:
+  interval: 10
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 5000
