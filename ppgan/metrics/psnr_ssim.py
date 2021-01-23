@@ -298,7 +298,6 @@ def rgb2ycbcr(img, y_only=False):
         img *= 255.
 
     if y_only:
-        # out_img = np.dot(img, [65.738, 129.057, 25.064]) / 256. + 16.0
         out_img = np.dot(img, [65.481, 128.553, 24.966]) / 255. + 16.0
     else:
         out_img = np.matmul(

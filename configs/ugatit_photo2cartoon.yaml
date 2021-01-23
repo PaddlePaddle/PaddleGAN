@@ -1,0 +1,126 @@
+epochs: 300
+output_dir: output_dir
+
+model:
+  name: UGATITModel
+  generator:
+    name: ResnetUGATITP2CGenerator
+    input_nc: 3
+    output_nc: 3
+    ngf: 32
+    n_blocks: 4
+    img_size: 256
+    light: True
+  discriminator_g:
+    name: UGATITDiscriminator
+    input_nc: 3
+    ndf: 32
+    n_layers: 7
+  discriminator_l:
+    name: UGATITDiscriminator
+    input_nc: 3
+    ndf: 32
+    n_layers: 5
+  l1_criterion:
+    name: L1Loss
+  mse_criterion:
+    name: MSELoss
+  bce_criterion:
+    name: BCEWithLogitsLoss
+  adv_weight: 1.0
+  cycle_weight: 50.0
+  identity_weight: 10.0
+  cam_weight: 1000.0
+
+dataset:
+  train:
+    name: UnpairedDataset
+    dataroot_a: data/photo2cartoon/trainA
+    dataroot_b: data/photo2cartoon/trainB
+    num_workers: 0
+    batch_size: 1
+    is_train: True
+    max_size: inf
+    preprocess:
+      - name: LoadImageFromFile
+        key: A
+      - name: LoadImageFromFile
+        key: B
+      - name: Transforms
+        input_keys: [A, B]
+        pipeline:
+          - name: Resize
+            size: [286, 286]
+            interpolation: 'bicubic' #cv2.INTER_CUBIC
+            keys: ['image', 'image']
+          - name: RandomCrop
+            size: [256, 256]
+            keys: ['image', 'image']
+          - name: RandomHorizontalFlip
+            prob: 0.5
+            keys: ['image', 'image']
+          - name: Transpose
+            keys: ['image', 'image']
+          - name: Normalize
+            mean: [127.5, 127.5, 127.5]
+            std: [127.5, 127.5, 127.5]
+            keys: ['image', 'image']
+  test:
+    name: UnpairedDataset
+    dataroot_a: data/photo2cartoon/testA
+    dataroot_b: data/photo2cartoon/testB
+    num_workers: 0
+    batch_size: 1
+    max_size: inf
+    is_train: False
+    preprocess:
+      - name: LoadImageFromFile
+        key: A
+      - name: LoadImageFromFile
+        key: B
+      - name: Transfroms
+        input_keys: [A, B]
+        pipeline:
+          - name: Resize
+            size: [256, 256]
+            interpolation: 'bicubic' #cv2.INTER_CUBIC
+            keys: ['image', 'image']
+          - name: Transpose
+            keys: ['image', 'image']
+          - name: Normalize
+            mean: [127.5, 127.5, 127.5]
+            std: [127.5, 127.5, 127.5]
+            keys: ['image', 'image']
+
+lr_scheduler:
+  name: LinearDecay
+  learning_rate: 0.0001
+  start_epoch: 150
+  decay_epochs: 150
+  # will get from real dataset
+  iters_per_epoch: 1
+
+optimizer:
+  optimG:
+    name: Adam
+    net_names:
+      - genA2B
+      - genB2A
+    weight_decay: 0.0001
+    beta1: 0.5
+  optimD:
+    name: Adam
+    net_names:
+      - disGA
+      - disGB
+      - disLA
+      - disLB
+    weight_decay: 0.0001
+    beta1: 0.5
+
+log_config:
+  interval: 10
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 30

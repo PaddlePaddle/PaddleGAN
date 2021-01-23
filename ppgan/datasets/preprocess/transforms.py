@@ -14,9 +14,13 @@
 
 import sys
 import cv2
+import glob
 import random
 import numbers
 import collections
+import numpy as np
+
+from PIL import Image
 
 import paddle.vision.transforms as T
 import paddle.vision.transforms.functional as F
@@ -55,18 +59,20 @@ class Transforms():
         data = tuple(data)
         for transform in self.transforms:
             data = transform(data)
-
             if hasattr(transform, 'params') and isinstance(
                     transform.params, dict):
                 datas.update(transform.params)
+
+        if len(self.input_keys) > 1:
+            for i, k in enumerate(self.input_keys):
+                datas[k] = data[i]
+        else:
+            datas[k] = data
 
         if self.output_keys is not None:
             for i, k in enumerate(self.output_keys):
                 datas[k] = data[i]
             return datas
-
-        for i, k in enumerate(self.input_keys):
-            datas[k] = data[i]
 
         return datas
 
@@ -230,3 +236,31 @@ class SRPairedRandomCrop(T.BaseTransform):
 
         outputs = (lq, gt)
         return outputs
+
+
+@TRANSFORMS.register()
+class SRNoise(T.BaseTransform):
+    """Super resolution noise.
+
+    Args:
+        noise_path (str): directory of noise image.
+        size (int): cropped noise patch size.
+    """
+    def __init__(self, noise_path, size, keys=None):
+        self.noise_path = noise_path
+        self.noise_imgs = sorted(glob.glob(noise_path + '*.png'))
+        self.size = size
+        self.keys = keys
+        self.transform = T.Compose([
+            T.RandomCrop(size),
+            T.Transpose(),
+            T.Normalize([0., 0., 0.], [255., 255., 255.])
+        ])
+
+    def _apply_image(self, image):
+        idx = np.random.randint(0, len(self.noise_imgs))
+        noise = self.transform(Image.open(self.noise_imgs[idx]))
+        normed_noise = noise - np.mean(noise, axis=(1, 2), keepdims=True)
+        image = image + normed_noise
+        image = np.clip(image, 0., 1.)
+        return image

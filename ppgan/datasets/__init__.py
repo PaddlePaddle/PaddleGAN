@@ -19,3 +19,4 @@ from .base_sr_dataset import SRDataset
 from .makeup_dataset import MakeupDataset
 from .common_vision_dataset import CommonVisionDataset
 from .animeganv2_dataset import AnimeGANV2Dataset
+from .wav2lip_dataset import Wav2LipDataset

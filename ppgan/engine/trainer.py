@@ -107,6 +107,7 @@ class Trainer:
 
         # base config
         self.output_dir = cfg.output_dir
+        self.max_eval_steps = cfg.model.get('max_eval_steps', None)
         self.epochs = cfg.get('epochs', None)
         if self.epochs:
             self.total_iters = self.epochs * self.iters_per_epoch
@@ -122,8 +123,13 @@ class Trainer:
         self.batch_id = 0
         self.global_steps = 0
         self.weight_interval = cfg.snapshot_config.interval
+        if self.by_epoch:
+            self.weight_interval *= self.iters_per_epoch
         self.log_interval = cfg.log_config.interval
         self.visual_interval = cfg.log_config.visiual_interval
+        if self.by_epoch:
+            self.weight_interval *= self.iters_per_epoch
+
         self.validate_interval = -1
         if cfg.get('validate', None) is not None:
             self.validate_interval = cfg.validate.get('interval', -1)
@@ -138,6 +144,17 @@ class Trainer:
         strategy = paddle.distributed.prepare_context()
         for net_name, net in self.model.nets.items():
             self.model.nets[net_name] = paddle.DataParallel(net, strategy)
+
+    def learning_rate_scheduler_step(self):
+        if isinstance(self.model.lr_scheduler, dict):
+            for lr_scheduler in self.model.lr_scheduler.values():
+                lr_scheduler.step()
+        elif isinstance(self.model.lr_scheduler,
+                        paddle.optimizer.lr.LRScheduler):
+            self.model.lr_scheduler.step()
+        else:
+            raise ValueError(
+                'lr schedulter must be a dict or an instance of LRScheduler')
 
     def train(self):
         reader_cost_averager = TimeAverager()
@@ -175,18 +192,14 @@ class Trainer:
             if self.current_iter % self.visual_interval == 0:
                 self.visual('visual_train')
 
-            self.model.lr_scheduler.step()
+            self.learning_rate_scheduler_step()
 
-            if self.by_epoch:
-                temp = self.current_epoch
-            else:
-                temp = self.current_iter
-            if self.validate_interval > -1 and temp % self.validate_interval == 0:
+            if self.validate_interval > -1 and self.current_iter % self.validate_interval == 0:
                 self.test()
 
-            if temp % self.weight_interval == 0:
-                self.save(temp, 'weight', keep=-1)
-                self.save(temp)
+            if self.current_iter % self.weight_interval == 0:
+                self.save(self.current_iter, 'weight', keep=-1)
+                self.save(self.current_iter)
 
             self.current_iter += 1
 
@@ -195,15 +208,16 @@ class Trainer:
             self.test_dataloader = build_dataloader(self.cfg.dataset.test,
                                                     is_train=False,
                                                     distributed=False)
+        iter_loader = IterLoader(self.test_dataloader)
+        if self.max_eval_steps is None:
+            self.max_eval_steps = len(self.test_dataloader)
 
         if self.metrics:
             for metric in self.metrics.values():
                 metric.reset()
 
-        # data[0]: img, data[1]: img path index
-        # test batch size must be 1
-        for i, data in enumerate(self.test_dataloader):
-
+        for i in range(self.max_eval_steps):
+            data = next(iter_loader)
             self.model.setup_input(data)
             self.model.test_iter(metrics=self.metrics)
 
@@ -237,7 +251,7 @@ class Trainer:
 
             if i % self.log_interval == 0:
                 self.logger.info('Test iter: [%d/%d]' %
-                                 (i, len(self.test_dataloader)))
+                                 (i, self.max_eval_steps))
 
         if self.metrics:
             for metric_name, metric in self.metrics.items():
@@ -335,7 +349,13 @@ class Trainer:
         assert name in ['checkpoint', 'weight']
 
         state_dicts = {}
-        save_filename = 'epoch_%s_%s.pdparams' % (epoch, name)
+        if self.by_epoch:
+            save_filename = 'epoch_%s_%s.pdparams' % (
+                epoch // self.iters_per_epoch, name)
+        else:
+            save_filename = 'iter_%s_%s.pdparams' % (epoch, name)
+
+        os.makedirs(self.output_dir, exist_ok=True)
         save_path = os.path.join(self.output_dir, save_filename)
         for net_name, net in self.model.nets.items():
             state_dicts[net_name] = net.state_dict()
@@ -353,9 +373,16 @@ class Trainer:
 
         if keep > 0:
             try:
-                checkpoint_name_to_be_removed = os.path.join(
-                    self.output_dir,
-                    'epoch_%s_%s.pdparams' % (epoch - keep, name))
+                if self.by_epoch:
+                    checkpoint_name_to_be_removed = os.path.join(
+                        self.output_dir, 'epoch_%s_%s.pdparams' %
+                        ((epoch - keep * self.weight_interval) //
+                         self.iters_per_epoch, name))
+                else:
+                    checkpoint_name_to_be_removed = os.path.join(
+                        self.output_dir, 'iter_%s_%s.pdparams' %
+                        (epoch - keep * self.weight_interval, name))
+
                 if os.path.exists(checkpoint_name_to_be_removed):
                     os.remove(checkpoint_name_to_be_removed)
 
@@ -366,7 +393,9 @@ class Trainer:
         state_dicts = load(checkpoint_path)
         if state_dicts.get('epoch', None) is not None:
             self.start_epoch = state_dicts['epoch'] + 1
-            self.global_steps = self.steps_per_epoch * state_dicts['epoch']
+            self.global_steps = self.iters_per_epoch * state_dicts['epoch']
+
+            self.current_iter = state_dicts['epoch'] + 1
 
         for net_name, net in self.model.nets.items():
             net.set_state_dict(state_dicts[net_name])

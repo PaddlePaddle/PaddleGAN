@@ -4,3 +4,6 @@ scikit-image>=0.14.0
 scipy>=1.1.0
 opencv-python
 imageio-ffmpeg
+librosa==0.7.0
+numba==0.48
+easydict

@@ -1,0 +1,63 @@
+total_iters: 200000000
+output_dir: output
+checkpoints_dir: checkpoints
+
+model:
+  name: Wav2LipModel
+  syncnet_wt: 0.0
+  max_eval_steps: 700
+  generator:
+    name: Wav2Lip
+  discriminator:
+    name: SyncNetColor
+
+dataset:
+  train:
+    name: Wav2LipDataset
+    dataroot: data/lrs2_preprocessed
+    filelists_path: ./
+    img_size: 96
+    split: train
+    batch_size: 8
+    num_workers: 4
+    use_shared_memory: False
+  test:
+    name: Wav2LipDataset
+    dataroot: data/lrs2_preprocessed
+    filelists_path: ./
+    img_size: 96
+    split: val
+    batch_size: 16
+    num_workers: 4
+    use_shared_memory: False
+
+optimizer:
+  optimizer_G:
+    name: Adam
+    net_names:
+      - netG
+    beta1: 0.5
+  optimizer_D:
+    name: Adam
+    net_names:
+      - netD
+    beta1: 0.5
+
+validate:
+  interval: 3000
+  save_img: false
+
+lr_scheduler:
+  name: LinearDecay
+  learning_rate: 0.0001
+  start_epoch: 2000000
+  decay_epochs: 2000000
+  # will get from real dataset
+  iters_per_epoch: 1
+
+log_config:
+  interval: 10
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 3000

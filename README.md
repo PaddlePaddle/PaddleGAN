@@ -42,6 +42,9 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 * [FaceParsing](./docs/en_US/tutorials/face_parse.md)
 * [AnimeGANv2](./docs/en_US/tutorials/animegan.md)
 * [U-GAT-IT](./docs/en_US/tutorials/ugatit.md)
+* [Photo2Cartoon](./docs/en_US/tutorials/photo2cartoon.md)
+* [Wav2Lip](./docs/en_US/tutorials/wav2lip.md)
+* [Super_Resolution](./docs/en_US/tutorials/super_resolution.md)
 
 ## Composite Application
 
@@ -86,11 +89,27 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
   <img src='./docs/imgs/ugatit.png'width='700' height='250'/>
 </div>
 
+
+### Realistic face cartoonization
+
+<div align='center'>
+  <img src='./docs/imgs/photo2cartoon.png'width='700' height='250'/>
+</div>
+
+
 ### Photo animation
 
 <div align='center'>
   <img src='./docs/imgs/animeganv2.png'width='700' height='250'/>
 </div>
+
+
+### Lip-syncing
+
+<div align='center'>
+  <img src='./docs/imgs/mona.gif'width='700'>
+</div>
+
 
 ## Changelog
 
@@ -119,6 +138,7 @@ SIG contributions:
 - [zhen8838](https://github.com/zhen8838): contributed to AnimeGANv2.
 - [Jay9z](https://github.com/Jay9z): contributed to DCGAN and updated install docs, etc.
 - [HighCWu](https://github.com/HighCWu): contributed to c-DCGAN and WGAN. Support to use `paddle.vision.datasets`.
+- [hao-qiang](https://github.com/hao-qiang) & [ minivision-ai ](https://github.com/minivision-ai): contributed to the photo2cartoon project.
 
 
 ## Contributing
