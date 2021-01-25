@@ -2,11 +2,11 @@
 
 ## 1.1 Principle
 
-  Super resolution is a process of upscaling and improving the details within an image. It usually takes a low-resolution image as input and upscales the same image to a higher resolution as output. 
-  Here we provide three super-resolution models, namely [RealSR](https://openaccess.thecvf.com/content_CVPRW_2020/papers/w31/Ji_Real-World_Super-Resolution_via_Kernel_Estimation_and_Noise_Injection_CVPRW_2020_paper.pdf), [ESRGAN](https://arxiv.org/abs/1809.00219v2), [LESRCNN](https://arxiv.org/abs/2007.04344). 
+  Super resolution is a process of upscaling and improving the details within an image. It usually takes a low-resolution image as input and upscales the same image to a higher resolution as output.
+  Here we provide three super-resolution models, namely [RealSR](https://openaccess.thecvf.com/content_CVPRW_2020/papers/w31/Ji_Real-World_Super-Resolution_via_Kernel_Estimation_and_Noise_Injection_CVPRW_2020_paper.pdf), [ESRGAN](https://arxiv.org/abs/1809.00219v2), [LESRCNN](https://arxiv.org/abs/2007.04344).
   [RealSR](https://openaccess.thecvf.com/content_CVPRW_2020/papers/w31/Ji_Real-World_Super-Resolution_via_Kernel_Estimation_and_Noise_Injection_CVPRW_2020_paper.pdf) proposed a realworld super-resolution model aiming at better perception.
   [ESRGAN](https://arxiv.org/abs/1809.00219v2) is an enhanced SRGAN that improves the three key components of SRGAN.
-  [LESRCNN](https://arxiv.org/abs/2007.04344) is a lightweight enhanced SR CNN (LESRCNN) with three successive sub-blocks. 
+  [LESRCNN](https://arxiv.org/abs/2007.04344) is a lightweight enhanced SR CNN (LESRCNN) with three successive sub-blocks.
 
 
 ## 1.2 How to use  
@@ -32,7 +32,7 @@
        ├── DIV2K_valid_LR_bicubic
        ...
   ```
- 
+
   The structures of Set5 and Set14 are similar. Taking Set5 as an example, the structure is as following:
   ```
     Set5
@@ -71,7 +71,7 @@ The metrics are PSNR / SSIM.
 | lesrcnn_x4  | 31.9476 / 0.8909 | 28.4110 / 0.7770 | 30.231 / 0.8326 |
 | esrgan_psnr_x4  | 32.5512 / 0.8991 | 28.8114 / 0.7871 | 30.7565 / 0.8449 |
 | esrgan_x4  | 28.7647 / 0.8187 | 25.0065 / 0.6762 | 26.9013 / 0.7542 |
-	
+
 
 <!-- ![](../../imgs/horse2zebra.png) -->
 
@@ -85,6 +85,7 @@ The metrics are PSNR / SSIM.
 | lesrcnn_x4  | DIV2K | [lesrcnn_x4](https://paddlegan.bj.bcebos.com/models/lesrcnn_x4.pdparams)
 | esrgan_psnr_x4  | DIV2K | [esrgan_psnr_x4](https://paddlegan.bj.bcebos.com/models/esrgan_psnr_x4.pdparams)
 | esrgan_x4  | DIV2K | [esrgan_x4](https://paddlegan.bj.bcebos.com/models/esrgan_x4.pdparams)
+| drns_x4  | DIV2K | [drns_x4](https://paddlegan.bj.bcebos.com/models/DRNSx4.pdparams)
 
 
 # References
@@ -125,4 +126,14 @@ The metrics are PSNR / SSIM.
   year={2020},
   publisher={Elsevier}
   }
+  ```
+- 4. [Closed-loop Matters: Dual Regression Networks for Single Image Super-Resolution](https://arxiv.org/pdf/2003.07018.pdf)
+
+  ```
+  @inproceedings{guo2020closed,
+  title={Closed-loop Matters: Dual Regression Networks for Single Image Super-Resolution},
+  author={Guo, Yong and Chen, Jian and Wang, Jingdong and Chen, Qi and Cao, Jiezhang and Deng, Zeshuai and Xu, Yanwu and Tan, Mingkui},
+  booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
+  year={2020}
+}
   ```

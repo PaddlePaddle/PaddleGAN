@@ -25,3 +25,4 @@ from .lesrcnn import LESRCNNGenerator
 from .resnet_ugatit_p2c import ResnetUGATITP2CGenerator
 from .generator_styleganv2 import StyleGANv2Generator
 from .generator_pixel2style2pixel import Pixel2Style2Pixel
+from .drn import DRNGenerator
