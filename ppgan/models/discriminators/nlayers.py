@@ -27,7 +27,7 @@ from .builder import DISCRIMINATORS
 @DISCRIMINATORS.register()
 class NLayerDiscriminator(nn.Layer):
     """Defines a PatchGAN discriminator"""
-    def __init__(self, input_nc, ndf=64, n_layers=3, norm_type='instance', use_sigmoid=False):
+    def __init__(self, input_nc, ndf=64, n_layers=3, norm_type='instance', use_sigmoid=False, add_last_layer=True):
         """Construct a PatchGAN discriminator
 
         Parameters:
@@ -95,30 +95,33 @@ class NLayerDiscriminator(nn.Layer):
                     norm_layer(ndf * nf_mult),
                     nn.LeakyReLU(0.2)
                 ]
-
-        nf_mult_prev = nf_mult
-        nf_mult = min(2**n_layers, 8)
-        if norm_type == 'spectral':
-            sequence += [
-                Spectralnorm(
+        
+        padw_last = 0
+        if add_last_layer:
+            padw_last = padw
+            nf_mult_prev = nf_mult
+            nf_mult = min(2**n_layers, 8)
+            if norm_type == 'spectral':
+                sequence += [
+                    Spectralnorm(
+                        nn.Conv2D(ndf * nf_mult_prev,
+                                  ndf * nf_mult,
+                                  kernel_size=kw,
+                                  stride=1,
+                                  padding=padw)),
+                    nn.LeakyReLU(0.01)
+                ]
+            else:
+                sequence += [
                     nn.Conv2D(ndf * nf_mult_prev,
                               ndf * nf_mult,
                               kernel_size=kw,
                               stride=1,
-                              padding=padw)),
-                nn.LeakyReLU(0.01)
-            ]
-        else:
-            sequence += [
-                nn.Conv2D(ndf * nf_mult_prev,
-                          ndf * nf_mult,
-                          kernel_size=kw,
-                          stride=1,
-                          padding=padw,
-                          bias_attr=use_bias),
-                norm_layer(ndf * nf_mult),
-                nn.LeakyReLU(0.2)
-            ]
+                              padding=padw,
+                              bias_attr=use_bias),
+                    norm_layer(ndf * nf_mult),
+                    nn.LeakyReLU(0.2)
+                ]
 
         if norm_type == 'spectral':
             sequence += [
@@ -127,7 +130,7 @@ class NLayerDiscriminator(nn.Layer):
                               1,
                               kernel_size=kw,
                               stride=1,
-                              padding=padw,
+                              padding=padw_last,
                               bias_attr=False))
             ]  # output 1 channel prediction map
         else:
@@ -136,7 +139,7 @@ class NLayerDiscriminator(nn.Layer):
                           1,
                           kernel_size=kw,
                           stride=1,
-                          padding=padw)
+                          padding=padw_last)
             ]  # output 1 channel prediction map
 
         self.model = nn.Sequential(*sequence)

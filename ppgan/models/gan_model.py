@@ -91,6 +91,14 @@ class GANModel(BaseModel):
             self.n_class = 0
 
         batch_size = self.D_real_inputs[0].shape[0]
+        
+        # check channelds
+        # TODO: remove after the bug in dataloader is fixed
+        channels = self.D_real_inputs[0].shape[1]
+        if channels > 4:
+            self.D_real_inputs[0] = paddle.transpose(self.D_real_inputs[0], perm=[0, 3, 1, 2])
+        assert self.D_real_inputs[0].shape[1] <= 4
+
         self.G_inputs = self.nets['netG'].random_inputs(batch_size)
         if not isinstance(self.G_inputs, (list, tuple)):
             self.G_inputs = [self.G_inputs]
@@ -136,6 +144,11 @@ class GANModel(BaseModel):
         if self.criterionGAN.gan_mode in ['vanilla', 'lsgan']:
             self.loss_D = self.loss_D + (self.loss_D_fake +
                                          self.loss_D_real) * 0.5
+        elif self.criterionGAN.gan_mode in ['wgangp']:
+            # gradient penalty
+            gradient_penalty = self.calculate_gradient_penalty(*self.D_real_inputs, *self.D_fake_inputs)
+            gradient_penalty.backward()
+            self.loss_D = self.loss_D + self.loss_D_fake + self.loss_D_real + gradient_penalty                                         
         else:
             self.loss_D = self.loss_D + self.loss_D_fake + self.loss_D_real
 
@@ -192,3 +205,23 @@ class GANModel(BaseModel):
                     self.samples_every_row)
 
         self.iter += 1
+    def calculate_gradient_penalty(self, real_images, fake_images, lambda_term=10):
+
+        # Uniformly sample along one straight line per each batch entry.
+        eta = paddle.expand(paddle.rand((real_images.shape[0],1,1,1)), real_images.shape)
+        interpolated = eta * real_images + ((1 - eta) * fake_images)
+        interpolated.stop_gradient = False
+
+        # calculate probability of interpolated examples
+        prob_interpolated = self.nets['netD'](interpolated)
+
+        # calculate gradients of probabilities with respect to examples
+        gradients = paddle.grad(outputs=prob_interpolated,
+                                inputs=interpolated,
+                                create_graph=True,
+                                retain_graph=True)[0]
+        
+        grad_penalty = ((gradients.norm(2, axis=1) - 1) ** 2).mean() * lambda_term
+        return grad_penalty
+
+
