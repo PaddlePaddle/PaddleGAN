@@ -17,8 +17,6 @@
             ├── trainB
             ├── testA
             └── testB
-
-    
   ```
 
 ### 1.2.2 Train/Test
