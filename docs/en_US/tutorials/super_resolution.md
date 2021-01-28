@@ -20,27 +20,36 @@
   | Classical SR Testing  | Set5 | Set5 test dataset | [Google Drive](https://drive.google.com/drive/folders/1B3DJGQKB6eNdwuQIhdskA64qUuVKLZ9u) / [Baidu Drive](https://pan.baidu.com/s/1q_1ERCMqALH0xFwjLM0pTg#list/path=%2Fsharelink2016187762-785433459861126%2Fclassical_SR_datasets&parentPath=%2Fsharelink2016187762-785433459861126) |
   | Classical SR Testing  | Set14 | Set14 test dataset | [Google Drive](https://drive.google.com/drive/folders/1B3DJGQKB6eNdwuQIhdskA64qUuVKLZ9u) / [Baidu Drive](https://pan.baidu.com/s/1q_1ERCMqALH0xFwjLM0pTg#list/path=%2Fsharelink2016187762-785433459861126%2Fclassical_SR_datasets&parentPath=%2Fsharelink2016187762-785433459861126) |
 
-  The structure of DIV2K is as following:
+  The structure of DIV2K, Set5 and Set14 is as following:
   ```
-    DIV2K
-       ├── DIV2K_train_HR
-       ├── DIV2K_train_LR_bicubic
-       |    ├──X2
-       |    ├──X3
-       |    └──X4
-       ├── DIV2K_valid_HR
-       ├── DIV2K_valid_LR_bicubic
-       ...
+    PaddleGAN
+      ├── data
+          ├── DIV2K
+                ├── DIV2K_train_HR
+                ├── DIV2K_train_LR_bicubic
+                |    ├──X2
+                |    ├──X3
+                |    └──X4
+                ├── DIV2K_valid_HR
+                ├── DIV2K_valid_LR_bicubic
+              Set5
+                ├── GTmod12
+                ├── LRbicx2
+                ├── LRbicx3
+                ├── LRbicx4
+                └── original
+              Set14
+                ├── GTmod12
+                ├── LRbicx2
+                ├── LRbicx3
+                ├── LRbicx4
+                └── original
+              ...
   ```
 
-  The structures of Set5 and Set14 are similar. Taking Set5 as an example, the structure is as following:
+  Use the following commands to process the DIV2K data set:
   ```
-    Set5
-      ├── GTmod12
-      ├── LRbicx2
-      ├── LRbicx3
-      ├── LRbicx4
-      └── original
+    python data/process_div2k_data.py --data-root data/DIV2K
   ```
 
 
@@ -71,6 +80,7 @@ The metrics are PSNR / SSIM.
 | lesrcnn_x4  | 31.9476 / 0.8909 | 28.4110 / 0.7770 | 30.231 / 0.8326 |
 | esrgan_psnr_x4  | 32.5512 / 0.8991 | 28.8114 / 0.7871 | 30.7565 / 0.8449 |
 | esrgan_x4  | 28.7647 / 0.8187 | 25.0065 / 0.6762 | 26.9013 / 0.7542 |
+| drns_x4  | 32.6684 / 0.8999 | 28.9037 / 0.7885 | - |
 
 
 <!-- ![](../../imgs/horse2zebra.png) -->

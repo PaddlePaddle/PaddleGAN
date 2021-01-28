@@ -65,8 +65,8 @@ dataset:
             keys: [image, image]
   test:
     name: SRDataset
-    gt_folder: data/DIV2K/val_set14/Set14
-    lq_folder: data/DIV2K/val_set14/Set14_bicLRx4
+    gt_folder: data/Set14/GTmod12
+    lq_folder: data/Set14/LRbicx4
     scale: 4
     preprocess:
       - name: LoadImageFromFile
