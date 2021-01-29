@@ -72,12 +72,44 @@ class Trainer:
     #         save checkpoint (model.nets)                     \/
     """
     def __init__(self, cfg):
+        # base config
+        self.logger = logging.getLogger(__name__)
+        self.cfg = cfg
+        self.output_dir = cfg.output_dir
+        self.max_eval_steps = cfg.model.get('max_eval_steps', None)
+
+        self.local_rank = ParallelEnv().local_rank
+        self.log_interval = cfg.log_config.interval
+        self.visual_interval = cfg.log_config.visiual_interval
+        self.weight_interval = cfg.snapshot_config.interval
+
+        self.start_epoch = 1
+        self.current_epoch = 1
+        self.current_iter = 1
+        self.inner_iter = 1
+        self.batch_id = 0
+        self.global_steps = 0
 
         # build model
         self.model = build_model(cfg.model)
         # multiple gpus prepare
         if ParallelEnv().nranks > 1:
             self.distributed_data_parallel()
+
+        # build metrics
+        self.metrics = None
+        validate_cfg = cfg.get('validate', None)
+        if validate_cfg and 'metrics' in validate_cfg:
+            self.metrics = self.model.setup_metrics(validate_cfg['metrics'])
+
+        self.enable_visualdl = cfg.get('enable_visualdl', False)
+        if self.enable_visualdl:
+            import visualdl
+            self.vdl_logger = visualdl.LogWriter(logdir=cfg.output_dir)
+
+        # evaluate only
+        if not cfg.is_train:
+            return
 
         # build train dataloader
         self.train_dataloader = build_dataloader(cfg.dataset.train)
@@ -93,21 +125,6 @@ class Trainer:
         self.optimizers = self.model.setup_optimizers(self.lr_schedulers,
                                                       cfg.optimizer)
 
-        # build metrics
-        self.metrics = None
-        validate_cfg = cfg.get('validate', None)
-        if validate_cfg and 'metrics' in validate_cfg:
-            self.metrics = self.model.setup_metrics(validate_cfg['metrics'])
-
-        self.logger = logging.getLogger(__name__)
-        self.enable_visualdl = cfg.get('enable_visualdl', False)
-        if self.enable_visualdl:
-            import visualdl
-            self.vdl_logger = visualdl.LogWriter(logdir=cfg.output_dir)
-
-        # base config
-        self.output_dir = cfg.output_dir
-        self.max_eval_steps = cfg.model.get('max_eval_steps', None)
         self.epochs = cfg.get('epochs', None)
         if self.epochs:
             self.total_iters = self.epochs * self.iters_per_epoch
@@ -116,26 +133,12 @@ class Trainer:
             self.by_epoch = False
             self.total_iters = cfg.total_iters
 
-        self.start_epoch = 1
-        self.current_epoch = 1
-        self.current_iter = 1
-        self.inner_iter = 1
-        self.batch_id = 0
-        self.global_steps = 0
-        self.weight_interval = cfg.snapshot_config.interval
-        if self.by_epoch:
-            self.weight_interval *= self.iters_per_epoch
-        self.log_interval = cfg.log_config.interval
-        self.visual_interval = cfg.log_config.visiual_interval
         if self.by_epoch:
             self.weight_interval *= self.iters_per_epoch
 
         self.validate_interval = -1
         if cfg.get('validate', None) is not None:
             self.validate_interval = cfg.validate.get('interval', -1)
-        self.cfg = cfg
-
-        self.local_rank = ParallelEnv().local_rank
 
         self.time_count = {}
         self.best_metric = {}
