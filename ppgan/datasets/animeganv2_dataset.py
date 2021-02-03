@@ -13,8 +13,9 @@
 #limitations under the License.
 
 import cv2
-import numpy as np
 import os.path
+import numpy as np
+import paddle
 from .base_dataset import BaseDataset
 from .image_folder import ImageFolder
 
@@ -23,21 +24,27 @@ from .transforms.builder import build_transforms
 
 
 @DATASETS.register()
-class AnimeGANV2Dataset(BaseDataset):
+class AnimeGANV2Dataset(paddle.io.Dataset):
     """
     """
-    def __init__(self, cfg):
+    def __init__(self,
+                 dataroot,
+                 style,
+                 transform_real=None,
+                 transform_anime=None,
+                 transform_gray=None):
         """Initialize this dataset class.
 
         Args:
             cfg (dict) -- stores all the experiment flags
         """
-        BaseDataset.__init__(self, cfg)
-        self.style = cfg.style
+        # self.cfg = cfg
+        self.root = dataroot
+        self.style = style
 
-        self.transform_real = build_transforms(self.cfg.transform_real)
-        self.transform_anime = build_transforms(self.cfg.transform_anime)
-        self.transform_gray = build_transforms(self.cfg.transform_gray)
+        self.transform_real = build_transforms(transform_real)
+        self.transform_anime = build_transforms(transform_anime)
+        self.transform_gray = build_transforms(transform_gray)
 
         self.real_root = os.path.join(self.root, 'train_photo')
         self.anime_root = os.path.join(self.root, f'{self.style}', 'style')
