@@ -21,7 +21,6 @@ from .generators.builder import build_generator
 from .discriminators.builder import build_discriminator
 from .criterions import build_criterion
 from ..modules.caffevgg import CaffeVGG19
-# from ..solver import build_optimizer
 from ..modules.init import init_weights
 from ..utils.filesystem import load
 
@@ -67,17 +66,6 @@ class AnimeGANV2Model(BaseModel):
             self.criterionGAN = build_criterion(gan_criterion)
             self.criterionL1 = nn.L1Loss()
             self.criterionHub = nn.SmoothL1Loss()
-
-            # # build optimizers
-            # self.build_lr_scheduler()
-            # self.optimizers['optimizer_G'] = build_optimizer(
-            #     cfg.optimizer,
-            #     self.lr_scheduler,
-            #     parameter_list=self.nets['netG'].parameters())
-            # self.optimizers['optimizer_D'] = build_optimizer(
-            #     cfg.optimizer,
-            #     self.lr_scheduler,
-            #     parameter_list=self.nets['netD'].parameters())
 
             if pretrain_ckpt:
                 state_dicts = load(pretrain_ckpt)
