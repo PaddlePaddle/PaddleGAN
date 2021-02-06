@@ -1,7 +1,5 @@
 epochs: 2
 output_dir: output_dir
-con_weight: 1
-pretrain_ckpt: null
 
 model:
   name: AnimeGANV2PreTrainModel
@@ -9,7 +7,11 @@ model:
     name: AnimeGenerator
   discriminator:
     name: AnimeDiscriminator
-  gan_mode: lsgan
+  gan_criterion:
+    name: GANLoss
+    gan_mode: lsgan
+  con_weight: 1
+  pretrain_ckpt: null
 
 dataset:
   train:
@@ -18,8 +20,6 @@ dataset:
     batch_size: 4
     dataroot: data/animedataset
     style: Hayao
-    phase: train
-    direction: AtoB
     transform_real:
       - name: Transpose
       - name: Normalize
@@ -57,15 +57,25 @@ dataset:
         mean: [127.5, 127.5, 127.5]
         std: [127.5, 127.5, 127.5]
 
-optimizer:
-  name: Adam
-  beta1: 0.5
-
 lr_scheduler:
-  name: linear
+  name: LinearDecay
   learning_rate: 0.0002
   start_epoch: 100
   decay_epochs: 100
+  # will get from real dataset
+  iters_per_epoch: 1
+
+optimizer:
+  optimizer_G:
+    name: Adam
+    net_names:
+      - netG
+    beta1: 0.5
+  optimizer_D:
+    name: Adam
+    net_names:
+      - netD
+    beta1: 0.5
 
 log_config:
   interval: 100
