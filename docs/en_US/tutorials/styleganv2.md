@@ -54,10 +54,43 @@ python -u tools/styleganv2.py \
 - n_col: the number of columns of the sampled picture
 - cpu: whether to use cpu inference, if not, please remove it from the command
 
-### Train (TODO)
+### Train
 
-In the future, training scripts will be added to facilitate users to train more types of StyleGAN V2 image generators.
+#### prepapre datasets
+you can get ffhq dataset from [here](https://drive.google.com/drive/folders/1u2xu7bSrWxrbUxk-dT-UvEJq8IjdmNTP)
 
+for convenient, we provide [images256x256.tar](https://paddlegan.bj.bcebos.com/datasets/images256x256.tar)
+
+The structure of stylegan data is as following:
+  ```
+    PaddleGAN
+      ├── data
+          ├── ffhq
+                ├──images1024x1024
+                      ├── 00000.png
+                      ├── 00001.png
+                      ├── 00002.png
+                      ├── 00003.png
+                      ├── 00004.png
+                 ├──images256x256
+                      ├── 00000.png
+                      ├── 00001.png
+                      ├── 00002.png
+                      ├── 00003.png
+                      ├── 00004.png
+         ├──custom_data
+              ├── img0.png
+              ├── img1.png
+              ├── img2.png
+              ├── img3.png
+              ├── img4.png
+              ...
+  ```
+
+train model
+```
+python tools/main.py -c configs/stylegan_v2_256_ffhq.yaml
+```
 
 ## Results
 
