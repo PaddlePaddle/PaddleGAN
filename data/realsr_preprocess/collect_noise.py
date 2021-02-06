@@ -27,7 +27,8 @@ parser.add_argument('--upscale_factor',
 opt = parser.parse_args()
 
 # define input and target directories
-with open('./preprocess/paths.yml', 'r') as stream:
+cur_path = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(cur_path, './paths.yml'), 'r') as stream:
     PATHS = yaml.load(stream)
 
 
