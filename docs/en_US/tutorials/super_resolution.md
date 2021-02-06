@@ -52,6 +52,16 @@
     python data/process_div2k_data.py --data-root data/DIV2K
   ```
 
+  Prepare dataset for realsr df2k model:
+  Download dataset from [NTIRE 2020 RWSR](https://competitions.codalab.org/competitions/22220#participate) and unzip it to your path.
+  Unzip Corrupted-tr-x.zip and Corrupted-tr-y.zip to ``PaddleGAN/data/ntire20`` directory.
+
+  Run the following commands:
+  ```
+    python ./data/realsr_preprocess/create_bicubic_dataset.py --dataset df2k --artifacts tdsr
+
+    python ./data/realsr_preprocess/collect_noise.py --dataset df2k --artifacts tdsr
+  ```
 
 ### 1.2.2 Train/Test
 
