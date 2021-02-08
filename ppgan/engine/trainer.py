@@ -144,9 +144,9 @@ class Trainer:
         self.best_metric = {}
 
     def distributed_data_parallel(self):
-        strategy = paddle.distributed.prepare_context()
+        paddle.distributed.init_parallel_env()
         for net_name, net in self.model.nets.items():
-            self.model.nets[net_name] = paddle.DataParallel(net, strategy)
+            self.model.nets[net_name] = paddle.DataParallel(net)
 
     def learning_rate_scheduler_step(self):
         if isinstance(self.model.lr_scheduler, dict):
