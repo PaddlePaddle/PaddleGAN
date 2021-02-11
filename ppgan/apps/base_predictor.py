@@ -30,12 +30,13 @@ class BasePredictor(object):
         else:
             place = paddle.fluid.framework._current_expected_place()
             self.exe = paddle.fluid.Executor(place)
-            file_names = os.listdir(self.weight_path)
-            for file_name in file_names:
-                if file_name.find('model') > -1:
-                    model_file = file_name
-                elif file_name.find('param') > -1:
-                    param_file = file_name
+            file_names = os.walk(self.weight_path) 
+            for root, dirs, files in file_names:
+                for file_name in files:
+                    if file_name.find('model') > -1:
+                        model_file = os.path.join(root, file_name)
+                    elif file_name.find('param') > -1:
+                        param_file = os.path.join(root, file_name)
 
             self.program, self.feed_names, self.fetch_targets = paddle.static.load_inference_model(
                 self.weight_path,
