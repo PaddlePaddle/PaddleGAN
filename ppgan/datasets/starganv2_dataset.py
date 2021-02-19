@@ -10,7 +10,6 @@ import random
 import numpy as np
 from PIL import Image
 
-from paddle.vision.transforms import Compose, Resize, RandomHorizontalFlip, Normalize, RandomResizedCrop
 from paddle.io import Dataset, WeightedRandomSampler
 
 
@@ -27,7 +26,7 @@ def _make_balanced_sampler(labels):
     return WeightedRandomSampler(weights, len(weights))
 
 
-class ImageFolder:
+class ImageFolder(Dataset):
     def __init__(self, root, use_sampler=False):
         self.samples, self.targets = self._make_dataset(root)
         self.use_sampler = use_sampler
@@ -177,4 +176,3 @@ class StarGANv2Dataset(BaseDataset):
     
     def prepare_data_infos(self, dataroot):
         pass
-    

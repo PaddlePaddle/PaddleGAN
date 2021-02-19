@@ -31,17 +31,9 @@ class StarGANv2Discriminator(nn.Layer):
     def forward(self, x, y):
         out = self.main(x)
         out = paddle.reshape(out, (out.shape[0], -1))  # (batch, num_domains)
-        # idx = paddle.to_tensor(np.array(range(y.shape[0]))).astype('int')
         idx = paddle.zeros_like(out)
         for i in range(idx.shape[0]):
             idx[i, y[i]] = 1
-        # s = out[idx, y]  # (batch, style_dim)
-
-        # s = []
-        # for i in range(idx.shape[0]):
-        #     s += [out[idx[i].numpy().astype(np.int).tolist()[0], y[i].numpy().astype(np.int).tolist()[0]]]
-        # s = paddle.stack(s)
         s = idx * out
         s = paddle.sum(s, axis=1)
-        # s = paddle.reshape(s, (s.shape[0], -1))
         return s

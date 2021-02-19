@@ -7,12 +7,17 @@ from .builder import GENERATORS
 import numpy as np
 import math
 
-from ppgan.modules.wing import BatchNorm2D, InstanceNorm2D
+from ppgan.modules.wing import InstanceNorm2D
 
 
-class Pool2(nn.Layer):
+class AvgPool2D(nn.Layer):
+    """
+    AvgPool2D 
+    Peplace avg_pool2d because paddle.grad will cause avg_pool2d to report an error when training.
+    In the future Paddle framework will supports avg_pool2d and remove this class.
+    """
     def __init__(self):
-        super(Pool2, self).__init__()
+        super(AvgPool2D, self).__init__()
         self.filter = paddle.to_tensor([[1, 1],
                                     [1, 1]], dtype='float32')
 
@@ -44,8 +49,7 @@ class ResBlk(nn.Layer):
         if self.learned_sc:
             x = self.conv1x1(x)
         if self.downsample:
-            x = Pool2()(x)
-            # x = F.avg_pool2d(x, 2)
+            x = AvgPool2D()(x)
         return x
 
     def _residual(self, x):
@@ -54,8 +58,7 @@ class ResBlk(nn.Layer):
         x = self.actv(x)
         x = self.conv1(x)
         if self.downsample:
-            x = Pool2()(x)
-            # x = F.avg_pool2d(x, 2)
+            x = AvgPool2D()(x)
         if self.normalize:
             x = self.norm2(x)
         x = self.actv(x)
@@ -222,12 +225,7 @@ class StarGANv2Mapping(nn.Layer):
         for layer in self.unshared:
             out += [layer(h)]
         out = paddle.stack(out, axis=1)  # (batch, num_domains, style_dim)
-        # idx = torch.LongTensor(range(y.size(0))).to(y.device)
-        # s = out[idx, y]  # (batch, style_dim)
-
         idx = paddle.to_tensor(np.array(range(y.shape[0]))).astype('int')
-        # s = out[idx, y]  # (batch, style_dim)
-
         s = []
         for i in range(idx.shape[0]):
             s += [out[idx[i].numpy().astype(np.int).tolist()[0], y[i].numpy().astype(np.int).tolist()[0]]]
@@ -261,16 +259,12 @@ class StarGANv2Style(nn.Layer):
 
     def forward(self, x, y):
         h = self.shared(x)
-        # h = h.view(h.size(0), -1)
         h = paddle.reshape(h, (h.shape[0], -1))
         out = []
         for layer in self.unshared:
             out += [layer(h)]
         out = paddle.stack(out, axis=1)  # (batch, num_domains, style_dim)
-        # idx = torch.LongTensor(range(y.size(0))).to(y.device)
-        # s = out[idx, y]  # (batch, style_dim)
         idx = paddle.to_tensor(np.array(range(y.shape[0]))).astype('int')
-
         s = []
         for i in range(idx.shape[0]):
             s += [out[idx[i].numpy().astype(np.int).tolist()[0], y[i].numpy().astype(np.int).tolist()[0]]]
