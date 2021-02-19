@@ -79,7 +79,7 @@ class DRN(BaseSRModel):
             self.gan_criterion = build_criterion(gan_criterion)
 
     def setup_input(self, input):
-        self.lq = paddle.fluid.dygraph.to_variable(input['lq'])
+        self.lq = paddle.to_tensor(input['lq'])
         self.visual_items['lq'] = self.lq
 
         if isinstance(self.scale, (list, tuple)) and len(
@@ -87,7 +87,7 @@ class DRN(BaseSRModel):
             self.lqx2 = input['lqx2']
 
         if 'gt' in input:
-            self.gt = paddle.fluid.dygraph.to_variable(input['gt'])
+            self.gt = paddle.to_tensor(input['gt'])
             self.visual_items['gt'] = self.gt
         self.image_paths = input['lq_path']
 

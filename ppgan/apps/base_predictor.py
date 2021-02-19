@@ -28,8 +28,8 @@ class BasePredictor(object):
             # todo self.model = build_model(self.cfg)
             pass
         else:
-            place = paddle.fluid.framework._current_expected_place()
-            self.exe = paddle.fluid.Executor(place)
+            place = paddle.get_device()
+            self.exe = paddle.static.Executor(place)
             file_names = os.listdir(self.weight_path)
             for file_name in file_names:
                 if file_name.find('model') > -1:
