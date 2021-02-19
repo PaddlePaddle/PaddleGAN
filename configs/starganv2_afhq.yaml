@@ -1,0 +1,141 @@
+epochs: 200
+output_dir: output_dir
+
+model:
+  name: StarGANv2Model
+  latent_dim: &LATENT_DIM 16
+  lambda_sty: 1
+  lambda_ds: 2
+  lambda_cyc: 1
+  generator:
+    name: StarGANv2Generator
+    img_size: &IMAGE_SIZE 256
+    w_hpf: 0
+    style_dim: &STYLE_DIM 64
+  style:
+    name: StarGANv2Style
+    img_size: *IMAGE_SIZE
+    style_dim: *STYLE_DIM
+    num_domains: &NUM_DOMAINS 3
+  mapping:
+    name: StarGANv2Mapping
+    latent_dim: *LATENT_DIM
+    style_dim: *STYLE_DIM
+    num_domains: *NUM_DOMAINS
+  discriminator:
+    name: StarGANv2Discriminator
+    img_size: *IMAGE_SIZE
+    num_domains: *NUM_DOMAINS
+
+dataset:
+  train:
+    name: StarGANv2Dataset
+    dataroot: data/stargan-v2/afhq/train
+    is_train: True
+    num_workers: 8
+    batch_size: 4
+    preprocess:
+      - name: LoadImageFromFile
+        key: src
+      - name: LoadImageFromFile
+        key: ref
+      - name: LoadImageFromFile
+        key: ref2
+      - name: Transforms
+        input_keys: [src, ref, ref2]
+        pipeline:
+          - name: RandomResizedCropProb
+            prob: 0.9
+            size: [*IMAGE_SIZE, *IMAGE_SIZE]
+            scale: [0.8, 1.0]
+            ratio: [0.9, 1.1]
+            interpolation: 'bilinear' 
+            keys: [image, image, image]
+          - name: Resize
+            size: [*IMAGE_SIZE, *IMAGE_SIZE]
+            interpolation: 'bilinear' 
+            keys: [image, image, image]
+          - name: RandomHorizontalFlip
+            prob: 0.5
+            keys: [image, image, image]
+          - name: Transpose
+            keys: [image, image, image]
+          - name: Normalize
+            mean: [127.5, 127.5, 127.5]
+            std: [127.5, 127.5, 127.5]
+            keys: [image, image, image]
+
+  test:
+    name: StarGANv2Dataset
+    dataroot: data/stargan-v2/afhq/val
+    is_train: False
+    num_workers: 8
+    batch_size: 16
+    test_count: 16
+    preprocess:
+      - name: LoadImageFromFile
+        key: src
+      - name: LoadImageFromFile
+        key: ref
+      - name: Transforms
+        input_keys: [src, ref]
+        pipeline:
+          - name: Resize
+            size: [*IMAGE_SIZE, *IMAGE_SIZE]
+            interpolation: 'bicubic' #cv2.INTER_CUBIC
+            keys: [image, image]
+          - name: Transpose
+            keys: [image, image]
+          - name: Normalize
+            mean: [127.5, 127.5, 127.5]
+            std: [127.5, 127.5, 127.5]
+            keys: [image, image]
+
+lr_scheduler:
+  name: LinearDecay
+  learning_rate: 0.0001
+  start_epoch: 100
+  decay_epochs: 100
+  # will get from real dataset
+  iters_per_epoch: 365
+
+optimizer:
+  generator:
+    name: Adam
+    net_names:
+      - generator
+    beta1: 0.0
+    beta2: 0.99
+    weight_decay: 0.0001
+  style_encoder:
+    name: Adam
+    net_names:
+      - style_encoder
+    beta1: 0.0
+    beta2: 0.99
+    weight_decay: 0.0001
+  mapping_network:
+    name: Adam
+    net_names:
+      - mapping_network
+    beta1: 0.0
+    beta2: 0.99
+    weight_decay: 0.0001
+  discriminator:
+    name: Adam
+    net_names:
+      - discriminator
+    beta1: 0.0
+    beta2: 0.99
+    weight_decay: 0.0001
+
+validate:
+  interval: 5000
+  save_img: false
+
+log_config:
+  interval: 5
+  visiual_interval: 100
+
+snapshot_config:
+  interval: 5

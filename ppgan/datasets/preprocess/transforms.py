@@ -264,3 +264,21 @@ class SRNoise(T.BaseTransform):
         image = image + normed_noise
         image = np.clip(image, 0., 1.)
         return image
+
+@TRANSFORMS.register()
+class RandomResizedCropProb(T.RandomResizedCrop):
+    """RandomResizedCropProb.
+
+    Args:
+        prob (float): probabilty of using random-resized cropping.
+        size (int): cropped size.
+    """
+    def __init__(self, prob, size, scale, ratio, interpolation, keys=None):
+        super().__init__(size, scale, ratio, interpolation)
+        self.prob = prob
+        self.keys = keys
+
+    def _apply_image(self, image):
+        if random.random() < self.prob:
+            image = super()._apply_image(image)
+        return image
