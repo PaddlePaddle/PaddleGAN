@@ -50,7 +50,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 ## Composite Application
 
-* [Video restore](./docs/zh_CN/tutorials/video_restore.md)
+* [Video restore](./docs/en_US/tutorials/video_restore.md)
 
 ## Examples
 
