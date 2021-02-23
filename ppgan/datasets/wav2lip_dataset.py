@@ -34,7 +34,10 @@ def get_image_list(data_root, split):
         for line in f:
             line = line.strip()
             if ' ' in line: line = line.split()[0]
-            filelist.append(os.path.join(data_root, line))
+            video_path = os.path.join(data_root, line)
+            assert os.path.exists(video_path), '{} is not found'.format(
+                video_path)
+            filelist.append(video_path)
 
     return filelist
 
@@ -179,14 +182,6 @@ class Wav2LipDataset(paddle.io.Dataset):
             mel = np.transpose(mel)
             mel = np.expand_dims(mel, 0)
             indiv_mels = np.expand_dims(indiv_mels, 1)
-            #np.random.seed(200)
-            #x = np.random.rand(*x.shape).astype('float32')
-            #np.random.seed(200)
-            #mel = np.random.rand(*mel.shape)
-            #np.random.seed(200)
-            #indiv_mels = np.random.rand(*indiv_mels.shape)
-            #np.random.seed(200)
-            #y = np.random.rand(*y.shape)
 
             return {
                 'x': x,
