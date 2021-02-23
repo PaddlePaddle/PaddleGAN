@@ -7,7 +7,7 @@ from .builder import GENERATORS
 import numpy as np
 import math
 
-from ppgan.modules.wing import InstanceNorm2D
+from ppgan.modules.wing import CoordConvTh, ConvBlock, HourGlass, preprocess
 
 
 class AvgPool2D(nn.Layer):
@@ -40,8 +40,8 @@ class ResBlk(nn.Layer):
         self.conv1 = nn.Conv2D(dim_in, dim_in, 3, 1, 1)
         self.conv2 = nn.Conv2D(dim_in, dim_out, 3, 1, 1)
         if self.normalize:
-            self.norm1 = InstanceNorm2D(dim_in, weight_attr=True, bias_attr=True)
-            self.norm2 = InstanceNorm2D(dim_in, weight_attr=True, bias_attr=True)
+            self.norm1 = nn.InstanceNorm2D(dim_in, weight_attr=True, bias_attr=True)
+            self.norm2 = nn.InstanceNorm2D(dim_in, weight_attr=True, bias_attr=True)
         if self.learned_sc:
             self.conv1x1 = nn.Conv2D(dim_in, dim_out, 1, 1, 0, bias_attr=False)
 
@@ -73,7 +73,7 @@ class ResBlk(nn.Layer):
 class AdaIN(nn.Layer):
     def __init__(self, style_dim, num_features):
         super().__init__()
-        self.norm = InstanceNorm2D(num_features, weight_attr=False, bias_attr=False)
+        self.norm = nn.InstanceNorm2D(num_features, weight_attr=False, bias_attr=False)
         self.fc = nn.Linear(style_dim, num_features*2)
 
     def forward(self, x, s):
@@ -150,7 +150,7 @@ class StarGANv2Generator(nn.Layer):
         self.encode = nn.LayerList()
         self.decode = nn.LayerList()
         self.to_rgb = nn.Sequential(
-            InstanceNorm2D(dim_in, weight_attr=True, bias_attr=True),
+            nn.InstanceNorm2D(dim_in, weight_attr=True, bias_attr=True),
             nn.LeakyReLU(0.2),
             nn.Conv2D(dim_in, 3, 1, 1, 0))
 
@@ -271,3 +271,80 @@ class StarGANv2Style(nn.Layer):
         s = paddle.stack(s)
         s = paddle.reshape(s, (s.shape[0], -1))
         return s
+
+
+@GENERATORS.register()
+class FAN(nn.Layer):
+    def __init__(self, num_modules=1, end_relu=False, num_landmarks=98, fname_pretrained=None):
+        super(FAN, self).__init__()
+        self.num_modules = num_modules
+        self.end_relu = end_relu
+
+        # Base part
+        self.conv1 = CoordConvTh(256, 256, True, False,
+                                 in_channels=3, out_channels=64,
+                                 kernel_size=7, stride=2, padding=3)
+        self.bn1 = nn.BatchNorm2D(64)
+        self.conv2 = ConvBlock(64, 128)
+        self.conv3 = ConvBlock(128, 128)
+        self.conv4 = ConvBlock(128, 256)
+
+        # Stacking part
+        self.add_sublayer('m0', HourGlass(1, 4, 256, first_one=True))
+        self.add_sublayer('top_m_0', ConvBlock(256, 256))
+        self.add_sublayer('conv_last0', nn.Conv2D(256, 256, 1, 1, 0))
+        self.add_sublayer('bn_end0', nn.BatchNorm2D(256))
+        self.add_sublayer('l0', nn.Conv2D(256, num_landmarks+1, 1, 1, 0))
+
+        if fname_pretrained is not None:
+            self.load_pretrained_weights(fname_pretrained)
+
+    def load_pretrained_weights(self, fname):
+        import pickle
+        import six
+
+        with open(fname, 'rb') as f:
+            checkpoint = pickle.load(f) if six.PY2 else pickle.load(
+                f, encoding='latin1')
+        
+        model_weights = self.state_dict()
+        model_weights.update({k: v for k, v in checkpoint['state_dict'].items()
+                              if k in model_weights})
+        self.set_state_dict(model_weights)
+
+    def forward(self, x):
+        x, _ = self.conv1(x)
+        x = F.relu(self.bn1(x), True)
+        x = F.avg_pool2d(self.conv2(x), 2, stride=2)
+        x = self.conv3(x)
+        x = self.conv4(x)
+
+        outputs = []
+        boundary_channels = []
+        tmp_out = None
+        ll, boundary_channel = self._sub_layers['m0'](x, tmp_out)
+        ll = self._sub_layers['top_m_0'](ll)
+        ll = F.relu(self._sub_layers['bn_end0']
+                    (self._sub_layers['conv_last0'](ll)), True)
+
+        # Predict heatmaps
+        tmp_out = self._sub_layers['l0'](ll)
+        if self.end_relu:
+            tmp_out = F.relu(tmp_out)  # HACK: Added relu
+        outputs.append(tmp_out)
+        boundary_channels.append(boundary_channel)
+        return outputs, boundary_channels
+
+    @paddle.no_grad()
+    def get_heatmap(self, x, b_preprocess=True):
+        ''' outputs 0-1 normalized heatmap '''
+        x = F.interpolate(x, size=[256, 256], mode='bilinear')
+        x_01 = x*0.5 + 0.5
+        outputs, _ = self(x_01)
+        heatmaps = outputs[-1][:, :-1, :, :]
+        scale_factor = x.shape[2] // heatmaps.shape[2]
+        if b_preprocess:
+            heatmaps = F.interpolate(heatmaps, scale_factor=scale_factor,
+                                     mode='bilinear', align_corners=True)
+            heatmaps = preprocess(heatmaps)
+        return heatmaps

@@ -16,196 +16,7 @@ import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
 
-
-from paddle.fluid.dygraph import layers
-from paddle.framework import get_default_dtype, set_default_dtype
-from paddle.fluid.initializer import Constant
-from paddle.fluid.param_attr import ParamAttr
-from paddle.nn.functional import batch_norm, instance_norm
-
 from ppgan.models.generators.builder import GENERATORS
-
-class _BatchNormBase(layers.Layer):
-    """
-    BatchNorm base .
-    """
-
-    def __init__(self,
-                 num_features,
-                 momentum=0.9,
-                 epsilon=1e-05,
-                 weight_attr=None,
-                 bias_attr=None,
-                 data_format='NCHW',
-                 use_global_stats=None,
-                 name=None):
-        super(_BatchNormBase, self).__init__()
-        self._num_features = num_features
-        self._weight_attr = weight_attr
-        self._bias_attr = bias_attr
-        self._use_global_stats = use_global_stats
-
-        if get_default_dtype() == 'float16':
-            set_default_dtype('float32')
-
-        param_shape = [num_features]
-
-        # create parameter
-        if weight_attr == False:
-            self.weight = self.create_parameter(
-                attr=None, shape=param_shape, default_initializer=Constant(1.0))
-            self.weight.stop_gradient = True
-        else:
-            self.weight = self.create_parameter(
-                attr=self._weight_attr,
-                shape=param_shape,
-                default_initializer=Constant(1.0))
-            self.weight.stop_gradient = self._weight_attr != None and self._weight_attr.learning_rate == 0.
-
-        if bias_attr == False:
-            self.bias = self.create_parameter(
-                attr=None,
-                shape=param_shape,
-                default_initializer=Constant(0.0),
-                is_bias=True)
-            self.bias.stop_gradient = True
-        else:
-            self.bias = self.create_parameter(
-                attr=self._bias_attr, shape=param_shape, is_bias=True)
-            self.bias.stop_gradient = self._bias_attr != None and self._bias_attr.learning_rate == 0.
-
-        moving_mean_name = None
-        moving_variance_name = None
-
-        if name is not None:
-            moving_mean_name = name + "_mean"
-            moving_variance_name = name + "_variance"
-
-        self.running_mean = self.create_parameter(
-            attr=ParamAttr(
-                name=moving_mean_name,
-                initializer=Constant(0.0),
-                trainable=False,
-                do_model_average=True),
-            shape=param_shape)
-        self.running_mean.stop_gradient = True
-
-        self.running_var = self.create_parameter(
-            attr=ParamAttr(
-                name=moving_variance_name,
-                initializer=Constant(1.0),
-                trainable=False,
-                do_model_average=True),
-            shape=param_shape)
-        self.running_var.stop_gradient = True
-
-        self._data_format = data_format
-        self._in_place = False
-        self._momentum = momentum
-        self._epsilon = epsilon
-        self._fuse_with_relu = False
-        self._name = name
-
-    def _check_input_dim(self, input):
-        raise NotImplementedError("BatchNorm Base error")
-
-    def _check_data_format(self, input):
-        raise NotImplementedError("BatchNorm Base data format error")
-
-    def forward(self, input):
-
-        self._check_data_format(self._data_format)
-
-        self._check_input_dim(input)
-
-        # if self.training:
-        #     print(
-        #         "When training, we now always track global mean and variance.")
-
-        return batch_norm(
-            input,
-            self.running_mean,
-            self.running_var,
-            weight=self.weight,
-            bias=self.bias,
-            training=self.training,
-            momentum=self._momentum,
-            epsilon=self._epsilon,
-            data_format=self._data_format,
-            use_global_stats=self._use_global_stats)
-
-
-class BatchNorm2D(_BatchNormBase):
-
-    def _check_data_format(self, input):
-        if input == 'NCHW':
-            self._data_format = input
-        elif input == "NHWC":
-            self._data_format = input
-        else:
-            raise ValueError('expected NCHW or NHWC for data_format input')
-
-    def _check_input_dim(self, input):
-        if len(input.shape) != 4:
-            raise ValueError('expected 4D input (got {}D input)'.format(
-                len(input.shape)))
-
-
-class _InstanceNormBase(layers.Layer):
-    """
-    This class is based class for InstanceNorm1D, 2d, 3d. 
-
-    See InstaceNorm1D, InstanceNorm2D or InstanceNorm3D for more details.
-    """
-
-    def __init__(self,
-                 num_features,
-                 epsilon=1e-5,
-                 momentum=0.9,
-                 weight_attr=None,
-                 bias_attr=None,
-                 data_format="NCHW",
-                 name=None):
-        super(_InstanceNormBase, self).__init__()
-
-        if weight_attr == False or bias_attr == False:
-            assert weight_attr == bias_attr, "weight_attr and bias_attr must be set to Fasle at the same time in InstanceNorm"
-        self._epsilon = epsilon
-        self._weight_attr = weight_attr
-        self._bias_attr = bias_attr
-
-        if weight_attr != False and bias_attr != False:
-            self.weight = self.create_parameter(
-                attr=self._weight_attr,
-                shape=[num_features],
-                default_initializer=Constant(1.0),
-                is_bias=False)
-            self.bias = self.create_parameter(
-                attr=self._bias_attr,
-                shape=[num_features],
-                default_initializer=Constant(0.0),
-                is_bias=True)
-        else:
-            self.weight = None
-            self.bias = None
-
-    def _check_input_dim(self, input):
-        raise NotImplementedError("InstanceNorm Base error")
-
-    def forward(self, input):
-        self._check_input_dim(input)
-
-        return instance_norm(
-            input, weight=self.weight, bias=self.bias, eps=self._epsilon)
-
-
-class InstanceNorm2D(_InstanceNormBase):
-
-    def _check_input_dim(self, input):
-        if len(input.shape) != 4:
-            raise ValueError('expected 4D input (got {}D input)'.format(
-                len(input.shape)))
-
 
 
 class HourGlass(nn.Layer):
@@ -312,17 +123,17 @@ class CoordConvTh(nn.Layer):
 class ConvBlock(nn.Layer):
     def __init__(self, in_planes, out_planes):
         super(ConvBlock, self).__init__()
-        self.bn1 = BatchNorm2D(in_planes)
+        self.bn1 = nn.BatchNorm2D(in_planes)
         conv3x3 = partial(nn.Conv2D, kernel_size=3, stride=1, padding=1, bias_attr=False, dilation=1)
         self.conv1 = conv3x3(in_planes, int(out_planes / 2))
-        self.bn2 = BatchNorm2D(int(out_planes / 2))
+        self.bn2 = nn.BatchNorm2D(int(out_planes / 2))
         self.conv2 = conv3x3(int(out_planes / 2), int(out_planes / 4))
-        self.bn3 = BatchNorm2D(int(out_planes / 4))
+        self.bn3 = nn.BatchNorm2D(int(out_planes / 4))
         self.conv3 = conv3x3(int(out_planes / 4), int(out_planes / 4))
 
         self.downsample = None
         if in_planes != out_planes:
-            self.downsample = nn.Sequential(BatchNorm2D(in_planes),
+            self.downsample = nn.Sequential(nn.BatchNorm2D(in_planes),
                                             nn.ReLU(True),
                                             nn.Conv2D(in_planes, out_planes, 1, 1, bias_attr=False))
 
@@ -346,83 +157,6 @@ class ConvBlock(nn.Layer):
             residual = self.downsample(residual)
         out3 += residual
         return out3
-
-
-@GENERATORS.register()
-class FAN(nn.Layer):
-    def __init__(self, num_modules=1, end_relu=False, num_landmarks=98, fname_pretrained=None):
-        super(FAN, self).__init__()
-        self.num_modules = num_modules
-        self.end_relu = end_relu
-
-        # Base part
-        self.conv1 = CoordConvTh(256, 256, True, False,
-                                 in_channels=3, out_channels=64,
-                                 kernel_size=7, stride=2, padding=3)
-        self.bn1 = BatchNorm2D(64)
-        self.conv2 = ConvBlock(64, 128)
-        self.conv3 = ConvBlock(128, 128)
-        self.conv4 = ConvBlock(128, 256)
-
-        # Stacking part
-        self.add_sublayer('m0', HourGlass(1, 4, 256, first_one=True))
-        self.add_sublayer('top_m_0', ConvBlock(256, 256))
-        self.add_sublayer('conv_last0', nn.Conv2D(256, 256, 1, 1, 0))
-        self.add_sublayer('bn_end0', BatchNorm2D(256))
-        self.add_sublayer('l0', nn.Conv2D(256, num_landmarks+1, 1, 1, 0))
-
-        if fname_pretrained is not None:
-            self.load_pretrained_weights(fname_pretrained)
-
-    def load_pretrained_weights(self, fname):
-        import pickle
-        import six
-
-        with open(fname, 'rb') as f:
-            checkpoint = pickle.load(f) if six.PY2 else pickle.load(
-                f, encoding='latin1')
-        
-        model_weights = self.state_dict()
-        model_weights.update({k: v for k, v in checkpoint['state_dict'].items()
-                              if k in model_weights})
-        self.set_state_dict(model_weights)
-
-    def forward(self, x):
-        x, _ = self.conv1(x)
-        x = F.relu(self.bn1(x), True)
-        x = F.avg_pool2d(self.conv2(x), 2, stride=2)
-        x = self.conv3(x)
-        x = self.conv4(x)
-
-        outputs = []
-        boundary_channels = []
-        tmp_out = None
-        ll, boundary_channel = self._sub_layers['m0'](x, tmp_out)
-        ll = self._sub_layers['top_m_0'](ll)
-        ll = F.relu(self._sub_layers['bn_end0']
-                    (self._sub_layers['conv_last0'](ll)), True)
-
-        # Predict heatmaps
-        tmp_out = self._sub_layers['l0'](ll)
-        if self.end_relu:
-            tmp_out = F.relu(tmp_out)  # HACK: Added relu
-        outputs.append(tmp_out)
-        boundary_channels.append(boundary_channel)
-        return outputs, boundary_channels
-
-    @paddle.no_grad()
-    def get_heatmap(self, x, b_preprocess=True):
-        ''' outputs 0-1 normalized heatmap '''
-        x = F.interpolate(x, size=[256, 256], mode='bilinear')
-        x_01 = x*0.5 + 0.5
-        outputs, _ = self(x_01)
-        heatmaps = outputs[-1][:, :-1, :, :]
-        scale_factor = x.shape[2] // heatmaps.shape[2]
-        if b_preprocess:
-            heatmaps = F.interpolate(heatmaps, scale_factor=scale_factor,
-                                     mode='bilinear', align_corners=True)
-            heatmaps = preprocess(heatmaps)
-        return heatmaps
 
 
 # ========================== #
