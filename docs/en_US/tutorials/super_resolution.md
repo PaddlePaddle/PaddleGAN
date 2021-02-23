@@ -81,6 +81,22 @@
     python ./data/realsr_preprocess/collect_noise.py --dataset df2k --artifacts tdsr
   ```
 
+#### Prepare dataset for realsr dped model
+  Download dataset from [NTIRE 2020 RWSR](https://competitions.codalab.org/competitions/22220#participate) and unzip it to your path.
+  Unzip DPEDiphone-tr-x.zip and DPEDiphone-va.zip to ``PaddleGAN/data/ntire20`` directory.
+
+  Use [KernelGAN](https://github.com/sefibk/KernelGAN) to generate kernels from source images. Clone the repo here. Replace SOURCE_PATH with specific path and run:
+  ```
+  python train.py --X4 --input-dir SOURCE_PATH
+  ```
+  for convenient, we provide [DPED_KERNEL.tar](https://paddlegan.bj.bcebos.com/datasets/DPED_KERNEL.tar). You can download it to ``PaddleGAN/data/DPED_KERNEL``
+
+  Run the following commands:
+  ```
+    python ./data/realsr_preprocess/create_kernel_dataset.py --dataset dped --artifacts clean --kernel_path data/DPED_KERNEL
+    python ./data/realsr_preprocess/collect_noise.py --dataset dped --artifacts clean
+  ```
+
 ### 1.2.2 Train/Test
 
   Datasets used in example is df2k, you can change it to your own dataset in the config file. The model used in example is RealSR, you can change other models by replacing the config file.
