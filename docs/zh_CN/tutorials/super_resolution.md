@@ -1,29 +1,26 @@
-# 1 Super Resolution
+# 1 超分
 
-## 1.1 Principle
+## 1.1 原理介绍
 
-  Super resolution is a process of upscaling and improving the details within an image. It usually takes a low-resolution image as input and upscales the same image to a higher resolution as output.
-  Here we provide three super-resolution models, namely [RealSR](https://openaccess.thecvf.com/content_CVPRW_2020/papers/w31/Ji_Real-World_Super-Resolution_via_Kernel_Estimation_and_Noise_Injection_CVPRW_2020_paper.pdf), [ESRGAN](https://arxiv.org/abs/1809.00219v2), [LESRCNN](https://arxiv.org/abs/2007.04344).
-
-  [RealSR](https://openaccess.thecvf.com/content_CVPRW_2020/papers/w31/Ji_Real-World_Super-Resolution_via_Kernel_Estimation_and_Noise_Injection_CVPRW_2020_paper.pdf) focus on designing a novel degradation framework for realworld images by estimating various blur kernels as well as real noise distributions. Based on the novel degradation framework, we can acquire LR images sharing a common domain with real-world images. RealSR is a real-world super-resolution model aiming at better perception. Extensive experiments on synthetic noise data and real-world images demonstrate that RealSR outperforms the state-of-the-art methods, resulting in lower noise and better visual quality.
-
-  [ESRGAN](https://arxiv.org/abs/1809.00219v2) is an enhanced SRGAN. To further enhance the visual quality of SRGAN, ESRGAN improves three key components of srgan. In addition, ESRGAN also introduces the Residual-in-Residual Dense Block (RRDB) without batch normalization as the basic network building unit, lets the discriminator predict relative realness instead of the absolute value, and improves the perceptual loss by using the features before activation. Benefiting from these improvements, the proposed ESRGAN achieves consistently better visual quality with more realistic and natural textures than SRGAN and won the first place in the PIRM2018-SR Challenge. 
-  
-  Considering that the application of CNN in SISR often consume high computational cost and more memory storage for training a SR model, a lightweight enhanced SR CNN ([LESRCNN](https://arxiv.org/abs/2007.04344)) was proposed.Extensive experiments demonstrate that the proposed LESRCNN outperforms state-of-the-arts on SISR in terms of qualitative and quantitative evaluation.
+  超分是放大和改善图像细节的过程。它通常将低分辨率图像作为输入，将同一图像放大到更高分辨率作为输出。这里我们提供了三种超分辨率模型，即[RealSR](https://openaccess.thecvf.com/content_CVPRW_2020/papers/w31/Ji_Real-World_Super-Resolution_via_Kernel_Estimation_and_Noise_Injection_CVPRW_2020_paper.pdf), [ESRGAN](https://arxiv.org/abs/1809.00219v2), [LESRCNN](https://arxiv.org/abs/2007.04344).
+  [RealSR](https://openaccess.thecvf.com/content_CVPRW_2020/papers/w31/Ji_Real-World_Super-Resolution_via_Kernel_Estimation_and_Noise_Injection_CVPRW_2020_paper.pdf)通过估计各种模糊内核以及实际噪声分布，为现实世界的图像设计一种新颖的真实图片降采样框架。基于该降采样框架，可以获取与真实世界图像共享同一域的低分辨率图像。RealSR是一个旨在提高感知度的真实世界超分辨率模型。对合成噪声数据和真实世界图像进行的大量实验表明，RealSR模型能够有效降低了噪声并提高了视觉质量。
+  [ESRGAN](https://arxiv.org/abs/1809.00219v2)是增强型SRGAN，为了进一步提高SRGAN的视觉质量，ESRGAN在SRGAN的基础上改进了SRGAN的三个关键组件。此外，ESRGAN还引入了未经批量归一化的剩余密集块（RRDB）作为基本的网络构建单元，让鉴别器预测相对真实性而不是绝对值，并利用激活前的特征改善感知损失。得益于这些改进，提出的ESRGAN实现了比SRGAN更好的视觉质量和更逼真、更自然的纹理，并在PIRM2018-SR挑战赛中获得第一名。
+  考虑到CNNs在SISR的应用上往往会消耗大量的计算量和存储空间来训练SR模型，轻量级增强SR-CNN（[LESRCNN](https://arxiv.org/abs/2007.04344)）被提出。大量实验表明，LESRCNN在定性和定量评价方面优于现有的SISR算法。
 
 
-## 1.2 How to use  
 
-### 1.2.1 Prepare Datasets
+## 1.2 如何使用 
 
-  A list of common image super-resolution datasets is as following:
-  | Name | Datasets | Short Description | Download |
+### 1.2.1 数据准备
+
+  常用的图像超分数据集如下：
+  | name | 数据集 | 数据描述 | 下载 |
   |---|---|---|---|
   | 2K Resolution  | [DIV2K](https://data.vision.ee.ethz.ch/cvl/DIV2K/) | proposed in [NTIRE17](https://data.vision.ee.ethz.ch/cvl/ntire17//) (800 train and 100 validation) | [official website](https://data.vision.ee.ethz.ch/cvl/DIV2K/) |
   | Classical SR Testing  | Set5 | Set5 test dataset | [Google Drive](https://drive.google.com/drive/folders/1B3DJGQKB6eNdwuQIhdskA64qUuVKLZ9u) / [Baidu Drive](https://pan.baidu.com/s/1q_1ERCMqALH0xFwjLM0pTg#list/path=%2Fsharelink2016187762-785433459861126%2Fclassical_SR_datasets&parentPath=%2Fsharelink2016187762-785433459861126) |
   | Classical SR Testing  | Set14 | Set14 test dataset | [Google Drive](https://drive.google.com/drive/folders/1B3DJGQKB6eNdwuQIhdskA64qUuVKLZ9u) / [Baidu Drive](https://pan.baidu.com/s/1q_1ERCMqALH0xFwjLM0pTg#list/path=%2Fsharelink2016187762-785433459861126%2Fclassical_SR_datasets&parentPath=%2Fsharelink2016187762-785433459861126) |
 
-  The structure of DIV2K, Set5 and Set14 is as following:
+  数据集DIV2K, Set5 和 Set14 的组成形式如下:
   ```
     PaddleGAN
       ├── data
@@ -49,12 +46,11 @@
                 └── original
               ...
   ```
-
-  Use the following commands to process the DIV2K data set:
+  使用以下命令处理DIV2K数据集:
   ```
     python data/process_div2k_data.py --data-root data/DIV2K
   ```
-  When the program is finished, check whether there are ``DIV2K_train_HR_sub``, ``X2_sub``, ``X3_sub`` and ``X4_sub`` directories in the DIV2K directory
+  程序完成后，检查DIV2K目录中是否有``DIV2K_train_HR_sub``、``X2_sub``、``X3_sub``和``X4_sub``目录
   ```
     PaddleGAN
       ├── data
@@ -73,53 +69,37 @@
               ...
   ```
 
-#### Prepare dataset for realsr df2k model
-  Download dataset from [NTIRE 2020 RWSR](https://competitions.codalab.org/competitions/22220#participate) and unzip it to your path.
-  Unzip Corrupted-tr-x.zip and Corrupted-tr-y.zip to ``PaddleGAN/data/ntire20`` directory.
+#### Realsr df2k model的数据准备
 
-  Run the following commands:
+  从 [NTIRE 2020 RWSR](https://competitions.codalab.org/competitions/22220#participate) 下载数据集并解压到您的路径下。
+  将 Corrupted-tr-x.zip 和 Corrupted-tr-y.zip 解压到 ``PaddleGAN/data/ntire20`` 目录下。
+
+  运行如下命令:
   ```
     python ./data/realsr_preprocess/create_bicubic_dataset.py --dataset df2k --artifacts tdsr
-
     python ./data/realsr_preprocess/collect_noise.py --dataset df2k --artifacts tdsr
   ```
 
-#### Prepare dataset for realsr dped model
-  Download dataset from [NTIRE 2020 RWSR](https://competitions.codalab.org/competitions/22220#participate) and unzip it to your path.
-  Unzip DPEDiphone-tr-x.zip and DPEDiphone-va.zip to ``PaddleGAN/data/ntire20`` directory.
+### 1.2.2 训练/测试
 
-  Use [KernelGAN](https://github.com/sefibk/KernelGAN) to generate kernels from source images. Clone the repo here. Replace SOURCE_PATH with specific path and run:
-  ```
-  python train.py --X4 --input-dir SOURCE_PATH
-  ```
-  for convenient, we provide [DPED_KERNEL.tar](https://paddlegan.bj.bcebos.com/datasets/DPED_KERNEL.tar). You can download it to ``PaddleGAN/data/DPED_KERNEL``
+  示例以df2k数据集和RealSR模型为例。如果您想使用自己的数据集，可以在配置文件中修改数据集为您自己的数据集。如果您想使用其他模型，可以通过替换配置文件。
 
-  Run the following commands:
-  ```
-    python ./data/realsr_preprocess/create_kernel_dataset.py --dataset dped --artifacts clean --kernel_path data/DPED_KERNEL
-    python ./data/realsr_preprocess/collect_noise.py --dataset dped --artifacts clean
-  ```
-
-### 1.2.2 Train/Test
-
-  Datasets used in example is df2k, you can change it to your own dataset in the config file. The model used in example is RealSR, you can change other models by replacing the config file.
-
-  Train a model:
+  训练模型:
   ```
      python -u tools/main.py --config-file configs/realsr_bicubic_noise_x4_df2k.yaml
   ```
 
-  Test the model:
+  训练模型:
   ```
      python tools/main.py --config-file configs/realsr_bicubic_noise_x4_df2k.yaml --evaluate-only --load ${PATH_OF_WEIGHT}
   ```
 
-## 1.3 Results
-Evaluated on RGB channels, scale pixels in each border are cropped before evaluation.
+## 1.3 实验结果展示
+实验数值结果是在 RGB 通道上进行评估，并在评估之前裁剪每个边界的尺度像素。
 
-The metrics are PSNR / SSIM.
+度量指标为 PSNR / SSIM.
 
-| Method | Set5 | Set14 | DIV2K |
+| 模型 | Set5 | Set14 | DIV2K |
 |---|---|---|---|
 | realsr_df2k  | 28.4385 / 0.8106 | 24.7424 / 0.6678 | 26.7306 / 0.7512 |
 | realsr_dped  | 20.2421 / 0.6158 | 19.3775 / 0.5259 | 20.5976 / 0.6051 |
@@ -145,7 +125,7 @@ The metrics are PSNR / SSIM.
 | drns_x4  | DIV2K | [drns_x4](https://paddlegan.bj.bcebos.com/models/DRNSx4.pdparams)
 
 
-# References
+# 参考文献
 
 - 1. [Real-World Super-Resolution via Kernel Estimation and Noise Injection](https://openaccess.thecvf.com/content_CVPRW_2020/papers/w31/Ji_Real-World_Super-Resolution_via_Kernel_Estimation_and_Noise_Injection_CVPRW_2020_paper.pdf)
 
