@@ -180,7 +180,7 @@ class StyleGAN2Model(BaseModel):
             input (dict): include the data itself and its metadata information.
 
         """
-        self.real_img = paddle.fluid.dygraph.to_variable(input['A'])
+        self.real_img = paddle.to_tensor(input['A'])
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
