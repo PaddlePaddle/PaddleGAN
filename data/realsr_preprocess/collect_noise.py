@@ -29,7 +29,7 @@ opt = parser.parse_args()
 # define input and target directories
 cur_path = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(cur_path, './paths.yml'), 'r') as stream:
-    PATHS = yaml.load(stream)
+    PATHS = yaml.load(stream, Loader=yaml.SafeLoader)
 
 
 def noise_patch(rgb_img, sp, max_var, min_mean):
