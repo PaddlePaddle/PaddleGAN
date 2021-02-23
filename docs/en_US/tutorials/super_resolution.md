@@ -51,8 +51,26 @@
   ```
     python data/process_div2k_data.py --data-root data/DIV2K
   ```
+  When the program is finished, check whether there are ``DIV2K_train_HR_sub``, ``X2_sub``, ``X3_sub`` and ``X4_sub`` directories in the DIV2K directory
+  ```
+    PaddleGAN
+      ├── data
+          ├── DIV2K
+                ├── DIV2K_train_HR
+                ├── DIV2K_train_HR_sub
+                ├── DIV2K_train_LR_bicubic
+                |    ├──X2
+                |    ├──X2_sub
+                |    ├──X3
+                |    ├──X3_sub
+                |    ├──sX4
+                |    └──X4_sub
+                ├── DIV2K_valid_HR
+                ├── DIV2K_valid_LR_bicubic
+              ...
+  ```
 
-  Prepare dataset for realsr df2k model:
+#### Prepare dataset for realsr df2k model
   Download dataset from [NTIRE 2020 RWSR](https://competitions.codalab.org/competitions/22220#participate) and unzip it to your path.
   Unzip Corrupted-tr-x.zip and Corrupted-tr-y.zip to ``PaddleGAN/data/ntire20`` directory.
 
