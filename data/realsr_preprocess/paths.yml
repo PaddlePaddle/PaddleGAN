@@ -7,7 +7,7 @@ dped:
   clean:
     hr:
       train: './data/ntire20/DPEDiphone-tr-x'
-      valid: './data/datasets/ntire20/DPEDiphone-va'
+      valid: './data/ntire20/DPEDiphone-va'
 datasets:
   df2k: 'data/DF2K'
   dped: 'data/DPED'

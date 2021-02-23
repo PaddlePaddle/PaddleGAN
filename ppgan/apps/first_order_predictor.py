@@ -43,7 +43,7 @@ class FirstOrderPredictor(BasePredictor):
                  find_best_frame=False,
                  best_frame=None):
         if config is not None and isinstance(config, str):
-            self.cfg = yaml.load(config)
+            self.cfg = yaml.load(config, Loader=yaml.SafeLoader)
         elif isinstance(config, dict):
             self.cfg = config
         elif config is None:
