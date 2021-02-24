@@ -48,8 +48,9 @@ parser.add_argument('--upscale_factor',
 opt = parser.parse_args()
 
 # define input and target directories
-with open('./paths.yml', 'r') as stream:
-    PATHS = yaml.load(stream)
+cur_path = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(cur_path, './paths.yml'), 'r') as stream:
+    PATHS = yaml.load(stream, Loader=yaml.SafeLoader)
 
 if opt.dataset == 'df2k':
     path_sdsr = PATHS['datasets']['df2k'] + '/generated/sdsr/'
@@ -82,7 +83,8 @@ else:
 tdsr_hr_dir = path_tdsr + 'HR'
 tdsr_lr_dir = path_tdsr + 'LR'
 
-assert not os.path.exists(PATHS['datasets'][opt.dataset])
+assert not os.path.exists(tdsr_hr_dir)
+assert not os.path.exists(tdsr_lr_dir)
 
 if not os.path.exists(tdsr_hr_dir):
     os.makedirs(tdsr_hr_dir)

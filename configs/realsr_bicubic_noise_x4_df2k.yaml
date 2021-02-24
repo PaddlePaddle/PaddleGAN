@@ -34,8 +34,8 @@ model:
 dataset:
   train:
     name: SRDataset
-    gt_folder: data/realsr_preprocess/DF2K/generated/tdsr/HR_sub/
-    lq_folder: data/realsr_preprocess/DF2K/generated/tdsr/LR_sub/
+    gt_folder: data/DF2K/generated/tdsr/HR/
+    lq_folder: data/DF2K/generated/tdsr/LR/
     num_workers: 4
     batch_size: 16
     scale: 4
@@ -64,13 +64,13 @@ dataset:
             std: [255., 255., 255.]
             keys: [image, image]
           - name: SRNoise
-            noise_path: data/realsr_preprocess/DF2K/Corrupted_noise/
+            noise_path: data/DF2K/Corrupted_noise/
             size: 32
             keys: [image]
   test:
     name: SRDataset
-    gt_folder: data/DIV2K/val_set14/Set14
-    lq_folder: data/DIV2K/val_set14/Set14_bicLRx4
+    gt_folder: data/Set14/GTmod12
+    lq_folder: data/Set14/LRbicx4
     scale: 4
     preprocess:
       - name: LoadImageFromFile

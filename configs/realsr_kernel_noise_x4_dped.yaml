@@ -34,8 +34,8 @@ model:
 dataset:
   train:
     name: SRDataset
-    gt_folder: data/realsr_preprocess/DPED/generated/clean/train_tdsr/HR/
-    lq_folder: data/realsr_preprocess/DPED/generated/clean/train_tdsr/LR/
+    gt_folder: data/DPED/generated/clean/train_tdsr/HR/
+    lq_folder: data/DPED/generated/clean/train_tdsr/LR/
     num_workers: 4
     batch_size: 16
     scale: 4
@@ -64,13 +64,13 @@ dataset:
             std: [255., 255., 255.]
             keys: [image, image]
           - name: SRNoise
-            noise_path: data/realsr_preprocess/DPED/DPEDiphone_noise/
+            noise_path: data/DPED/DPEDiphone_noise/
             size: 32
             keys: [image]
   test:
     name: SRDataset
-    gt_folder: data/DIV2K/val_set14/Set14
-    lq_folder: data/DIV2K/val_set14/Set14_bicLRx4
+    gt_folder: data/Set14/GTmod12
+    lq_folder: data/Set14/LRbicx4
     scale: 4
     preprocess:
       - name: LoadImageFromFile

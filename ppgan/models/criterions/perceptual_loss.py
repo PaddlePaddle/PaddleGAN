@@ -120,7 +120,7 @@ class PerceptualLoss(nn.Layer):
             perceptual_weight=1.0,
             style_weight=1.0,
             norm_img=True,
-            pretrained='https://paddlegan.bj.bcebos.com/model/vgg19.pdparams',
+            pretrained='https://paddlegan.bj.bcebos.com/models/vgg19.pdparams',
             criterion='l1'):
         super(PerceptualLoss, self).__init__()
         # when loss weight less than zero return None

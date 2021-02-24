@@ -45,10 +45,10 @@ def parse_args():
                         default=False,
                         help='skip validation during training')
     # config options
-    parser.add_argument('opts',
-                        help='See config for all options',
-                        default=None,
-                        nargs=argparse.REMAINDER)
+    parser.add_argument("-o", 
+                        "--opt", 
+                        nargs='+', 
+                        help="set configuration options")
 
     #for inference
     parser.add_argument("--source_path",
