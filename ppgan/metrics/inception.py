@@ -14,16 +14,13 @@
 
 import math
 import paddle
-import paddle.fluid as fluid
-from paddle.fluid.param_attr import ParamAttr
-from paddle.fluid.layer_helper import LayerHelper
-from paddle.fluid.dygraph.nn import Conv2D, Pool2D, BatchNorm, Linear
-from paddle.fluid.dygraph.base import to_variable
+import paddle.nn as nn
+from paddle.nn import Conv2D, AvgPool2D, MaxPool2D, BatchNorm, Linear
 
 __all__ = ['InceptionV3']
 
 
-class InceptionV3(fluid.dygraph.Layer):
+class InceptionV3(nn.Layer):
     DEFAULT_BLOCK_INDEX = 3
     BLOCK_INDEX_BY_DIM = {
         64: 0,  # First max pooling features
@@ -60,21 +57,21 @@ class InceptionV3(fluid.dygraph.Layer):
                                          3,
                                          padding=1,
                                          name='Conv2d_2b_3x3')
-        self.maxpool1 = Pool2D(pool_size=3, pool_stride=2, pool_type='max')
+        self.maxpool1 = MaxPool2D(pool_size=3, pool_stride=2)
 
         block0 = [
             self.Conv2d_1a_3x3, self.Conv2d_2a_3x3, self.Conv2d_2b_3x3,
             self.maxpool1
         ]
-        self.blocks.append(fluid.dygraph.Sequential(*block0))
+        self.blocks.append(nn.Sequential(*block0))
         ### block1
 
         if self.last_needed_block >= 1:
             self.Conv2d_3b_1x1 = ConvBNLayer(64, 80, 1, name='Conv2d_3b_1x1')
             self.Conv2d_4a_3x3 = ConvBNLayer(80, 192, 3, name='Conv2d_4a_3x3')
-            self.maxpool2 = Pool2D(pool_size=3, pool_stride=2, pool_type='max')
+            self.maxpool2 = MaxPool2D(pool_size=3, pool_stride=2)
             block1 = [self.Conv2d_3b_1x1, self.Conv2d_4a_3x3, self.maxpool2]
-            self.blocks.append(fluid.dygraph.Sequential(*block1))
+            self.blocks.append(nn.Sequential(*block1))
 
         ### block2
         ### Mixed_5b 5c 5d
@@ -100,7 +97,7 @@ class InceptionV3(fluid.dygraph.Layer):
                 self.Mixed_5b, self.Mixed_5c, self.Mixed_5d, self.Mixed_6a,
                 self.Mixed_6b, self.Mixed_6c, self.Mixed_6d, self.Mixed_6e
             ]
-            self.blocks.append(fluid.dygraph.Sequential(*block2))
+            self.blocks.append(nn.Sequential(*block2))
 
         if self.aux_logits:
             self.AuxLogits = InceptionAux(768, self.class_dim, name='AuxLogits')
@@ -110,19 +107,20 @@ class InceptionV3(fluid.dygraph.Layer):
             self.Mixed_7a = InceptionD(768, name='Mixed_7a')
             self.Mixed_7b = Fid_inceptionE_1(1280, name='Mixed_7b')
             self.Mixed_7c = Fid_inceptionE_2(2048, name='Mixed_7c')
-            self.avgpool = Pool2D(global_pooling=True, pool_type='avg')
+            self.avgpool = AvgPool2D(global_pooling=True)
 
             block3 = [self.Mixed_7a, self.Mixed_7b, self.Mixed_7c, self.avgpool]
-            self.blocks.append(fluid.dygraph.Sequential(*block3))
+            self.blocks.append(nn.Sequential(*block3))
 
     def forward(self, x):
         out = []
         aux = None
         if self.resize_input:
-            x = fluid.layers.resize_bilinear(x,
-                                             out_shape=[299, 299],
-                                             align_corners=False,
-                                             align_mode=0)
+            x = nn.functional.interpolate(x, 
+                                          size=[299, 299], 
+                                          mode='bilinear', 
+                                          align_corners=False, 
+                                          align_mode=0)
 
         if self.normalize_input:
             x = x * 2 - 1
@@ -139,7 +137,7 @@ class InceptionV3(fluid.dygraph.Layer):
         return out, aux
 
 
-class InceptionA(fluid.dygraph.Layer):
+class InceptionA(nn.Layer):
     def __init__(self, in_channels, pool_features, name=None):
         super(InceptionA, self).__init__()
         self.branch1x1 = ConvBNLayer(in_channels,
@@ -172,11 +170,10 @@ class InceptionA(fluid.dygraph.Layer):
                                           padding=1,
                                           name=name + '.branch3x3dbl_3')
 
-        self.branch_pool0 = Pool2D(pool_size=3,
+        self.branch_pool0 = AvgPool2D(pool_size=3,
                                    pool_stride=1,
                                    pool_padding=1,
-                                   exclusive=True,
-                                   pool_type='avg')
+                                   exclusive=True)
         self.branch_pool = ConvBNLayer(in_channels,
                                        pool_features,
                                        1,
@@ -194,11 +191,11 @@ class InceptionA(fluid.dygraph.Layer):
 
         branch_pool = self.branch_pool0(x)
         branch_pool = self.branch_pool(branch_pool)
-        return fluid.layers.concat(
+        return paddle.concat(
             [branch1x1, branch5x5, branch3x3dbl, branch_pool], axis=1)
 
 
-class InceptionB(fluid.dygraph.Layer):
+class InceptionB(nn.Layer):
     def __init__(self, in_channels, name=None):
         super(InceptionB, self).__init__()
         self.branch3x3 = ConvBNLayer(in_channels,
@@ -222,7 +219,7 @@ class InceptionB(fluid.dygraph.Layer):
                                           stride=2,
                                           name=name + '.branch3x3dbl_3')
 
-        self.branch_pool = Pool2D(pool_size=3, pool_stride=2, pool_type='max')
+        self.branch_pool = MaxPool2D(pool_size=3, pool_stride=2)
 
     def forward(self, x):
         branch3x3 = self.branch3x3(x)
@@ -232,11 +229,11 @@ class InceptionB(fluid.dygraph.Layer):
         branch3x3dbl = self.branch3x3dbl_3(branch3x3dbl)
 
         branch_pool = self.branch_pool(x)
-        return fluid.layers.concat([branch3x3, branch3x3dbl, branch_pool],
+        return paddle.concat([branch3x3, branch3x3dbl, branch_pool],
                                    axis=1)
 
 
-class InceptionC(fluid.dygraph.Layer):
+class InceptionC(nn.Layer):
     def __init__(self, in_channels, c7, name=None):
         super(InceptionC, self).__init__()
         self.branch1x1 = ConvBNLayer(in_channels,
@@ -278,11 +275,10 @@ class InceptionC(fluid.dygraph.Layer):
                                           padding=(0, 3),
                                           name=name + '.branch7x7dbl_5')
 
-        self.branch_pool0 = Pool2D(pool_size=3,
+        self.branch_pool0 = AvgPool2D(pool_size=3,
                                    pool_stride=1,
                                    pool_padding=1,
-                                   exclusive=True,
-                                   pool_type='avg')
+                                   exclusive=True)
         self.branch_pool = ConvBNLayer(in_channels,
                                        192,
                                        1,
@@ -304,11 +300,11 @@ class InceptionC(fluid.dygraph.Layer):
         branch_pool = self.branch_pool0(x)
         branch_pool = self.branch_pool(branch_pool)
 
-        return fluid.layers.concat(
+        return paddle.concat(
             [branch1x1, branch7x7, branch7x7dbl, branch_pool], axis=1)
 
 
-class InceptionD(fluid.dygraph.Layer):
+class InceptionD(nn.Layer):
     def __init__(self, in_channels, name=None):
         super(InceptionD, self).__init__()
         self.branch3x3_1 = ConvBNLayer(in_channels,
@@ -339,7 +335,7 @@ class InceptionD(fluid.dygraph.Layer):
                                          stride=2,
                                          name=name + '.branch7x7x3_4')
 
-        self.branch_pool = Pool2D(pool_size=3, pool_stride=2, pool_type='max')
+        self.branch_pool = MaxPool2D(pool_size=3, pool_stride=2)
 
     def forward(self, x):
         branch3x3 = self.branch3x3_1(x)
@@ -352,11 +348,11 @@ class InceptionD(fluid.dygraph.Layer):
 
         branch_pool = self.branch_pool(x)
 
-        return fluid.layers.concat([branch3x3, branch7x7x3, branch_pool],
+        return paddle.concat([branch3x3, branch7x7x3, branch_pool],
                                    axis=1)
 
 
-class InceptionE(fluid.dygraph.Layer):
+class InceptionE(nn.Layer):
     def __init__(self, in_channels, name=None):
         super(InceptionE, self).__init__()
         self.branch1x1 = ConvBNLayer(in_channels,
@@ -395,11 +391,10 @@ class InceptionE(fluid.dygraph.Layer):
                                            padding=(1, 0),
                                            name=name + '.branch3x3dbl_3b')
 
-        self.branch_pool0 = Pool2D(pool_size=3,
+        self.branch_pool0 = AvgPool2D(pool_size=3,
                                    pool_stride=1,
                                    pool_padding=1,
-                                   exclusive=True,
-                                   pool_type='avg')
+                                   exclusive=True)
         self.branch_pool = ConvBNLayer(in_channels,
                                        192,
                                        1,
@@ -410,42 +405,42 @@ class InceptionE(fluid.dygraph.Layer):
         branch3x3_1 = self.branch3x3_1(x)
         branch3x3_2a = self.branch3x3_2a(branch3x3_1)
         branch3x3_2b = self.branch3x3_2b(branch3x3_1)
-        branch3x3 = fluid.layers.concat([branch3x3_2a, branch3x3_2b], axis=1)
+        branch3x3 = paddle.concat([branch3x3_2a, branch3x3_2b], axis=1)
 
         branch3x3dbl = self.branch3x3dbl_1(x)
         branch3x3dbl = self.branch3x3dbl_2(branch3x3dbl)
         branch3x3dbl_3a = self.branch3x3dbl_3a(branch3x3dbl)
         branch3x3dbl_3b = self.branch3x3dbl_3b(branch3x3dbl)
-        branch3x3dbl = fluid.layers.concat([branch3x3dbl_3a, branch3x3dbl_3b],
+        branch3x3dbl = paddle.concat([branch3x3dbl_3a, branch3x3dbl_3b],
                                            axis=1)
 
         branch_pool = self.branch_pool0(x)
         branch_pool = self.branch_pool(branch_pool)
 
-        return fluid.layers.concat(
+        return paddle.concat(
             [branch1x1, branch3x3, branch3x3dbl, branch_pool], axis=1)
 
 
-class InceptionAux(fluid.dygraph.Layer):
+class InceptionAux(nn.Layer):
     def __init__(self, in_channels, num_classes, name=None):
         super(InceptionAux, self).__init__()
         self.num_classes = num_classes
-        self.pool0 = Pool2D(pool_size=5, pool_stride=3, pool_type='avg')
+        self.pool0 = AvgPool2D(pool_size=5, pool_stride=3)
         self.conv0 = ConvBNLayer(in_channels, 128, 1, name=name + '.conv0')
         self.conv1 = ConvBNLayer(128, 768, 5, name=name + '.conv1')
-        self.pool1 = Pool2D(global_pooling=True, pool_type='avg')
+        self.pool1 = AvgPool2D(global_pooling=True)
 
     def forward(self, x):
         x = self.pool0(x)
         x = self.conv0(x)
         x = self.conv1(x)
         x = self.pool1(x)
-        x = fluid.layers.flatten(x, axis=1)
-        x = fluid.layers.fc(x, size=self.num_classes)
+        x = paddle.flatten(x, axis=1)
+        x = paddle.static.nn.fc(x, size=self.num_classes)
         return x
 
 
-class Fid_inceptionA(fluid.dygraph.Layer):
+class Fid_inceptionA(nn.Layer):
     """ FID block in inception v3
     """
     def __init__(self, in_channels, pool_features, name=None):
@@ -480,11 +475,10 @@ class Fid_inceptionA(fluid.dygraph.Layer):
                                           padding=1,
                                           name=name + '.branch3x3dbl_3')
 
-        self.branch_pool0 = Pool2D(pool_size=3,
+        self.branch_pool0 = AvgPool2D(pool_size=3,
                                    pool_stride=1,
                                    pool_padding=1,
-                                   exclusive=True,
-                                   pool_type='avg')
+                                   exclusive=True)
         self.branch_pool = ConvBNLayer(in_channels,
                                        pool_features,
                                        1,
@@ -502,11 +496,11 @@ class Fid_inceptionA(fluid.dygraph.Layer):
 
         branch_pool = self.branch_pool0(x)
         branch_pool = self.branch_pool(branch_pool)
-        return fluid.layers.concat(
+        return paddle.concat(
             [branch1x1, branch5x5, branch3x3dbl, branch_pool], axis=1)
 
 
-class Fid_inceptionC(fluid.dygraph.Layer):
+class Fid_inceptionC(nn.Layer):
     """ FID block in inception v3
     """
     def __init__(self, in_channels, c7, name=None):
@@ -550,11 +544,10 @@ class Fid_inceptionC(fluid.dygraph.Layer):
                                           padding=(0, 3),
                                           name=name + '.branch7x7dbl_5')
 
-        self.branch_pool0 = Pool2D(pool_size=3,
+        self.branch_pool0 = AvgPool2D(pool_size=3,
                                    pool_stride=1,
                                    pool_padding=1,
-                                   exclusive=True,
-                                   pool_type='avg')
+                                   exclusive=True)
         self.branch_pool = ConvBNLayer(in_channels,
                                        192,
                                        1,
@@ -576,11 +569,11 @@ class Fid_inceptionC(fluid.dygraph.Layer):
         branch_pool = self.branch_pool0(x)
         branch_pool = self.branch_pool(branch_pool)
 
-        return fluid.layers.concat(
+        return paddle.concat(
             [branch1x1, branch7x7, branch7x7dbl, branch_pool], axis=1)
 
 
-class Fid_inceptionE_1(fluid.dygraph.Layer):
+class Fid_inceptionE_1(nn.Layer):
     """ FID block in inception v3
         """
     def __init__(self, in_channels, name=None):
@@ -621,11 +614,10 @@ class Fid_inceptionE_1(fluid.dygraph.Layer):
                                            padding=(1, 0),
                                            name=name + '.branch3x3dbl_3b')
 
-        self.branch_pool0 = Pool2D(pool_size=3,
+        self.branch_pool0 = AvgPool2D(pool_size=3,
                                    pool_stride=1,
                                    pool_padding=1,
-                                   exclusive=True,
-                                   pool_type='avg')
+                                   exclusive=True)
         self.branch_pool = ConvBNLayer(in_channels,
                                        192,
                                        1,
@@ -636,23 +628,23 @@ class Fid_inceptionE_1(fluid.dygraph.Layer):
         branch3x3_1 = self.branch3x3_1(x)
         branch3x3_2a = self.branch3x3_2a(branch3x3_1)
         branch3x3_2b = self.branch3x3_2b(branch3x3_1)
-        branch3x3 = fluid.layers.concat([branch3x3_2a, branch3x3_2b], axis=1)
+        branch3x3 = paddle.concat([branch3x3_2a, branch3x3_2b], axis=1)
 
         branch3x3dbl = self.branch3x3dbl_1(x)
         branch3x3dbl = self.branch3x3dbl_2(branch3x3dbl)
         branch3x3dbl_3a = self.branch3x3dbl_3a(branch3x3dbl)
         branch3x3dbl_3b = self.branch3x3dbl_3b(branch3x3dbl)
-        branch3x3dbl = fluid.layers.concat([branch3x3dbl_3a, branch3x3dbl_3b],
+        branch3x3dbl = paddle.concat([branch3x3dbl_3a, branch3x3dbl_3b],
                                            axis=1)
 
         branch_pool = self.branch_pool0(x)
         branch_pool = self.branch_pool(branch_pool)
 
-        return fluid.layers.concat(
+        return paddle.concat(
             [branch1x1, branch3x3, branch3x3dbl, branch_pool], axis=1)
 
 
-class Fid_inceptionE_2(fluid.dygraph.Layer):
+class Fid_inceptionE_2(nn.Layer):
     """ FID block in inception v3
     """
     def __init__(self, in_channels, name=None):
@@ -693,10 +685,9 @@ class Fid_inceptionE_2(fluid.dygraph.Layer):
                                            padding=(1, 0),
                                            name=name + '.branch3x3dbl_3b')
         ### same with paper
-        self.branch_pool0 = Pool2D(pool_size=3,
+        self.branch_pool0 = MaxPool2D(pool_size=3,
                                    pool_stride=1,
-                                   pool_padding=1,
-                                   pool_type='max')
+                                   pool_padding=1)
         self.branch_pool = ConvBNLayer(in_channels,
                                        192,
                                        1,
@@ -707,23 +698,23 @@ class Fid_inceptionE_2(fluid.dygraph.Layer):
         branch3x3_1 = self.branch3x3_1(x)
         branch3x3_2a = self.branch3x3_2a(branch3x3_1)
         branch3x3_2b = self.branch3x3_2b(branch3x3_1)
-        branch3x3 = fluid.layers.concat([branch3x3_2a, branch3x3_2b], axis=1)
+        branch3x3 = paddle.concat([branch3x3_2a, branch3x3_2b], axis=1)
 
         branch3x3dbl = self.branch3x3dbl_1(x)
         branch3x3dbl = self.branch3x3dbl_2(branch3x3dbl)
         branch3x3dbl_3a = self.branch3x3dbl_3a(branch3x3dbl)
         branch3x3dbl_3b = self.branch3x3dbl_3b(branch3x3dbl)
-        branch3x3dbl = fluid.layers.concat([branch3x3dbl_3a, branch3x3dbl_3b],
+        branch3x3dbl = paddle.concat([branch3x3dbl_3a, branch3x3dbl_3b],
                                            axis=1)
 
         branch_pool = self.branch_pool0(x)
         branch_pool = self.branch_pool(branch_pool)
 
-        return fluid.layers.concat(
+        return paddle.concat(
             [branch1x1, branch3x3, branch3x3dbl, branch_pool], axis=1)
 
 
-class ConvBNLayer(fluid.dygraph.Layer):
+class ConvBNLayer(nn.Layer):
     def __init__(self,
                  in_channels,
                  num_filters,
@@ -741,13 +732,13 @@ class ConvBNLayer(fluid.dygraph.Layer):
                            padding=padding,
                            groups=groups,
                            act=None,
-                           param_attr=ParamAttr(name=name + ".conv.weight"),
+                           param_attr=paddle.ParamAttr(name=name + ".conv.weight"),
                            bias_attr=False)
         self.bn = BatchNorm(num_filters,
                             act=act,
                             epsilon=0.001,
-                            param_attr=ParamAttr(name=name + ".bn.weight"),
-                            bias_attr=ParamAttr(name=name + ".bn.bias"),
+                            param_attr=paddle.ParamAttr(name=name + ".bn.weight"),
+                            bias_attr=paddle.ParamAttr(name=name + ".bn.bias"),
                             moving_mean_name=name + '.bn.running_mean',
                             moving_variance_name=name + '.bn.running_var')
 
