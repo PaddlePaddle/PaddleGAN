@@ -16,12 +16,11 @@ import os
 import fnmatch
 import numpy as np
 import cv2
+import paddle
 from PIL import Image
 from cv2 import imread
 from scipy import linalg
-import paddle.fluid as fluid
 from inception import InceptionV3
-from paddle.fluid.dygraph.base import to_variable
 
 try:
     from tqdm import tqdm
@@ -89,8 +88,8 @@ def _get_activations_from_ims(img, model, batch_size, dims, use_gpu,
             images = images.transpose((0, 3, 1, 2))
         images /= 255
 
-        images = to_variable(images)
-        param_dict, _ = fluid.load_dygraph(premodel_path)
+        images = paddle.to_tensor(images)
+        param_dict, _ = paddle.load(premodel_path)
         model.set_dict(param_dict)
         model.eval()
         pred = model(images)[0][0]
@@ -188,9 +187,9 @@ def _get_activations(files,
         if style == 'stargan':
             pred_arr[start:end] = inception_infer(images, premodel_path)
         else:
-            with fluid.dygraph.guard():
-                images = to_variable(images)
-                param_dict, _ = fluid.load_dygraph(premodel_path)
+            with paddle.guard():
+                images = paddle.to_tensor(images)
+                param_dict, _ = paddle.load(premodel_path)
                 model.set_dict(param_dict)
                 model.eval()
 
@@ -202,9 +201,9 @@ def _get_activations(files,
 
 
 def inception_infer(x, model_path):
-    exe = fluid.Executor()
+    exe = paddle.static.Executor()
     [inference_program, feed_target_names,
-     fetch_targets] = fluid.io.load_inference_model(model_path, exe)
+     fetch_targets] = paddle.static.load_inference_model(model_path, exe)
     results = exe.run(inference_program,
                       feed={feed_target_names[0]: x},
                       fetch_list=fetch_targets)
@@ -264,7 +263,7 @@ def calculate_fid_given_paths(paths,
             raise RuntimeError('Invalid path: %s' % p)
 
     if model is None and style != 'stargan':
-        with fluid.dygraph.guard():
+        with paddle.guard():
             block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[dims]
             model = InceptionV3([block_idx], class_dim=1008)
 
