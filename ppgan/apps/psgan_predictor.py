@@ -22,12 +22,12 @@ import numpy as np
 
 import paddle
 import paddle.vision.transforms as T
+from paddle.utils.download import get_weights_path_from_url
 import ppgan.faceutils as futils
 from ppgan.utils.options import parse_args
 from ppgan.utils.config import get_config
 from ppgan.utils.setup import setup
 from ppgan.utils.filesystem import load
-from ppgan.engine.trainer import Trainer
 from ppgan.models.builder import build_model
 from ppgan.utils.preprocess import *
 from .base_predictor import BasePredictor
@@ -120,7 +120,7 @@ class PostProcess:
 
 class Inference:
     def __init__(self, config, model_path=''):
-        self.model = build_model(config)
+        self.model = build_model(config.model)
         self.preprocess = PreProcess(config)
         self.model_path = model_path
 
@@ -154,6 +154,7 @@ class Inference:
             'P_B': reference_input[2],
             'consis_mask': consis_mask
         }
+
         state_dicts = load(self.model_path)
         for net_name, net in self.model.nets.items():
             net.set_state_dict(state_dicts[net_name])
@@ -175,8 +176,7 @@ class PSGANPredictor(BasePredictor):
         self.cfg = cfg
         self.weight_path = self.args.model_path
         if self.weight_path is None:
-            cur_path = os.path.abspath(os.path.dirname(__file__))
-            self.weight_path = get_path_from_url(PS_WEIGHT_URL, cur_path)
+            self.weight_path = get_weights_path_from_url(PS_WEIGHT_URL)
         self.output_path = output_path
 
     def run(self):
