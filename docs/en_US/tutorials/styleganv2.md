@@ -92,6 +92,21 @@ train model
 python tools/main.py -c configs/stylegan_v2_256_ffhq.yaml
 ```
 
+### Inference
+
+When you finish training, you need to use ``tools/extract_weight.py`` to extract the corresponding weights.
+```
+python tools/extract_weight.py output_dir/YOUR_TRAINED_WEIGHT.pdparams --net-name gen_ema --output YOUR_WEIGHT_PATH.pdparams
+```
+
+Then use ``applications/tools/styleganv2.py`` to get results
+```
+python tools/styleganv2.py --output_path stylegan01 --weight_path YOUR_WEIGHT_PATH.pdparams --size 256
+```
+
+Note: ``--size`` should be same with your config file.
+
+
 ## Results
 
 Random Samples:

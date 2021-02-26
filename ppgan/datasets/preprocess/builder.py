@@ -62,3 +62,15 @@ def build_preprocess(cfg):
 
     preproccess = Compose(preproccess)
     return preproccess
+
+
+def build_transforms(cfg):
+    transforms = []
+
+    for trans_cfg in cfg:
+        temp_trans_cfg = copy.deepcopy(trans_cfg)
+        name = temp_trans_cfg.pop('name')
+        transforms.append(TRANSFORMS.get(name)(**temp_trans_cfg))
+
+    transforms = Compose(transforms)
+    return transforms
