@@ -20,7 +20,7 @@ python tools/psgan_infer.py \
   --model_path /your/model/path \
   --source_path  docs/imgs/ps_source.png  \
   --reference_dir docs/imgs/ref \
-  --evaluate-only True
+  --evaluate-only
 ```
 **params:**
 - config-file: PSGAN network configuration file, yaml format

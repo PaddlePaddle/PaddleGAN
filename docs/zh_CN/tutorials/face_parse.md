@@ -10,7 +10,7 @@
 运行如下命令，可以完成人脸解析任务，程序运行成功后，会在`output`文件夹生成解析后的图片文件。具体命令如下所示：
 ```
 cd applications
-python face_parse.py --input_image ../docs/imgs/face.png
+python tools/face_parse.py --input_image ../docs/imgs/face.png
 ```
 
 **参数:**

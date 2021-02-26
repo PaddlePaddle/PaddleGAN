@@ -12,7 +12,7 @@ Runing the following command to complete the face parsing task. The output resul
 
 ```
 cd applications
-python face_parse.py --input_image ../docs/imgs/face.png
+python tools/face_parse.py --input_image ../docs/imgs/face.png
 ```
 
 **params:**
