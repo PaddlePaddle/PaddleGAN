@@ -64,6 +64,9 @@ dataset:
     preprocess:
       - name: LoadImageFromFile
         key: pair
+      - name: SplitPairedImage
+        key: pair
+        paired_keys: [A, B]
       - name: Transforms
         input_keys: [A, B]
         pipeline:
