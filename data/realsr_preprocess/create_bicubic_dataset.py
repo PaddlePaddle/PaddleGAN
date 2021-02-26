@@ -50,7 +50,7 @@ opt = parser.parse_args()
 # define input and target directories
 cur_path = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(cur_path, './paths.yml'), 'r') as stream:
-    PATHS = yaml.load(stream)
+    PATHS = yaml.load(stream, Loader=yaml.SafeLoader)
 
 if opt.dataset == 'df2k':
     path_sdsr = PATHS['datasets']['df2k'] + '/generated/sdsr/'

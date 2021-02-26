@@ -91,7 +91,7 @@ class Hooks():
 
 def _hook_inner(m, i, o):
     return o if isinstance(
-        o, paddle.fluid.framework.Variable) else o if is_listy(o) else list(o)
+        o, paddle.static.Variable) else o if is_listy(o) else list(o)
 
 
 def hook_output(module, detach=True, grad=False):

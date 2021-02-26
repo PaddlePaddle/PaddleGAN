@@ -21,7 +21,6 @@ from tqdm import tqdm
 from imageio import imread, imsave
 
 import paddle
-import paddle.fluid as fluid
 from ppgan.utils.download import get_path_from_url
 from ppgan.utils.video import video2frames, frames2video
 
