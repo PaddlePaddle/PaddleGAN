@@ -141,6 +141,13 @@ class MakeupModel(BaseModel):
         self.visual_items['fake_A'] = self.fake_A
         self.visual_items['rec_B'] = self.rec_B
 
+    def test(self, input):
+        with paddle.no_grad():
+            return self.nets['netG'](input['image_A'], input['image_B'],
+                                     input['P_A'], input['P_B'],
+                                     input['consis_mask'], input['mask_A_aug'],
+                                     input['mask_B_aug'])
+
     def backward_D_basic(self, netD, real, fake):
         """Calculate GAN loss for the discriminator
 
