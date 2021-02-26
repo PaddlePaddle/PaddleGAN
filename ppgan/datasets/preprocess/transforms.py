@@ -41,6 +41,7 @@ TRANSFORMS.register(T.RandomHorizontalFlip)
 TRANSFORMS.register(T.RandomVerticalFlip)
 TRANSFORMS.register(T.Normalize)
 TRANSFORMS.register(T.Transpose)
+TRANSFORMS.register(T.Grayscale)
 
 
 @PREPROCESS.register()
