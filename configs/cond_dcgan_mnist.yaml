@@ -18,46 +18,57 @@ model:
     norm_type: batch
     n_class: 10
     use_sigmoid: True
-  gan_mode: vanilla
+  gan_criterion:
+    name: GANLoss
+    gan_mode: vanilla
 
 dataset:
   train:
     name: CommonVisionDataset
-    class_name: MNIST
-    dataroot: None
+    dataset_name: MNIST
     num_workers: 4
     batch_size: 64
-    mode: train
-    return_cls: True
+    return_label: True
     transforms:
       - name: Normalize
         mean: [127.5]
         std: [127.5]
         keys: [image]
+    params:
+      mode: train
   test:
     name: CommonVisionDataset
-    class_name: MNIST
-    dataroot: None
+    dataset_name: MNIST
     num_workers: 0
     batch_size: 64
-    mode: test
+    return_label: True
+    params:
+      mode: train
     transforms:
       - name: Normalize
         mean: [127.5]
         std: [127.5]
         keys: [image]
-    return_cls: True
-
-
-optimizer:
-  name: Adam
-  beta1: 0.5
 
 lr_scheduler:
-  name: linear
+  name: LinearDecay
   learning_rate: 0.0002
   start_epoch: 100
   decay_epochs: 100
+  # will get from real dataset
+  iters_per_epoch: 1
+
+optimizer:
+  optimizer_G:
+    name: Adam
+    net_names:
+      - netG
+    beta1: 0.5
+  optimizer_D:
+    name: Adam
+    net_names:
+      - netD
+    beta1: 0.5
 
 log_config:
   interval: 100
