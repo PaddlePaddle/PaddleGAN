@@ -40,10 +40,10 @@ class BaseSRModel(BaseModel):
             self.pixel_criterion = build_criterion(pixel_criterion)
 
     def setup_input(self, input):
-        self.lq = paddle.fluid.dygraph.to_variable(input['lq'])
+        self.lq = paddle.to_tensor(input['lq'])
         self.visual_items['lq'] = self.lq
         if 'gt' in input:
-            self.gt = paddle.fluid.dygraph.to_variable(input['gt'])
+            self.gt = paddle.to_tensor(input['gt'])
             self.visual_items['gt'] = self.gt
         self.image_paths = input['lq_path']
 

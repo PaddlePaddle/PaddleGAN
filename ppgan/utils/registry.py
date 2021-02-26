@@ -96,7 +96,7 @@ def build_from_config(cfg, registry, default_args=None):
                 '`cfg` or `default_args` must contain the key "name", '
                 f'but got {cfg}\n{default_args}')
     if not isinstance(registry, Registry):
-        raise TypeError('registry must be an mmcv.Registry object, '
+        raise TypeError('registry must be an ppgan.utils.Registry object, '
                         f'but got {type(registry)}')
     if not (isinstance(default_args, dict) or default_args is None):
         raise TypeError('default_args must be a dict or None, '
