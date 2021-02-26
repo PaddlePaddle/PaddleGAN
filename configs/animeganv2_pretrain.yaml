@@ -42,20 +42,21 @@ dataset:
   test:
     name: SingleDataset
     dataroot: data/animedataset/test/test_photo
-    max_dataset_size: inf
-    direction: BtoA
-    input_nc: 3
-    output_nc: 3
-    serial_batches: False
-    pool_size: 50
-    transforms:
-      - name: Resize
-        size: [256, 256]
-        interpolation: "bicubic" #cv2.INTER_CUBIC
-      - name: Transpose
-      - name: Normalize
-        mean: [127.5, 127.5, 127.5]
-        std: [127.5, 127.5, 127.5]
+    preprocess:
+      - name: LoadImageFromFile
+        key: A
+      - name: Transforms
+        input_keys: [A]
+        pipeline:
+          - name: ResizeToScale
+            size: [256, 256]
+            scale: 32
+            interpolation: bilinear
+          - name: Transpose
+          - name: Normalize
+            mean: [127.5, 127.5, 127.5]
+            std: [127.5, 127.5, 127.5]
+            keys: [image, image]
 
 lr_scheduler:
   name: LinearDecay
