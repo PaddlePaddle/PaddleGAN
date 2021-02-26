@@ -96,7 +96,7 @@ python tools/main.py -c configs/stylegan_v2_256_ffhq.yaml
 
 训练结束后，需要使用 ``tools/extract_weight.py`` 来提取对应的权重给``applications/tools/styleganv2.py``来进行推理.
 ```
-python tools/extract_weight.py output_dir/YOUR_TRAINED_WEIGHT.pdparams --net-name gen_ema --output stylegan_config_f.pdparams
+python tools/extract_weight.py output_dir/YOUR_TRAINED_WEIGHT.pdparams --net-name gen_ema --output YOUR_WEIGHT_PATH.pdparams
 ```
 
 ```
