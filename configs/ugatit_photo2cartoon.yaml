@@ -78,7 +78,7 @@ dataset:
         key: A
       - name: LoadImageFromFile
         key: B
-      - name: Transfroms
+      - name: Transforms
         input_keys: [A, B]
         pipeline:
           - name: Resize
