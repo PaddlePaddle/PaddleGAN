@@ -17,7 +17,7 @@ import paddle
 
 from .builder import DATASETS
 from .base_dataset import BaseDataset
-from .transforms.builder import build_transforms
+from .preprocess.builder import build_transforms
 
 
 @DATASETS.register()

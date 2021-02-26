@@ -21,44 +21,33 @@ model:
 
 dataset:
   train:
-    name: SingleDataset
-    dataroot: data/mnist/train
+    name: CommonVisionDataset
+    dataset_name: MNIST
+    num_workers: 0
     batch_size: 128
-    preprocess:
-      - name: LoadImageFromFile
-        key: A
-      - name: Transfroms
-        input_keys: [A]
-        pipeline:
-          - name: Resize
-            size: [64, 64]
-            interpolation: 'bicubic' #cv2.INTER_CUBIC
-            keys: [image, image]
-          - name: Transpose
-            keys: [image, image]
-          - name: Normalize
-            mean: [127.5, 127.5, 127.5]
-            std: [127.5, 127.5, 127.5]
-            keys: [image, image]
+    return_label: False
+    transforms:
+      - name: Resize
+        size: [64, 64]
+        interpolation: 'bicubic' #cv2.INTER_CUBIC
+      - name: Normalize
+        mean: [127.5]
+        std: [127.5]
+        keys: [image]
   test:
-    name: SingleDataset
-    dataroot: data/mnist/test
-    preprocess:
-      - name: LoadImageFromFile
-        key: A
-      - name: Transforms
-        input_keys: [A]
-        pipeline:
-          - name: Resize
-            size: [64, 64]
-            interpolation: 'bicubic' #cv2.INTER_CUBIC
-            keys: [image, image]
-          - name: Transpose
-            keys: [image, image]
-          - name: Normalize
-            mean: [127.5, 127.5, 127.5]
-            std: [127.5, 127.5, 127.5]
-            keys: [image, image]
+    name: CommonVisionDataset
+    dataset_name: MNIST
+    num_workers: 0
+    batch_size: 128
+    return_label: False
+    transforms:
+      - name: Resize
+        size: [64, 64]
+        interpolation: 'bicubic' #cv2.INTER_CUBIC
+      - name: Normalize
+        mean: [127.5]
+        std: [127.5]
+        keys: [image]
 
 lr_scheduler:
   name: LinearDecay

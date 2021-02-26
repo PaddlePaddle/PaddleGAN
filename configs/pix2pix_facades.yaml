@@ -64,7 +64,7 @@ dataset:
     preprocess:
       - name: LoadImageFromFile
         key: pair
-    - name: Transforms
+      - name: Transforms
         input_keys: [A, B]
         pipeline:
           - name: Resize
