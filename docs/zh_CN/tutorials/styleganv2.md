@@ -54,9 +54,56 @@ python -u tools/styleganv2.py \
 - n_col: 采样的图片的列数
 - cpu: 是否使用cpu推理，若不使用，请在命令中去除
 
-### 训练(TODO)
+### 训练
 
-未来还将添加训练脚本方便用户训练出更多类型的 StyleGAN V2 图像生成器。
+#### 准备数据集
+你可以从[这里](https://drive.google.com/drive/folders/1u2xu7bSrWxrbUxk-dT-UvEJq8IjdmNTP)下载对应的数据集
+
+为了方便，我们提供了[images256x256.tar](https://paddlegan.bj.bcebos.com/datasets/images256x256.tar)
+
+目前的配置文件默认数据集的结构如下:
+  ```
+    PaddleGAN
+      ├── data
+          ├── ffhq
+                ├──images1024x1024
+                      ├── 00000.png
+                      ├── 00001.png
+                      ├── 00002.png
+                      ├── 00003.png
+                      ├── 00004.png
+                 ├──images256x256
+                      ├── 00000.png
+                      ├── 00001.png
+                      ├── 00002.png
+                      ├── 00003.png
+                      ├── 00004.png
+         ├──custom_data
+              ├── img0.png
+              ├── img1.png
+              ├── img2.png
+              ├── img3.png
+              ├── img4.png
+              ...
+  ```
+
+启动训练
+```
+python tools/main.py -c configs/stylegan_v2_256_ffhq.yaml
+```
+
+### 推理
+
+训练结束后，需要使用 ``tools/extract_weight.py`` 来提取对应的权重给``applications/tools/styleganv2.py``来进行推理.
+```
+python tools/extract_weight.py output_dir/YOUR_TRAINED_WEIGHT.pdparams --net-name gen_ema --output stylegan_config_f.pdparams
+```
+
+```
+python tools/styleganv2.py --output_path stylegan01 --weight_path YOUR_WEIGHT_PATH.pdparams --size 256
+```
+
+注意: ``--size`` 这个参数要和配置文件中的参数保持一致.
 
 
 ## 生成结果展示
