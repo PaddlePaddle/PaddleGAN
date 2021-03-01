@@ -39,7 +39,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 * [Pixel2Pixel](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
 * [CycleGAN](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
 * [PSGAN](./docs/zh_CN/tutorials/psgan.md)
-* [First Order Motion Model](./docs/zh_CN/tutorials/motion_driving.md)--**「蚂蚁呀嘿」换脸视频核心技术**
+* [First Order Motion Model](./docs/zh_CN/tutorials/motion_driving.md):**🤩「蚂蚁呀嘿🐜」🤩换脸视频核心技术**
 * [FaceParsing](./docs/zh_CN/tutorials/face_parse.md)
 * [AnimeGANv2](./docs/zh_CN/tutorials/animegan.md)
 * [U-GAT-IT](./docs/zh_CN/tutorials/ugatit.md)
@@ -59,13 +59,14 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 |在线教程      |    链接   |
 |--------------|-----------|
+|表情动作迁移-全网爆火的「蚂蚁呀嘿」实现 |[点击体验](https://aistudio.baidu.com/aistudio/projectdetail/1586056?channelType=0&channel=0)|
 |老北京视频修复|[点击体验](https://aistudio.baidu.com/aistudio/projectdetail/1161285)|
 |表情动作迁移-当苏大强唱起unravel |[点击体验](https://aistudio.baidu.com/aistudio/projectdetail/1048840)|
-|表情动作迁移-全网爆火的「蚂蚁呀嘿」实现 |[点击体验](https://aistudio.baidu.com/aistudio/projectdetail/1586056?channelType=0&channel=0)|
+
 
 ## 效果展示
 
-### 蚂蚁呀嘿
+### 蚂蚁呀嘿🤪
 
 <div align='center'>
   <img src=https://user-images.githubusercontent.com/48054808/109486399-c8ba6b00-7abd-11eb-8f17-5fa8e44f1d81.gif width='300'/>
