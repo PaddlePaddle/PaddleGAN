@@ -1,4 +1,4 @@
-# Fist order motion model
+# First order motion model
 
 ## First order motion model introduction
 
