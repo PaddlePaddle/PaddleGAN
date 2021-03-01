@@ -22,7 +22,7 @@ python tools/video-enhance.py --input you_video_path.mp4 --process_order DAIN De
 
 ### 注意事项
 
-* 在使用本教程前，请确保您已经[安装完paddle和ppgan]()。
+* 在使用本教程前，请确保您已经[安装完paddle和ppgan](../install.md)。
 
 * 本教程的所有命令都基于PaddleGAN/applications主目录进行执行。
 
