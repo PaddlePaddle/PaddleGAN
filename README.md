@@ -54,7 +54,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 ## Online Tutorial
 
-You can try the abilities above on the [AI Studio](https://aistudio.baidu.com/aistudio/projectoverview/public/1?kw=paddlegan):
+You can run those projects in the [AI Studio](https://aistudio.baidu.com/aistudio/projectoverview/public/1?kw=paddlegan) to learn how to use the models above:
 
 |Online Tutorial      |    link  |
 |--------------|-----------|
