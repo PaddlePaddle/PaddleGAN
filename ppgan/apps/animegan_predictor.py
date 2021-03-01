@@ -18,7 +18,7 @@ import cv2
 
 import paddle
 from .base_predictor import BasePredictor
-from ppgan.datasets.transforms import ResizeToScale
+from ppgan.datasets.preprocess.transforms import ResizeToScale
 import paddle.vision.transforms as T
 from ppgan.models.generators import AnimeGenerator
 from ppgan.utils.download import get_path_from_url

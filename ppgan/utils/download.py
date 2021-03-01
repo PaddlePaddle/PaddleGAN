@@ -64,7 +64,7 @@ def get_path_from_url(url, md5sum=None, check_exist=True):
         str: a local path to save downloaded models & weights & datasets.
     """
 
-    from paddle.fluid.dygraph.parallel import ParallelEnv
+    from paddle.distributed import ParallelEnv
 
     assert is_url(url), "downloading from {} not a url".format(url)
     root_dir = PPGAN_HOME

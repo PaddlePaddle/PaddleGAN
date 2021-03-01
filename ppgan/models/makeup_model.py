@@ -236,13 +236,13 @@ class MakeupModel(BaseModel):
         mask_B_lip_np = mask_B_lip.numpy().squeeze()
         mask_A_lip_np, mask_B_lip_np, index_A_lip, index_B_lip = mask_preprocess(
             mask_A_lip_np, mask_B_lip_np)
-        real_A = paddle.nn.clip((self.real_A + 1.0) / 2.0, 0.0, 1.0) * 255.0
+        real_A = paddle.clip((self.real_A + 1.0) / 2.0, 0.0, 1.0) * 255.0
         real_A_np = real_A.numpy().squeeze()
-        real_B = paddle.nn.clip((self.real_B + 1.0) / 2.0, 0.0, 1.0) * 255.0
+        real_B = paddle.clip((self.real_B + 1.0) / 2.0, 0.0, 1.0) * 255.0
         real_B_np = real_B.numpy().squeeze()
-        fake_A = paddle.nn.clip((self.fake_A + 1.0) / 2.0, 0.0, 1.0) * 255.0
+        fake_A = paddle.clip((self.fake_A + 1.0) / 2.0, 0.0, 1.0) * 255.0
         fake_A_np = fake_A.numpy().squeeze()
-        fake_B = paddle.nn.clip((self.fake_B + 1.0) / 2.0, 0.0, 1.0) * 255.0
+        fake_B = paddle.clip((self.fake_B + 1.0) / 2.0, 0.0, 1.0) * 255.0
         fake_B_np = fake_B.numpy().squeeze()
 
         fake_match_lip_A = hisMatch(fake_A_np, real_B_np, mask_A_lip_np,

@@ -13,10 +13,10 @@ Wav2Lip实现的是视频人物根据输入音频生成与语音同步的人物�
 
 ```
 cd applications
-python tools/wav2lip.py --face ../../imgs/mona7s.mp4 --audio ../../imgs/guangquan.m4a --outfile pp_guangquan_mona7s.mp4
+python tools/wav2lip.py --face ../docs/imgs/mona7s.mp4 --audio ../docs/imgs/guangquan.m4a --outfile pp_guangquan_mona7s.mp4
 ```
 **参数说明:**
-- face: 原始视频，视频中都人物都唇形将根据音频进行唇形合成，以和音频同步
+- face: 视频或图片，视频或图片中的人物唇形将根据音频进行唇形合成，以和音频同步
 - audio: 驱动唇形合成的音频，视频中的人物将根据此音频进行唇形合成
 
 ### 2.2 训练
