@@ -38,7 +38,7 @@ preprocessed_root (lrs2_preprocessed)
 - GPU单卡训练:
 ```
 export CUDA_VISIBLE_DEVICES=0
-python tools/main.py --confit-file configs/wav2lip.yaml
+python tools/main.py --config-file configs/wav2lip.yaml
 ```
 
 - GPU多卡训练:
@@ -54,7 +54,7 @@ python -m paddle.distributed.launch \
 - GPU单卡训练:
 ```
 export CUDA_VISIBLE_DEVICES=0
-python tools/main.py --confit-file configs/wav2lip_hq.yaml
+python tools/main.py --config-file configs/wav2lip_hq.yaml
 ```
 - GPU多卡训练:
 ```

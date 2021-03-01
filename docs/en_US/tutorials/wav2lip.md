@@ -36,7 +36,7 @@ Place the LRS2 filelists(train, val, test) `.txt` files in the `filelists/` fold
 - For single GPU:
 ```
 export CUDA_VISIBLE_DEVICES=0
-python tools/main.py --confit-file configs/wav2lip.yaml
+python tools/main.py --config-file configs/wav2lip.yaml
 ```
 
 - For multiple GPUs:
@@ -52,7 +52,7 @@ For the latter, run:
 - For single GPU:
 ```
 export CUDA_VISIBLE_DEVICES=0
-python tools/main.py --confit-file configs/wav2lip_hq.yaml
+python tools/main.py --config-file configs/wav2lip_hq.yaml
 ```
 - For multiple GPUs:
 ```
