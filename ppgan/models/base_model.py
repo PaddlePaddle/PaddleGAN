@@ -95,6 +95,9 @@ class BaseModel(ABC):
         """Calculate losses, gradients, and update network weights; called in every training iteration"""
         pass
 
+    def set_total_iter(self, total_iter):
+        self.total_iter = total_iter
+
     def test_iter(self, metrics=None):
         """Calculate metrics; called in every test iteration"""
         self.eval()
