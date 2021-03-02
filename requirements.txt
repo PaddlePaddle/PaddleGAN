@@ -7,3 +7,4 @@ imageio-ffmpeg
 librosa==0.7.0
 numba==0.48
 easydict
+munch
