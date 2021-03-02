@@ -142,6 +142,7 @@ class Trainer:
 
         self.time_count = {}
         self.best_metric = {}
+        self.model.set_total_iter(self.total_iters)
 
     def distributed_data_parallel(self):
         paddle.distributed.init_parallel_env()
