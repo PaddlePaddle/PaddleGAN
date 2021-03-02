@@ -49,6 +49,11 @@ parser.add_argument("--best_frame",
                     default=None,
                     help="Set frame to start from.")
 parser.add_argument("--cpu", dest="cpu", action="store_true", help="cpu mode.")
+parser.add_argument("--ratio",
+                    dest="ratio",
+                    type=float,
+                    default=1.0,
+                    help="margin ratio")
 
 parser.set_defaults(relative=False)
 parser.set_defaults(adapt_scale=False)
@@ -65,5 +70,6 @@ if __name__ == "__main__":
                                     relative=args.relative,
                                     adapt_scale=args.adapt_scale,
                                     find_best_frame=args.find_best_frame,
-                                    best_frame=args.best_frame)
+                                    best_frame=args.best_frame,
+                                    ratio=args.ratio)
     predictor.run(args.source_image, args.driving_video)
