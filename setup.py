@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from setuptools import setup
+from setuptools import find_packages
 from io import open
 
 with open('requirements.txt', encoding="utf-8-sig") as f:
@@ -27,11 +28,11 @@ def readme():
 
 setup(
     name='ppgan',
-    packages=['ppgan'],
+    packages=find_packages(),
     include_package_data=True,
     entry_points={"console_scripts": ["paddlegan= paddlegan.paddlegan:main"]},
     author='PaddlePaddle Author',
-    version='0.1.0',
+    version='2.0.0-beta',
     install_requires=requirements,
     license='Apache License 2.0',
     description='Awesome GAN toolkits based on PaddlePaddle',

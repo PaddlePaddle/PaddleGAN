@@ -166,6 +166,8 @@ class Trainer:
 
         iter_loader = IterLoader(self.train_dataloader)
 
+        # set model.is_train = True
+        self.model.setup_train_mode(is_train=True)
         while self.current_iter < (self.total_iters + 1):
             self.current_epoch = iter_loader.epoch
             self.inner_iter = self.current_iter % self.iters_per_epoch
@@ -219,6 +221,9 @@ class Trainer:
         if self.metrics:
             for metric in self.metrics.values():
                 metric.reset()
+
+        # set model.is_train = False
+        self.model.setup_train_mode(is_train=False)
 
         for i in range(self.max_eval_steps):
             data = next(iter_loader)
@@ -290,7 +295,9 @@ class Trainer:
             message += 'ips: %.5f images/s ' % self.ips
 
         if hasattr(self, 'step_time'):
-            eta = self.step_time * (self.total_iters - self.current_iter - 1)
+            eta = self.step_time * (self.total_iters - self.current_iter)
+            eta = eta if eta > 0 else 0
+
             eta_str = str(datetime.timedelta(seconds=int(eta)))
             message += f'eta: {eta_str}'
 

@@ -74,10 +74,8 @@ class Pix2PixModel(BaseModel):
 
         AtoB = self.direction == 'AtoB'
 
-        self.real_A = paddle.to_tensor(
-            input['A' if AtoB else 'B'])
-        self.real_B = paddle.to_tensor(
-            input['B' if AtoB else 'A'])
+        self.real_A = paddle.to_tensor(input['A' if AtoB else 'B'])
+        self.real_B = paddle.to_tensor(input['B' if AtoB else 'A'])
 
         self.image_paths = input['A_path' if AtoB else 'B_path']
 
@@ -141,3 +139,7 @@ class Pix2PixModel(BaseModel):
         optimizers['optimG'].clear_grad()
         self.backward_G()
         optimizers['optimG'].step()
+
+    def test_iter(self, metrics=None):
+        with paddle.no_grad():
+            self.forward()

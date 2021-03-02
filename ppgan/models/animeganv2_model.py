@@ -83,7 +83,7 @@ class AnimeGANV2Model(BaseModel):
             self.smooth_gray = paddle.to_tensor(input['smooth_gray'])
         else:
             self.real = paddle.to_tensor(input['A'])
-            self.image_paths = input['A_paths']
+            self.image_paths = input['A_path']
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""

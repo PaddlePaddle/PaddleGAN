@@ -20,7 +20,7 @@ from .base_dataset import BaseDataset
 from .image_folder import ImageFolder
 
 from .builder import DATASETS
-from .transforms.builder import build_transforms
+from .preprocess.builder import build_transforms
 
 
 @DATASETS.register()
