@@ -70,7 +70,7 @@ animedataset
 
   2.  After the warmup, we strat to training GAN.:
   **NOTE：** you must modify the `configs/animeganv2.yaml > pretrain_ckpt ` parameter first! ensure the GAN can reuse the warmup generator model.
-  Set the `batch size=4` and the `learning rate=0.00002`. Train 30 epochs on a GTX2060S GPU to reproduce the result. For other hyperparameters, please refer to `configs/animeganv2.yaml`.
+  Set the `batch size=4` and the `learning rate=0.0002`. Train 30 epochs on a GTX2060S GPU to reproduce the result. For other hyperparameters, please refer to `configs/animeganv2.yaml`.
   ```sh
   python tools/main.py --config-file configs/animeganv2.yaml
   ```

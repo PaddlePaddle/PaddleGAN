@@ -134,7 +134,7 @@ class FaceDetector(object):
                 tensor_or_path)[..., ::-1]
         elif isinstance(
                 tensor_or_path,
-            (paddle.fluid.framework.Variable, paddle.fluid.core.VarBase)):
+            (paddle.static.Variable, paddle.Tensor)):
             # Call cpu in case its coming from cuda
             return tensor_or_path.numpy()[
                 ..., ::-1].copy() if not rgb else tensor_or_path.numpy()

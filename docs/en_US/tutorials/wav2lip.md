@@ -11,7 +11,7 @@ Runing the following command to complete the lip-syning task. The output is the 
 
 ```
 cd applications
-python tools/wav2lip.py --face ../../imgs/mona7s.mp4 --audio ../../imgs/guangquan.m4a --outfile pp_guangquan_mona7s.mp4
+python tools/wav2lip.py --face ../docs/imgs/mona7s.mp4 --audio ../docs/imgs/guangquan.m4a --outfile pp_guangquan_mona7s.mp4
 ```
 
 **params:**
@@ -36,7 +36,7 @@ Place the LRS2 filelists(train, val, test) `.txt` files in the `filelists/` fold
 - For single GPU:
 ```
 export CUDA_VISIBLE_DEVICES=0
-python tools/main.py --confit-file configs/wav2lip.yaml
+python tools/main.py --config-file configs/wav2lip.yaml
 ```
 
 - For multiple GPUs:
@@ -52,7 +52,7 @@ For the latter, run:
 - For single GPU:
 ```
 export CUDA_VISIBLE_DEVICES=0
-python tools/main.py --confit-file configs/wav2lip_hq.yaml
+python tools/main.py --config-file configs/wav2lip_hq.yaml
 ```
 - For multiple GPUs:
 ```

@@ -10,7 +10,7 @@ ppgan.apps包含超分、插针、上色、换妆、图像动画生成、人脸�
   * [DeepRemaster](#ppgan.apps.DeepRemasterPredictor)
 * 插帧:
   * [DAIN](#ppgan.apps.DAINPredictor)
-* 图像工作驱动:
+* 图像动作驱动:
   * [FirstOrder](#ppgan.apps.FirstOrderPredictor)
 * 人脸:
   * [FaceFaceParse](#ppgan.apps.FaceParsePredictor)

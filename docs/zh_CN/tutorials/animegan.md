@@ -70,7 +70,7 @@ animedataset
 
   1.  预热模型完成后，训练风格迁移模型:
   **注意：** 必须先修改在`configs/animeganv2.yaml`中的`pretrain_ckpt`参数，确保指向正确的 **预热模型权重路径**
-  设置`batch size=4`，`learning rate=0.00002`，在一个  GTX2060S GPU上训练30个epoch即可获得较好的效果，其他超参数请参考`configs/animeganv2.yaml`。
+  设置`batch size=4`，`learning rate=0.0002`，在一个  GTX2060S GPU上训练30个epoch即可获得较好的效果，其他超参数请参考`configs/animeganv2.yaml`。
 
   ```sh
   python tools/main.py --config-file configs/animeganv2.yaml
