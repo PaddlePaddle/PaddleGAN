@@ -243,14 +243,14 @@ def _uncompress_file_tar(filepath, mode="r:*"):
 
 
 def _is_a_single_file(file_list):
-    if len(file_list) == 1 and file_list[0].find(os.sep) < -1:
+    if len(file_list) == 1 and file_list[0].find('/') < -1:
         return True
     return False
 
 
 def _is_a_single_dir(file_list):
-    file_name = file_list[0].split(os.sep)[0]
+    file_name = file_list[0].split('/')[0]
     for i in range(1, len(file_list)):
-        if file_name != file_list[i].split(os.sep)[0]:
+        if file_name != file_list[i].split('/')[0]:
             return False
     return True
