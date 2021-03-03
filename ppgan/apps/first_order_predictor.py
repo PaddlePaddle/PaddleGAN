@@ -270,9 +270,9 @@ class FirstOrderPredictor(BasePredictor):
             cx = rect[0] + int(bw / 2)
             margin = max(bh, bw)
             y1 = max(0, cy - margin)
-            x1 = max(0, cx - margin)
+            x1 = max(0, cx - int(0.8 * margin))
             y2 = min(h, cy + margin)
-            x2 = min(w, cx + margin)
+            x2 = min(w, cx + int(0.8 * margin))
             results.append([x1, y1, x2, y2])
         boxes = np.array(results)
         return boxes
