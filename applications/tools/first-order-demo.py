@@ -25,7 +25,9 @@ parser.add_argument("--weight_path",
 parser.add_argument("--source_image", type=str, help="path to source image")
 parser.add_argument("--driving_video", type=str, help="path to driving video")
 parser.add_argument("--output", default='output', help="path to output")
-parser.add_argument("--filename", default='result.mp4', help="filename to output")
+parser.add_argument("--filename",
+                    default='result.mp4',
+                    help="filename to output")
 parser.add_argument("--relative",
                     dest="relative",
                     action="store_true",
@@ -53,7 +55,7 @@ parser.add_argument("--cpu", dest="cpu", action="store_true", help="cpu mode.")
 parser.add_argument("--ratio",
                     dest="ratio",
                     type=float,
-                    default=1.0,
+                    default=0.4,
                     help="margin ratio")
 
 parser.set_defaults(relative=False)

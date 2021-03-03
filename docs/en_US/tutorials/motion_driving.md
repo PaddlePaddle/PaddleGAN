@@ -17,7 +17,7 @@ cd applications/
 python -u tools/first-order-demo.py  \
      --driving_video ../docs/imgs/fom_dv.mp4 \
      --source_image ../docs/imgs/fom_source_image.png \
-     --ratio 0.5 \
+     --ratio 0.4 \
      --relative --adapt_scalae
 ```
 
@@ -26,7 +26,7 @@ python -u tools/first-order-demo.py  \
 - source_image: source_image, support single people and multipeople in the image, the image will be animated according to the motion of the driving video.
 - relative: indicate whether the relative or absolute coordinates of the key points in the video are used in the program. It is recommended to use relative coordinates. If absolute coordinates are used, the characters will be distorted after animation.
 - adapt_scale: adapt movement scale based on convex hull of keypoints.
-- ratio: The pasted face percentage of generated image, this parameter should be adjusted in the case of multipeople image in which the adjacent faces are close
+- ratio: The pasted face percentage of generated image, this parameter should be adjusted in the case of multi-person image in which the adjacent faces are close, the reange is [0.4, 0.5]
 
 ## Animation results
 
