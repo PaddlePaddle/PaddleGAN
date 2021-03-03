@@ -45,7 +45,8 @@ class FirstOrderPredictor(BasePredictor):
                  adapt_scale=False,
                  find_best_frame=False,
                  best_frame=None,
-                 ratio=1.0):
+                 ratio=1.0,
+                 filename='result.mp4'):
         if config is not None and isinstance(config, str):
             self.cfg = yaml.load(config, Loader=yaml.SafeLoader)
         elif isinstance(config, dict):
@@ -88,6 +89,7 @@ class FirstOrderPredictor(BasePredictor):
         if not os.path.exists(output):
             os.makedirs(output)
         self.output = output
+        self.filename = filename
         self.relative = relative
         self.adapt_scale = adapt_scale
         self.find_best_frame = find_best_frame
@@ -170,7 +172,7 @@ class FirstOrderPredictor(BasePredictor):
                 frame = cv2.copyTo(patch, mask, frame)
 
             out_frame.append(frame)
-        imageio.mimsave(os.path.join(self.output, 'result.mp4'),
+        imageio.mimsave(os.path.join(self.output, self.filename),
                         [frame for frame in out_frame],
                         fps=fps)
 
