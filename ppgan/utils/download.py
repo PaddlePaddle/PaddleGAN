@@ -29,7 +29,7 @@ from tqdm import tqdm
 
 from .logger import get_logger
 
-PPGAN_HOME = os.path.expanduser("~/.cache/ppgan/")
+PPGAN_HOME = os.path.expanduser(os.path.join('~', '.cache', 'ppgan'))
 
 DOWNLOAD_RETRY_LIMIT = 3
 
