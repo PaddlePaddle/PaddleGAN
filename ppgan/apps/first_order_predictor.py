@@ -14,6 +14,8 @@
 
 import os
 import sys
+import cv2
+import math
 
 import yaml
 import pickle
@@ -29,6 +31,7 @@ from ppgan.utils.download import get_path_from_url
 from ppgan.utils.animate import normalize_kp
 from ppgan.modules.keypoint_detector import KPDetector
 from ppgan.models.generators.occlusion_aware import OcclusionAwareGenerator
+from ppgan.faceutils import face_detection
 
 from .base_predictor import BasePredictor
 
@@ -41,7 +44,9 @@ class FirstOrderPredictor(BasePredictor):
                  relative=False,
                  adapt_scale=False,
                  find_best_frame=False,
-                 best_frame=None):
+                 best_frame=None,
+                 ratio=1.0,
+                 filename='result.mp4'):
         if config is not None and isinstance(config, str):
             self.cfg = yaml.load(config, Loader=yaml.SafeLoader)
         elif isinstance(config, dict):
@@ -84,15 +89,18 @@ class FirstOrderPredictor(BasePredictor):
         if not os.path.exists(output):
             os.makedirs(output)
         self.output = output
+        self.filename = filename
         self.relative = relative
         self.adapt_scale = adapt_scale
         self.find_best_frame = find_best_frame
         self.best_frame = best_frame
+        self.ratio = ratio
         self.generator, self.kp_detector = self.load_checkpoints(
             self.cfg, self.weight_path)
 
     def run(self, source_image, driving_video):
         source_image = imageio.imread(source_image)
+        bboxes = self.extract_bbox(source_image.copy())
         reader = imageio.get_reader(driving_video)
         fps = reader.get_meta_data()['fps']
         driving_video = []
@@ -103,44 +111,70 @@ class FirstOrderPredictor(BasePredictor):
             pass
         reader.close()
 
-        source_image = resize(source_image, (256, 256))[..., :3]
         driving_video = [
             resize(frame, (256, 256))[..., :3] for frame in driving_video
         ]
+        results = []
+        for rec in bboxes:
+            face_image = source_image.copy()[rec[1]:rec[3], rec[0]:rec[2]]
+            face_image = resize(face_image, (256, 256))
 
-        if self.find_best_frame or self.best_frame is not None:
-            i = self.best_frame if self.best_frame is not None else self.find_best_frame_func(
-                source_image, driving_video)
+            if self.find_best_frame or self.best_frame is not None:
+                i = self.best_frame if self.best_frame is not None else self.find_best_frame_func(
+                    source_image, driving_video)
 
-            print("Best frame: " + str(i))
-            driving_forward = driving_video[i:]
-            driving_backward = driving_video[:(i + 1)][::-1]
-            predictions_forward = self.make_animation(
-                source_image,
-                driving_forward,
-                self.generator,
-                self.kp_detector,
-                relative=self.relative,
-                adapt_movement_scale=self.adapt_scale)
-            predictions_backward = self.make_animation(
-                source_image,
-                driving_backward,
-                self.generator,
-                self.kp_detector,
-                relative=self.relative,
-                adapt_movement_scale=self.adapt_scale)
-            predictions = predictions_backward[::-1] + predictions_forward[1:]
-        else:
-            predictions = self.make_animation(
-                source_image,
-                driving_video,
-                self.generator,
-                self.kp_detector,
-                relative=self.relative,
-                adapt_movement_scale=self.adapt_scale)
-            imageio.mimsave(os.path.join(self.output, 'result.mp4'),
-                            [img_as_ubyte(frame) for frame in predictions],
-                            fps=fps)
+                print("Best frame: " + str(i))
+                driving_forward = driving_video[i:]
+                driving_backward = driving_video[:(i + 1)][::-1]
+                predictions_forward = self.make_animation(
+                    face_image,
+                    driving_forward,
+                    self.generator,
+                    self.kp_detector,
+                    relative=self.relative,
+                    adapt_movement_scale=self.adapt_scale)
+                predictions_backward = self.make_animation(
+                    face_image,
+                    driving_backward,
+                    self.generator,
+                    self.kp_detector,
+                    relative=self.relative,
+                    adapt_movement_scale=self.adapt_scale)
+                predictions = predictions_backward[::-1] + predictions_forward[
+                    1:]
+            else:
+                predictions = self.make_animation(
+                    face_image,
+                    driving_video,
+                    self.generator,
+                    self.kp_detector,
+                    relative=self.relative,
+                    adapt_movement_scale=self.adapt_scale)
+
+            results.append({'rec': rec, 'predict': predictions})
+
+        out_frame = []
+        for i in range(len(driving_video)):
+            frame = source_image.copy()
+            for result in results:
+                x1, y1, x2, y2 = result['rec']
+                h = y2 - y1
+                w = x2 - x1
+                out = result['predict'][i] * 255.0
+                out = cv2.resize(out.astype(np.uint8), (x2 - x1, y2 - y1))
+                patch = np.zeros(frame.shape).astype('uint8')
+                patch[y1:y2, x1:x2] = out
+                mask = np.zeros(frame.shape[:2]).astype('uint8')
+                cx = int((x1 + x2) / 2)
+                cy = int((y1 + y2) / 2)
+                cv2.circle(mask, (cx, cy), math.ceil(h * self.ratio),
+                           (255, 255, 255), -1, 8, 0)
+                frame = cv2.copyTo(patch, mask, frame)
+
+            out_frame.append(frame)
+        imageio.mimsave(os.path.join(self.output, self.filename),
+                        [frame for frame in out_frame],
+                        fps=fps)
 
     def load_checkpoints(self, config, checkpoint_path):
 
@@ -220,3 +254,25 @@ class FirstOrderPredictor(BasePredictor):
                 norm = new_norm
                 frame_num = i
         return frame_num
+
+    def extract_bbox(self, image):
+        detector = face_detection.FaceAlignment(
+            face_detection.LandmarksType._2D, flip_input=False)
+
+        frame = [image]
+        predictions = detector.get_detections_for_image(np.array(frame))
+        results = []
+        h, w, _ = image.shape
+        for rect in predictions:
+            bh = rect[3] - rect[1]
+            bw = rect[2] - rect[0]
+            cy = rect[1] + int(bh / 2)
+            cx = rect[0] + int(bw / 2)
+            margin = max(bh, bw)
+            y1 = max(0, cy - margin)
+            x1 = max(0, cx - int(0.8 * margin))
+            y2 = min(h, cy + margin)
+            x2 = min(w, cx + int(0.8 * margin))
+            results.append([x1, y1, x2, y2])
+        boxes = np.array(results)
+        return boxes

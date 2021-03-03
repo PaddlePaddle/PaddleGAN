@@ -20,3 +20,4 @@ from .discriminator_animegan import AnimeDiscriminator
 from .discriminator_styleganv2 import StyleGANv2Discriminator
 from .syncnet import SyncNetColor
 from .wav2lip_disc_qual import Wav2LipDiscQual
+from .discriminator_starganv2 import StarGANv2Discriminator

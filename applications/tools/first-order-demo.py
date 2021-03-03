@@ -25,6 +25,9 @@ parser.add_argument("--weight_path",
 parser.add_argument("--source_image", type=str, help="path to source image")
 parser.add_argument("--driving_video", type=str, help="path to driving video")
 parser.add_argument("--output", default='output', help="path to output")
+parser.add_argument("--filename",
+                    default='result.mp4',
+                    help="filename to output")
 parser.add_argument("--relative",
                     dest="relative",
                     action="store_true",
@@ -49,6 +52,11 @@ parser.add_argument("--best_frame",
                     default=None,
                     help="Set frame to start from.")
 parser.add_argument("--cpu", dest="cpu", action="store_true", help="cpu mode.")
+parser.add_argument("--ratio",
+                    dest="ratio",
+                    type=float,
+                    default=0.4,
+                    help="margin ratio")
 
 parser.set_defaults(relative=False)
 parser.set_defaults(adapt_scale=False)
@@ -60,10 +68,12 @@ if __name__ == "__main__":
         paddle.set_device('cpu')
 
     predictor = FirstOrderPredictor(output=args.output,
+                                    filename=args.filename,
                                     weight_path=args.weight_path,
                                     config=args.config,
                                     relative=args.relative,
                                     adapt_scale=args.adapt_scale,
                                     find_best_frame=args.find_best_frame,
-                                    best_frame=args.best_frame)
+                                    best_frame=args.best_frame,
+                                    ratio=args.ratio)
     predictor.run(args.source_image, args.driving_video)
