@@ -25,8 +25,6 @@ parser.add_argument("--weight_path",
 parser.add_argument("--source_image", type=str, help="path to source image")
 parser.add_argument("--driving_video", type=str, help="path to driving video")
 parser.add_argument("--output", default='output', help="path to output")
-
-parser.add_argument("--output", default='output', help="path to output")
 parser.add_argument("--filename", default='result.mp4', help="filename to output")
 parser.add_argument("--relative",
                     dest="relative",
