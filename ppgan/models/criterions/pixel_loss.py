@@ -50,6 +50,29 @@ class L1Loss():
 
 
 @CRITERIONS.register()
+class CharbonnierLoss():
+    """Charbonnier Loss (L1).
+
+    Args:
+        
+
+    """
+    def __init__(self, eps=1e-12):
+        # super(CharbonnierLoss, self).__init__()
+        self.eps = eps
+        # self.reduction = reduction
+
+    def __call__(self, pred, target, **kwargs):
+        """Forward Function.
+
+        Args:
+            pred (Tensor): of shape (N, C, H, W). Predicted tensor.
+            target (Tensor): of shape (N, C, H, W). Ground truth tensor.
+        """
+        return paddle.sum(paddle.sqrt((pred - target) ** 2 + self.eps))
+
+
+@CRITERIONS.register()
 class MSELoss():
     """MSE (L2) loss.
 
