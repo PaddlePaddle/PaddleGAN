@@ -24,7 +24,7 @@ def video2frames(video_path, outpath, **kargs):
         return cmd_str
 
     ffmpeg = ['ffmpeg ', ' -y -loglevel ', ' error ']
-    vid_name = video_path.split(os.sep)[-1].split('.')[0]
+    vid_name = os.path.basename(video_path).split('.')[0]
     out_full_path = os.path.join(outpath, vid_name)
 
     if not os.path.exists(out_full_path):
