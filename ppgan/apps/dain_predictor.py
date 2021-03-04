@@ -78,7 +78,7 @@ class DAINPredictor(BasePredictor):
 
         out_path = video2frames(video_path, frame_path_input)
 
-        vidname = video_path.split(os.sep)[-1].split('.')[0]
+        vidname = os.path.basename(video_path).split('.')[0]
 
         frames = sorted(glob.glob(os.path.join(out_path, '*.png')))
 
