@@ -38,7 +38,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 * [Pixel2Pixel](./docs/en_US/tutorials/pix2pix_cyclegan.md)
 * [CycleGAN](./docs/en_US/tutorials/pix2pix_cyclegan.md)
 * [PSGAN](./docs/en_US/tutorials/psgan.md)
-* [First Order Motion Model](./docs/en_US/tutorials/motion_driving.md): **🤩Key Technology of "Mayiyahei🐜" (Face Swapping)🤩**
+* [First Order Motion Model](./docs/en_US/tutorials/motion_driving.md): **🤩Key Technology of "Mai-ha-hi🐜" (Face Swapping)🤩**
 * [FaceParsing](./docs/en_US/tutorials/face_parse.md)
 * [AnimeGANv2](./docs/en_US/tutorials/animegan.md)
 * [U-GAT-IT](./docs/en_US/tutorials/ugatit.md)
@@ -58,7 +58,8 @@ You can run those projects in the [AI Studio](https://aistudio.baidu.com/aistudi
 
 |Online Tutorial      |    link  |
 |--------------|-----------|
-|Face Swapping-"Mayiyahei" |[Click and Try](https://aistudio.baidu.com/aistudio/projectdetail/1586056?channelType=0&channel=0)|
+|Face Swapping-multi-personal "Mai-ha-hi" | [Click and Try](https://aistudio.baidu.com/aistudio/projectdetail/1603391) |
+|Face Swapping-"Mai-ha-hi" |[Click and Try](https://aistudio.baidu.com/aistudio/projectdetail/1586056?channelType=0&channel=0)|
 |Restore the video of Beijing hundreds years ago|[Click and Try](https://aistudio.baidu.com/aistudio/projectdetail/1161285)|
 |Face Swapping-When "Su Daqiang" sings "unravel" |[Click and Try](https://aistudio.baidu.com/aistudio/projectdetail/1048840)|
 
