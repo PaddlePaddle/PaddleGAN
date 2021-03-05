@@ -17,30 +17,34 @@ import os
 import random
 import numpy as np
 import scipy.io as scio
-import cv2 
+import cv2
 import paddle
 from paddle.io import Dataset, DataLoader
 from .builder import DATASETS
 
 logger = logging.getLogger(__name__)
 
+
 @DATASETS.register()
 class EDVRDataset(Dataset):
     """
-    获取一个训练样本：[5,3,W,H],label:GT[3,W,H]
+    Get a training sample:[5,3,W,H],label:GT[3,W,H]
     """
-    def __init__(self,mode,lq_folder,gt_folder,
-                     img_format="png",
-                     crop_size=256,
-                     interval_list=[1],
-                     random_reverse=False,
-                     number_frames=5,
-                     batch_size=32,
-                     use_flip=False,
-                     use_rot=False,
-                     buf_size=1024,
-                     scale = 4,
-                     fix_random_seed=False):
+    def __init__(self,
+                 mode,
+                 lq_folder,
+                 gt_folder,
+                 img_format="png",
+                 crop_size=256,
+                 interval_list=[1],
+                 random_reverse=False,
+                 number_frames=5,
+                 batch_size=32,
+                 use_flip=False,
+                 use_rot=False,
+                 buf_size=1024,
+                 scale=4,
+                 fix_random_seed=False):
         super(EDVRDataset, self).__init__()
         self.format = img_format
         self.mode = mode
@@ -48,7 +52,6 @@ class EDVRDataset(Dataset):
         self.interval_list = interval_list
         self.random_reverse = random_reverse
         self.number_frames = number_frames
-        # set batch size and file list
         self.batch_size = batch_size
         self.fileroot = lq_folder
         self.use_flip = use_flip
@@ -67,37 +70,46 @@ class EDVRDataset(Dataset):
 
         self._init_()
 
-    #初始化
     def _init_(self):
         logger.info('initialize reader ... ')
         print("initialize reader")
         self.filelist = []
         for video_name in os.listdir(self.fileroot):
-            if (self.mode == 'train') and (video_name in ['000', '011', '015', '020']):#这四段视频用来做验证集
+            if (self.mode == 'train') and (video_name in [
+                    '000', '011', '015', '020'
+            ]):  #These four videos are used as val
                 continue
-            for frame_name in os.listdir(os.path.join(self.fileroot, video_name)):
-                frame_idx = frame_name.split('.')[0] #拿到这一段视频的其中一帧。
+            for frame_name in os.listdir(os.path.join(self.fileroot,
+                                                      video_name)):
+                frame_idx = frame_name.split('.')[0]
                 video_frame_idx = video_name + '_' + str(frame_idx)
                 # for each item in self.filelist is like '010_00000015', '260_00000090'
-                self.filelist.append(video_frame_idx) 
+                self.filelist.append(video_frame_idx)
         if self.mode == 'test':
             self.filelist.sort()
         print(len(self.filelist))
 
     def __getitem__(self, index):
         item = self.filelist[index]
-        img_LQs, img_GT = self.get_sample_data(item,self.number_frames,self.interval_list,
-                             self.random_reverse,self.gtroot,self.fileroot,
-                             self.LR_input,self.crop_size,self.scale,
-                             self.use_flip,self.use_rot,self.mode)
-        return {
-                'lq': img_LQs,
-                'gt': img_GT,
-                'lq_path': self.filelist[index]
-            }
+        img_LQs, img_GT = self.get_sample_data(
+            item, self.number_frames, self.interval_list, self.random_reverse,
+            self.gtroot, self.fileroot, self.LR_input, self.crop_size,
+            self.scale, self.use_flip, self.use_rot, self.mode)
+        return {'lq': img_LQs, 'gt': img_GT, 'lq_path': self.filelist[index]}
 
-    def get_sample_data(self,item, number_frames, interval_list, random_reverse, gtroot, fileroot,
-                        LR_input, crop_size, scale, use_flip, use_rot, mode='train'):
+    def get_sample_data(self,
+                        item,
+                        number_frames,
+                        interval_list,
+                        random_reverse,
+                        gtroot,
+                        fileroot,
+                        LR_input,
+                        crop_size,
+                        scale,
+                        use_flip,
+                        use_rot,
+                        mode='train'):
         video_name = item.split('_')[0]
         frame_name = item.split('_')[1]
         if (mode == 'train') or (mode == 'valid'):
@@ -106,31 +118,42 @@ class EDVRDataset(Dataset):
                                                      interval_list=interval_list, \
                                                      random_reverse=random_reverse)
         elif mode == 'test':
-            ngb_frames, name_b = self.get_test_neighbor_frames(int(frame_name), number_frames)
+            ngb_frames, name_b = self.get_test_neighbor_frames(
+                int(frame_name), number_frames)
         else:
             raise NotImplementedError('mode {} not implemented'.format(mode))
         frame_name = name_b
-        img_GT = self.read_img(os.path.join(gtroot, video_name, frame_name + '.png'))
+        img_GT = self.read_img(
+            os.path.join(gtroot, video_name, frame_name + '.png'))
         frame_list = []
         for ngb_frm in ngb_frames:
             ngb_name = "%08d" % ngb_frm
-            img = self.read_img(os.path.join(fileroot, video_name, ngb_name + '.png'))
+            img = self.read_img(
+                os.path.join(fileroot, video_name, ngb_name + '.png'))
             frame_list.append(img)
         H, W, C = frame_list[0].shape
         # add random crop
         if (mode == 'train') or (mode == 'valid'):
             if LR_input:
-                LQ_size = crop_size // scale 
+                LQ_size = crop_size // scale
                 rnd_h = random.randint(0, max(0, H - LQ_size))
                 rnd_w = random.randint(0, max(0, W - LQ_size))
-                frame_list = [v[rnd_h:rnd_h + LQ_size, rnd_w:rnd_w + LQ_size, :] for v in frame_list]
+                frame_list = [
+                    v[rnd_h:rnd_h + LQ_size, rnd_w:rnd_w + LQ_size, :]
+                    for v in frame_list
+                ]
                 rnd_h_HR, rnd_w_HR = int(rnd_h * scale), int(rnd_w * scale)
-                img_GT = img_GT[rnd_h_HR:rnd_h_HR + crop_size, rnd_w_HR:rnd_w_HR + crop_size, :]
+                img_GT = img_GT[rnd_h_HR:rnd_h_HR + crop_size,
+                                rnd_w_HR:rnd_w_HR + crop_size, :]
             else:
                 rnd_h = random.randint(0, max(0, H - crop_size))
                 rnd_w = random.randint(0, max(0, W - crop_size))
-                frame_list = [v[rnd_h:rnd_h + crop_size, rnd_w:rnd_w + crop_size, :] for v in frame_list]
-                img_GT = img_GT[rnd_h:rnd_h + crop_size, rnd_w:rnd_w + crop_size, :]
+                frame_list = [
+                    v[rnd_h:rnd_h + crop_size, rnd_w:rnd_w + crop_size, :]
+                    for v in frame_list
+                ]
+                img_GT = img_GT[rnd_h:rnd_h + crop_size,
+                                rnd_w:rnd_w + crop_size, :]
 
         # add random flip and rotation
         frame_list.append(img_GT)
@@ -149,39 +172,46 @@ class EDVRDataset(Dataset):
         img_GT = np.transpose(img_GT, (2, 0, 1)).astype('float32')
         img_LQs = np.transpose(img_LQs, (0, 3, 1, 2)).astype('float32')
 
-        return img_LQs,img_GT
+        return img_LQs, img_GT
 
-    def get_neighbor_frames(self,frame_name, number_frames, interval_list, random_reverse, max_frame=99, bordermode=False):
+    def get_neighbor_frames(self,
+                            frame_name,
+                            number_frames,
+                            interval_list,
+                            random_reverse,
+                            max_frame=99,
+                            bordermode=False):
         center_frame_idx = int(frame_name)
-        half_N_frames = number_frames // 2  # 5//2 = 2
-        #### determine the neighbor frames
+        half_N_frames = number_frames // 2
         interval = random.choice(interval_list)
         if bordermode:
-            direction = 1  # 1: forward; 0: backward
+            direction = 1
             if random_reverse and random.random() < 0.5:
                 direction = random.choice([0, 1])
             if center_frame_idx + interval * (number_frames - 1) > max_frame:
                 direction = 0
             elif center_frame_idx - interval * (number_frames - 1) < 0:
                 direction = 1
-            # get the neighbor list
             if direction == 1:
                 neighbor_list = list(
-                    range(center_frame_idx, center_frame_idx + interval * number_frames, interval))
+                    range(center_frame_idx,
+                          center_frame_idx + interval * number_frames,
+                          interval))
             else:
                 neighbor_list = list(
-                    range(center_frame_idx, center_frame_idx - interval * number_frames, -interval))
+                    range(center_frame_idx,
+                          center_frame_idx - interval * number_frames,
+                          -interval))
             name_b = '{:08d}'.format(neighbor_list[0])
         else:
             # ensure not exceeding the borders
-            while (center_frame_idx + half_N_frames * interval >
-                   max_frame) or (center_frame_idx - half_N_frames * interval < 0):
-                # 如果超处边界，则随机选一帧作为center_frame
+            while (center_frame_idx + half_N_frames * interval > max_frame) or (
+                    center_frame_idx - half_N_frames * interval < 0):
                 center_frame_idx = random.randint(0, max_frame)
-            # get the neighbor list
             neighbor_list = list(
                 range(center_frame_idx - half_N_frames * interval,
-                      center_frame_idx + half_N_frames * interval + 1, interval))
+                      center_frame_idx + half_N_frames * interval + 1,
+                      interval))
             if random_reverse and random.random() < 0.5:
                 neighbor_list.reverse()
             name_b = '{:08d}'.format(neighbor_list[half_N_frames])
@@ -190,7 +220,7 @@ class EDVRDataset(Dataset):
 
         return neighbor_list, name_b
 
-    def read_img(self,path, size=None):
+    def read_img(self, path, size=None):
         """read image by cv2
         return: Numpy float32, HWC, BGR, [0,1]"""
         img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
@@ -202,7 +232,7 @@ class EDVRDataset(Dataset):
             img = img[:, :, :3]
         return img
 
-    def img_augment(self,img_list, hflip=True, rot=True):
+    def img_augment(self, img_list, hflip=True, rot=True):
         """horizontal flip OR rotate (0, 90, 180, 270 degrees)"""
         hflip = hflip and random.random() < 0.5
         vflip = rot and random.random() < 0.5
@@ -219,7 +249,7 @@ class EDVRDataset(Dataset):
 
         return [_augment(img) for img in img_list]
 
-    def get_test_neighbor_frames(self,crt_i, N, max_n=100, padding='new_info'):
+    def get_test_neighbor_frames(self, crt_i, N, max_n=100, padding='new_info'):
         """Generate an index list for reading N frames from a sequence of images
         Args:
             crt_i (int): current center index
