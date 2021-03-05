@@ -19,9 +19,8 @@ mel_step_size = 16
 class Wav2LipPredictor(BasePredictor):
     def __init__(self, args):
         self.args = args
-        if os.path.isfile(self.args.face) and self.args.face.split('.')[1] in [
-                'jpg', 'png', 'jpeg'
-        ]:
+        if os.path.isfile(self.args.face) and path.basename(
+                self.args.face).split('.')[1] in ['jpg', 'png', 'jpeg']:
             self.args.static = True
         self.img_size = 96
         makedirs('./temp', exist_ok=True)
@@ -147,7 +146,8 @@ class Wav2LipPredictor(BasePredictor):
             raise ValueError(
                 '--face argument must be a valid path to video/image file')
 
-        elif self.args.face.split('.')[1] in ['jpg', 'png', 'jpeg']:
+        elif path.basename(
+                self.args.face).split('.')[1] in ['jpg', 'png', 'jpeg']:
             full_frames = [cv2.imread(self.args.face)]
             fps = self.args.fps
 
