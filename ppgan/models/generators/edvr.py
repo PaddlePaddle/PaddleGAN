@@ -90,12 +90,12 @@ def MakeMultiBlocks(func, num_layers, nf=64):
     return Blocks
 
 
-class Predeblur_ResNet_Pyramid(nn.Layer):
+class PredeblurResNetPyramid(nn.Layer):
     def __init__(self, in_nf=3, nf=64, HR_in=False):
         '''
         HR_in: True if the inputs are high spatial size
         '''
-        super(Predeblur_ResNet_Pyramid, self).__init__()
+        super(PredeblurResNetPyramid, self).__init__()
         self.in_nf = in_nf
         self.nf = nf
         self.HR_in = True if HR_in else False
@@ -169,9 +169,9 @@ class Predeblur_ResNet_Pyramid(nn.Layer):
         return out
 
 
-class TSA_Fusion(nn.Layer):
+class TSAFusion(nn.Layer):
     def __init__(self, nf=64, nframes=5, center=2):
-        super(TSA_Fusion, self).__init__()
+        super(TSAFusion, self).__init__()
         self.nf = nf
         self.nframes = nframes
         self.center = center
@@ -365,9 +365,9 @@ class DCNPack(nn.Layer):
         return y
 
 
-class PCD_Align(nn.Layer):
+class PCDAlign(nn.Layer):
     def __init__(self, nf=64, groups=8):
-        super(PCD_Align, self).__init__()
+        super(PCDAlign, self).__init__()
         self.nf = nf
         self.groups = groups
         self.Leaky_relu = nn.LeakyReLU(negative_slope=0.1)
@@ -543,9 +543,9 @@ class EDVRNet(nn.Layer):
 
         self.Leaky_relu = nn.LeakyReLU(negative_slope=0.1)
         if self.predeblur:
-            self.pre_deblur = Predeblur_ResNet_Pyramid(in_nf=self.in_nf,
-                                                       nf=self.nf,
-                                                       HR_in=self.HR_in)
+            self.pre_deblur = PredeblurResNetPyramid(in_nf=self.in_nf,
+                                                     nf=self.nf,
+                                                     HR_in=self.HR_in)
             self.cov_1 = nn.Conv2D(in_channels=self.nf,
                                    out_channels=self.nf,
                                    kernel_size=1,
@@ -601,13 +601,13 @@ class EDVRNet(nn.Layer):
                                       padding=1)
 
         #PCD alignment module
-        self.PCDModule = PCD_Align(nf=self.nf, groups=self.groups)
+        self.PCDModule = PCDAlign(nf=self.nf, groups=self.groups)
 
-        #TSA_Fusion module
+        #TSA Fusion module
         if self.w_TSA:
-            self.TSAModule = TSA_Fusion(nf=self.nf,
-                                        nframes=self.nframes,
-                                        center=self.center)
+            self.TSAModule = TSAFusion(nf=self.nf,
+                                       nframes=self.nframes,
+                                       center=self.center)
         else:
             self.TSAModule = nn.Conv2D(in_channels=self.nframes * self.nf,
                                        out_channels=self.nf,
@@ -666,7 +666,7 @@ class EDVRNet(nn.Layer):
                 L1_fea = self.conv_first(L1_fea)
                 L1_fea = self.Leaky_relu(L1_fea)
 
-        # ===========================feature extraction and create Pyramid==========================
+        # feature extraction and create Pyramid
         L1_fea = self.feature_extractor(L1_fea)
         # L2
         L2_fea = self.fea_L2_conv1(L1_fea)
@@ -683,7 +683,7 @@ class EDVRNet(nn.Layer):
         L2_fea = L2_fea.reshape([-1, N, self.nf, H // 2, W // 2])
         L3_fea = L3_fea.reshape([-1, N, self.nf, H // 4, W // 4])
 
-        # =================================pcd align===============================
+        # pcd align
         ref_fea_l = [
             L1_fea[:, self.center, :, :, :], L2_fea[:, self.center, :, :, :],
             L3_fea[:, self.center, :, :, :]
@@ -696,14 +696,14 @@ class EDVRNet(nn.Layer):
             ]
             aligned_fea.append(self.PCDModule(nbr_fea_l, ref_fea_l))
 
-        # =================================TSA Fusion===============================
+        # TSA Fusion
         aligned_fea = paddle.stack(aligned_fea, axis=1)  # [B, N, C, H, W]
         fea = None
         if not self.w_TSA:
             aligned_fea = aligned_fea.reshape([B, -1, H, W])
         fea = self.TSAModule(aligned_fea)  # [B, N, C, H, W]
 
-        #===========================Reconstruct============================
+        #Reconstruct
         out = self.reconstructor(fea)
 
         out = self.upconv1(out)

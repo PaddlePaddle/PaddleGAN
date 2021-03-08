@@ -28,7 +28,7 @@ model:
 
 dataset:
   train:
-    name: EDVRDataset
+    name: REDSDataset
     mode: train
     gt_folder: data/REDS/train_sharp/X4
     lq_folder: data/REDS/train_sharp_bicubic/X4
@@ -47,7 +47,7 @@ dataset:
 
 
   test:
-    name: EDVRDataset
+    name: REDSDataset
     mode: test
     gt_folder: data/REDS/REDS4_test_sharp/X4
     lq_folder: data/REDS/REDS4_test_sharp_bicubic/X4

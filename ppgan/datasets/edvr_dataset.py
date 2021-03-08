@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 @DATASETS.register()
-class EDVRDataset(Dataset):
+class REDSDataset(Dataset):
     """
     Get a training sample:[5,3,W,H],label:GT[3,W,H]
     """
@@ -45,7 +45,7 @@ class EDVRDataset(Dataset):
                  buf_size=1024,
                  scale=4,
                  fix_random_seed=False):
-        super(EDVRDataset, self).__init__()
+        super(REDSDataset, self).__init__()
         self.format = img_format
         self.mode = mode
         self.crop_size = crop_size
