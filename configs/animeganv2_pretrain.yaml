@@ -1,7 +1,5 @@
 epochs: 2
 output_dir: output_dir
-con_weight: 1
-pretrain_ckpt: null
 
 model:
   name: AnimeGANV2PreTrainModel
@@ -10,6 +8,8 @@ model:
   discriminator:
     name: AnimeDiscriminator
   gan_mode: lsgan
+  pretrain_ckpt: null
+  con_weight: 1
 
 dataset:
   train:
@@ -42,30 +42,40 @@ dataset:
   test:
     name: SingleDataset
     dataroot: data/animedataset/test/test_photo
-    max_dataset_size: inf
-    direction: BtoA
-    input_nc: 3
-    output_nc: 3
-    serial_batches: False
-    pool_size: 50
-    transforms:
-      - name: Resize
-        size: [256, 256]
-        interpolation: "bicubic" #cv2.INTER_CUBIC
-      - name: Transpose
-      - name: Normalize
-        mean: [127.5, 127.5, 127.5]
-        std: [127.5, 127.5, 127.5]
+    num_workers: 0
+    batch_size: 1
+    preprocess:
+      - name: LoadImageFromFile
+        key: A
+      - name: Transforms
+        input_keys: [A]
+        pipeline:
+          - name: Resize
+            size: [256, 256]
+            interpolation: "bicubic" #cv2.INTER_CUBIC
+          - name: Transpose
+          - name: Normalize
+            mean: [127.5, 127.5, 127.5]
+            std: [127.5, 127.5, 127.5]
 
 optimizer:
-  name: Adam
-  beta1: 0.5
+  optimG:
+    name: Adam
+    net_names:
+      - netG
+    beta1: 0.5
+  optimD:
+    name: Adam
+    net_names:
+      - netD
+    beta1: 0.5
 
 lr_scheduler:
-  name: linear
+  name: LinearDecay
   learning_rate: 0.0002
   start_epoch: 100
   decay_epochs: 100
+  iters_per_epoch: 1
 
 log_config:
   interval: 100

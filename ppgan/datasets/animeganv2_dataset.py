@@ -15,6 +15,7 @@
 import cv2
 import numpy as np
 import os.path
+from easydict import EasyDict
 from .base_dataset import BaseDataset
 from .image_folder import ImageFolder
 
@@ -26,18 +27,22 @@ from .transforms.builder import build_transforms
 class AnimeGANV2Dataset(BaseDataset):
     """
     """
-    def __init__(self, cfg):
+    def __init__(self, **cfg):
         """Initialize this dataset class.
 
         Args:
             cfg (dict) -- stores all the experiment flags
         """
-        BaseDataset.__init__(self, cfg)
+        BaseDataset.__init__(self)
+        cfg = EasyDict(**cfg)
         self.style = cfg.style
+        self.root = cfg.dataroot
+        self.prepare_data_infos(cfg)
 
-        self.transform_real = build_transforms(self.cfg.transform_real)
-        self.transform_anime = build_transforms(self.cfg.transform_anime)
-        self.transform_gray = build_transforms(self.cfg.transform_gray)
+    def prepare_data_infos(self, cfg):
+        self.transform_real = build_transforms(cfg.transform_real)
+        self.transform_anime = build_transforms(cfg.transform_anime)
+        self.transform_gray = build_transforms(cfg.transform_gray)
 
         self.real_root = os.path.join(self.root, 'train_photo')
         self.anime_root = os.path.join(self.root, f'{self.style}', 'style')
@@ -89,6 +94,7 @@ class AnimeGANV2Dataset(BaseDataset):
         real_idx, anime_idx, smooth_idx = index
 
         return {
+            'A': self.real[real_idx],
             'real': self.real[real_idx],
             'anime': self.anime[anime_idx],
             'anime_gray': self.anime_gray[anime_idx],

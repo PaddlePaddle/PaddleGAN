@@ -1,20 +1,20 @@
 #  Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
 #
-#Licensed under the Apache License, Version 2.0 (the "License");
-#you may not use this file except in compliance with the License.
-#You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
 #    http://www.apache.org/licenses/LICENSE-2.0
 #
-#Unless required by applicable law or agreed to in writing, software
-#distributed under the License is distributed on an "AS IS" BASIS,
-#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#See the License for the specific language governing permissions and
-#limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import paddle
 from paddle import nn
-
+from easydict import EasyDict
 from .base_model import BaseModel
 from .builder import MODELS
 from .generators.builder import build_generator
@@ -28,58 +28,44 @@ from ..utils.filesystem import load
 
 @MODELS.register()
 class AnimeGANV2Model(BaseModel):
-    def __init__(self, cfg):
+    def __init__(self, **cfg):
         """Initialize the AnimeGANV2 class.
 
-        Parameters:
-            opt (config dict)-- stores all the experiment flags; needs to be a subclass of Dict
-        """
-        super(AnimeGANV2Model, self).__init__(cfg)
+    Parameters:
+        opt (config dict)-- stores all the experiment flags; needs to be a subclass of Dict
+    """
+        super(AnimeGANV2Model, self).__init__()
         # define networks (both generator and discriminator)
-        self.nets['netG'] = build_generator(cfg.model.generator)
+        self.cfg = EasyDict(**cfg)
+        self.nets['netG'] = build_generator(self.cfg.generator)
         init_weights(self.nets['netG'])
-
         # define a discriminator; conditional GANs need to take both input and output images; Therefore, #channels for D is input_nc + output_nc
         if self.is_train:
-            self.nets['netD'] = build_discriminator(cfg.model.discriminator)
+            self.nets['netD'] = build_discriminator(self.cfg.discriminator)
             init_weights(self.nets['netD'])
 
             self.pretrained = CaffeVGG19()
 
             self.losses = {}
             # define loss functions
-            self.criterionGAN = GANLoss(cfg.model.gan_mode)
+            self.criterionGAN = GANLoss(self.cfg.gan_mode)
             self.criterionL1 = nn.L1Loss()
             self.criterionHub = nn.SmoothL1Loss()
-
-            # build optimizers
-            self.build_lr_scheduler()
-            self.optimizers['optimizer_G'] = build_optimizer(
-                cfg.optimizer,
-                self.lr_scheduler,
-                parameter_list=self.nets['netG'].parameters())
-            self.optimizers['optimizer_D'] = build_optimizer(
-                cfg.optimizer,
-                self.lr_scheduler,
-                parameter_list=self.nets['netD'].parameters())
 
             if self.cfg.pretrain_ckpt:
                 state_dicts = load(self.cfg.pretrain_ckpt)
                 self.nets['netG'].set_state_dict(state_dicts['netG'])
                 print('Load pretrained generator from', self.cfg.pretrain_ckpt)
 
-    def set_input(self, input):
+    def setup_input(self, input):
         """Unpack input data from the dataloader and perform necessary pre-processing steps.
 
-        """
-        if self.is_train:
-            self.real = paddle.to_tensor(input['real'])
+    """
+        self.real = paddle.to_tensor(input['A'])
+        if 'anime' in input:
             self.anime = paddle.to_tensor(input['anime'])
             self.anime_gray = paddle.to_tensor(input['anime_gray'])
             self.smooth_gray = paddle.to_tensor(input['smooth_gray'])
-        else:
-            self.real = paddle.to_tensor(input['A'])
-            self.image_paths = input['A_paths']
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
@@ -191,19 +177,19 @@ class AnimeGANV2Model(BaseModel):
         self.losses['col_loss'] = col_loss
         self.losses['tv_loss'] = tv_loss
 
-    def optimize_parameters(self):
+    def train_iter(self, optimizers=None):
         # compute fake images: G(A)
         self.forward()
 
         # update D
-        self.optimizers['optimizer_D'].clear_grad()
+        optimizers['optimD'].clear_grad()
         self.backward_D()
-        self.optimizers['optimizer_D'].step()
+        optimizers['optimD'].step()
 
         # update G
-        self.optimizers['optimizer_G'].clear_grad()
+        optimizers['optimG'].clear_grad()
         self.backward_G()
-        self.optimizers['optimizer_G'].step()
+        optimizers['optimG'].step()
 
 
 @MODELS.register()
@@ -216,9 +202,9 @@ class AnimeGANV2PreTrainModel(AnimeGANV2Model):
         loss.backward()
         self.losses['init_c_loss'] = init_c_loss
 
-    def optimize_parameters(self):
+    def train_iter(self, optimizers=None):
         self.forward()
         # update G
-        self.optimizers['optimizer_G'].clear_grad()
+        optimizers['optimD'].clear_grad()
         self.backward_G()
-        self.optimizers['optimizer_G'].step()
+        optimizers['optimD'].step()
