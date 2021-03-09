@@ -64,8 +64,6 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 |表情动作迁移-当苏大强唱起unravel |[点击体验](https://aistudio.baidu.com/aistudio/projectdetail/1048840)|
 
 
-
-
 ## 效果展示
 
 

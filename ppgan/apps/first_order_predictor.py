@@ -154,6 +154,7 @@ class FirstOrderPredictor(BasePredictor):
             results.append({'rec': rec, 'predict': predictions})
 
         out_frame = []
+
         for i in range(len(driving_video)):
             frame = source_image.copy()
             for result in results:
@@ -162,14 +163,17 @@ class FirstOrderPredictor(BasePredictor):
                 w = x2 - x1
                 out = result['predict'][i] * 255.0
                 out = cv2.resize(out.astype(np.uint8), (x2 - x1, y2 - y1))
-                patch = np.zeros(frame.shape).astype('uint8')
-                patch[y1:y2, x1:x2] = out
-                mask = np.zeros(frame.shape[:2]).astype('uint8')
-                cx = int((x1 + x2) / 2)
-                cy = int((y1 + y2) / 2)
-                cv2.circle(mask, (cx, cy), math.ceil(h * self.ratio),
-                           (255, 255, 255), -1, 8, 0)
-                frame = cv2.copyTo(patch, mask, frame)
+                if len(results) == 1:
+                    frame[y1:y2, x1:x2] = out
+                else:
+                    patch = np.zeros(frame.shape).astype('uint8')
+                    patch[y1:y2, x1:x2] = out
+                    mask = np.zeros(frame.shape[:2]).astype('uint8')
+                    cx = int((x1 + x2) / 2)
+                    cy = int((y1 + y2) / 2)
+                    cv2.circle(mask, (cx, cy), math.ceil(h * self.ratio),
+                               (255, 255, 255), -1, 8, 0)
+                    frame = cv2.copyTo(patch, mask, frame)
 
             out_frame.append(frame)
         imageio.mimsave(os.path.join(self.output, self.filename),
