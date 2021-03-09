@@ -19,7 +19,7 @@ Note: command above will install paddle with cuda10.2, if your installed cuda is
 
 ```
 # only support Python3
-python3 -m pip install --upgrade ppgan==2.0.0b0
+python3 -m pip install --upgrade ppgan
 ```
 
 Download the examples and configuration files via cloning the source code:

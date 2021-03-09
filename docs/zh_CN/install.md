@@ -18,7 +18,7 @@ pip install -U paddlepaddle-gpu==2.0.0
 ##### 2.1 通过Pip安裝
 ```
 # only support Python3
-python3 -m pip install --upgrade ppgan==2.0.0b0
+python3 -m pip install --upgrade ppgan
 ```
 
 下载示例和配置文件:
