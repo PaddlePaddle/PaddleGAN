@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 @DATASETS.register()
 class REDSDataset(Dataset):
     """
-    Get a training sample:[5,3,W,H],label:GT[3,W,H]
+    REDS dataset for EDVR model
     """
     def __init__(self,
                  mode,
@@ -90,6 +90,12 @@ class REDSDataset(Dataset):
         print(len(self.filelist))
 
     def __getitem__(self, index):
+        """Get training sample
+
+        return: lq:[5,3,W,H],
+                gt:[3,W,H],
+                lq_path:str
+        """
         item = self.filelist[index]
         img_LQs, img_GT = self.get_sample_data(
             item, self.number_frames, self.interval_list, self.random_reverse,
@@ -222,7 +228,9 @@ class REDSDataset(Dataset):
 
     def read_img(self, path, size=None):
         """read image by cv2
-        return: Numpy float32, HWC, BGR, [0,1]"""
+
+        return: Numpy float32, HWC, BGR, [0,1]
+        """
         img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
         img = img.astype(np.float32) / 255.
         if img.ndim == 2:
@@ -233,7 +241,8 @@ class REDSDataset(Dataset):
         return img
 
     def img_augment(self, img_list, hflip=True, rot=True):
-        """horizontal flip OR rotate (0, 90, 180, 270 degrees)"""
+        """horizontal flip OR rotate (0, 90, 180, 270 degrees)
+        """
         hflip = hflip and random.random() < 0.5
         vflip = rot and random.random() < 0.5
         rot90 = rot and random.random() < 0.5
@@ -300,4 +309,6 @@ class REDSDataset(Dataset):
         return return_l, name_b
 
     def __len__(self):
+        """Return the total number of images in the dataset.
+        """
         return len(self.filelist)

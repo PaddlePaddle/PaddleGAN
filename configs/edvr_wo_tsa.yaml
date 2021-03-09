@@ -71,6 +71,8 @@ lr_scheduler:
 
 optimizer:
   name: Adam
+  # add parameters of net_name to optim
+  # name should in self.nets
   net_names:
     - generator
   beta1: 0.9

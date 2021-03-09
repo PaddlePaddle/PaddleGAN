@@ -84,6 +84,15 @@ class ResidualBlockNoBN(nn.Layer):
 
 
 def MakeMultiBlocks(func, num_layers, nf=64):
+    """Make layers by stacking the same blocks.
+
+    Args:
+        func (nn.Layer): nn.Layer class for basic block.
+        num_layers (int): number of blocks.
+
+    Returns:
+        nn.Sequential: Stacked blocks in nn.Sequential.
+    """
     Blocks = nn.Sequential()
     for i in range(num_layers):
         Blocks.add_sublayer('block%d' % i, func(nf))
@@ -91,10 +100,14 @@ def MakeMultiBlocks(func, num_layers, nf=64):
 
 
 class PredeblurResNetPyramid(nn.Layer):
+    """Pre-dublur module.
+
+    Args:
+        in_nf (int): Channel number of input image. Default: 3.
+        nf (int): Channel number of intermediate features. Default: 64.
+        HR_in (bool): Whether the input has high resolution. Default: False.
+    """
     def __init__(self, in_nf=3, nf=64, HR_in=False):
-        '''
-        HR_in: True if the inputs are high spatial size
-        '''
         super(PredeblurResNetPyramid, self).__init__()
         self.in_nf = in_nf
         self.nf = nf
@@ -170,6 +183,19 @@ class PredeblurResNetPyramid(nn.Layer):
 
 
 class TSAFusion(nn.Layer):
+    """Temporal Spatial Attention (TSA) fusion module.
+
+    Temporal: Calculate the correlation between center frame and
+        neighboring frames;
+    Spatial: It has 3 pyramid levels, the attention is similar to SFT.
+        (SFT: Recovering realistic texture in image super-resolution by deep
+            spatial feature transform.)
+
+    Args:
+        nf (int): Channel number of middle features. Default: 64.
+        nframes (int): Number of frames. Default: 5.
+        center (int): The index of center frame. Default: 2.
+    """
     def __init__(self, nf=64, nframes=5, center=2):
         super(TSAFusion, self).__init__()
         self.nf = nf
@@ -254,6 +280,13 @@ class TSAFusion(nn.Layer):
                                     align_mode=0)
 
     def forward(self, aligned_fea):
+        """
+        Args:
+            aligned_feat (Tensor): Aligned features with shape (b, n, c, h, w).
+
+        Returns:
+            Tensor: Features after TSA with the shape (b, c, h, w).
+        """
         B, N, C, H, W = aligned_fea.shape
         x_center = aligned_fea[:, self.center, :, :, :]
         emb_rf = self.tAtt_2(x_center)
@@ -316,6 +349,11 @@ class TSAFusion(nn.Layer):
 
 
 class DCNPack(nn.Layer):
+    """Modulated deformable conv for deformable alignment.
+
+    Ref:
+        Delving Deep into Deformable Alignment in Video Super-Resolution.
+    """
     def __init__(self,
                  num_filters=64,
                  kernel_size=3,
@@ -366,6 +404,16 @@ class DCNPack(nn.Layer):
 
 
 class PCDAlign(nn.Layer):
+    """Alignment module using Pyramid, Cascading and Deformable convolution
+    (PCD). It is used in EDVR.
+
+    Ref:
+        EDVR: Video Restoration with Enhanced Deformable Convolutional Networks
+
+    Args:
+        nf (int): Channel number of middle features. Default: 64.
+        groups (int): Deformable groups. Defaults: 8.
+    """
     def __init__(self, nf=64, groups=8):
         super(PCDAlign, self).__init__()
         self.nf = nf
@@ -375,6 +423,11 @@ class PCDAlign(nn.Layer):
                                     mode="bilinear",
                                     align_corners=False,
                                     align_mode=0)
+        # Pyramid has three levels:
+        # L3: level 3, 1/4 spatial size
+        # L2: level 2, 1/2 spatial size
+        # L1: level 1, original spatial size
+
         # L3
         self.PCD_Align_L3_offset_conv1 = nn.Conv2D(in_channels=nf * 2,
                                                    out_channels=nf,
@@ -461,6 +514,19 @@ class PCDAlign(nn.Layer):
                                              deformable_groups=groups)
 
     def forward(self, nbr_fea_l, ref_fea_l):
+        """Align neighboring frame features to the reference frame features.
+
+        Args:
+            nbr_fea_l (list[Tensor]): Neighboring feature list. It
+                contains three pyramid levels (L1, L2, L3),
+                each with shape (b, c, h, w).
+            ref_fea_l (list[Tensor]): Reference feature list. It
+                contains three pyramid levels (L1, L2, L3),
+                each with shape (b, c, h, w).
+
+        Returns:
+            Tensor: Aligned features.
+        """
         #L3
         L3_offset = paddle.concat([nbr_fea_l[2], ref_fea_l[2]], axis=1)
         L3_offset = self.PCD_Align_L3_offset_conv1(L3_offset)
@@ -513,6 +579,27 @@ class PCDAlign(nn.Layer):
 
 @GENERATORS.register()
 class EDVRNet(nn.Layer):
+    """EDVR network structure for video super-resolution.
+
+    Now only support X4 upsampling factor.
+    Paper:
+        EDVR: Video Restoration with Enhanced Deformable Convolutional Networks
+
+    Args:
+        in_nf (int): Channel number of input image. Default: 3.
+        out_nf (int): Channel number of output image. Default: 3.
+        scale_factor (int): Scale factor from input image to output image. Default: 4.
+        nf (int): Channel number of intermediate features. Default: 64.
+        nframes (int): Number of input frames. Default: 5.
+        groups (int): Deformable groups. Defaults: 8.
+        front_RBs (int): Number of blocks for feature extraction. Default: 5.
+        back_RBs (int): Number of blocks for reconstruction. Default: 10.
+        center (int): The index of center frame. Frame counting from 0. Default: None.
+        predeblur (bool): Whether has predeblur module. Default: False.
+        HR_in (bool): Whether the input has high resolution. Default: False.
+        with_tsa (bool): Whether has TSA module. Default: True.
+        TSA_only (bool): Whether only use TSA module. Default: False.
+    """
     def __init__(self,
                  in_nf=3,
                  out_nf=3,
@@ -644,6 +731,13 @@ class EDVRNet(nn.Layer):
                                     align_mode=0)
 
     def forward(self, x):
+        """
+        Args:
+            x (Tensor): Input features with shape (b, n, c, h, w).
+
+        Returns:
+            Tensor: Features after EDVR with the shape (b, c, scale_factor*h, scale_factor*w).
+        """
         B, N, C, H, W = x.shape
         x_center = x[:, self.center, :, :, :]
         L1_fea = x.reshape([-1, C, H, W])  #[B*N，C,W,H]

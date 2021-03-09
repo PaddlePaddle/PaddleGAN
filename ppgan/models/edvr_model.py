@@ -23,7 +23,18 @@ from ..modules.init import reset_parameters
 
 @MODELS.register()
 class EDVRModel(BaseSRModel):
+    """EDVR Model.
+
+    Paper: EDVR: Video Restoration with Enhanced Deformable Convolutional Networks.
+    """
     def __init__(self, generator, tsa_iter, pixel_criterion=None):
+        """Initialize the EDVR class.
+
+        Args:
+            generator (dict): config of generator.
+            tsa_iter (dict): config of tsa_iter.
+            pixel_criterion (dict): config of pixel criterion.
+        """
         super(EDVRModel, self).__init__(generator, pixel_criterion)
         self.tsa_iter = tsa_iter
         self.current_iter = 1

@@ -54,7 +54,7 @@ class CharbonnierLoss():
     """Charbonnier Loss (L1).
 
     Args:
-
+        eps (float): Default: 1e-12.
 
     """
     def __init__(self, eps=1e-12):
