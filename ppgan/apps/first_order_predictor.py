@@ -46,7 +46,8 @@ class FirstOrderPredictor(BasePredictor):
                  find_best_frame=False,
                  best_frame=None,
                  ratio=1.0,
-                 filename='result.mp4'):
+                 filename='result.mp4',
+                 face_detector='sfd'):
         if config is not None and isinstance(config, str):
             self.cfg = yaml.load(config, Loader=yaml.SafeLoader)
         elif isinstance(config, dict):
@@ -95,6 +96,7 @@ class FirstOrderPredictor(BasePredictor):
         self.find_best_frame = find_best_frame
         self.best_frame = best_frame
         self.ratio = ratio
+        self.face_detector = face_detector
         self.generator, self.kp_detector = self.load_checkpoints(
             self.cfg, self.weight_path)
 
@@ -257,7 +259,9 @@ class FirstOrderPredictor(BasePredictor):
 
     def extract_bbox(self, image):
         detector = face_detection.FaceAlignment(
-            face_detection.LandmarksType._2D, flip_input=False)
+            face_detection.LandmarksType._2D,
+            flip_input=False,
+            face_detector=self.face_detector)
 
         frame = [image]
         predictions = detector.get_detections_for_image(np.array(frame))

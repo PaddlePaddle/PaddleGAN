@@ -97,6 +97,12 @@ parser.add_argument(
     action='store_true',
     help='Prevent smoothing face detections over a short temporal window')
 parser.add_argument("--cpu", dest="cpu", action="store_true", help="cpu mode.")
+parser.add_argument(
+    "--face_detector",
+    dest="face_detector",
+    type=str,
+    default='sfd',
+    help="face detector to be used, can choose s3fd or blazeface")
 
 if __name__ == "__main__":
     args = parser.parse_args()
