@@ -7,11 +7,8 @@ from ..core import FaceDetector
 from .net_blazeface import BlazeFace
 from .detect import *
 
-models_urls = {
-    'blazeface_weights':
-    'https://paddlegan.bj.bcebos.com/models/blazeface.pdparams',
-    'blazeface_anchors': 'https://paddlegan.bj.bcebos.com/models/anchors.npy'
-}
+blazeface_weights = 'https://paddlegan.bj.bcebos.com/models/blazeface.pdparams'
+blazeface_anchors = 'https://paddlegan.bj.bcebos.com/models/anchors.npy'
 
 
 class BlazeFaceDetector(FaceDetector):
@@ -25,11 +22,10 @@ class BlazeFaceDetector(FaceDetector):
 
         # Initialise the face detector
         if path_to_detector is None:
-            model_weights_path = get_weights_path_from_url(
-                models_urls['blazeface_weights'])
+            model_weights_path = get_weights_path_from_url(blazeface_weights)
             model_weights = paddle.load(model_weights_path)
             model_anchors = np.load(
-                get_wwights_path_from_url(models_urls['blazeface_anchors']))
+                get_weights_path_from_url(blazeface_anchors))
         else:
             model_weights = paddle.load(path_to_detector)
             model_anchors = np.load(path_to_anchor)
