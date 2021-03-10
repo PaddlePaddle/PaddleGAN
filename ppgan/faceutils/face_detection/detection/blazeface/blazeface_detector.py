@@ -9,9 +9,8 @@ from .detect import *
 
 models_urls = {
     'blazeface_weights':
-    'https://github.com/hollance/BlazeFace-PyTorch/blob/master/blazeface.pth?raw=true',
-    'blazeface_anchors':
-    'https://github.com/hollance/BlazeFace-PyTorch/blob/master/anchors.npy?raw=true'
+    'https://paddlegan.bj.bcebos.com/models/blazeface.pdparams',
+    'blazeface_anchors': 'https://paddlegan.bj.bcebos.com/models/anchors.npy'
 }
 
 
