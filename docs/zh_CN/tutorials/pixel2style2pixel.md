@@ -27,7 +27,7 @@ Pixel2Style2Pixel使用相当大的模型对图像进行编码，将图像编码
 
 ```
 cd applications/
-python -u tools/styleganv2.py \
+python -u tools/pixel2style2pixel.py \
        --input_image <替换为输入的图像路径> \
        --output_path <替换为生成图片存放的文件夹> \
        --weight_path <替换为你的预训练模型路径> \
