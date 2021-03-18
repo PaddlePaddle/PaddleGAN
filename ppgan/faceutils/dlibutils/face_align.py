@@ -16,6 +16,7 @@ import cv2
 import math
 import numpy as np
 from PIL import Image
+from paddle.utils import try_import
 
 from .dlib_utils import detect, landmarks
 
@@ -40,14 +41,23 @@ def get_max_face(faces):
         return faces[0]
 
     else:
+        dlib = try_import('dlib')
         # find max face
         areas = []
-        for face in faces:
-            left = face.rect.left()
-            top = face.rect.top()
-            right = face.rect.right()
-            bottom = face.rect.bottom()
-            areas.append((bottom - top) * (right - left))
+        if dlib.__version__ != '19.21.1':
+            for face in faces:
+                left = face.rect.left()
+                top = face.rect.top()
+                right = face.rect.right()
+                bottom = face.rect.bottom()
+                areas.append((bottom - top) * (right - left))
+        else:
+            for face in faces:
+                left = face.left()
+                top = face.top()
+                right = face.right()
+                bottom = face.bottom()
+                areas.append((bottom - top) * (right - left))
         max_face_index = np.argmax(areas)
         return faces[max_face_index]
 
