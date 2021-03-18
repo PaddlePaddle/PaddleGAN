@@ -23,7 +23,7 @@ from .dlib_utils import detect, landmarks
 def align_crop(image: Image):
     faces = detect(image)
 
-    assert len(faces) > 0, 'can not detect face!!!'
+    assert len(faces) > 0, 'Cannot detect face!!!'
 
     face = get_max_face(faces)
     lms = landmarks(image, face)
