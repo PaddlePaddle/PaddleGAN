@@ -46,6 +46,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 * [Wav2Lip](./docs/en_US/tutorials/wav2lip.md)
 * [Super_Resolution](./docs/en_US/tutorials/super_resolution.md)
 * [StyleGAN2](./docs/en_US/tutorials/styleganv2.md)
+* [Pixel2Style2Pixel](./docs/en_US/tutorials/pixel2style2pixel.md)
 
 
 ## Composite Application
