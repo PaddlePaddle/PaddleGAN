@@ -36,7 +36,9 @@ class Wav2LipPredictor(BasePredictor):
 
     def face_detect(self, images):
         detector = face_detection.FaceAlignment(
-            face_detection.LandmarksType._2D, flip_input=False)
+            face_detection.LandmarksType._2D,
+            flip_input=False,
+            face_detector=self.args.face_detector)
 
         batch_size = self.args.face_det_batch_size
 
