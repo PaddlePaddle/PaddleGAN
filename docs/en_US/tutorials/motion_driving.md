@@ -31,7 +31,7 @@ python -u tools/first-order-demo.py  \
      --driving_video ../docs/imgs/fom_dv.mp4 \
      --source_image ../docs/imgs/fom_source_image.png \
      --ratio 0.4 \
-     --relative --adapt_scalae
+     --relative --adapt_scale
 ```
 
 **params:**
