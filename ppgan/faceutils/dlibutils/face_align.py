@@ -23,7 +23,7 @@ from .dlib_utils import detect, landmarks
 def align_crop(image: Image):
     faces = detect(image)
 
-    assert len(faces) > 0, 'can not detect face!!!'
+    assert len(faces) > 0, 'Cannot detect face!!!'
 
     face = get_max_face(faces)
     lms = landmarks(image, face)
@@ -43,10 +43,10 @@ def get_max_face(faces):
         # find max face
         areas = []
         for face in faces:
-            left = face.rect.left()
-            top = face.rect.top()
-            right = face.rect.right()
-            bottom = face.rect.bottom()
+            left = face.left()
+            top = face.top()
+            right = face.right()
+            bottom = face.bottom()
             areas.append((bottom - top) * (right - left))
         max_face_index = np.argmax(areas)
         return faces[max_face_index]

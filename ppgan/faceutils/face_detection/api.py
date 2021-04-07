@@ -80,7 +80,7 @@ class FaceAlignment:
             d = d[0]
             d = np.clip(d, 0, None)
 
-            x1, y1, x2, y2 = map(int, d[:-1])
+            x1, y1, x2, y2 = map(int, d[:4])
             results.append((x1, y1, x2, y2))
 
         return results
