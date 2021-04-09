@@ -13,6 +13,34 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 [![License](https://img.shields.io/badge/license-Apache%202-red.svg)](LICENSE)![python version](https://img.shields.io/badge/python-3.6+-orange.svg)
 
+
+
+## 生成对抗网络七日打卡营🔥🔥🔥
+
+**4月15日~4月22日【原理+实战=7天学会GAN】**🤓 
+
+**百度飞桨一线高级研发工程师团队亲自直播授课，连续7天最强干货，带大家逐步掌握GAN常用模型脉络及代码！**
+
+讲师团队：百度高级研发工程师***4**
+
+助教团队：深度学习领域平均码龄超过**5**年的高阶开发者***7**
+
+**更有万元豪奖、百度实习内推机会等你来拿**🎁🎈🎊
+
+⌨️**一等奖 1 名**：HHKB Professional静电容蓝牙键盘
+
+🖥**二等奖 2 名**：Kindle paperwhite 电子阅读器
+
+📞**三等奖 6 名**：小度无线智能耳机
+
+📘**优秀奖 10 名**：纸质书《Generative Deep Learning》+《Deep Learning》
+
+**还在等什么，快来点击报名吧：https://aistudio.baidu.com/aistudio/course/introduce/16651**
+
+**直播链接：http://live.bilibili.com/21689802**
+
+**直播日期：4月15日～4月20日直播授课，4月22日结营直播**
+
 ## 近期贡献者
 
 [![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/0)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/0)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/1)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/1)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/2)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/2)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/3)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/3)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/4)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/4)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/5)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/5)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/6)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/6)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/7)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/7)
