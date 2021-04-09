@@ -57,6 +57,12 @@ parser.add_argument("--ratio",
                     type=float,
                     default=0.4,
                     help="margin ratio")
+parser.add_argument(
+    "--face_detector",
+    dest="face_detector",
+    type=str,
+    default='sfd',
+    help="face detector to be used, can choose s3fd or blazeface")
 
 parser.set_defaults(relative=False)
 parser.set_defaults(adapt_scale=False)
@@ -75,5 +81,6 @@ if __name__ == "__main__":
                                     adapt_scale=args.adapt_scale,
                                     find_best_frame=args.find_best_frame,
                                     best_frame=args.best_frame,
-                                    ratio=args.ratio)
+                                    ratio=args.ratio,
+                                    face_detector=args.face_detector)
     predictor.run(args.source_image, args.driving_video)

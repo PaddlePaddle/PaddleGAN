@@ -324,3 +324,10 @@ def init_weights(net,
     logger = get_logger()
     logger.debug('initialize network with %s' % init_type)
     net.apply(init_func)  # apply the initialization function <init_func>
+
+def reset_parameters(m):
+    kaiming_uniform_(m.weight, a=math.sqrt(5))
+    if m.bias is not None:
+        fan_in, _ = _calculate_fan_in_and_fan_out(m.weight)
+        bound = 1 / math.sqrt(fan_in)
+        uniform_(m.bias, -bound, bound)
