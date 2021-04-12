@@ -62,7 +62,7 @@ dataset:
   train:
     name: FirstOrderDataset
     phase: train
-    dataroot: /home/paddle/PaddleGAN/data/first_order/fashion/
+    dataroot: data/first_order/fashion/
     num_repeats: 50
     time_flip: True
     batch_size: 8
