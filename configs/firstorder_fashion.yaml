@@ -1,4 +1,3 @@
-# config is transformed from https://github.com/AliaksandrSiarohin/first-order-model/tree/master/config
 epochs: 150
 output_dir: output_dir
 
