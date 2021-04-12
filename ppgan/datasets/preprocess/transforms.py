@@ -355,3 +355,59 @@ class ResizeToScale(T.BaseTransform):
 
     def _apply_image(self, image):
         return F.resize(image, self.params['taget_size'], self.interpolation)
+
+
+@TRANSFORMS.register()
+class PairedColorJitter(T.BaseTransform):
+    def __init__(self,
+                 brightness=0,
+                 contrast=0,
+                 saturation=0,
+                 hue=0,
+                 keys=None):
+        super().__init__(keys=keys)
+        self.brightness = T.transforms._check_input(brightness, 'brightness')
+        self.contrast = T.transforms._check_input(contrast, 'contrast')
+        self.saturation = T.transforms._check_input(saturation, 'saturation')
+        self.hue = T.transforms._check_input(hue,
+                                             'hue',
+                                             center=0,
+                                             bound=(-0.5, 0.5),
+                                             clip_first_on_zero=False)
+
+    def _get_params(self, input):
+        """Get a randomized transform to be applied on image.
+        Arguments are same as that of __init__.
+        Returns:
+            Transform which randomly adjusts brightness, contrast and
+            saturation in a random order.
+        """
+        transforms = []
+
+        if self.brightness is not None:
+            brightness = random.uniform(self.brightness[0], self.brightness[1])
+            f = lambda img: F.adjust_brightness(img, brightness)
+            transforms.append(f)
+
+        if self.contrast is not None:
+            contrast = random.uniform(self.contrast[0], self.contrast[1])
+            f = lambda img: F.adjust_contrast(img, contrast)
+            transforms.append(f)
+
+        if self.saturation is not None:
+            saturation = random.uniform(self.saturation[0], self.saturation[1])
+            f = lambda img: F.adjust_saturation(img, saturation)
+            transforms.append(f)
+
+        if self.hue is not None:
+            hue = random.uniform(self.hue[0], self.hue[1])
+            f = lambda img: F.adjust_hue(img, hue)
+            transforms.append(f)
+
+        random.shuffle(transforms)
+        return transforms
+
+    def _apply_image(self, img):
+        for f in self.params:
+            img = f(img)
+        return img
