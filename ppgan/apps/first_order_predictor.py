@@ -49,12 +49,13 @@ class FirstOrderPredictor(BasePredictor):
                  filename='result.mp4',
                  face_detector='sfd'):
         if config is not None and isinstance(config, str):
-            self.cfg = yaml.load(config, Loader=yaml.SafeLoader)
+            with open(config) as f:
+                self.cfg = yaml.load(f, Loader=yaml.SafeLoader)
         elif isinstance(config, dict):
             self.cfg = config
         elif config is None:
             self.cfg = {
-                'model_params': {
+                'model': {
                     'common_params': {
                         'num_kp': 10,
                         'num_channels': 3,
@@ -185,11 +186,12 @@ class FirstOrderPredictor(BasePredictor):
     def load_checkpoints(self, config, checkpoint_path):
 
         generator = OcclusionAwareGenerator(
-            **config['model_params']['generator_params'],
-            **config['model_params']['common_params'])
+            **config['model']['generator']['generator_cfg'],
+            **config['model']['common_params'])
 
-        kp_detector = KPDetector(**config['model_params']['kp_detector_params'],
-                                 **config['model_params']['common_params'])
+        kp_detector = KPDetector(
+            **config['model']['generator']['kp_detector_cfg'],
+            **config['model']['common_params'])
 
         checkpoint = paddle.load(self.weight_path)
         generator.set_state_dict(checkpoint['generator'])
