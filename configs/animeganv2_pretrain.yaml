@@ -1,6 +1,6 @@
 epochs: 2
 output_dir: output_dir
-
+s
 model:
   name: AnimeGANV2PreTrainModel
   generator:
