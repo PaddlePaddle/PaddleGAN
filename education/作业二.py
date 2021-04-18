@@ -206,3 +206,4 @@ for pass_id in range(100):
                 print(IOError)
     paddle.save(netG.state_dict(), "work/generator.params")
     
+AISTUDIO ID:s65553696
