@@ -61,24 +61,26 @@ class FirstOrderPredictor(BasePredictor):
                         'num_channels': 3,
                         'estimate_jacobian': True
                     },
-                    'kp_detector_params': {
-                        'temperature': 0.1,
-                        'block_expansion': 32,
-                        'max_features': 1024,
-                        'scale_factor': 0.25,
-                        'num_blocks': 5
-                    },
-                    'generator_params': {
-                        'block_expansion': 64,
-                        'max_features': 512,
-                        'num_down_blocks': 2,
-                        'num_bottleneck_blocks': 6,
-                        'estimate_occlusion_map': True,
-                        'dense_motion_params': {
-                            'block_expansion': 64,
+                    'generator': {
+                        'kp_detector_cfg': {
+                            'temperature': 0.1,
+                            'block_expansion': 32,
                             'max_features': 1024,
-                            'num_blocks': 5,
-                            'scale_factor': 0.25
+                            'scale_factor': 0.25,
+                            'num_blocks': 5
+                        },
+                        'generator_cfg': {
+                            'block_expansion': 64,
+                            'max_features': 512,
+                            'num_down_blocks': 2,
+                            'num_bottleneck_blocks': 6,
+                            'estimate_occlusion_map': True,
+                            'dense_motion_params': {
+                                'block_expansion': 64,
+                                'max_features': 1024,
+                                'num_blocks': 5,
+                                'scale_factor': 0.25
+                            }
                         }
                     }
                 }

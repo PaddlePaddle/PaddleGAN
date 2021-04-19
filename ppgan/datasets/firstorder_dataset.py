@@ -1,3 +1,19 @@
+# Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# code was heavily based on https://github.com/AliaksandrSiarohin/first-order-model
+
 import logging
 from multiprocessing import Pool
 from pathlib import Path
@@ -5,10 +21,9 @@ from pathlib import Path
 import numpy as np
 import tqdm
 from imageio import imread, mimread, imwrite
+import cv2
 from paddle.io import Dataset
 from sklearn.model_selection import train_test_split
-from skimage.transform import resize
-from skimage import io, img_as_float32
 
 from .builder import DATASETS
 from .preprocess.builder import build_transforms
@@ -20,6 +35,20 @@ POOL_SIZE = 64  # If POOL_SIZE>0 use multiprocessing to extract frames from gif 
 @DATASETS.register()
 class FirstOrderDataset(Dataset):
     def __init__(self, **cfg):
+        """Initialize FirstOrder dataset class.
+
+        Args:
+            dataroot (str): Directory of dataset.
+            phase (str): train or test
+            num_repeats (int): Number for datasets to repeat
+            time_flip (bool): whether to exchange the driving image and source image randomly
+            batch_size (int): dataset batch size
+            id_sampling (bool): whether to sample person's id
+            frame_shape (list): image shape
+            create_frames_folder (bool): if the format of your input datasets is '.mp4', \
+                                         you can choose whether to save it with images
+            num_workers (int): dataset
+        """
         super(FirstOrderDataset, self).__init__()
         self.cfg = cfg
         self.frameDataset = FramesDataset(self.cfg)
@@ -77,8 +106,7 @@ def read_video(name: Path, frame_shape=tuple([256, 256, 3]), saveto='folder'):
     if name.is_dir():
         frames = sorted(name.iterdir(),
                         key=lambda x: int(x.with_suffix('').name))
-        video_array = np.array(
-            [img_as_float32(imread(path) for path in frames)])
+        video_array = np.array([cv2.imread(path) for path in frames])
     elif name.suffix.lower() in ['.gif', '.mp4', '.mov']:
         try:
             video = mimread(name, memtest=False)
@@ -96,7 +124,7 @@ def read_video(name: Path, frame_shape=tuple([256, 256, 3]), saveto='folder'):
         video_array = np.asarray(video)
         video_array_reshape = []
         for idx, img in enumerate(video_array):
-            img = resize(img, (frame_shape[0], frame_shape[1]))[..., :3] * 255
+            img = cv2.resize(img, (frame_shape[0], frame_shape[1]))[..., :3]
             video_array_reshape.append(img.astype(np.uint8))
         video_array_reshape = np.asarray(video_array_reshape)
 
@@ -107,7 +135,7 @@ def read_video(name: Path, frame_shape=tuple([256, 256, 3]), saveto='folder'):
             except FileExistsError:
                 pass
             for idx, img in enumerate(video_array_reshape):
-                imwrite(sub_dir.joinpath('%i.png' % idx), img)
+                cv2.imwrite(sub_dir.joinpath('%i.png' % idx), img)
             name.unlink()
     else:
         raise Exception("Unknown dataset file extensions  %s" % name)
@@ -177,7 +205,7 @@ class FramesDataset(Dataset):
             num_frames = len(frames)
             frame_idx = np.sort(
                 np.random.choice(num_frames, replace=True, size=2))
-            video_array = [imread(frames[idx]) for idx in frame_idx]
+            video_array = [cv2.imread(str(frames[idx])) for idx in frame_idx]
         else:
             if self.create_frames_folder:
                 video_array = read_video(path,
@@ -210,15 +238,16 @@ class FramesDataset(Dataset):
         if self.is_train:
             if self.transform is not None:  #modify
                 t = self.transform(tuple(video_array))
-                out['driving'] = img_as_float32(t[0].transpose(2, 0, 1))
-                out['source'] = img_as_float32(t[1].transpose(2, 0, 1))
+                out['driving'] = t[0].transpose(2, 0, 1).astype(
+                    np.float32) / 255.0
+                out['source'] = t[1].transpose(2, 0, 1).astype(
+                    np.float32) / 255.0
             else:
-                source = img_as_float32(
-                    np.array(video_array[0],
-                             dtype='float32'))  # / 255.0  # shape is [H, W, C]
-                driving = img_as_float32(
-                    np.array(video_array[1],
-                             dtype='float32'))  # / 255.0  # shape is [H, W, C]
+                source = np.array(video_array[0],
+                                  dtype='float32') / 255.0  # shape is [H, W, C]
+                driving = np.array(
+                    video_array[1],
+                    dtype='float32') / 255.0  # shape is [H, W, C]
                 out['driving'] = driving.transpose(2, 0, 1)
                 out['source'] = source.transpose(2, 0, 1)
             if self.time_flip and np.random.rand() < 0.5:  #modify
@@ -226,12 +255,12 @@ class FramesDataset(Dataset):
                 out['driving'] = out['source']
                 out['source'] = buf
         else:
-            video = img_as_float32(np.stack(video_array, axis=0))
+            video = np.stack(video_array, axis=0) / 255.0
             out['video'] = video.transpose(3, 0, 1, 2)
         out['name'] = video_name
         return out
 
-    def getSample(self, idx):
+    def get_sample(self, idx):
         return self.__getitem__(idx)
 
 

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# code was heavily based on https://github.com/AliaksandrSiarohin/first-order-model
+
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
@@ -320,14 +322,6 @@ class AntiAliasInterpolation2d(nn.Layer):
         out = F.pad(input, [self.ka, self.kb, self.ka, self.kb])
         out = F.conv2d(out, weight=self.weight, groups=self.groups)
         out.stop_gradient = False
-        # The high version of pytorch has a bug that affects the convergence of this model
-
-        # original code
-        # out = F.interpolate(out, scale_factor=[self.scale, self.scale])
-        # original code end
-
-        # a patch 'might be' work for this bug.
-        # see https://github.com/AliaksandrSiarohin/first-order-model/issues/146#issue-624354694
         inv_scale = 1 / self.scale
         int_inv_scale = int(inv_scale)
         assert (inv_scale == int_inv_scale)

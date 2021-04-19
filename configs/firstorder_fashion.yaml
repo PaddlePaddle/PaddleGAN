@@ -27,7 +27,7 @@ model:
         num_blocks: 5
         scale_factor: 0.25
   discriminator:
-    name: FirstOrder_Discriminator
+    name: FirstOrderDiscriminator
     discriminator_cfg:
       scales: [1]
       block_expansion: 32
@@ -61,7 +61,7 @@ dataset:
   train:
     name: FirstOrderDataset
     phase: train
-    dataroot: /home/paddle/PaddleGAN/data/first_order/fashion/
+    dataroot: data/first_order/fashion/
     num_repeats: 50
     time_flip: True
     batch_size: 8
@@ -86,7 +86,7 @@ dataset:
           keys: [image, image]
   test:
     name: FirstOrderDataset
-    dataroot: /home/paddle/PaddleGAN/data/first_order/fashion/
+    dataroot: data/first_order/fashion/
     phase: test
     batch_size: 1
     num_workers: 1

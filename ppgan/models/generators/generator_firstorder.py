@@ -1,3 +1,19 @@
+# Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# code was heavily based on https://github.com/AliaksandrSiarohin/first-order-model
+
 import numpy as np
 import paddle
 import paddle.nn.functional as F
@@ -14,6 +30,30 @@ from ppgan.utils.download import get_path_from_url
 
 @GENERATORS.register()
 class FirstOrderGenerator(nn.Layer):
+    """
+    Args:
+      kp_detector_cfg:
+        temperature (flost): parameter of softmax
+        block_expansion (int): block_expansion * (2**i) output features for each block i
+        max_features (int): input features cannot larger than max_features for encoding images
+        num_blocks (int): number of blocks for encoding images
+      generator_cfg:
+        block_expansion (int): block_expansion * (2**i) output features for each block i
+        max_features (int): input features cannot larger than max_features for encoding images
+        num_down_blocks (int): Downsampling block number for use in encoder.
+        num_bottleneck_blocks (int): block number for use in decoder.
+        estimate_occlusion_map (bool): whether to extimate occlusion_map
+      common_params:
+        num_kp (int): number of keypoints
+        num_channels (int): image channels
+        estimate_jacobian (bool): whether to estimate jacobian values of keypoints
+      train_params:
+        transform_params: transform keypoints and its jacobians
+        scale: extract the features of image pyramids
+        loss_weights: weight of [generator, discriminator, feature_matching, perceptual,
+                                 equivariance_value, equivariance_jacobian]
+
+    """
     def __init__(self, generator_cfg, kp_detector_cfg, common_params,
                  train_params, dis_scales):
         super(FirstOrderGenerator, self).__init__()
@@ -26,7 +66,7 @@ class FirstOrderGenerator(nn.Layer):
         self.pyramid = ImagePyramide(self.scales, self.generator.num_channels)
         self.loss_weights = train_params['loss_weights']
         if sum(self.loss_weights['perceptual']) != 0:
-            self.vgg = Vgg19()
+            self.vgg = VGG19()
 
     def forward(self, x, discriminator):
         kp_source = self.kp_extractor(x['source'])
@@ -114,12 +154,12 @@ class FirstOrderGenerator(nn.Layer):
         return loss_values, generated
 
 
-class Vgg19(nn.Layer):
+class VGG19(nn.Layer):
     """
     Vgg19 network for perceptual loss. See Sec 3.3.
     """
     def __init__(self, requires_grad=False):
-        super(Vgg19, self).__init__()
+        super(VGG19, self).__init__()
         pretrained_url = 'https://paddlegan.bj.bcebos.com/models/vgg19.pdparams'
         weight_path = get_path_from_url(pretrained_url)
         state_dict = paddle.load(weight_path)

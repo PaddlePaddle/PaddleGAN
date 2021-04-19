@@ -1,3 +1,19 @@
+# Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# code was heavily based on https://github.com/AliaksandrSiarohin/first-order-model
+
 import paddle
 
 from .base_model import BaseModel
@@ -11,7 +27,7 @@ from ..modules.init import reset_parameters, uniform_
 import paddle.nn as nn
 import numpy as np
 from skimage.draw import circle
-import matplotlib.pyplot as plt
+from paddle.utils import try_import
 import paddle.nn.functional as F
 
 
@@ -168,6 +184,7 @@ class FirstOrderModel(BaseModel):
 
 class Visualizer:
     def __init__(self, kp_size=5, draw_border=False, colormap='gist_rainbow'):
+        plt = try_import('matplotlib.pyplot')
         self.kp_size = kp_size
         self.draw_border = draw_border
         self.colormap = plt.get_cmap(colormap)
