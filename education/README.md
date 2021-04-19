@@ -55,7 +55,7 @@ Day 6-大作业：自选PaddleGAN里面的模型实现超分
 
 ### Step 1：创建自己的GitHub repo
 
-对于还未有自己的repo的同学（fork他人项目不算噢）可以点进自己的主页，点击【New】创建自己人生中的一个repo，并予以命名。
+对于还未有自己的repo的同学（fork他人项目不算噢）可以点进自己的主页，点击【New】创建一个新的repo，并予以命名。
 
 ![img](https://user-images.githubusercontent.com/48054808/115176689-31a68280-a100-11eb-9872-b6da622aabd2.png)
 
