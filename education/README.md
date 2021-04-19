@@ -1,3 +1,4 @@
+第三节课pix2pix人像卡通化作业链接：https://aistudio.baidu.com/aistudio/projectdetail/1820886
 第四课代码题老视频修复作业链接：https://aistudio.baidu.com/aistudio/projectdetail/1824947
 
 我在AI Studio上获得黄金等级，点亮5个徽章，来互关呀~ https://aistudio.baidu.com/aistudio/personalcenter/thirdview/335435
