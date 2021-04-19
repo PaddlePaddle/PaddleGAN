@@ -14,7 +14,7 @@ D. 解码器
 
 **2.（多选）GAN的应用包括（）**
 
-A. 换脸   
+A. 换脸  
 
 B. 动作迁移
 
@@ -46,7 +46,7 @@ C. ![img](https://user-images.githubusercontent.com/48054808/115173903-d1f9a880-
 
 D. ![img](https://user-images.githubusercontent.com/48054808/115173943-e178f180-a0fa-11eb-87ce-ba3e96e51572.png)
 
-参考答案：A
+参考答案：D
 
 **5.  （多选）下列关于GAN中对抗的描述正确的是（）**
 
@@ -95,5 +95,3 @@ C.  对数据集的要求不同
 D. 损失函数不同
 
 参考答案：D
-
- 
