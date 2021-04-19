@@ -41,7 +41,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 **直播日期：4月15日～4月20日直播授课，4月22日结营直播**
 
-**具体详情请参见：[PaddleGAN生成对抗七日打卡营](https://github.com/PaddlePaddle/PaddleGAN/tree/develop/education)**
+**具体详情请参见：[PaddleGAN生成对抗七日打卡营](./education/README.md)**
 
 
 
