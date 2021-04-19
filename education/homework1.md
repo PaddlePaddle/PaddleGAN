@@ -38,13 +38,13 @@ D. 输入文字描述生成图像
 
 **4.  （单选）下列哪一项是GAN的判别器的损失函数（）**
 
-A. ![img](file:////Users/shiyixin/Library/Group%20Containers/UBF8T346G9.Office/TemporaryItems/msohtmlclip/clip_image002.png)
+A. ![img](https://user-images.githubusercontent.com/48054808/115173831-b1315300-a0fa-11eb-9616-c8bd39dd74eb.png)
 
-B. ![img](file:////Users/shiyixin/Library/Group%20Containers/UBF8T346G9.Office/TemporaryItems/msohtmlclip/clip_image004.png)
+B. ![img](https://user-images.githubusercontent.com/48054808/115173874-c6a67d00-a0fa-11eb-8447-722a4d0993ca.png)
 
-C. ![img](file:////Users/shiyixin/Library/Group%20Containers/UBF8T346G9.Office/TemporaryItems/msohtmlclip/clip_image006.png)
+C. ![img](https://user-images.githubusercontent.com/48054808/115173903-d1f9a880-a0fa-11eb-90bd-7c143367444b.png)
 
-D. ![img](file:////Users/shiyixin/Library/Group%20Containers/UBF8T346G9.Office/TemporaryItems/msohtmlclip/clip_image008.png)
+D. ![img](https://user-images.githubusercontent.com/48054808/115173943-e178f180-a0fa-11eb-87ce-ba3e96e51572.png)
 
 参考答案：A
 
