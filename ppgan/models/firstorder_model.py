@@ -26,9 +26,9 @@ from paddle.optimizer.lr import MultiStepDecay
 from ..modules.init import reset_parameters, uniform_
 import paddle.nn as nn
 import numpy as np
-from skimage.draw import circle
 from paddle.utils import try_import
 import paddle.nn.functional as F
+import cv2
 
 
 def init_weight(net):
@@ -183,7 +183,7 @@ class FirstOrderModel(BaseModel):
 
 
 class Visualizer:
-    def __init__(self, kp_size=5, draw_border=False, colormap='gist_rainbow'):
+    def __init__(self, kp_size=3, draw_border=False, colormap='gist_rainbow'):
         plt = try_import('matplotlib.pyplot')
         self.kp_size = kp_size
         self.draw_border = draw_border
@@ -194,9 +194,16 @@ class Visualizer:
         spatial_size = np.array(image.shape[:2][::-1])[np.newaxis]
         kp_array = spatial_size * (kp_array + 1) / 2
         num_kp = kp_array.shape[0]
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = (image * 255).astype(np.uint8)
         for kp_ind, kp in enumerate(kp_array):
-            rr, cc = circle(kp[1], kp[0], self.kp_size, shape=image.shape[:2])
-            image[rr, cc] = np.array(self.colormap(kp_ind / num_kp))[:3]
+            color = cv2.applyColorMap(
+                np.array(kp_ind / num_kp * 255).astype(np.uint8),
+                cv2.COLORMAP_JET)[0][0]
+            color = (int(color[0]), int(color[1]), int(color[2]))
+            image = cv2.circle(image, (int(kp[1]), int(kp[0])), self.kp_size,
+                               color, 3)
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR).astype('float32') / 255.0
         return image
 
     def create_image_column_with_kp(self, images, kp):

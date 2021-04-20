@@ -23,8 +23,6 @@ import tqdm
 from imageio import imread, mimread, imwrite
 import cv2
 from paddle.io import Dataset
-from sklearn.model_selection import train_test_split
-
 from .builder import DATASETS
 from .preprocess.builder import build_transforms
 import glob, os
@@ -106,7 +104,7 @@ def read_video(name: Path, frame_shape=tuple([256, 256, 3]), saveto='folder'):
     if name.is_dir():
         frames = sorted(name.iterdir(),
                         key=lambda x: int(x.with_suffix('').name))
-        video_array = np.array([cv2.imread(path) for path in frames])
+        video_array = np.array([imread(path) for path in frames])
     elif name.suffix.lower() in ['.gif', '.mp4', '.mov']:
         try:
             video = mimread(name, memtest=False)
@@ -124,7 +122,7 @@ def read_video(name: Path, frame_shape=tuple([256, 256, 3]), saveto='folder'):
         video_array = np.asarray(video)
         video_array_reshape = []
         for idx, img in enumerate(video_array):
-            img = cv2.resize(img, (frame_shape[0], frame_shape[1]))[..., :3]
+            img = cv2.resize(img, (frame_shape[0], frame_shape[1]))
             video_array_reshape.append(img.astype(np.uint8))
         video_array_reshape = np.asarray(video_array_reshape)
 
@@ -161,24 +159,20 @@ class FramesDataset(Dataset):
         self.create_frames_folder = cfg['create_frames_folder']
         self.transform = None
         random_seed = 0
-        if self.root_dir.joinpath('train').exists():
-            assert self.root_dir.joinpath('test').exists()
-            logging.info("Use predefined train-test split.")
-            if self.id_sampling:
-                train_videos = {
-                    video.name.split('#')[0]
-                    for video in self.root_dir.joinpath('train').iterdir()
-                }
-                train_videos = list(train_videos)
-            else:
-                train_videos = list(self.root_dir.joinpath('train').iterdir())
-            test_videos = list(self.root_dir.joinpath('test').iterdir())
-            self.root_dir = self.root_dir.joinpath(
-                'train' if self.is_train else 'test')
+        assert self.root_dir.joinpath('train').exists()
+        assert self.root_dir.joinpath('test').exists()
+        logging.info("Use predefined train-test split.")
+        if self.id_sampling:
+            train_videos = {
+                video.name.split('#')[0]
+                for video in self.root_dir.joinpath('train').iterdir()
+            }
+            train_videos = list(train_videos)
         else:
-            logging.info("Use random train-test split.")
-            train_videos, test_videos = train_test_split(
-                self.videos, random_state=random_seed, test_size=0.2)
+            train_videos = list(self.root_dir.joinpath('train').iterdir())
+        test_videos = list(self.root_dir.joinpath('test').iterdir())
+        self.root_dir = self.root_dir.joinpath(
+            'train' if self.is_train else 'test')
 
         if self.is_train:
             self.videos = train_videos
@@ -205,7 +199,7 @@ class FramesDataset(Dataset):
             num_frames = len(frames)
             frame_idx = np.sort(
                 np.random.choice(num_frames, replace=True, size=2))
-            video_array = [cv2.imread(str(frames[idx])) for idx in frame_idx]
+            video_array = [imread(str(frames[idx])) for idx in frame_idx]
         else:
             if self.create_frames_folder:
                 video_array = read_video(path,
