@@ -41,7 +41,7 @@ class ResnetGenerator(nn.Layer):
             input_nc (int)      -- the number of channels in input images
             output_nc (int)     -- the number of channels in output images
             ngf (int)           -- the number of filters in the last conv layer
-            norm_layer          -- normalization layer
+            norm_type (str)     -- the name of the normalization layer: batch | instance | none
             use_dropout (bool)  -- if use dropout layers
             n_blocks (int)      -- the number of ResNet blocks
             padding_type (str)  -- the name of padding layer in conv layers: reflect | replicate | zero
