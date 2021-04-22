@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# code was heavily based on https://github.com/AliaksandrSiarohin/first-order-model
+
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
@@ -96,9 +98,15 @@ class DenseMotionNetwork(nn.Layer):
             jacobian = paddle.matmul(kp_source['jacobian'],
                                      paddle.inverse(kp_driving['jacobian']))
             jacobian = jacobian.unsqueeze(-3).unsqueeze(-3)
-            jacobian = paddle.tile(jacobian, [1, 1, h, w, 1, 1])
-            coordinate_grid = paddle.matmul(jacobian,
+            # Todo: fix bug of paddle.tile
+            p_jacobian = jacobian.reshape([bs, self.num_kp, 1, 1, 4])
+            paddle_jacobian = paddle.tile(p_jacobian, [1, 1, h, w, 1])
+            paddle_jacobian = paddle_jacobian.reshape(
+                [bs, self.num_kp, h, w, 2, 2])
+
+            coordinate_grid = paddle.matmul(paddle_jacobian,
                                             coordinate_grid.unsqueeze(-1))
+
             coordinate_grid = coordinate_grid.squeeze(-1)
 
         driving_to_source = coordinate_grid + kp_source['value'].reshape(
@@ -125,7 +133,9 @@ class DenseMotionNetwork(nn.Layer):
             (bs * (self.num_kp + 1), h, w, -1))
         sparse_deformed = F.grid_sample(source_repeat,
                                         sparse_motions,
-                                        align_corners=False)
+                                        mode='bilinear',
+                                        padding_mode='zeros',
+                                        align_corners=True)
         sparse_deformed = sparse_deformed.reshape(
             (bs, self.num_kp + 1, -1, h, w))
         return sparse_deformed
