@@ -7,7 +7,7 @@ min_max:
 
 model:
   name: EDVRModel
-  tsa_iter: 50000
+  tsa_iter: 0
   generator:
     name: EDVRNet
     in_nf: 3
@@ -21,8 +21,7 @@ model:
     center: 2
     predeblur: False
     HR_in: False
-    w_TSA: True
-    TSA_only: False
+    w_TSA: False
   pixel_criterion:
     name: CharbonnierLoss
 
@@ -65,8 +64,8 @@ dataset:
 lr_scheduler:
   name: CosineAnnealingRestartLR
   learning_rate: !!float 4e-4
-  periods: [50000, 100000, 150000, 150000, 150000]
-  restart_weights: [1, 1, 1, 1, 1]
+  periods: [150000, 150000, 150000, 150000]
+  restart_weights: [1, 1, 1, 1]
   eta_min: !!float 1e-7
 
 optimizer:
@@ -94,7 +93,7 @@ validate:
 
 log_config:
   interval: 10
-  visiual_interval: 5000
+  visiual_interval: 500
 
 snapshot_config:
   interval: 5000

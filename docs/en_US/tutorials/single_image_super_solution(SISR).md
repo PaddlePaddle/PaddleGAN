@@ -1,4 +1,4 @@
-# 1 Super Resolution
+# 1 Single Image Super Solution(SISR)
 
 ## 1.1 Principle
 
@@ -7,8 +7,8 @@
 
   [RealSR](https://openaccess.thecvf.com/content_CVPRW_2020/papers/w31/Ji_Real-World_Super-Resolution_via_Kernel_Estimation_and_Noise_Injection_CVPRW_2020_paper.pdf) focus on designing a novel degradation framework for realworld images by estimating various blur kernels as well as real noise distributions. Based on the novel degradation framework, we can acquire LR images sharing a common domain with real-world images. RealSR is a real-world super-resolution model aiming at better perception. Extensive experiments on synthetic noise data and real-world images demonstrate that RealSR outperforms the state-of-the-art methods, resulting in lower noise and better visual quality.
 
-  [ESRGAN](https://arxiv.org/abs/1809.00219v2) is an enhanced SRGAN. To further enhance the visual quality of SRGAN, ESRGAN improves three key components of srgan. In addition, ESRGAN also introduces the Residual-in-Residual Dense Block (RRDB) without batch normalization as the basic network building unit, lets the discriminator predict relative realness instead of the absolute value, and improves the perceptual loss by using the features before activation. Benefiting from these improvements, the proposed ESRGAN achieves consistently better visual quality with more realistic and natural textures than SRGAN and won the first place in the PIRM2018-SR Challenge. 
-  
+  [ESRGAN](https://arxiv.org/abs/1809.00219v2) is an enhanced SRGAN. To further enhance the visual quality of SRGAN, ESRGAN improves three key components of srgan. In addition, ESRGAN also introduces the Residual-in-Residual Dense Block (RRDB) without batch normalization as the basic network building unit, lets the discriminator predict relative realness instead of the absolute value, and improves the perceptual loss by using the features before activation. Benefiting from these improvements, the proposed ESRGAN achieves consistently better visual quality with more realistic and natural textures than SRGAN and won the first place in the PIRM2018-SR Challenge.
+
   Considering that the application of CNN in SISR often consume high computational cost and more memory storage for training a SR model, a lightweight enhanced SR CNN ([LESRCNN](https://arxiv.org/abs/2007.04344)) was proposed.Extensive experiments demonstrate that the proposed LESRCNN outperforms state-of-the-arts on SISR in terms of qualitative and quantitative evaluation.
 
 
