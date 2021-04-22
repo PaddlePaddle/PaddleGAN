@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# code was heavily based on https://github.com/AliaksandrSiarohin/first-order-model
+
 import paddle
 from paddle import nn
 import paddle.nn.functional as F
@@ -98,7 +100,11 @@ class OcclusionAwareGenerator(nn.Layer):
                                         mode='bilinear',
                                         align_corners=False)
             deformation = deformation.transpose([0, 2, 3, 1])
-        return F.grid_sample(inp, deformation, align_corners=False)
+        return F.grid_sample(inp,
+                             deformation,
+                             mode='bilinear',
+                             padding_mode='zeros',
+                             align_corners=True)
 
     def forward(self, source_image, kp_driving, kp_source):
         # Encoding (downsampling) part

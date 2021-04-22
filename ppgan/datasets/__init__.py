@@ -22,3 +22,4 @@ from .animeganv2_dataset import AnimeGANV2Dataset
 from .wav2lip_dataset import Wav2LipDataset
 from .starganv2_dataset import StarGANv2Dataset
 from .edvr_dataset import REDSDataset
+from .firstorder_dataset import FirstOrderDataset
