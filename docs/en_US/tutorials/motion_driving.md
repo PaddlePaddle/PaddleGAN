@@ -9,7 +9,7 @@
 </div>
 ## Multi-Faces swapping
 
-For photoes with multiple faces, we first detect all of the faces,  then do facial expression transfer for each face, and finally put those faces back to the original photo to generate a complete new video. 
+For photoes with multiple faces, we first detect all of the faces,  then do facial expression transfer for each face, and finally put those faces back to the original photo to generate a complete new video.
 
 Specific technical steps are shown below:
 
@@ -17,14 +17,15 @@ Specific technical steps are shown below:
 2. Use the First Order Motion model to do the facial expression transfer of each face
 3. Put those "new" generated faces back to the original photo
 
-At the same time, specifically for face related work, PaddleGAN provides a ["faceutils" tool](https://github.com/PaddlePaddle/PaddleGAN/tree/develop/ppgan/faceutils), including face detection, face segmentation models and more. 
+At the same time, specifically for face related work, PaddleGAN provides a ["faceutils" tool](https://github.com/PaddlePaddle/PaddleGAN/tree/develop/ppgan/faceutils), including face detection, face segmentation models and more.
 
 ## How to use
-
+### 1 Test for Face
 Users can upload the prepared source image and driving video, then substitute the path of source image and driving video for the `source_image` and `driving_video` parameter in the following running command. It will geneate a video file named `result.mp4` in the `output` folder, which is the animated video file.
 
 Note: for photoes with multiple faces, the longer the distances between faces, the better the result quality you can get.  
 
+- single face:
 ```
 cd applications/
 python -u tools/first-order-demo.py  \
@@ -33,6 +34,14 @@ python -u tools/first-order-demo.py  \
      --ratio 0.4 \
      --relative --adapt_scale
 ```
+- multi face
+cd applications/
+python -u tools/first-order-demo.py  \
+     --driving_video ../docs/imgs/fom_dv.mp4 \
+     --source_image ../docs/imgs/fom_source_image_multi_person.png \
+     --ratio 0.4 \
+     --relative --adapt_scale \
+     --multi_person
 
 **params:**
 - driving_video: driving video, the motion of the driving video is to be migrated.
@@ -40,6 +49,46 @@ python -u tools/first-order-demo.py  \
 - relative: indicate whether the relative or absolute coordinates of the key points in the video are used in the program. It is recommended to use relative coordinates. If absolute coordinates are used, the characters will be distorted after animation.
 - adapt_scale: adapt movement scale based on convex hull of keypoints.
 - ratio: The pasted face percentage of generated image, this parameter should be adjusted in the case of multi-person image in which the adjacent faces are close. The defualt value is 0.4 and the range is [0.4, 0.5].
+- multi_person: There are multi faces in the images. Default means only one face in the image
+
+### 2 Training
+**Datasets:**
+- fashion See[here](https://vision.cs.ubc.ca/datasets/fashion/)
+- VoxCeleb See[here](https://github.com/AliaksandrSiarohin/video-preprocessing)
+
+**params:**
+- dataset_name.yaml: Create a config of your own dataset
+
+- For single GPU:
+```
+export CUDA_VISIBLE_DEVICES=0
+python tools/main.py --config-file configs/dataset_name.yaml
+```
+- For multiple GPUs:
+```
+export CUDA_VISIBLE_DEVICES=0,1,2,3
+python -m paddle.distributed.launch \
+    --log_dir ./mylog_dd.log \
+    tools/main.py \
+    --config-file configs/dataset_name.yaml \
+
+```
+
+**例如:**
+- For single GPU:
+```
+export CUDA_VISIBLE_DEVICES=0
+python tools/main.py --config-file configs/firstorder_fashion.yaml
+```
+- For multiple GPUs:
+```
+export CUDA_VISIBLE_DEVICES=0,1,2,3
+python -m paddle.distributed.launch \
+    --log_dir ./mylog_dd.log \
+    tools/main.py \
+    --config-file configs/firstorder_fashion.yaml \
+```
+
 
 **Online Tutorial running in AI Studio:**
 

@@ -25,13 +25,14 @@ First order motion model的任务是image animation，给定一张源图片，�
 同时，PaddleGAN针对人脸的相关处理提供[faceutil工具](https://github.com/PaddlePaddle/PaddleGAN/tree/develop/ppgan/faceutils)，包括人脸检测、五官分割、关键点检测等能力。
 
 ## 使用方法
-
+### 1 人脸测试
 用户可上传一张单人/多人照片与驱动视频，并在如下命令中的source_image参数和driving_video参数分别换成自己的图片和视频路径，然后运行如下命令，即可完成单人/多人脸动作表情迁移，运行结果为命名为result.mp4的视频文件，保存在output文件夹中。
 
 注意：使用多人脸时，尽量使用人脸间距较大的照片，效果更佳，也可通过手动调节ratio进行效果优化。
 
 本项目中提供了原始图片和驱动视频供展示使用，运行的命令如下：
 
+- 默认为单人脸:
 ```
 cd applications/
 python -u tools/first-order-demo.py  \
@@ -40,12 +41,59 @@ python -u tools/first-order-demo.py  \
      --ratio 0.4 \
      --relative --adapt_scale
 ```
+- 多人脸
+cd applications/
+python -u tools/first-order-demo.py  \
+     --driving_video ../docs/imgs/fom_dv.mp4 \
+     --source_image ../docs/imgs/fom_source_image_multi_person.jpg \
+     --ratio 0.4 \
+     --relative --adapt_scale \
+     --multi_person
 
 - driving_video: 驱动视频，视频中人物的表情动作作为待迁移的对象
 - source_image: 原始图片，支持单人图片和多人图片，视频中人物的表情动作将迁移到该原始图片中的人物上
 - relative: 指示程序中使用视频和图片中人物关键点的相对坐标还是绝对坐标，建议使用相对坐标，若使用绝对坐标，会导致迁移后人物扭曲变形
 - adapt_scale: 根据关键点凸包自适应运动尺度
 - ratio: 贴回驱动生成的人脸区域占原图的比例, 用户需要根据生成的效果调整该参数，尤其对于多人脸距离比较近的情况下需要调整改参数, 默认为0.4，调整范围是[0.4, 0.5]
+- multi_person: 表示图片中有多张人脸，不加则默认为单人脸
+
+### 2 训练
+**数据集:**
+- fashion 可以参考[这里](https://vision.cs.ubc.ca/datasets/fashion/)
+- VoxCeleb 可以参考[这里](https://github.com/AliaksandrSiarohin/video-preprocessing)
+
+**参数说明:**
+- dataset_name.yaml: 需要配置自己的yaml文件及参数
+
+- GPU单卡训练:
+```
+export CUDA_VISIBLE_DEVICES=0
+python tools/main.py --config-file configs/dataset_name.yaml
+```
+- GPU多卡训练:
+```
+export CUDA_VISIBLE_DEVICES=0,1,2,3
+python -m paddle.distributed.launch \
+    --log_dir ./mylog_dd.log \
+    tools/main.py \
+    --config-file configs/dataset_name.yaml \
+
+```
+
+**例如:**
+- GPU单卡训练:
+```
+export CUDA_VISIBLE_DEVICES=0
+python tools/main.py --config-file configs/firstorder_fashion.yaml
+```
+- GPU多卡训练:
+```
+export CUDA_VISIBLE_DEVICES=0,1,2,3
+python -m paddle.distributed.launch \
+    --log_dir ./mylog_dd.log \
+    tools/main.py \
+    --config-file configs/firstorder_fashion.yaml \
+```
 
 **在线体验项目**
 
