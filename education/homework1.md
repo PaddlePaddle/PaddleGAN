@@ -46,7 +46,9 @@ C. ![img](https://user-images.githubusercontent.com/48054808/115173903-d1f9a880-
 
 D. ![img](https://user-images.githubusercontent.com/48054808/115173943-e178f180-a0fa-11eb-87ce-ba3e96e51572.png)
 
+
 参考答案：C
+
 
 **5.  （多选）下列关于GAN中对抗的描述正确的是（）**
 

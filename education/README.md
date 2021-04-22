@@ -31,13 +31,13 @@
 
 **Bonus🤩：鼓励大家除了在AI Studio上完成作业外，也可自行创建GitHub repo，在repo上完成作业（内容可和AI Studio一样），并将PaddleGAN加入你的repo的requirements.txt中，最后将repo链接放在AI Studio项目中即可获得加分，最终有机会获得大奖°˖✧◝(⁰▿⁰)◜✧˖°。**
 
-Day 1：[客观题_理论层面的单选题](./homework1) 
+Day 1：[客观题_理论层面的单选题](./homework1.md) 
 
-Day 2：[代码题_基于DCGAN，改写为LS-GAN](./homework2) 
+Day 2：[代码题_基于DCGAN，改写为LS-GAN](./homework2.md) 
 
-Day 3：[代码题_填空补全基于pix2pix实现人脸卡通的预测代码](./homework3) 
+Day 3：[代码题_填空补全基于pix2pix实现人脸卡通的预测代码](./homework3.md) 
 
-Day 4：[客观题+项目展示（照片、视频）](./homework4) 
+Day 4：[客观题+项目展示（照片、视频）](./homework4.md) 
 
 Day 5：客观题+项目展示（照片、视频）
 
