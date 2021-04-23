@@ -74,7 +74,6 @@ python tools/main.py --config-file configs/dataset_name.yaml
 ```
 export CUDA_VISIBLE_DEVICES=0,1,2,3
 python -m paddle.distributed.launch \
-    --log_dir ./mylog_dd.log \
     tools/main.py \
     --config-file configs/dataset_name.yaml \
 
@@ -90,7 +89,6 @@ python tools/main.py --config-file configs/firstorder_fashion.yaml
 ```
 export CUDA_VISIBLE_DEVICES=0,1,2,3
 python -m paddle.distributed.launch \
-    --log_dir ./mylog_dd.log \
     tools/main.py \
     --config-file configs/firstorder_fashion.yaml \
 ```
