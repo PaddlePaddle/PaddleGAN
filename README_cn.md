@@ -77,7 +77,8 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 * [U-GAT-IT](./docs/zh_CN/tutorials/ugatit.md)
 * [Photo2Cartoon](docs/zh_CN/tutorials/photo2cartoon.md)
 * [Wav2Lip](docs/zh_CN/tutorials/wav2lip.md)
-* [Super_Resolution](./docs/zh_CN/tutorials/super_resolution.md)
+* [Single Image Super Resolution(SISR)](./docs/zh_CN/tutorials/single_image_super_resolution.md)
+* [Video Super Resolution(VSR)](./docs/zh_CN/tutorials/video_super_resolution.md)
 * [StyleGAN2](./docs/zh_CN/tutorials/styleganv2.md)
 * [Pixel2Style2Pixel](./docs/zh_CN/tutorials/pixel2style2pixel.md)
 
