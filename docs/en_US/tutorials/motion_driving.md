@@ -34,7 +34,8 @@ python -u tools/first-order-demo.py  \
      --ratio 0.4 \
      --relative --adapt_scale
 ```
-- multi face
+- multi face：
+```
 cd applications/
 python -u tools/first-order-demo.py  \
      --driving_video ../docs/imgs/fom_dv.mp4 \
@@ -42,6 +43,7 @@ python -u tools/first-order-demo.py  \
      --ratio 0.4 \
      --relative --adapt_scale \
      --multi_person
+```
 
 **params:**
 - driving_video: driving video, the motion of the driving video is to be migrated.

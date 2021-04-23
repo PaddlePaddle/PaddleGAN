@@ -41,7 +41,8 @@ python -u tools/first-order-demo.py  \
      --ratio 0.4 \
      --relative --adapt_scale
 ```
-- 多人脸
+- 多人脸：
+```
 cd applications/
 python -u tools/first-order-demo.py  \
      --driving_video ../docs/imgs/fom_dv.mp4 \
@@ -49,6 +50,7 @@ python -u tools/first-order-demo.py  \
      --ratio 0.4 \
      --relative --adapt_scale \
      --multi_person
+```
 
 - driving_video: 驱动视频，视频中人物的表情动作作为待迁移的对象
 - source_image: 原始图片，支持单人图片和多人图片，视频中人物的表情动作将迁移到该原始图片中的人物上
