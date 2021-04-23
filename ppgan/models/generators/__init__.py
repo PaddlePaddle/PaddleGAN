@@ -28,4 +28,4 @@ from .generator_pixel2style2pixel import Pixel2Style2Pixel
 from .drn import DRNGenerator
 from .generator_starganv2 import StarGANv2Generator, StarGANv2Style, StarGANv2Mapping, FAN
 from .edvr import EDVRNet
-
+from .generator_firstorder import FirstOrderGenerator

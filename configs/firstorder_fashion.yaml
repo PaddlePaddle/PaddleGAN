@@ -1,0 +1,106 @@
+epochs: 150
+output_dir: output_dir
+
+model:
+  name: FirstOrderModel
+  common_params:
+    num_kp: 10
+    num_channels: 3
+    estimate_jacobian: True
+  generator:
+    name: FirstOrderGenerator
+    kp_detector_cfg:
+      temperature: 0.1
+      block_expansion: 32
+      max_features: 1024
+      scale_factor: 0.25
+      num_blocks: 5
+    generator_cfg:
+      block_expansion: 64
+      max_features: 512
+      num_down_blocks: 2
+      num_bottleneck_blocks: 6
+      estimate_occlusion_map: True
+      dense_motion_params:
+        block_expansion: 64
+        max_features: 1024
+        num_blocks: 5
+        scale_factor: 0.25
+  discriminator:
+    name: FirstOrderDiscriminator
+    discriminator_cfg:
+      scales: [1]
+      block_expansion: 32
+      max_features: 512
+      num_blocks: 4
+      sn: True
+  train_params:
+    scales: [1, 0.5, 0.25, 0.125]
+    transform_params:
+      sigma_affine: 0.05
+      sigma_tps: 0.005
+      points_tps: 5
+    loss_weights:
+      generator_gan: 1
+      discriminator_gan: 1
+      feature_matching: [10, 10, 10, 10]
+      perceptual: [10, 10, 10, 10, 10]
+      equivariance_value: 10
+      equivariance_jacobian: 10
+
+optimizer:
+  name: Adam
+
+lr_scheduler:
+  epoch_milestones: [187500, 281250]
+  lr_generator: 2.0e-4
+  lr_discriminator: 2.0e-4
+  lr_kp_detector: 2.0e-4
+
+dataset:
+  train:
+    name: FirstOrderDataset
+    phase: train
+    dataroot: data/first_order/fashion/
+    num_repeats: 50
+    time_flip: True
+    batch_size: 8
+    id_sampling: False
+    frame_shape: [ 256, 256, 3 ]
+    process_time: False
+    create_frames_folder: False
+    num_workers: 4
+    max_dataset_size: inf
+    direction: BtoA
+    input_nc: 3
+    output_nc: 3
+    transforms:
+        - name: PairedRandomHorizontalFlip
+          prob: 0.5
+          keys: [image, image]
+        - name: PairedColorJitter
+          brightness: 0.1
+          contrast: 0.1
+          saturation: 0.1
+          hue: 0.1
+          keys: [image, image]
+  test:
+    name: FirstOrderDataset
+    dataroot: data/first_order/fashion/
+    phase: test
+    batch_size: 1
+    num_workers: 1
+    time_flip: False
+    id_sampling: False
+    create_frames_folder: False
+    frame_shape: [ 256, 256, 3 ]
+
+log_config:
+  interval: 10
+  visiual_interval: 10
+
+snapshot_config:
+  interval: 10
+
+validate:
+  interval: 31250

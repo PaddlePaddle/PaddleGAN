@@ -63,6 +63,11 @@ parser.add_argument(
     type=str,
     default='sfd',
     help="face detector to be used, can choose s3fd or blazeface")
+parser.add_argument("--multi_person",
+                    dest="multi_person",
+                    action="store_true",
+                    default=False,
+                    help="whether there is only one person in the image or not")
 
 parser.set_defaults(relative=False)
 parser.set_defaults(adapt_scale=False)
@@ -72,7 +77,6 @@ if __name__ == "__main__":
 
     if args.cpu:
         paddle.set_device('cpu')
-
     predictor = FirstOrderPredictor(output=args.output,
                                     filename=args.filename,
                                     weight_path=args.weight_path,
@@ -82,5 +86,6 @@ if __name__ == "__main__":
                                     find_best_frame=args.find_best_frame,
                                     best_frame=args.best_frame,
                                     ratio=args.ratio,
-                                    face_detector=args.face_detector)
+                                    face_detector=args.face_detector,
+                                    multi_person=args.multi_person)
     predictor.run(args.source_image, args.driving_video)
