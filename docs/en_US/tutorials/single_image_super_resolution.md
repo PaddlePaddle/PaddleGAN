@@ -1,4 +1,4 @@
-# 1 Super Resolution
+# 1 Single Image Super Resolution(SISR)
 
 ## 1.1 Principle
 
@@ -133,8 +133,8 @@ The metrics are PSNR / SSIM.
 <!-- ![](../../imgs/horse2zebra.png) -->
 
 
-## 1.4 模型下载
-| 模型 | 数据集 | 下载地址 |
+## 1.4 Model Download
+| Method | Dataset | Download Link |
 |---|---|---|
 | realsr_df2k  | df2k | [realsr_df2k](https://paddlegan.bj.bcebos.com/models/realsr_df2k.pdparams)
 | realsr_dped  | dped | [realsr_dped](https://paddlegan.bj.bcebos.com/models/realsr_dped.pdparams)

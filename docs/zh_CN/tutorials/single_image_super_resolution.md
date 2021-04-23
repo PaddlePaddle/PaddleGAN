@@ -1,4 +1,4 @@
-# 1 超分
+# 1 单张图像超分
 
 ## 1.1 原理介绍
 
@@ -89,7 +89,7 @@
      python -u tools/main.py --config-file configs/realsr_bicubic_noise_x4_df2k.yaml
   ```
 
-  训练模型:
+  测试模型:
   ```
      python tools/main.py --config-file configs/realsr_bicubic_noise_x4_df2k.yaml --evaluate-only --load ${PATH_OF_WEIGHT}
   ```
