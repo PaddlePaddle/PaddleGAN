@@ -146,6 +146,7 @@ class FirstOrderPredictor(BasePredictor):
             for im in reader:
                 driving_video.append(im)
         except RuntimeError:
+            print("Read driving video error!")
             pass
         reader.close()
 

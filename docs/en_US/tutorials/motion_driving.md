@@ -74,7 +74,7 @@ python -m paddle.distributed.launch \
 
 ```
 
-**例如:**
+**Example:**
 - For single GPU:
 ```
 export CUDA_VISIBLE_DEVICES=0
