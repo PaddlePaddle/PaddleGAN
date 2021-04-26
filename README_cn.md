@@ -17,7 +17,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 ## 生成对抗网络七日打卡营🔥🔥🔥
 
-**4月15日~4月22日【原理+实战=7天学会GAN】** 🤓 
+**4月15日~4月22日【原理+实战=7天学会GAN】** 🤓
 
 **百度飞桨一线高级研发工程师团队亲自直播授课，连续7天最强干货，带大家逐步掌握GAN常用模型脉络及代码！**
 
@@ -70,6 +70,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 * [Pixel2Pixel](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
 * [CycleGAN](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
+* [LapStyle coming soon](./docs/en_US/tutorials/lap_style.md)
 * [PSGAN](./docs/zh_CN/tutorials/psgan.md)
 * [First Order Motion Model](./docs/zh_CN/tutorials/motion_driving.md)
 * [FaceParsing](./docs/zh_CN/tutorials/face_parse.md)
@@ -175,7 +176,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   《大谷 Spitzer 手把手教你修复百年前老北京影像》b站直播中奖用户名单请点击[PaddleGAN直播中奖名单](./docs/luckydraw.md)查看~
 
   想要看直播回放视频请点击链接：https://www.bilibili.com/video/BV1GZ4y1g7xc
-  
+
 - 2021.4.15~4.22
 
   生成对抗网络七日打卡营火爆🔥来袭，赶紧让百度资深研发带你上车GAN起来吧！
