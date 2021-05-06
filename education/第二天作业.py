@@ -105,7 +105,6 @@ class Discriminator(nn.Layer):
             nn.Conv2D(64 * 4, 1, 4, 1, 0, bias_attr=False),
             # 这里为需要改变的地方
             # nn.Sigmoid()
-            nn.LeakyReLU()
         )
 
     def forward(self, x):
