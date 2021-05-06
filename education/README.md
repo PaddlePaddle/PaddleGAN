@@ -1,4 +1,19 @@
+
+[作业]自选模型实现超分作业链接:https://aistudio.baidu.com/aistudio/projectdetail/1827855
+
+第三节课pix2pix人像卡通化作业链接：https://aistudio.baidu.com/aistudio/projectdetail/1820886
+
+第四课代码题老视频修复作业链接：https://aistudio.baidu.com/aistudio/projectdetail/1824947
+
+我在AI Studio上获得黄金等级，点亮5个徽章，来互关呀~ https://aistudio.baidu.com/aistudio/personalcenter/thirdview/335435
+![image](https://user-images.githubusercontent.com/48580700/115171220-2b5ed900-a0f5-11eb-8023-7cadcb9264eb.png)
+
+
 # PaddleGAN七日打卡营
+
+
+
+
 
 欢迎加入《百度飞桨生成对抗网络七日打卡营》，PaddlePaddle研发团队直播授课，4月15日起，每天1小时，连续7天，深入剖析多种经典及前沿 GAN 模型算法及代码。
 
