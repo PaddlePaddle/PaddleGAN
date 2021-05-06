@@ -163,7 +163,8 @@ class FirstOrderPredictor(BasePredictor):
             imageio.mimsave(os.path.join(self.output, self.filename), [
                 cv2.resize((frame * 255.0).astype('uint8'), (h, w))
                 for frame in predictions
-            ])
+            ],
+                            fps=fps)
             return
 
         bboxes = self.extract_bbox(source_image.copy())
@@ -175,7 +176,8 @@ class FirstOrderPredictor(BasePredictor):
             imageio.mimsave(os.path.join(self.output, self.filename), [
                 cv2.resize((frame * 255.0).astype('uint8'), (h, w))
                 for frame in predictions
-            ])
+            ],
+                            fps=fps)
             return
 
         # for multi person
