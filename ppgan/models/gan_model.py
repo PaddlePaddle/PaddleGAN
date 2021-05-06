@@ -91,7 +91,12 @@ class GANModel(BaseModel):
             self.n_class = 0
 
         batch_size = self.D_real_inputs[0].shape[0]
-        self.G_inputs = self.nets['netG'].random_inputs(batch_size)
+
+        if isinstance(self.nets['netG'], paddle.DataParallel):
+            self.G_inputs = self.nets['netG']._layers.random_inputs(batch_size)
+        else:
+            self.G_inputs = self.nets['netG'].random_inputs(batch_size)
+
         if not isinstance(self.G_inputs, (list, tuple)):
             self.G_inputs = [self.G_inputs]
 
