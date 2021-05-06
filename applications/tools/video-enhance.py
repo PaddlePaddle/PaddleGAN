@@ -89,7 +89,7 @@ if __name__ == "__main__":
     temp_video_path = None
 
     for order in orders:
-        print('Model {} proccess start..'.format(order))
+        print('Model {} process start..'.format(order))
         if temp_video_path is None:
             temp_video_path = args.input
         if order == 'DAIN':
@@ -126,4 +126,4 @@ if __name__ == "__main__":
 
         print('Model {} output frames path:'.format(order), frames_path)
         print('Model {} output video path:'.format(order), temp_video_path)
-        print('Model {} proccess done!'.format(order))
+        print('Model {} process done!'.format(order))
