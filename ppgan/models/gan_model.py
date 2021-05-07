@@ -83,7 +83,11 @@ class GANModel(BaseModel):
             input = {'img': input}
         self.D_real_inputs = [paddle.to_tensor(input['img'])]
         if 'class_id' in input:  # n class input
-            self.n_class = self.nets['netG'].n_class
+            if isinstance(self.nets['netG'], paddle.DataParallel):
+                self.n_class = self.nets['netG']._layers.n_class
+            else:
+                self.n_class = self.nets['netG'].n_class
+
             self.D_real_inputs += [
                 paddle.to_tensor(input['class_id'], dtype='int64')
             ]

@@ -156,10 +156,13 @@ def compute_g_loss(nets,
     loss_ds = paddle.mean(paddle.abs(x_fake - x_fake2))
 
     # cycle-consistency loss
-    if isinstance(nets['fan'], paddle.DataParallel):
-        masks = nets['fan']._layers.get_heatmap(x_fake) if w_hpf > 0 else None
+    if w_hpf > 0:
+        if isinstance(nets['fan'], paddle.DataParallel):
+            masks = nets['fan']._layers.get_heatmap(x_fake)
+        else:
+            masks = nets['fan'].get_heatmap(x_fake)
     else:
-        masks = nets['fan'].get_heatmap(x_fake) if w_hpf > 0 else None
+        masks = None
 
     s_org = nets['style_encoder'](x_real, y_org)
     x_rec = nets['generator'](x_fake, s_org, masks=masks)
@@ -261,12 +264,13 @@ class StarGANv2Model(BaseModel):
             'ref2'], self.input['ref_cls']
         z_trg, z_trg2 = self.input['z_trg'], self.input['z_trg2']
 
-        if isinstance(self.nets['fan'], paddle.DataParallel):
-            masks = self.nets['fan']._layers.get_heatmap(
-                x_real) if self.w_hpf > 0 else None
+        if self.w_hpf > 0:
+            if isinstance(self.nets['fan'], paddle.DataParallel):
+                masks = self.nets['fan']._layers.get_heatmap(x_real)
+            else:
+                masks = self.nets['fan'].get_heatmap(x_real)
         else:
-            masks = self.nets['fan'].get_heatmap(
-                x_real) if self.w_hpf > 0 else None
+            masks = None
 
         # train the discriminator
         d_loss, d_losses_latent = compute_d_loss(self.nets,
