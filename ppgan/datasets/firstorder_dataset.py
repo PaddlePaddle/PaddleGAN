@@ -104,7 +104,9 @@ def read_video(name: Path, frame_shape=tuple([256, 256, 3]), saveto='folder'):
     if name.is_dir():
         frames = sorted(name.iterdir(),
                         key=lambda x: int(x.with_suffix('').name))
-        video_array = np.array([imread(path) for path in frames])
+        video_array = np.array([imread(path) for path in frames],
+                               dtype='float32')
+        return video_array
     elif name.suffix.lower() in ['.gif', '.mp4', '.mov']:
         try:
             video = mimread(name, memtest=False)
@@ -135,9 +137,9 @@ def read_video(name: Path, frame_shape=tuple([256, 256, 3]), saveto='folder'):
             for idx, img in enumerate(video_array_reshape):
                 cv2.imwrite(sub_dir.joinpath('%i.png' % idx), img)
             name.unlink()
+        return video_array_reshape
     else:
         raise Exception("Unknown dataset file extensions  %s" % name)
-    return video_array_reshape
 
 
 class FramesDataset(Dataset):
