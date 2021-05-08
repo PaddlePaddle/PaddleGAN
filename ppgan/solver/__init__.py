@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .lr_scheduler import CosineAnnealingRestartLR, LinearDecay
+from .lr_scheduler import CosineAnnealingRestartLR, LinearDecay, NonLinearDecay
 from .optimizer import *
 from .builder import build_lr_scheduler
 from .builder import build_optimizer

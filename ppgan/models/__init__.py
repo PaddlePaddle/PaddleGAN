@@ -29,3 +29,4 @@ from .wav2lip_hq_model import Wav2LipModelHq
 from .starganv2_model import StarGANv2Model
 from .edvr_model import EDVRModel
 from .firstorder_model import FirstOrderModel
+from .lapstyle_model import LapStyleModel
