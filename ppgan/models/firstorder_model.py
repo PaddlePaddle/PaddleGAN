@@ -64,26 +64,12 @@ class FirstOrderModel(BaseModel):
         generator_cfg.update({'train_params': train_params})
         generator_cfg.update(
             {'dis_scales': discriminator.discriminator_cfg.scales})
-        self.Gen_Full = build_generator(generator_cfg)
+        self.nets['Gen_Full'] = build_generator(generator_cfg)
         discriminator_cfg = discriminator
         discriminator_cfg.update({'common_params': common_params})
         discriminator_cfg.update({'train_params': train_params})
-        self.Dis = build_discriminator(discriminator_cfg)
+        self.nets['Dis'] = build_discriminator(discriminator_cfg)
         self.visualizer = Visualizer()
-
-        if isinstance(self.Gen_Full, paddle.DataParallel):
-            self.nets['kp_detector'] = self.Gen_Full._layers.kp_extractor
-            self.nets['generator'] = self.Gen_Full._layers.generator
-            self.nets['discriminator'] = self.Dis._layers.discriminator
-        else:
-            self.nets['kp_detector'] = self.Gen_Full.kp_extractor
-            self.nets['generator'] = self.Gen_Full.generator
-            self.nets['discriminator'] = self.Dis.discriminator
-
-        # init params
-        init_weight(self.nets['kp_detector'])
-        init_weight(self.nets['generator'])
-        init_weight(self.nets['discriminator'])
 
     def setup_lr_schedulers(self, lr_cfg):
         self.kp_lr = MultiStepDecay(learning_rate=lr_cfg['lr_kp_detector'],
@@ -102,6 +88,21 @@ class FirstOrderModel(BaseModel):
         }
 
     def setup_optimizers(self, lr_cfg, optimizer):
+        if isinstance(self.nets['Gen_Full'], paddle.DataParallel):
+            self.nets['kp_detector'] = self.nets[
+                'Gen_Full']._layers.kp_extractor
+            self.nets['generator'] = self.nets['Gen_Full']._layers.generator
+            self.nets['discriminator'] = self.nets['Dis']._layers.discriminator
+        else:
+
+            self.nets['kp_detector'] = self.nets['Gen_Full'].kp_extractor
+            self.nets['generator'] = self.nets['Gen_Full'].generator
+            self.nets['discriminator'] = self.nets['Dis'].discriminator
+        # init params
+        init_weight(self.nets['kp_detector'])
+        init_weight(self.nets['generator'])
+        init_weight(self.nets['discriminator'])
+
         # define loss functions
         self.losses = {}
 
@@ -124,7 +125,7 @@ class FirstOrderModel(BaseModel):
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
         self.losses_generator, self.generated = \
-            self.Gen_Full(self.input_data.copy(), self.nets['discriminator'])
+            self.nets['Gen_Full'](self.input_data.copy(), self.nets['discriminator'])
         self.visual_items['driving_source_gen'] = self.visualizer.visualize(
             self.input_data['driving'].detach(),
             self.input_data['source'].detach(), self.generated)
@@ -136,7 +137,8 @@ class FirstOrderModel(BaseModel):
         loss.backward()
 
     def backward_D(self):
-        losses_discriminator = self.Dis(self.input_data.copy(), self.generated)
+        losses_discriminator = self.nets['Dis'](self.input_data.copy(),
+                                                self.generated)
         loss_values = [val.mean() for val in losses_discriminator.values()]
         loss = paddle.add_n(loss_values)
         loss.backward()
