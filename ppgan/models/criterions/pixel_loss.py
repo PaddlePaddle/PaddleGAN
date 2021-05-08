@@ -131,6 +131,12 @@ class BCEWithLogitsLoss():
 
 
 def calc_emd_loss(pred, target):
+    """calc emd loss.
+
+    Args:
+        pred (Tensor): of shape (N, C, H, W). Predicted tensor.
+        target (Tensor): of shape (N, C, H, W). Ground truth tensor.
+    """
     b, _, h, w = pred.shape
     pred = pred.reshape([b, -1, w * h])
     pred_norm = paddle.sqrt((pred**2).sum(1).reshape([b, -1, 1]))
@@ -143,11 +149,19 @@ def calc_emd_loss(pred, target):
 
 
 @CRITERIONS.register()
-class calc_style_emd_loss():
+class CalcStyleEmdLoss():
+    """Calc Style Emd Loss.
+    """
     def __init__(self):
-        super(calc_style_emd_loss, self).__init__()
+        super(CalcStyleEmdLoss, self).__init__()
 
     def __call__(self, pred, target):
+        """Forward Function.
+
+        Args:
+            pred (Tensor): of shape (N, C, H, W). Predicted tensor.
+            target (Tensor): of shape (N, C, H, W). Ground truth tensor.
+        """
         CX_M = calc_emd_loss(pred, target)
         m1 = CX_M.min(2)
         m2 = CX_M.min(1)
@@ -157,11 +171,19 @@ class calc_style_emd_loss():
 
 
 @CRITERIONS.register()
-class calc_content_relt_loss():
+class CalcContentReltLoss():
+    """Calc Content Relt Loss.
+    """
     def __init__(self):
-        super(calc_content_relt_loss, self).__init__()
+        super(CalcContentReltLoss, self).__init__()
 
     def __call__(self, pred, target):
+        """Forward Function.
+
+        Args:
+            pred (Tensor): of shape (N, C, H, W). Predicted tensor.
+            target (Tensor): of shape (N, C, H, W). Ground truth tensor.
+        """
         dM = 1.
         Mx = calc_emd_loss(pred, pred)
         Mx = Mx / Mx.sum(1, keepdim=True)
@@ -173,11 +195,20 @@ class calc_content_relt_loss():
 
 
 @CRITERIONS.register()
-class calc_content_loss():
+class CalcContentLoss():
+    """Calc Content Loss.
+    """
     def __init__(self):
         self.mse_loss = nn.MSELoss()
 
     def __call__(self, pred, target, norm=False):
+        """Forward Function.
+
+        Args:
+            pred (Tensor): of shape (N, C, H, W). Predicted tensor.
+            target (Tensor): of shape (N, C, H, W). Ground truth tensor.
+            norm(Bool): whether use mean_variance_norm for pred and target
+        """
         if (norm == False):
             return self.mse_loss(pred, target)
         else:
@@ -186,11 +217,19 @@ class calc_content_loss():
 
 
 @CRITERIONS.register()
-class calc_style_loss():
+class CalcStyleLoss():
+    """Calc Style Loss.
+    """
     def __init__(self):
         self.mse_loss = nn.MSELoss()
 
     def __call__(self, pred, target):
+        """Forward Function.
+
+        Args:
+            pred (Tensor): of shape (N, C, H, W). Predicted tensor.
+            target (Tensor): of shape (N, C, H, W). Ground truth tensor.
+        """
         pred_mean, pred_std = calc_mean_std(pred)
         target_mean, target_std = calc_mean_std(target)
         return self.mse_loss(pred_mean, target_mean) + self.mse_loss(

@@ -41,7 +41,8 @@ python -u tools/first-order-demo.py  \
      --ratio 0.4 \
      --relative --adapt_scale
 ```
-- 多人脸
+- 多人脸：
+```
 cd applications/
 python -u tools/first-order-demo.py  \
      --driving_video ../docs/imgs/fom_dv.mp4 \

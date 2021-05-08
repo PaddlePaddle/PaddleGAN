@@ -11,13 +11,13 @@ model:
   generator_decode:
     name: DecoderNet
   calc_style_emd_loss:
-    name: calc_style_emd_loss
+    name: CalcStyleEmdLoss
   calc_content_relt_loss:
-    name: calc_content_relt_loss
+    name: CalcContentReltLoss
   calc_content_loss:
-    name: calc_content_loss
+    name: CalcContentLoss
   calc_style_loss:
-    name: calc_style_loss
+    name: CalcStyleLoss
   content_layers: ['r11', 'r21', 'r31', 'r41', 'r51']
   style_layers: ['r11', 'r21', 'r31', 'r41', 'r51']
   content_weight: 1.0
@@ -27,7 +27,7 @@ model:
 dataset:
   train:
     name: LapStyleDataset
-    content_root: data/train/
+    content_root: data/coco/train2017/
     style_root: data/starrynew.png
     load_size: 136
     crop_size: 128
@@ -35,7 +35,7 @@ dataset:
     batch_size: 5
   test:
     name: LapStyleDataset
-    content_root: data/test/
+    content_root: data/coco/test2017/
     style_root: data/starrynew.png
     load_size: 136
     crop_size: 128
