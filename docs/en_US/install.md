@@ -22,13 +22,6 @@ Note: command above will install paddle with cuda10.2, if your installed cuda is
 python3 -m pip install --upgrade ppgan
 ```
 
-Download the examples and configuration files via cloning the source code:
-
-```
-git clone https://github.com/PaddlePaddle/PaddleGAN
-cd PaddleGAN
-```
-
 #### 2.2 Install through source code
 
 ```
