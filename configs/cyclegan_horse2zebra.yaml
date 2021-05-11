@@ -1,5 +1,6 @@
 epochs: 200
 output_dir: output_dir
+find_unused_parameters: True
 
 model:
   name: CycleGANModel
