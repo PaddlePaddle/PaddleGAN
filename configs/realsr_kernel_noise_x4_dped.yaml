@@ -1,5 +1,6 @@
 total_iters: 60000
 output_dir: output_dir
+find_unused_parameters: True
 # tensor range for function tensor2img
 min_max:
   (0., 1.)
