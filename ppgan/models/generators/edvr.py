@@ -15,10 +15,8 @@
 import paddle
 
 import numpy as np
-import scipy.io as scio
 
 import paddle.nn as nn
-from paddle.nn import initializer
 from ...modules.init import kaiming_normal_, constant_
 
 from ...modules.dcn import DeformableConv_dygraph
@@ -63,11 +61,8 @@ class ResidualBlockNoBN(nn.Layer):
          |________________|
 
     Args:
-        num_feat (int): Channel number of intermediate features.
+        nf (int): Channel number of intermediate features.
             Default: 64.
-        res_scale (float): Residual scale. Default: 1.
-        pytorch_init (bool): If set to True, use pytorch default init,
-            otherwise, use default_init_weights. Default: False.
     """
     def __init__(self, nf=64):
         super(ResidualBlockNoBN, self).__init__()
@@ -612,8 +607,7 @@ class EDVRNet(nn.Layer):
                  center=None,
                  predeblur=False,
                  HR_in=False,
-                 w_TSA=True,
-                 TSA_only=False):
+                 w_TSA=True):
         super(EDVRNet, self).__init__()
         self.in_nf = in_nf
         self.out_nf = out_nf
@@ -638,28 +632,11 @@ class EDVRNet(nn.Layer):
                                    kernel_size=1,
                                    stride=1)
         else:
-            if self.HR_in:
-                self.conv_first_1 = nn.Conv2D(in_channels=self.in_nf,
-                                              out_channels=self.nf,
-                                              kernel_size=3,
-                                              stride=1,
-                                              padding=1)
-                self.conv_first_2 = nn.Conv2D(in_channels=self.nf,
-                                              out_channels=self.nf,
-                                              kernel_size=3,
-                                              stride=2,
-                                              padding=1)
-                self.conv_first_3 = nn.Conv2D(in_channels=self.nf,
-                                              out_channels=self.nf,
-                                              kernel_size=3,
-                                              stride=2,
-                                              padding=1)
-            else:
-                self.conv_first = nn.Conv2D(in_channels=self.in_nf,
-                                            out_channels=self.nf,
-                                            kernel_size=3,
-                                            stride=1,
-                                            padding=1)
+            self.conv_first = nn.Conv2D(in_channels=self.in_nf,
+                                        out_channels=self.nf,
+                                        kernel_size=3,
+                                        stride=1,
+                                        padding=1)
 
         #feature extraction module
         self.feature_extractor = MakeMultiBlocks(ResidualBlockNoBN,
@@ -711,16 +688,16 @@ class EDVRNet(nn.Layer):
                                  padding=1)
         self.pixel_shuffle = nn.PixelShuffle(2)
         self.upconv2 = nn.Conv2D(in_channels=self.nf,
-                                 out_channels=4 * self.nf,
+                                 out_channels=4 * 64,
                                  kernel_size=3,
                                  stride=1,
                                  padding=1)
-        self.HRconv = nn.Conv2D(in_channels=self.nf,
-                                out_channels=self.nf,
+        self.HRconv = nn.Conv2D(in_channels=64,
+                                out_channels=64,
                                 kernel_size=3,
                                 stride=1,
                                 padding=1)
-        self.conv_last = nn.Conv2D(in_channels=self.nf,
+        self.conv_last = nn.Conv2D(in_channels=64,
                                    out_channels=self.out_nf,
                                    kernel_size=3,
                                    stride=1,
@@ -747,18 +724,8 @@ class EDVRNet(nn.Layer):
             if self.HR_in:
                 H, W = H // self.scale_factor, W // self.scale_factor
         else:
-            if self.HR_in:
-                L1_fea = self.conv_first_1(L1_fea)
-                L1_fea = self.Leaky_relu(L1_fea)
-                L1_fea = self.conv_first_2(L1_fea)
-                L1_fea = self.Leaky_relu(L1_fea)
-                L1_fea = self.conv_first_3(L1_fea)
-                L1_fea = self.Leaky_relu(L1_fea)
-                H = H // self.scale_factor
-                W = W // self.scale_factor
-            else:
-                L1_fea = self.conv_first(L1_fea)
-                L1_fea = self.Leaky_relu(L1_fea)
+            L1_fea = self.conv_first(L1_fea)
+            L1_fea = self.Leaky_relu(L1_fea)
 
         # feature extraction and create Pyramid
         L1_fea = self.feature_extractor(L1_fea)
