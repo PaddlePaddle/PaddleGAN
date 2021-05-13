@@ -146,8 +146,10 @@ class Trainer:
 
     def distributed_data_parallel(self):
         paddle.distributed.init_parallel_env()
+        find_unused_parameters = self.cfg.get('find_unused_parameters', False)
         for net_name, net in self.model.nets.items():
-            self.model.nets[net_name] = paddle.DataParallel(net)
+            self.model.nets[net_name] = paddle.DataParallel(
+                net, find_unused_parameters=find_unused_parameters)
 
     def learning_rate_scheduler_step(self):
         if isinstance(self.model.lr_scheduler, dict):
