@@ -20,6 +20,16 @@ from .builder import GENERATORS
 
 
 def calc_mean_std(feat, eps=1e-5):
+    """calculate mean and standard deviation.
+
+    Args:
+        feat (Tensor): Tensor with shape (N, C, H, W).
+        eps (float): Default: 1e-5.
+
+    Return:
+        mean and std of feat
+        shape: [N, C, 1, 1]
+    """
     size = feat.shape
     assert (len(size) == 4)
     N, C = size[:2]
@@ -34,6 +44,14 @@ def calc_mean_std(feat, eps=1e-5):
 
 
 def mean_variance_norm(feat):
+    """mean_variance_norm.
+
+    Args:
+        feat (Tensor): Tensor with shape (N, C, H, W).
+
+    Return:
+        Normalized feat with shape (N, C, H, W)
+    """
     size = feat.shape
     mean, std = calc_mean_std(feat)
     normalized_feat = (feat - mean.expand(size)) / std.expand(size)
@@ -41,6 +59,15 @@ def mean_variance_norm(feat):
 
 
 def adaptive_instance_normalization(content_feat, style_feat):
+    """adaptive_instance_normalization.
+
+    Args:
+        content_feat (Tensor): Tensor with shape (N, C, H, W).
+        style_feat (Tensor): Tensor with shape (N, C, H, W).
+
+    Return:
+        Normalized content_feat with shape (N, C, H, W)
+    """
     assert (content_feat.shape[:2] == style_feat.shape[:2])
     size = content_feat.shape
     style_mean, style_std = calc_mean_std(style_feat)
@@ -52,6 +79,15 @@ def adaptive_instance_normalization(content_feat, style_feat):
 
 
 class ResnetBlock(nn.Layer):
+    """Residual block.
+
+    It has a style of:
+        ---Pad-Conv-ReLU-Pad-Conv-+-
+         |________________________|
+
+    Args:
+        dim (int): Channel number of intermediate features.
+    """
     def __init__(self, dim):
         super(ResnetBlock, self).__init__()
         self.conv_block = nn.Sequential(nn.Pad2D([1, 1, 1, 1], mode='reflect'),
@@ -65,6 +101,15 @@ class ResnetBlock(nn.Layer):
 
 
 class ConvBlock(nn.Layer):
+    """convolution block.
+
+    It has a style of:
+        ---Pad-Conv-ReLU---
+
+    Args:
+        dim1 (int): Channel number of input features.
+        dim2 (int): Channel number of output features.
+    """
     def __init__(self, dim1, dim2):
         super(ConvBlock, self).__init__()
         self.conv_block = nn.Sequential(nn.Pad2D([1, 1, 1, 1], mode='reflect'),
@@ -78,6 +123,11 @@ class ConvBlock(nn.Layer):
 
 @GENERATORS.register()
 class DecoderNet(nn.Layer):
+    """Decoder of Drafting module.
+    Paper:
+        Drafting and Revision: Laplacian Pyramid Network for Fast High-Quality
+        Artistic Style Transfer.
+    """
     def __init__(self):
         super(DecoderNet, self).__init__()
 
@@ -176,6 +226,11 @@ vgg = nn.Sequential(
 
 @GENERATORS.register()
 class Encoder(nn.Layer):
+    """Encoder of Drafting module.
+    Paper:
+        Drafting and Revision: Laplacian Pyramid Network for Fast High-Quality
+        Artistic Style Transfer.
+    """
     def __init__(self):
         super(Encoder, self).__init__()
         vgg_net = vgg

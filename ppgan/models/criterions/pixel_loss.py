@@ -131,7 +131,7 @@ class BCEWithLogitsLoss():
 
 
 def calc_emd_loss(pred, target):
-    """calc emd loss.
+    """calculate emd loss.
 
     Args:
         pred (Tensor): of shape (N, C, H, W). Predicted tensor.

@@ -45,6 +45,13 @@ class LapStyleDataset(Dataset):
         self.transform = data_transform(self.crop_size)
 
     def __getitem__(self, index):
+        """Get training sample
+
+        return:
+            ci: content image with shape [C,W,H],
+            si: style image with shape [C,W,H],
+            ci_path: str
+        """
         path = self.paths[index]
         content_img = Image.open(os.path.join(self.content_root,
                                               path)).convert('RGB')
@@ -62,6 +69,11 @@ class LapStyleDataset(Dataset):
         return {'ci': content_img, 'si': style_img, 'ci_path': path}
 
     def img(self, img):
+        """make image with [0,255] and HWC to [0,1] and CHW
+
+        return:
+            img: image with shape [3,W,H] and value [0, 1].
+        """
         # [0,255] to [0,1]
         img = img.astype(np.float32) / 255.
         # some images have 4 channels

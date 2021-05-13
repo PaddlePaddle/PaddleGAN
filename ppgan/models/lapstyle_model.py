@@ -111,7 +111,7 @@ class LapStyleModel(BaseModel):
         return self.loss
 
     def train_iter(self, optimizers=None):
-        """Calculate losses, gradients, and update network weights; called in every training iteration"""
+        """Calculate losses, gradients, and update network weights"""
         self.forward()
         optimizers['optimG'].clear_grad()
         self.backward_dnc()
