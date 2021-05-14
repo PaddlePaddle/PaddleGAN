@@ -347,7 +347,10 @@ class Trainer:
                     dataformats="HWC" if image_num == 1 else "NCHW")
             else:
                 if self.cfg.is_train:
-                    msg = 'epoch%.3d_' % self.current_epoch
+                    if self.by_epoch:
+                        msg = 'epoch%.3d_' % self.current_epoch
+                    else:
+                        msg = 'iter%.3d_' % self.current_iter
                 else:
                     msg = ''
                 makedirs(os.path.join(self.output_dir, results_dir))

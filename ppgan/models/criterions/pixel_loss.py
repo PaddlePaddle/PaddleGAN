@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import numpy as np
+from ..generators.generater_lapstyle import calc_mean_std, mean_variance_norm
 
 import paddle
 import paddle.nn as nn
@@ -127,3 +128,109 @@ class BCEWithLogitsLoss():
                 weights. Default: None.
         """
         return self.loss_weight * self._bce_loss(pred, target)
+
+
+def calc_emd_loss(pred, target):
+    """calculate emd loss.
+
+    Args:
+        pred (Tensor): of shape (N, C, H, W). Predicted tensor.
+        target (Tensor): of shape (N, C, H, W). Ground truth tensor.
+    """
+    b, _, h, w = pred.shape
+    pred = pred.reshape([b, -1, w * h])
+    pred_norm = paddle.sqrt((pred**2).sum(1).reshape([b, -1, 1]))
+    pred = pred.transpose([0, 2, 1])
+    target_t = target.reshape([b, -1, w * h])
+    target_norm = paddle.sqrt((target**2).sum(1).reshape([b, 1, -1]))
+    similarity = paddle.bmm(pred, target_t) / pred_norm / target_norm
+    dist = 1. - similarity
+    return dist
+
+
+@CRITERIONS.register()
+class CalcStyleEmdLoss():
+    """Calc Style Emd Loss.
+    """
+    def __init__(self):
+        super(CalcStyleEmdLoss, self).__init__()
+
+    def __call__(self, pred, target):
+        """Forward Function.
+
+        Args:
+            pred (Tensor): of shape (N, C, H, W). Predicted tensor.
+            target (Tensor): of shape (N, C, H, W). Ground truth tensor.
+        """
+        CX_M = calc_emd_loss(pred, target)
+        m1 = CX_M.min(2)
+        m2 = CX_M.min(1)
+        m = paddle.concat([m1.mean(), m2.mean()])
+        loss_remd = paddle.max(m)
+        return loss_remd
+
+
+@CRITERIONS.register()
+class CalcContentReltLoss():
+    """Calc Content Relt Loss.
+    """
+    def __init__(self):
+        super(CalcContentReltLoss, self).__init__()
+
+    def __call__(self, pred, target):
+        """Forward Function.
+
+        Args:
+            pred (Tensor): of shape (N, C, H, W). Predicted tensor.
+            target (Tensor): of shape (N, C, H, W). Ground truth tensor.
+        """
+        dM = 1.
+        Mx = calc_emd_loss(pred, pred)
+        Mx = Mx / Mx.sum(1, keepdim=True)
+        My = calc_emd_loss(target, target)
+        My = My / My.sum(1, keepdim=True)
+        loss_content = paddle.abs(
+            dM * (Mx - My)).mean() * pred.shape[2] * pred.shape[3]
+        return loss_content
+
+
+@CRITERIONS.register()
+class CalcContentLoss():
+    """Calc Content Loss.
+    """
+    def __init__(self):
+        self.mse_loss = nn.MSELoss()
+
+    def __call__(self, pred, target, norm=False):
+        """Forward Function.
+
+        Args:
+            pred (Tensor): of shape (N, C, H, W). Predicted tensor.
+            target (Tensor): of shape (N, C, H, W). Ground truth tensor.
+            norm(Bool): whether use mean_variance_norm for pred and target
+        """
+        if (norm == False):
+            return self.mse_loss(pred, target)
+        else:
+            return self.mse_loss(mean_variance_norm(pred),
+                                 mean_variance_norm(target))
+
+
+@CRITERIONS.register()
+class CalcStyleLoss():
+    """Calc Style Loss.
+    """
+    def __init__(self):
+        self.mse_loss = nn.MSELoss()
+
+    def __call__(self, pred, target):
+        """Forward Function.
+
+        Args:
+            pred (Tensor): of shape (N, C, H, W). Predicted tensor.
+            target (Tensor): of shape (N, C, H, W). Ground truth tensor.
+        """
+        pred_mean, pred_std = calc_mean_std(pred)
+        target_mean, target_std = calc_mean_std(target)
+        return self.mse_loss(pred_mean, target_mean) + self.mse_loss(
+            pred_std, target_std)
