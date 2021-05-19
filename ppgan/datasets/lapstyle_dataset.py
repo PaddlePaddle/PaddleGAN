@@ -19,6 +19,7 @@ from PIL import Image
 import paddle
 import paddle.vision.transforms as T
 from paddle.io import Dataset
+import cv2
 
 from .builder import DATASETS
 
@@ -53,12 +54,15 @@ class LapStyleDataset(Dataset):
             ci_path: str
         """
         path = self.paths[index]
-        content_img = Image.open(os.path.join(self.content_root,
-                                              path)).convert('RGB')
+        content_img = cv2.imread(os.path.join(self.content_root, path))
+        content_img = cv2.cvtColor(content_img, cv2.COLOR_RGB2BGR)
+        content_img = Image.fromarray(content_img)
         content_img = content_img.resize((self.load_size, self.load_size),
                                          Image.BILINEAR)
         content_img = np.array(content_img)
-        style_img = Image.open(self.style_root).convert('RGB')
+        style_img = cv2.imread(self.style_root)
+        style_img = cv2.cvtColor(style_img, cv2.COLOR_RGB2BGR)
+        style_img = Image.fromarray(style_img)
         style_img = style_img.resize((self.load_size, self.load_size),
                                      Image.BILINEAR)
         style_img = np.array(style_img)

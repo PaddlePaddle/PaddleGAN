@@ -37,7 +37,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 * [Pixel2Pixel](./docs/en_US/tutorials/pix2pix_cyclegan.md)
 * [CycleGAN](./docs/en_US/tutorials/pix2pix_cyclegan.md)
-* [LapStyle(coming soon)](./docs/en_US/tutorials/lap_style.md)
+* [LapStyle](./docs/en_US/tutorials/lap_style.md)
 * [PSGAN](./docs/en_US/tutorials/psgan.md)
 * [First Order Motion Model](./docs/en_US/tutorials/motion_driving.md)
 * [FaceParsing](./docs/en_US/tutorials/face_parse.md)
