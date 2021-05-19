@@ -115,7 +115,7 @@ log_config:
   visiual_interval: 10
 
 validate:
-  interval: 10
+  interval: 3000
   save_img: false
 
 snapshot_config:

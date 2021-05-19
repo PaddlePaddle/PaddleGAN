@@ -251,7 +251,8 @@ class FramesDataset(Dataset):
                 out['driving'] = out['source']
                 out['source'] = buf
         else:
-            video = np.stack(video_array, axis=0) / 255.0
+            video = np.stack(video_array, axis=0).astype(
+                    np.float32) / 255.0
             out['video'] = video.transpose(3, 0, 1, 2)
         out['name'] = video_name
         return out

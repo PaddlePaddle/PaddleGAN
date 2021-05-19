@@ -55,13 +55,16 @@ class LapStyleDataset(Dataset):
         """
         path = self.paths[index]
         content_img = cv2.imread(os.path.join(self.content_root, path))
-        content_img = cv2.cvtColor(content_img, cv2.COLOR_RGB2BGR)
+        if content_img.ndim == 2:
+            content_img = cv2.cvtColor(content_img, cv2.COLOR_GRAY2RGB)
+        else:
+            content_img = cv2.cvtColor(content_img, cv2.COLOR_BGR2RGB)
         content_img = Image.fromarray(content_img)
         content_img = content_img.resize((self.load_size, self.load_size),
                                          Image.BILINEAR)
         content_img = np.array(content_img)
         style_img = cv2.imread(self.style_root)
-        style_img = cv2.cvtColor(style_img, cv2.COLOR_RGB2BGR)
+        style_img = cv2.cvtColor(style_img, cv2.COLOR_BGR2RGB)
         style_img = Image.fromarray(style_img)
         style_img = style_img.resize((self.load_size, self.load_size),
                                      Image.BILINEAR)
