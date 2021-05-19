@@ -86,18 +86,20 @@ class FirstOrderModel(BaseModel):
             "gen_lr": self.gen_lr,
             "dis_lr": self.dis_lr
         }
-
-    def setup_optimizers(self, lr_cfg, optimizer):
+    
+    def setup_net_parallel(self):
         if isinstance(self.nets['Gen_Full'], paddle.DataParallel):
             self.nets['kp_detector'] = self.nets[
                 'Gen_Full']._layers.kp_extractor
             self.nets['generator'] = self.nets['Gen_Full']._layers.generator
             self.nets['discriminator'] = self.nets['Dis']._layers.discriminator
         else:
-
             self.nets['kp_detector'] = self.nets['Gen_Full'].kp_extractor
             self.nets['generator'] = self.nets['Gen_Full'].generator
             self.nets['discriminator'] = self.nets['Dis'].discriminator
+
+    def setup_optimizers(self, lr_cfg, optimizer):
+        self.setup_net_parallel()
         # init params
         init_weight(self.nets['kp_detector'])
         init_weight(self.nets['generator'])
@@ -163,6 +165,7 @@ class FirstOrderModel(BaseModel):
             self.optimizers['optimizer_Dis'].step()
 
     def test_iter(self, metrics=None):
+        self.setup_net_parallel()
         self.nets['kp_detector'].eval()
         self.nets['generator'].eval()
         loss_list = []

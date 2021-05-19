@@ -103,6 +103,16 @@ class FirstOrderPredictor(BasePredictor):
             self.cfg, self.weight_path)
         self.multi_person = multi_person
 
+    def read_img(self, path):
+        img = imageio.imread(path)
+        img = img.astype(np.float32)
+        if img.ndim == 2:
+            img = np.expand_dims(img, axis=2)
+        # som images have 4 channels
+        if img.shape[2] > 3:
+            img = img[:,:,:3]
+        return img
+
     def run(self, source_image, driving_video):
         def get_prediction(face_image):
             if self.find_best_frame or self.best_frame is not None:
@@ -138,7 +148,7 @@ class FirstOrderPredictor(BasePredictor):
                     adapt_movement_scale=self.adapt_scale)
             return predictions
 
-        source_image = imageio.imread(source_image)
+        source_image = self.read_img(source_image)
         reader = imageio.get_reader(driving_video)
         fps = reader.get_meta_data()['fps']
         driving_video = []
