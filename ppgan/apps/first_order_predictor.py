@@ -23,7 +23,6 @@ import imageio
 import numpy as np
 from tqdm import tqdm
 from scipy.spatial import ConvexHull
-import cv2
 
 import paddle
 from ppgan.utils.download import get_path_from_url
