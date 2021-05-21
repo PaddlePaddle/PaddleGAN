@@ -1,5 +1,6 @@
 total_iters: 600000
 output_dir: output_dir
+find_unused_parameters: True
 checkpoints_dir: checkpoints
 # tensor range for function tensor2img
 min_max:
