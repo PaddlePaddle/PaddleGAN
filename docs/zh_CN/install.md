@@ -21,13 +21,6 @@ pip install -U paddlepaddle-gpu==2.0.0
 python3 -m pip install --upgrade ppgan
 ```
 
-下载示例和配置文件:
-
-```
-git clone https://github.com/PaddlePaddle/PaddleGAN
-cd PaddleGAN
-```
-
 ##### 2.2通过源码安装
 
 ```
