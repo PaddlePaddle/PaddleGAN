@@ -86,7 +86,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 ## 复合应用
 
-* [视频修复](./docs/zh_CN/tutorials/video_restore.md)
+* [智能影像修复](./docs/zh_CN/industrial_solution/video_restore_cn.md)
 
 ## 在线教程
 
