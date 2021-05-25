@@ -70,7 +70,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 * [Pixel2Pixel](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
 * [CycleGAN](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
-* [LapStyle(coming soon)](./docs/zh_CN/tutorials/lap_style.md)
+* [LapStyle](./docs/zh_CN/tutorials/lap_style.md)
 * [PSGAN](./docs/zh_CN/tutorials/psgan.md)
 * [First Order Motion Model](./docs/zh_CN/tutorials/motion_driving.md)
 * [FaceParsing](./docs/zh_CN/tutorials/face_parse.md)
