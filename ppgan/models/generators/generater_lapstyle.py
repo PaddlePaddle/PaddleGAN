@@ -167,63 +167,6 @@ class DecoderNet(nn.Layer):
         return out
 
 
-vgg = nn.Sequential(
-    nn.Conv2D(3, 3, (1, 1)),
-    nn.Pad2D([1, 1, 1, 1], mode='reflect'),
-    nn.Conv2D(3, 64, (3, 3)),
-    nn.ReLU(),  # relu1-1
-    nn.Pad2D([1, 1, 1, 1], mode='reflect'),
-    nn.Conv2D(64, 64, (3, 3)),
-    nn.ReLU(),  # relu1-2
-    nn.MaxPool2D((2, 2), (2, 2), (0, 0), ceil_mode=True),
-    nn.Pad2D([1, 1, 1, 1], mode='reflect'),
-    nn.Conv2D(64, 128, (3, 3)),
-    nn.ReLU(),  # relu2-1
-    nn.Pad2D([1, 1, 1, 1], mode='reflect'),
-    nn.Conv2D(128, 128, (3, 3)),
-    nn.ReLU(),  # relu2-2
-    nn.MaxPool2D((2, 2), (2, 2), (0, 0), ceil_mode=True),
-    nn.Pad2D([1, 1, 1, 1], mode='reflect'),
-    nn.Conv2D(128, 256, (3, 3)),
-    nn.ReLU(),  # relu3-1
-    nn.Pad2D([1, 1, 1, 1], mode='reflect'),
-    nn.Conv2D(256, 256, (3, 3)),
-    nn.ReLU(),  # relu3-2
-    nn.Pad2D([1, 1, 1, 1], mode='reflect'),
-    nn.Conv2D(256, 256, (3, 3)),
-    nn.ReLU(),  # relu3-3
-    nn.Pad2D([1, 1, 1, 1], mode='reflect'),
-    nn.Conv2D(256, 256, (3, 3)),
-    nn.ReLU(),  # relu3-4
-    nn.MaxPool2D((2, 2), (2, 2), (0, 0), ceil_mode=True),
-    nn.Pad2D([1, 1, 1, 1], mode='reflect'),
-    nn.Conv2D(256, 512, (3, 3)),
-    nn.ReLU(),  # relu4-1, this is the last layer used
-    nn.Pad2D([1, 1, 1, 1], mode='reflect'),
-    nn.Conv2D(512, 512, (3, 3)),
-    nn.ReLU(),  # relu4-2
-    nn.Pad2D([1, 1, 1, 1], mode='reflect'),
-    nn.Conv2D(512, 512, (3, 3)),
-    nn.ReLU(),  # relu4-3
-    nn.Pad2D([1, 1, 1, 1], mode='reflect'),
-    nn.Conv2D(512, 512, (3, 3)),
-    nn.ReLU(),  # relu4-4
-    nn.MaxPool2D((2, 2), (2, 2), (0, 0), ceil_mode=True),
-    nn.Pad2D([1, 1, 1, 1], mode='reflect'),
-    nn.Conv2D(512, 512, (3, 3)),
-    nn.ReLU(),  # relu5-1
-    nn.Pad2D([1, 1, 1, 1], mode='reflect'),
-    nn.Conv2D(512, 512, (3, 3)),
-    nn.ReLU(),  # relu5-2
-    nn.Pad2D([1, 1, 1, 1], mode='reflect'),
-    nn.Conv2D(512, 512, (3, 3)),
-    nn.ReLU(),  # relu5-3
-    nn.Pad2D([1, 1, 1, 1], mode='reflect'),
-    nn.Conv2D(512, 512, (3, 3)),
-    nn.ReLU()  # relu5-4
-)
-
-
 @GENERATORS.register()
 class Encoder(nn.Layer):
     """Encoder of Drafting module.
@@ -233,7 +176,61 @@ class Encoder(nn.Layer):
     """
     def __init__(self):
         super(Encoder, self).__init__()
-        vgg_net = vgg
+        vgg_net = nn.Sequential(
+            nn.Conv2D(3, 3, (1, 1)),
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(3, 64, (3, 3)),
+            nn.ReLU(),  # relu1-1
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(64, 64, (3, 3)),
+            nn.ReLU(),  # relu1-2
+            nn.MaxPool2D((2, 2), (2, 2), (0, 0), ceil_mode=True),
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(64, 128, (3, 3)),
+            nn.ReLU(),  # relu2-1
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(128, 128, (3, 3)),
+            nn.ReLU(),  # relu2-2
+            nn.MaxPool2D((2, 2), (2, 2), (0, 0), ceil_mode=True),
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(128, 256, (3, 3)),
+            nn.ReLU(),  # relu3-1
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(256, 256, (3, 3)),
+            nn.ReLU(),  # relu3-2
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(256, 256, (3, 3)),
+            nn.ReLU(),  # relu3-3
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(256, 256, (3, 3)),
+            nn.ReLU(),  # relu3-4
+            nn.MaxPool2D((2, 2), (2, 2), (0, 0), ceil_mode=True),
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(256, 512, (3, 3)),
+            nn.ReLU(),  # relu4-1, this is the last layer used
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(512, 512, (3, 3)),
+            nn.ReLU(),  # relu4-2
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(512, 512, (3, 3)),
+            nn.ReLU(),  # relu4-3
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(512, 512, (3, 3)),
+            nn.ReLU(),  # relu4-4
+            nn.MaxPool2D((2, 2), (2, 2), (0, 0), ceil_mode=True),
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(512, 512, (3, 3)),
+            nn.ReLU(),  # relu5-1
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(512, 512, (3, 3)),
+            nn.ReLU(),  # relu5-2
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(512, 512, (3, 3)),
+            nn.ReLU(),  # relu5-3
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(512, 512, (3, 3)),
+            nn.ReLU()  # relu5-4
+        )
         weight_path = get_path_from_url(
             'https://paddlegan.bj.bcebos.com/models/vgg_normalised.pdparams')
         vgg_net.set_dict(paddle.load(weight_path))

@@ -92,8 +92,8 @@ validate:
       test_y_channel: False
 
 log_config:
-  interval: 10
-  visiual_interval: 500
+  interval: 100
+  visiual_interval: 5000
 
 snapshot_config:
   interval: 5000

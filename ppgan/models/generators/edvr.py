@@ -17,7 +17,7 @@ import paddle
 import numpy as np
 
 import paddle.nn as nn
-from ...modules.init import kaiming_normal_, constant_
+from ...modules.init import kaiming_normal_, constant_, constant_init
 
 from ...modules.dcn import DeformableConv_dygraph
 # from paddle.vision.ops import DeformConv2D  #to be compiled
@@ -382,6 +382,8 @@ class DCNPack(nn.Layer):
             deformable_groups=self.deformable_groups)
         # self.dcn = DeformConv2D(in_channels=self.num_filters,out_channels=self.num_filters,kernel_size=self.kernel_size,stride=stride,padding=padding,dilation=dilation,deformable_groups=self.deformable_groups,groups=1) # to be compiled
         self.sigmoid = nn.Sigmoid()
+        # init conv offset
+        constant_init(self.conv_offset_mask, 0., 0.)
 
     def forward(self, fea_and_offset):
         out = None
@@ -686,6 +688,7 @@ class EDVRNet(nn.Layer):
                                  kernel_size=3,
                                  stride=1,
                                  padding=1)
+
         self.pixel_shuffle = nn.PixelShuffle(2)
         self.upconv2 = nn.Conv2D(in_channels=self.nf,
                                  out_channels=4 * 64,
@@ -702,10 +705,11 @@ class EDVRNet(nn.Layer):
                                    kernel_size=3,
                                    stride=1,
                                    padding=1)
-        self.upsample = nn.Upsample(scale_factor=self.scale_factor,
-                                    mode="bilinear",
-                                    align_corners=False,
-                                    align_mode=0)
+        if self.scale_factor == 4:
+            self.upsample = nn.Upsample(scale_factor=self.scale_factor,
+                                        mode="bilinear",
+                                        align_corners=False,
+                                        align_mode=0)
 
     def forward(self, x):
         """
@@ -722,7 +726,7 @@ class EDVRNet(nn.Layer):
             L1_fea = self.pre_deblur(L1_fea)
             L1_fea = self.cov_1(L1_fea)
             if self.HR_in:
-                H, W = H // self.scale_factor, W // self.scale_factor
+                H, W = H // 4, W // 4
         else:
             L1_fea = self.conv_first(L1_fea)
             L1_fea = self.Leaky_relu(L1_fea)
@@ -782,5 +786,8 @@ class EDVRNet(nn.Layer):
             base = x_center
         else:
             base = self.upsample(x_center)
+        with paddle.no_grad():
+            print(paddle.max(out), paddle.min(out))
+        # print('debug:', out.stop_gradient)
         out += base
         return out
