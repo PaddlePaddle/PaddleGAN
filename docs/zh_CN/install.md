@@ -1,5 +1,5 @@
 # 安装文档
-本文档包含了如何安装PaddleGAN以及相关依赖，更多产品简介请参考[README](./README.md)。
+本文档包含了如何安装PaddleGAN以及相关依赖，更多产品简介请参考[README](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/README_cn.md)。
 
 ## 环境依赖
 - PaddlePaddle >= 2.0.0
