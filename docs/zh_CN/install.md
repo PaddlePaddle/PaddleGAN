@@ -2,18 +2,15 @@
 本文档包含了如何安装PaddleGAN以及相关依赖，更多产品简介请参考[README](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/README_cn.md)。
 
 ## 环境依赖
-- PaddlePaddle >= 2.0.0
+- PaddlePaddle >= 2.1.0
 - Python >= 3.6
-- CUDA >= 9.0
+- CUDA >= 10.1
 
 ## 安装PaddlePaddle
 
 ```
-# CUDA9.0
-python -m pip install paddlepaddle-gpu==2.0.1.post90 -i https://mirror.baidu.com/pypi/simple
-
 # CUDA10.1
-python -m pip install paddlepaddle-gpu==2.0.1.post101 -f https://mirror.baidu.com/pypi/simple
+python -m pip install paddlepaddle-gpu==2.1.0.post101 -f https://mirror.baidu.com/pypi/simple
 
 # CPU
 python -m pip install paddlepaddle -i https://mirror.baidu.com/pypi/simple
