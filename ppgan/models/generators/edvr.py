@@ -786,8 +786,6 @@ class EDVRNet(nn.Layer):
             base = x_center
         else:
             base = self.upsample(x_center)
-        with paddle.no_grad():
-            print(paddle.max(out), paddle.min(out))
-        # print('debug:', out.stop_gradient)
+
         out += base
         return out
