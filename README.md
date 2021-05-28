@@ -37,7 +37,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 * [Pixel2Pixel](./docs/en_US/tutorials/pix2pix_cyclegan.md)
 * [CycleGAN](./docs/en_US/tutorials/pix2pix_cyclegan.md)
-* [LapStyle(coming soon)](./docs/en_US/tutorials/lap_style.md)
+* [LapStyle](./docs/en_US/tutorials/lap_style.md)
 * [PSGAN](./docs/en_US/tutorials/psgan.md)
 * [First Order Motion Model](./docs/en_US/tutorials/motion_driving.md)
 * [FaceParsing](./docs/en_US/tutorials/face_parse.md)
@@ -71,60 +71,69 @@ You can run those projects in the [AI Studio](https://aistudio.baidu.com/aistudi
 ### Image Translation
 
 <div align='center'>
-  <img src='./docs/imgs/horse2zebra.gif'width='700' height='200'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119464966-d5c1c000-bd75-11eb-9696-9bb75357229f.gif'width='700' height='200'/>
 </div>
+
 
 ### Old video restore
 <div align='center'>
-  <img src='./docs/imgs/color_sr_peking.gif' width='700'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119469496-fc81f580-bd79-11eb-865a-5e38482b1ae8.gif' width='700'/>
 </div>
+
 
 
 ### Motion driving
 <div align='center'>
-  <img src='./docs/imgs/first_order.gif' width='700'>
+  <img src='https://user-images.githubusercontent.com/48054808/119469551-0a377b00-bd7a-11eb-9117-e4871c8fb9c0.gif' width='700'>
 </div>
+
 
 ### Super resolution
 
 <div align='center'>
-  <img src='./docs/imgs/sr_demo.png'width='700' height='250'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119469753-3e12a080-bd7a-11eb-9cde-4fa01b3201ab.png'width='700' height='250'/>
 </div>
+
 
 
 ### Makeup shifter
 
 <div align='center'>
-  <img src='./docs/imgs/makeup_shifter.png'width='700' height='250'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119469834-4ff44380-bd7a-11eb-93b6-05b705dcfbf2.png'width='700' height='250'/>
 </div>
+
 
 
 ### Face cartoonization
 
 <div align='center'>
-  <img src='./docs/imgs/ugatit.png'width='700' height='250'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119469952-6bf7e500-bd7a-11eb-89ad-9a78b10bd4ab.png'width='700' height='250'/>
 </div>
+
 
 
 ### Realistic face cartoonization
 
 <div align='center'>
-  <img src='./docs/imgs/photo2cartoon.png'width='700' height='250'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119470028-7f0ab500-bd7a-11eb-88e9-78a6b9e2e319.png'width='700' height='250'/>
 </div>
+
 
 
 ### Photo animation
 
 <div align='center'>
-  <img src='./docs/imgs/animeganv2.png'width='700' height='250'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119470099-9184ee80-bd7a-11eb-8b12-c9400fe01266.png'width='700' height='250'/>
 </div>
+
 
 
 ### Lip-syncing
 
 <div align='center'>
-  <img src='./docs/imgs/mona.gif'width='700'>
+  <img src='https://user-images.githubusercontent.com/48054808/119470166-a6618200-bd7a-11eb-9f98-58052ce21b14.gif'width='700'>
 </div>
+
 
 
 ## Changelog

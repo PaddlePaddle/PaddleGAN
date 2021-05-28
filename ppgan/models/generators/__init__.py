@@ -29,4 +29,4 @@ from .drn import DRNGenerator
 from .generator_starganv2 import StarGANv2Generator, StarGANv2Style, StarGANv2Mapping, FAN
 from .edvr import EDVRNet
 from .generator_firstorder import FirstOrderGenerator
-from .generater_lapstyle import DecoderNet, Encoder
+from .generater_lapstyle import DecoderNet, Encoder, RevisionNet
