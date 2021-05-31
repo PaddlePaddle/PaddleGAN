@@ -20,7 +20,9 @@ import paddle
 from PIL import Image
 from cv2 import imread
 from scipy import linalg
-from inception import InceptionV3
+from .inception import InceptionV3
+from paddle.utils.download import get_weights_path_from_url
+from .builder import METRICS
 
 try:
     from tqdm import tqdm
@@ -35,6 +37,42 @@ except:
 """
 inceptionV3 pretrain model is convert from pytorch, pretrain_model url is https://paddle-gan-models.bj.bcebos.com/params_inceptionV3.tar.gz
 """
+INCEPTIONV3_WEIGHT_URL = "https://paddlegan.bj.bcebos.com/InceptionV3.pdparams"
+
+@METRICS.register()
+class FID(paddle.metric.Metric):
+    def __init__(self, batch_size=1, use_GPU=True, dims = 2048, premodel_path=None, model=None):
+        self.batch_size = batch_size
+        self.use_GPU = use_GPU
+        self.dims = dims
+        self.premodel_path = premodel_path
+        if model is None:
+            block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[dims]
+            model = InceptionV3([block_idx])
+        if premodel_path is None:
+            premodel_path = get_weights_path_from_url(INCEPTIONV3_WEIGHT_URL)
+        self.model = model
+        param_dict = paddle.load(premodel_path)
+        model.load_dict(param_dict)
+        model.eval()
+        self.reset()   
+        
+    def reset(self):
+        self.results = []
+
+    def update(self, preds, gts):
+        value = calculate_fid_given_img(preds, gts, self.batch_size, self.model, self.use_GPU, self.dims)
+        self.results.append(value)
+
+    def accumulate(self):
+        if len(self.results) <= 0:
+            return 0.
+        return np.mean(self.results)
+
+    def name(self):
+        return 'FID'
+
+
 
 
 def _calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
@@ -71,13 +109,12 @@ def _calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
             2 * tr_covmean)
 
 
-def _get_activations_from_ims(img, model, batch_size, dims, use_gpu,
-                              premodel_path):
+def _get_activations_from_ims(img, model, batch_size, dims, use_gpu):
     n_batches = (len(img) + batch_size - 1) // batch_size
     n_used_img = len(img)
-
+    
     pred_arr = np.empty((n_used_img, dims))
-
+    
     for i in tqdm(range(n_batches)):
         start = i * batch_size
         end = start + batch_size
@@ -89,19 +126,13 @@ def _get_activations_from_ims(img, model, batch_size, dims, use_gpu,
         images /= 255
 
         images = paddle.to_tensor(images)
-        param_dict, _ = paddle.load(premodel_path)
-        model.set_dict(param_dict)
-        model.eval()
         pred = model(images)[0][0]
-        pred_arr[start:end] = pred.reshape(end - start, -1)
-
+        pred_arr[start:end] = pred.reshape([end - start, -1]).cpu().numpy()
     return pred_arr
 
 
-def _compute_statistic_of_img(img, model, batch_size, dims, use_gpu,
-                              premodel_path):
-    act = _get_activations_from_ims(img, model, batch_size, dims, use_gpu,
-                                    premodel_path)
+def _compute_statistic_of_img(img, model, batch_size, dims, use_gpu):
+    act = _get_activations_from_ims(img, model, batch_size, dims, use_gpu)
     mu = np.mean(act, axis=0)
     sigma = np.cov(act, rowvar=False)
     return mu, sigma
@@ -110,22 +141,14 @@ def _compute_statistic_of_img(img, model, batch_size, dims, use_gpu,
 def calculate_fid_given_img(img_fake,
                             img_real,
                             batch_size,
-                            use_gpu,
-                            dims,
-                            premodel_path,
-                            model=None):
-    assert os.path.exists(
-        premodel_path
-    ), 'pretrain_model path {} is not exists! Please download it first'.format(
-        premodel_path)
-    if model is None:
-        block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[dims]
-        model = InceptionV3([block_idx])
+                            model,
+                            use_gpu = True,
+                            dims = 2048):
 
     m1, s1 = _compute_statistic_of_img(img_fake, model, batch_size, dims,
-                                       use_gpu, premodel_path)
+                                       use_gpu)
     m2, s2 = _compute_statistic_of_img(img_real, model, batch_size, dims,
-                                       use_gpu, premodel_path)
+                                       use_gpu)
 
     fid_value = _calculate_frechet_distance(m1, s1, m2, s2)
     return fid_value

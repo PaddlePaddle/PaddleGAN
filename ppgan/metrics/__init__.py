@@ -13,4 +13,5 @@
 # limitations under the License.
 
 from .psnr_ssim import PSNR, SSIM
+from .fid import FID
 from .builder import build_metric
