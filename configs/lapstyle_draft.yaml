@@ -5,7 +5,7 @@ min_max:
   (0., 1.)
 
 model:
-  name: LapStyleModel
+  name: LapStyleDraModel
   generator_encode:
     name: Encoder
   generator_decode:
@@ -37,7 +37,7 @@ dataset:
     name: LapStyleDataset
     content_root: data/coco/test2017/
     style_root: data/starrynew.png
-    load_size: 136
+    load_size: 128
     crop_size: 128
     num_workers: 0
     batch_size: 1
@@ -56,12 +56,12 @@ optimizer:
     beta2: 0.999
 
 validate:
-  interval: 5000
+  interval: 500
   save_img: false
 
 log_config:
   interval: 10
-  visiual_interval: 5000
+  visiual_interval: 500
 
 snapshot_config:
   interval: 5000
