@@ -16,6 +16,8 @@ from setuptools import setup
 from setuptools import find_packages
 from io import open
 
+from ppgan import __version__
+
 with open('requirements.txt', encoding="utf-8-sig") as f:
     requirements = f.readlines()
 
@@ -32,7 +34,7 @@ setup(
     include_package_data=True,
     entry_points={"console_scripts": ["paddlegan= paddlegan.paddlegan:main"]},
     author='PaddlePaddle Author',
-    version='2.0.0-beta',
+    version=__version__,
     install_requires=requirements,
     license='Apache License 2.0',
     description='Awesome GAN toolkits based on PaddlePaddle',

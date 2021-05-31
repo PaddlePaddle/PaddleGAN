@@ -34,8 +34,6 @@ def build_dataloader(cfg, is_train=True, distributed=True):
     name = cfg_.pop('name')
 
     dataset = DATASETS.get(name)(**cfg_)
-    place = paddle.CUDAPlace(ParallelEnv().dev_id) \
-            if ParallelEnv().nranks > 1 else paddle.CUDAPlace(0)
 
     if distributed:
         sampler = DistributedBatchSampler(dataset,
@@ -45,7 +43,6 @@ def build_dataloader(cfg, is_train=True, distributed=True):
 
         dataloader = paddle.io.DataLoader(dataset,
                                           batch_sampler=sampler,
-                                          places=place,
                                           num_workers=num_workers,
                                           use_shared_memory=use_shared_memory)
     else:
@@ -53,7 +50,6 @@ def build_dataloader(cfg, is_train=True, distributed=True):
                                           batch_size=batch_size,
                                           shuffle=True if is_train else False,
                                           drop_last=True if is_train else False,
-                                          places=place,
                                           use_shared_memory=False,
                                           num_workers=num_workers)
 
