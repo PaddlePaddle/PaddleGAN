@@ -106,6 +106,12 @@ visualdl --logdir output_dir/CycleGANModel-2020-10-29-09-21/
 
 在训练过程中默认会**保存上一个epoch的checkpoint在`output_dir`中，方便恢复训练。**
 
+本次示例中，cyclegan的训练默认**每五个epoch会保存checkpoint**，如需更改，可以到**config文件中的`interval`**进行修改。
+
+<div align='center'>
+  <img src='https://user-images.githubusercontent.com/48054808/120147997-2758c780-c21a-11eb-9cf1-4288dbc01d22.png' width=60%>
+</div>
+
 ```
 python -u tools/main.py --config-file configs/cyclegan_cityscapes.yaml --resume your_checkpoint_path
 ```
