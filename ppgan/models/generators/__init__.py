@@ -30,3 +30,4 @@ from .generator_starganv2 import StarGANv2Generator, StarGANv2Style, StarGANv2Ma
 from .edvr import EDVRNet
 from .generator_firstorder import FirstOrderGenerator
 from .generater_lapstyle import DecoderNet, Encoder, RevisionNet
+from .basicvsr import BasicVSRNet

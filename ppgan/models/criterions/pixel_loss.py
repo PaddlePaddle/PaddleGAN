@@ -58,8 +58,9 @@ class CharbonnierLoss():
         eps (float): Default: 1e-12.
 
     """
-    def __init__(self, eps=1e-12):
+    def __init__(self, eps=1e-12, reduction='sum'):
         self.eps = eps
+        self.reduction = reduction
 
     def __call__(self, pred, target, **kwargs):
         """Forward Function.
@@ -68,7 +69,14 @@ class CharbonnierLoss():
             pred (Tensor): of shape (N, C, H, W). Predicted tensor.
             target (Tensor): of shape (N, C, H, W). Ground truth tensor.
         """
-        return paddle.sum(paddle.sqrt((pred - target)**2 + self.eps))
+        if self.reduction == 'sum':
+            out = paddle.sum(paddle.sqrt((pred - target)**2 + self.eps))
+        elif self.reduction == 'mean':
+            out = paddle.mean(paddle.sqrt((pred - target)**2 + self.eps))
+        else:
+            raise NotImplementedError('CharbonnierLoss %s not implemented' %
+                                      self.reduction)
+        return out
 
 
 @CRITERIONS.register()
