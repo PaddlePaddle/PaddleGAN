@@ -165,30 +165,8 @@ class FirstOrderPredictor(BasePredictor):
         ]
         results = []
 
-        # for single person
-        if not self.multi_person:
-            h, w, _ = source_image.shape
-            source_image = cv2.resize(source_image, (IMAGE_SIZE, IMAGE_SIZE)) / 255.0
-            predictions = get_prediction(source_image)
-            imageio.mimsave(os.path.join(self.output, self.filename), [
-                cv2.resize((frame * 255.0).astype('uint8'), (h, w))
-                for frame in predictions
-            ],
-                            fps=fps)
-            return
-
         bboxes = self.extract_bbox(source_image.copy())
         print(str(len(bboxes)) + " persons have been detected")
-        if len(bboxes) <= 1:
-            h, w, _ = source_image.shape
-            source_image = cv2.resize(source_image, (IMAGE_SIZE, IMAGE_SIZE)) / 255.0
-            predictions = get_prediction(source_image)
-            imageio.mimsave(os.path.join(self.output, self.filename), [
-                cv2.resize((frame * 255.0).astype('uint8'), (h, w))
-                for frame in predictions
-            ],
-                            fps=fps)
-            return
 
         # for multi person
         for rec in bboxes:
@@ -196,7 +174,8 @@ class FirstOrderPredictor(BasePredictor):
             face_image = cv2.resize(face_image, (IMAGE_SIZE, IMAGE_SIZE)) / 255.0
             predictions = get_prediction(face_image)
             results.append({'rec': rec, 'predict': predictions})
-
+            if len(bboxes) == 1 or not self.multi_person:
+                break 
         out_frame = []
 
         for i in range(len(driving_video)):
@@ -209,6 +188,7 @@ class FirstOrderPredictor(BasePredictor):
                 out = cv2.resize(out.astype(np.uint8), (x2 - x1, y2 - y1))
                 if len(results) == 1:
                     frame[y1:y2, x1:x2] = out
+                    break
                 else:
                     patch = np.zeros(frame.shape).astype('uint8')
                     patch[y1:y2, x1:x2] = out
