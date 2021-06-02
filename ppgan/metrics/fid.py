@@ -53,8 +53,8 @@ class FID(paddle.metric.Metric):
             premodel_path = get_weights_path_from_url(INCEPTIONV3_WEIGHT_URL)
         self.model = model
         param_dict = paddle.load(premodel_path)
-        model.load_dict(param_dict)
-        model.eval()
+        self.model.load_dict(param_dict)
+        self.model.eval()
         self.reset()   
         
     def reset(self):
@@ -199,7 +199,6 @@ def _get_activations(files,
             images = np.array([images.astype(np.float32)])
 
         images = images.transpose((0, 3, 1, 2))
-        images /= 255
 
         # imagenet normalization
         if style == 'stargan':
