@@ -53,8 +53,8 @@ class FID(paddle.metric.Metric):
             premodel_path = get_weights_path_from_url(INCEPTIONV3_WEIGHT_URL)
         self.model = model
         param_dict = paddle.load(premodel_path)
-        model.load_dict(param_dict)
-        model.eval()
+        self.model.load_dict(param_dict)
+        self.model.eval()
         self.reset()   
         
     def reset(self):
@@ -123,7 +123,6 @@ def _get_activations_from_ims(img, model, batch_size, dims, use_gpu):
         images = img[start:end]
         if images.shape[1] != 3:
             images = images.transpose((0, 3, 1, 2))
-        images /= 255
 
         images = paddle.to_tensor(images)
         pred = model(images)[0][0]
