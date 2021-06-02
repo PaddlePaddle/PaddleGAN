@@ -146,5 +146,5 @@ class Pix2PixModel(BaseModel):
         with paddle.no_grad():
             if metrics is not None:
                 for metric in metrics.values():
-                    metric.update(self.fake_B / 255.0, self.real_B / 255.0)
+                    metric.update(self.fake_B, self.real_B)
         self.nets['netG'].train()

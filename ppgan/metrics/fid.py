@@ -58,16 +58,25 @@ class FID(paddle.metric.Metric):
         self.reset()   
         
     def reset(self):
+        self.preds = []
+        self.gts = []
         self.results = []
 
     def update(self, preds, gts):
-        value = calculate_fid_given_img(preds, gts, self.batch_size, self.model, self.use_GPU, self.dims)
-        self.results.append(value)
-
+        if len(preds.shape) >=4:
+            self.preds.append(preds)
+            self.gts.append(gts)
+        else:
+            for i in range(preds.shape[0]):
+                self.preds.append(preds[i,:,:,:,:])
+                self.gts.append(gts[i,:,:,:,:])
+        
     def accumulate(self):
-        if len(self.results) <= 0:
-            return 0.
-        return np.mean(self.results)
+        self.preds = paddle.concat(self.preds, axis=0)
+        self.gts = paddle.concat(self.gts, axis=0)
+        value = calculate_fid_given_img(self.preds, self.gts, self.batch_size, self.model, self.use_GPU, self.dims)
+        self.reset() 
+        return value
 
     def name(self):
         return 'FID'
