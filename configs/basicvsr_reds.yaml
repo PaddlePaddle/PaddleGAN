@@ -8,7 +8,7 @@ min_max:
 
 model:
   name: BasicVSRModel
-  fix_iter: 20
+  fix_iter: 5000
   generator:
     name: BasicVSRNet
     mid_channels: 64
@@ -31,7 +31,7 @@ dataset:
     use_rot: True
     scale: 4
     val_partition: REDS4
-    num_workers: 6  # 6
+    num_workers: 3  # 6
     batch_size: 2  # 4*2
 
 
@@ -82,7 +82,7 @@ validate:
       test_y_channel: False
 
 log_config:
-  interval: 5
+  interval: 100
   visiual_interval: 500
 
 snapshot_config:

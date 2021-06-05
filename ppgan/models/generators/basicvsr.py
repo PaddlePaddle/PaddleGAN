@@ -479,7 +479,7 @@ class BasicVSRNet(nn.Layer):
         self.spynet = SPyNet()
         weight_path = get_path_from_url(
             'https://paddlegan.bj.bcebos.com/models/spynet.pdparams')
-        self.spynet.set_dict(paddle.load(weight_path))
+        self.spynet.set_state_dict(paddle.load(weight_path))
 
         # propagation branches
         self.backward_resblocks = ResidualBlocksWithInputConv(

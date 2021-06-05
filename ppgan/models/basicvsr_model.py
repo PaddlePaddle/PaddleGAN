@@ -17,7 +17,7 @@ import paddle.nn as nn
 
 from .builder import MODELS
 from .sr_model import BaseSRModel
-from .generators.basicvsr import ResidualBlockNoBN, PixelShufflePack
+from .generators.basicvsr import ResidualBlockNoBN, PixelShufflePack, SPyNet
 from ..modules.init import reset_parameters
 from ..utils.visual import tensor2img
 
@@ -38,7 +38,8 @@ class BasicVSRModel(BaseSRModel):
         """
         super(BasicVSRModel, self).__init__(generator, pixel_criterion)
         self.fix_iter = fix_iter
-        self.current_iter = 1
+        self.current_iter = 30000
+        self.flag = True
         init_basicvsr_weight(self.nets['generator'])
 
     def setup_input(self, input):
@@ -58,20 +59,27 @@ class BasicVSRModel(BaseSRModel):
                 for name, param in self.nets['generator'].named_parameters():
                     if 'spynet' in name:
                         param.trainable = False
-            elif self.current_iter == self.fix_iter + 1:
+            elif self.current_iter >= self.fix_iter + 1 and self.flag:
                 print('Train all the parameters.')
                 for name, param in self.nets['generator'].named_parameters():
                     param.trainable = True
                     if 'spynet' in name:
                         param.optimize_attr['learning_rate'] = 0.125
+                self.flag = False
         self.output = self.nets['generator'](self.lq)
         self.visual_items['output'] = self.output[:, 0, :, :, :]
         # pixel loss
         loss_pixel = self.pixel_criterion(self.output, self.gt)
-        self.losses['loss_pixel'] = loss_pixel
-
+        
         loss_pixel.backward()
         optims['optim'].step()
+        
+        # world_size = paddle.distributed.get_world_size()
+        # if world_size > 1:
+        #     self.losses['loss_pixel'] = paddle.distributed.all_reduce(loss_pixel.clone()) / world_size
+        # else:
+        self.losses['loss_pixel'] = loss_pixel
+
         self.current_iter += 1
 
     def test_iter(self, metrics=None):
@@ -79,7 +87,7 @@ class BasicVSRModel(BaseSRModel):
         with paddle.no_grad():
             # print('debug input:', self.lq.shape)
             self.output = self.nets['generator'](self.lq)
-            self.visual_items['output'] = self.output
+            self.visual_items['output'] = self.output[:, 0, :, :, :]
         self.nets['generator'].train()
 
         out_img = []
@@ -95,10 +103,11 @@ class BasicVSRModel(BaseSRModel):
 
 
 def init_basicvsr_weight(net):
-    def reset_func(m):
-        if hasattr(m, 'weight') and (not isinstance(
-                m, (nn.BatchNorm, nn.BatchNorm2D))) and (not isinstance(
-                    m, (ResidualBlockNoBN, PixelShufflePack))):
+    for m in net.children():
+        if hasattr(m, 'weight') and not isinstance(m, (nn.BatchNorm, nn.BatchNorm2D)):
             reset_parameters(m)
+            continue
 
-    net.apply(reset_func)
+        if (not isinstance(
+                    m, (ResidualBlockNoBN, PixelShufflePack, SPyNet))):
+            init_basicvsr_weight(m)
