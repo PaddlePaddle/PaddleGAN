@@ -68,7 +68,11 @@ parser.add_argument("--multi_person",
                     action="store_true",
                     default=False,
                     help="whether there is only one person in the image or not")
-
+parser.add_argument("--image_size",
+                    dest="image_size",
+                    type=int,
+                    default=256,
+                    help="size of image")
 parser.set_defaults(relative=False)
 parser.set_defaults(adapt_scale=False)
 
@@ -87,5 +91,6 @@ if __name__ == "__main__":
                                     best_frame=args.best_frame,
                                     ratio=args.ratio,
                                     face_detector=args.face_detector,
-                                    multi_person=args.multi_person)
+                                    multi_person=args.multi_person,
+                                    image_size=args.image_size)
     predictor.run(args.source_image, args.driving_video)
