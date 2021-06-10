@@ -280,3 +280,17 @@ class StyleGAN2Model(BaseModel):
             self.visual_items['fake_img_ema'] = sample
 
         self.current_iter += 1
+
+    def export_model(self, path=None, inputs_size=[]):
+        static_model = paddle.jit.to_static(self.nets['gen'],
+                                            input_spec=[
+            paddle.static.InputSpec(shape=inputs_size[0],
+                                    dtype="float32"),
+            paddle.static.InputSpec(shape=inputs_size[1],
+                                    dtype="float32"),
+        ])
+        if path is None:
+            paddle.jit.save(static_model, 'export_model/' +
+                            self.__class__.__name__.lower())
+        else:
+            paddle.jit.save(static_model, path)
