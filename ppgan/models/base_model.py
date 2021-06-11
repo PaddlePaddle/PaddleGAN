@@ -21,7 +21,6 @@ from abc import ABC, abstractmethod
 
 from .criterions.builder import build_criterion
 from ..solver import build_lr_scheduler, build_optimizer
-from ..metrics import build_metric
 from ..utils.visual import tensor2img
 
 
@@ -133,6 +132,7 @@ class BaseModel(ABC):
         return self.optimizers
 
     def setup_metrics(self, cfg):
+        from ..metrics import build_metric
         if isinstance(list(cfg.values())[0], dict):
             for metric_name, cfg_ in cfg.items():
                 self.metrics[metric_name] = build_metric(cfg_)

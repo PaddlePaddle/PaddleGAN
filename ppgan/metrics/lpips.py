@@ -21,7 +21,7 @@ import paddle
 import paddle.nn as nn
 from paddle.utils.download import get_weights_path_from_url
 from ..modules import init
-from ..models.criterions.perceptual_loss import vgg
+from ..models.criterions.perceptual_loss import PerceptualVGG
 from .builder import METRICS
 
 lpips = True
@@ -269,47 +269,18 @@ class NetLinLayer(nn.Layer):
 class vgg16(nn.Layer):
     def __init__(self, requires_grad=False, pretrained=True):
         super(vgg16, self).__init__()
-        vgg_pretrained = vgg.vgg16()
-        model_path = get_weights_path_from_url(VGG16_TORCHVISION_URL)
-        state_dict = paddle.load(model_path)
-        vgg_pretrained.set_state_dict(state_dict)
+        self.vgg16 = PerceptualVGG(['3', '8', '15', '22', '29'], 'vgg16', False,
+                                   VGG16_TORCHVISION_URL)
 
-        vgg_pretrained_features = vgg_pretrained.features
-        self.slice1 = nn.Sequential()
-        self.slice2 = nn.Sequential()
-        self.slice3 = nn.Sequential()
-        self.slice4 = nn.Sequential()
-        self.slice5 = nn.Sequential()
-        self.N_slices = 5
-        for x in range(4):
-            self.slice1.add_sublayer(str(x), vgg_pretrained_features[x])
-        for x in range(4, 9):
-            self.slice2.add_sublayer(str(x), vgg_pretrained_features[x])
-        for x in range(9, 16):
-            self.slice3.add_sublayer(str(x), vgg_pretrained_features[x])
-        for x in range(16, 23):
-            self.slice4.add_sublayer(str(x), vgg_pretrained_features[x])
-        for x in range(23, 30):
-            self.slice5.add_sublayer(str(x), vgg_pretrained_features[x])
         if not requires_grad:
             for param in self.parameters():
                 param.trainable = False
 
-    def forward(self, X):
-        h = self.slice1(X)
-        h_relu1_2 = h
-        h = self.slice2(h)
-        h_relu2_2 = h
-        h = self.slice3(h)
-        h_relu3_3 = h
-        h = self.slice4(h)
-        h_relu4_3 = h
-        h = self.slice5(h)
-        h_relu5_3 = h
-
+    def forward(self, x):
+        out = self.vgg16(x)
         vgg_outputs = namedtuple(
             "VggOutputs",
             ['relu1_2', 'relu2_2', 'relu3_3', 'relu4_3', 'relu5_3'])
-        out = vgg_outputs(h_relu1_2, h_relu2_2, h_relu3_3, h_relu4_3, h_relu5_3)
+        out = vgg_outputs(out['3'], out['8'], out['15'], out['22'], out['29'])
 
         return out
