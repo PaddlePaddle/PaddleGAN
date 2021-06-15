@@ -119,6 +119,8 @@ validate:
       name: SSIM
       crop_border: 4
       test_y_channel: false
+    lpips:
+      name: LPIPSMetric
 
 log_config:
   interval: 100

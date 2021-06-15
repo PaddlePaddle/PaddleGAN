@@ -14,4 +14,5 @@
 
 from .psnr_ssim import PSNR, SSIM
 from .fid import FID
+from .lpips import LPIPSMetric
 from .builder import build_metric
