@@ -31,7 +31,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 * More applications, please refer to [ppgan.apps apis](./docs/en_US/apis/apps.md)
 * More tutorials:
   - [Data preparation](./docs/en_US/data_prepare.md)
-  - [Training/Evaluating/Testing basic usage](./docs/zh_CN/get_started.md)
+  - [Training/Evaluating/Testing basic usage](./docs/en_US/get_started.md)
 
 ## Model Tutorial
 
