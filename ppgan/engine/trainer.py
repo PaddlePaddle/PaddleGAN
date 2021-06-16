@@ -101,6 +101,8 @@ class Trainer:
         validate_cfg = cfg.get('validate', None)
         if validate_cfg and 'metrics' in validate_cfg:
             self.metrics = self.model.setup_metrics(validate_cfg['metrics'])
+        if validate_cfg and 'save_img' in validate_cfg:
+            self.is_save_img = validate_cfg['save_img']
 
         self.enable_visualdl = cfg.get('enable_visualdl', False)
         if self.enable_visualdl:
@@ -223,7 +225,7 @@ class Trainer:
         if self.metrics:
             for metric in self.metrics.values():
                 metric.reset()
-
+                
         # set model.is_train = False
         self.model.setup_train_mode(is_train=False)
 
@@ -232,33 +234,34 @@ class Trainer:
             self.model.setup_input(data)
             self.model.test_iter(metrics=self.metrics)
 
-            visual_results = {}
-            current_paths = self.model.get_image_paths()
-            current_visuals = self.model.get_current_visuals()
+            if self.is_save_img:
+                visual_results = {}
+                current_paths = self.model.get_image_paths()
+                current_visuals = self.model.get_current_visuals()
 
-            if len(current_visuals) > 0 and list(
-                    current_visuals.values())[0].shape == 4:
-                num_samples = list(current_visuals.values())[0].shape[0]
-            else:
-                num_samples = 1
-
-            for j in range(num_samples):
-                if j < len(current_paths):
-                    short_path = os.path.basename(current_paths[j])
-                    basename = os.path.splitext(short_path)[0]
+                if len(current_visuals) > 0 and list(
+                        current_visuals.values())[0].shape == 4:
+                    num_samples = list(current_visuals.values())[0].shape[0]
                 else:
-                    basename = '{:04d}_{:04d}'.format(i, j)
-                for k, img_tensor in current_visuals.items():
-                    name = '%s_%s' % (basename, k)
-                    if len(img_tensor.shape) == 4:
-                        visual_results.update({name: img_tensor[j]})
-                    else:
-                        visual_results.update({name: img_tensor})
+                    num_samples = 1
 
-            self.visual('visual_test',
-                        visual_results=visual_results,
-                        step=self.batch_id,
-                        is_save_image=True)
+                for j in range(num_samples):
+                    if j < len(current_paths):
+                        short_path = os.path.basename(current_paths[j])
+                        basename = os.path.splitext(short_path)[0]
+                    else:
+                        basename = '{:04d}_{:04d}'.format(i, j)
+                    for k, img_tensor in current_visuals.items():
+                        name = '%s_%s' % (basename, k)
+                        if len(img_tensor.shape) == 4:
+                            visual_results.update({name: img_tensor[j]})
+                        else:
+                            visual_results.update({name: img_tensor})
+
+                self.visual('visual_test',
+                            visual_results=visual_results,
+                            step=self.batch_id,
+                            is_save_image=True)
 
             if i % self.log_interval == 0:
                 self.logger.info('Test iter: [%d/%d]' %
