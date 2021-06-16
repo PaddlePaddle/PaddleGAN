@@ -182,3 +182,16 @@ class BaseModel(ABC):
             if net is not None:
                 for param in net.parameters():
                     param.trainable = requires_grad
+
+    def export_model(self, export_model, output_dir=None, inputs_size=[]):
+        inputs_num = 0
+        for net in export_model:
+            input_spec = [paddle.static.InputSpec(
+                shape=inputs_size[inputs_num + i], dtype="float32") for i in range(net["inputs_num"])]
+            inputs_num = inputs_num + net["inputs_num"]
+            static_model = paddle.jit.to_static(self.nets[net["name"]],
+                                                input_spec=input_spec)
+            if output_dir is None:
+                output_dir = 'export_model'
+            paddle.jit.save(static_model, os.path.join(
+                output_dir, '{}_{}'.format(self.__class__.__name__.lower(), net["name"])))

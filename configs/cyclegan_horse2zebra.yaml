@@ -27,6 +27,10 @@ model:
     name: GANLoss
     gan_mode: lsgan
 
+export_model:
+  - {name: 'netG_A', inputs_num: 1}
+  - {name: 'netG_B', inputs_num: 1}
+
 dataset:
   train:
     name: UnpairedDataset

@@ -25,6 +25,9 @@ model:
     name: GANLoss
     gan_mode: vanilla
 
+export_model:
+  - {name: 'netG', inputs_num: 1}
+
 dataset:
   train:
     name: PairedDataset

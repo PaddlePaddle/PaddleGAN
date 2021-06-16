@@ -11,6 +11,7 @@ from ppgan.utils.filesystem import makedirs
 
 MODEL_CLASSES = ["pix2pix", "cyclegan", "wav2lip", "esrgan", "edvr"]
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -42,6 +43,7 @@ def parse_args():
                         help="set configuration options")
     args = parser.parse_args()
     return args
+
 
 def create_predictor(model_path, device="gpu"):
     config = paddle.inference.Config(model_path + ".pdmodel",
@@ -126,7 +128,6 @@ def main():
             prediction = paddle.to_tensor(prediction[0])
             image_numpy = tensor2img(prediction, min_max)
             save_image(image_numpy, "infer_output/edvr/{}.png".format(i))
-
 
 
 if __name__ == '__main__':

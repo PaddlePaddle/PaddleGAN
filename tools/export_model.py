@@ -21,6 +21,7 @@ from ppgan.utils.config import get_config
 from ppgan.utils.setup import setup
 from ppgan.engine.trainer import Trainer
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -39,9 +40,9 @@ def parse_args():
                         required=True,
                         help="put the path to resuming file if needed")
     # config options
-    parser.add_argument("-o", 
-                        "--opt", 
-                        nargs="+", 
+    parser.add_argument("-o",
+                        "--opt",
+                        nargs="+",
                         help="set configuration options")
     parser.add_argument("-s",
                         "--inputs_size",
@@ -54,15 +55,15 @@ def parse_args():
 
 
 def main(args, cfg):
-    inputs_size = [[int(size) for size in input_size.split(',')] for input_size in args.inputs_size.split(';')]
+    inputs_size = [[int(size) for size in input_size.split(',')]
+                   for input_size in args.inputs_size.split(';')]
     model = ppgan.models.builder.build_model(cfg.model)
     model.setup_train_mode(is_train=False)
     state_dicts = ppgan.utils.filesystem.load(args.load)
     for net_name, net in model.nets.items():
         if net_name in state_dicts:
             net.set_state_dict(state_dicts[net_name])
-
-    model.export_model(args.export_model, inputs_size)
+    model.export_model(cfg.export_model, args.export_model, inputs_size)
 
 
 if __name__ == "__main__":

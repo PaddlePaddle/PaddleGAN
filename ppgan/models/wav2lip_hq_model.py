@@ -212,16 +212,3 @@ class Wav2LipModelHq(BaseModel):
             self.eval_step = 0
         self.nets['netG'].train()
         self.nets['netDH'].train()
-
-    def export_model(self, path=None, inputs_size=[]):
-        static_model = paddle.jit.to_static(self.nets['netG'],
-                                            input_spec=[
-            paddle.static.InputSpec(shape=inputs_size[0],
-                                    dtype="float32"),
-            paddle.static.InputSpec(shape=inputs_size[1],
-                                    dtype="float32"),
-        ])
-        if path is None:
-            paddle.jit.save(static_model, 'export_model/' + self.__class__.__name__.lower())
-        else:
-            paddle.jit.save(static_model, path)
