@@ -225,7 +225,7 @@ class Trainer:
         if self.metrics:
             for metric in self.metrics.values():
                 metric.reset()
-                
+
         # set model.is_train = False
         self.model.setup_train_mode(is_train=False)
 
