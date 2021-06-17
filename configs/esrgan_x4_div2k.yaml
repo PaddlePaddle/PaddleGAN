@@ -32,6 +32,9 @@ model:
     gan_mode: vanilla
     loss_weight: !!float 5e-3
 
+export_model:
+  - {name: 'generator', inputs_num: 1}
+
 dataset:
   train:
     name: SRDataset
