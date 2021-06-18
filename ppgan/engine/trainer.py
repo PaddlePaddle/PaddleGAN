@@ -98,6 +98,7 @@ class Trainer:
 
         # build metrics
         self.metrics = None
+        self.is_save_img = True
         validate_cfg = cfg.get('validate', None)
         if validate_cfg and 'metrics' in validate_cfg:
             self.metrics = self.model.setup_metrics(validate_cfg['metrics'])
