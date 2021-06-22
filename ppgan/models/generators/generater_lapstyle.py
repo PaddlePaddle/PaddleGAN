@@ -233,7 +233,6 @@ class Encoder(nn.Layer):
             nn.Conv2D(512, 512, (3, 3)),
             nn.ReLU()  # relu5-4
         )
-
         weight_path = get_path_from_url(
             'https://paddlegan.bj.bcebos.com/models/vgg_normalised.pdparams')
         vgg_net.set_dict(paddle.load(weight_path))
