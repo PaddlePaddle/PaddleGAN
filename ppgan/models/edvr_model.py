@@ -17,7 +17,7 @@ import paddle.nn as nn
 
 from .builder import MODELS
 from .sr_model import BaseSRModel
-from .generators.edvr import ResidualBlockNoBN
+from .generators.edvr import ResidualBlockNoBN, DCNPack
 from ..modules.init import reset_parameters
 
 
@@ -48,7 +48,7 @@ class EDVRModel(BaseSRModel):
         self.visual_items['lq+1'] = self.lq[:, 3, :, :, :]
         self.visual_items['lq+2'] = self.lq[:, 4, :, :, :]
         if 'gt' in input:
-            self.gt = paddle.to_tensor(input['gt'])
+            self.gt = input['gt']
             self.visual_items['gt'] = self.gt
         self.image_paths = input['lq_path']
 
@@ -77,10 +77,10 @@ class EDVRModel(BaseSRModel):
 
 def init_edvr_weight(net):
     def reset_func(m):
-        if hasattr(m,
-                   'weight') and (not isinstance(m,
-                                                 (nn.BatchNorm, nn.BatchNorm2D))
-                                  ) and (not isinstance(m, ResidualBlockNoBN)):
+        if hasattr(m, 'weight') and (not isinstance(
+                m, (nn.BatchNorm, nn.BatchNorm2D))) and (
+                    not isinstance(m, ResidualBlockNoBN) and
+                    (not isinstance(m, DCNPack))):
             reset_parameters(m)
 
     net.apply(reset_func)

@@ -14,6 +14,9 @@ model:
   discriminator_hq:
     name: Wav2LipDiscQual
 
+export_model:
+  - {name: 'netG', inputs_num: 2}
+
 dataset:
   train:
     name: Wav2LipDataset

@@ -473,6 +473,7 @@ ppgan.apps.MiDaSPredictor(output=None, weight_path=None)
 
 ```python
 ppgan.apps.Wav2LipPredictor(face=None, ausio_seq=None, outfile=None)
+
 ```
 
 > 构建Wav2Lip模型的实例，此模型用来做唇形合成，即给定一个人物视频和一个音频，实现人物口型与输入语音同步。
@@ -483,9 +484,11 @@ ppgan.apps.Wav2LipPredictor(face=None, ausio_seq=None, outfile=None)
 >
 > ```
 > from ppgan.apps import Wav2LipPredictor
+
 > import ppgan
 > predictor = Wav2LipPredictor()
 > predictor.run('/home/aistudio/先烈.jpeg', '/home/aistudio/pp_guangquan_zhenzhu46s.mp4','wav2lip')
+
 > ```
 
 > **参数:**
