@@ -74,9 +74,8 @@ snapshot_config:
   interval: 5000
 
 validate:
-  interval: 500
+  interval: 5000
   save_imig: False
-  max_eval_steps: 50
   metrics:
     fid: # metric name, can be arbitrary
       name: FID
