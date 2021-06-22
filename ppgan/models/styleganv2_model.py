@@ -280,3 +280,15 @@ class StyleGAN2Model(BaseModel):
             self.visual_items['fake_img_ema'] = sample
 
         self.current_iter += 1
+
+    def test_iter(self, metrics=None):
+        self.nets['gen_ema'].eval()
+        batch = self.real_img.shape[0]
+        noises = [paddle.randn([batch, self.num_style_feat])]
+        fake_img, _ = self.nets['gen_ema'](noises)
+        with paddle.no_grad():
+            if metrics is not None:
+                for metric in metrics.values():
+                    metric.update(fake_img, self.real_img)
+        self.nets['gen_ema'].train()
+

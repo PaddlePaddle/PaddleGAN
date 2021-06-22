@@ -72,3 +72,12 @@ log_config:
 
 snapshot_config:
   interval: 5000
+
+validate:
+  interval: 500
+  save_imig: False
+  max_eval_steps: 50
+  metrics:
+    fid: # metric name, can be arbitrary
+      name: FID
+      batch_size: 4
