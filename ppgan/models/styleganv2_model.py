@@ -79,7 +79,8 @@ class StyleGAN2Model(BaseModel):
                  r1_reg_weight=10.,
                  path_reg_weight=2.,
                  path_batch_shrink=2.,
-                 params=None):
+                 params=None,
+                 max_eval_steps=50000):
         """Initialize the CycleGAN class.
 
         Args:
@@ -107,6 +108,7 @@ class StyleGAN2Model(BaseModel):
         self.mean_path_length = 0
 
         self.nets['gen'] = build_generator(generator)
+        self.max_eval_steps = max_eval_steps
 
         # define discriminators
         if discriminator:
