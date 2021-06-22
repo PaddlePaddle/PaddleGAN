@@ -1,13 +1,13 @@
-# Applications接口说明
+# 预测接口说明
 
-ppgan.apps包含超分、插针、上色、换妆、图像动画生成、人脸解析等应用，接口使用简洁，并内置了已训练好的模型，可以直接用来做应用。
+PaddleGAN（ppgan.apps）提供超分、插帧、上色、换妆、图像动画生成、人脸解析等多种应用的预测API接口。接口内置训练好的高性能模型，支持用户进行灵活高效的应用推理。
 
-* 超分:
-  * [RealSR](#ppgan.apps.DeOldifyPredictor)
-  * [EDVR](#ppgan.apps.EDVRPredictor)
 * 上色:
   * [DeOldify](#ppgan.apps.DeOldifyPredictor)
   * [DeepRemaster](#ppgan.apps.DeepRemasterPredictor)
+* 超分:
+  * [RealSR](#ppgan.apps.RealSRPredictor)
+  * [EDVR](#ppgan.apps.EDVRPredictor)
 * 插帧:
   * [DAIN](#ppgan.apps.DAINPredictor)
 * 图像动作驱动:
@@ -24,17 +24,15 @@ ppgan.apps包含超分、插针、上色、换妆、图像动画生成、人脸�
 
 ### CPU和GPU的切换
 
-默认情况下，如果是GPU设备、并且安装了PaddlePaddle的GPU环境包，则默认使用GPU进行推理。否则，如果安装的是CPU环境包，则使用CPU进行推理。如果需要手动切换CPU、GPU，可以通过以下方式:
+默认情况下，如果是GPU设备、并且安装了[PaddlePaddle](https://www.paddlepaddle.org.cn/install/quick?docurl=/documentation/docs/zh/install/pip/windows-pip.html)的GPU环境包，则默认使用GPU进行推理。否则，如果安装的是CPU环境包，则使用CPU进行推理。
+
+如果需要手动切换CPU、GPU，可以通过以下方式:
 
 
 ```
 import paddle
-paddle.set_device('cpu')
-#paddle.set_device('gpu')
-
-# from ppgan.apps import DeOldifyPredictor
-# deoldify = DeOldifyPredictor()
-# deoldify.run("docs/imgs/test_old.jpeg")
+paddle.set_device('cpu') #设置为CPU
+#paddle.set_device('gpu') #设置为GPU
 ```
 
 ## ppgan.apps.DeOldifyPredictor
@@ -43,7 +41,7 @@ paddle.set_device('cpu')
 ppgan.apps.DeOldifyPredictor(output='output', weight_path=None, render_factor=32)
 ```
 
-> 构建DeOldify实例。DeOldify是一个基于GAN的老照片上色模型。该接口可以对图片或视频做上色。建议视频使用mp4格式。
+> 构建DeOldify实例。DeOldify是一个基于GAN的影像上色模型。该接口支持对图片或视频上色。视频建议使用mp4格式。
 >
 > **示例**
 >
@@ -71,11 +69,10 @@ run(input)
 > **参数**
 >
 > > - input (str|np.ndarray|Image.Image): 输入的图片或视频文件。如果是图片，可以是图片的路径、np.ndarray、或PIL.Image类型。如果是视频，只能是视频文件路径。
-> >
->
-> **返回值**
->
-> > - tuple(pred_img(np.array), out_paht(str)): 当属输入时图片时，返回预测后的图片，类型PIL.Image，以及图片的保存的路径。
+> 
+>**返回值**
+> 
+>> - tuple(pred_img(np.array), out_paht(str)): 当属输入时图片时，返回预测后的图片，类型PIL.Image，以及图片的保存的路径。
 > > - tuple(frame_path(str), out_path(str)): 当输入为视频时，frame_path为视频每帧上色后保存的图片路径，out_path为上色后视频的保存路径。
 
 ### run_image
@@ -89,11 +86,10 @@ run_image(img)
 > **参数**
 >
 > > - img (str|np.ndarray|Image.Image): 输入图片，可以是图片的路径、np.ndarray、或PIL.Image类型。
-> >
->
-> **返回值**
->
-> > - pred_img(PIL.Image): 返回预测后的图片，为PIL.Image类型。
+> 
+>**返回值**
+> 
+>> - pred_img(PIL.Image): 返回预测后的图片，为PIL.Image类型。
 
 ### run_video
 
@@ -119,7 +115,7 @@ run_video(video)
 ppgan.apps.DeepRemasterPredictor(output='output', weight_path=None, colorization=False, reference_dir=None, mindim=360)
 ```
 
-> 构建DeepRemasterPredictor实例。DeepRemaster是一个基于GAN的老照片/视频修复、上色模型，该模型可以提供一个参考色的图片作为输入。该接口目前只支持视频输入，建议使用mp4格式。
+> 构建DeepRemasterPredictor实例。DeepRemaster是一个基于GAN的视频上色、修复模型，该模型可以提供一个参考色的图片作为输入。该接口目前只支持视频输入，建议使用mp4格式。
 >
 > **示例**
 >
@@ -165,6 +161,8 @@ ppgan.apps.RealSRPredictor(output='output', weight_path=None)
 
 > 构建RealSR实例。RealSR: Real-World Super-Resolution via Kernel Estimation and Noise Injection发表于CVPR 2020 Workshops的基于真实世界图像训练的超分辨率模型。此接口对输入图片或视频做4倍的超分辨率。建议视频使用mp4格式。
 >
+> *注意：RealSR的输入图片尺寸需小于1000x1000pix。
+>
 > **用例**
 >
 > ```
@@ -187,11 +185,10 @@ run(video_path)
 > **参数**
 >
 > > - video_path (str): 输入视频文件路径。
-> >
->
-> **返回值**
->
-> > - tuple(pred_img(np.array), out_paht(str)): 当属输入时图片时，返回预测后的图片，类型PIL.Image，以及图片的保存的路径。
+> 
+>**返回值**
+> 
+>> - tuple(pred_img(np.array), out_paht(str)): 当属输入时图片时，返回预测后的图片，类型PIL.Image，以及图片的保存的路径。
 > > - tuple(frame_path(str), out_path(str)): 当输入为视频时，frame_path为超分后视频每帧图片的保存路径，out_path为超分后的视频保存路径。
 
 ### run_image
@@ -236,6 +233,14 @@ ppgan.apps.EDVRPredictor(output='output', weight_path=None)
 
 > 构建RealSR实例。EDVR: Video Restoration with Enhanced Deformable Convolutional Networks，论文链接: https://arxiv.org/abs/1905.02716  ，是一个针对视频超分的模型。该接口，对视频做2倍的超分。建议视频使用mp4格式。
 >
+> *注意：目前该接口仅支持在静态图下使用，需在使用前添加如下代码开启静态图：
+>
+> ```
+> import paddle
+> paddle.enable_static() #开启静态图
+> paddle.disable_static() #关闭静态图
+> ```
+>
 > **示例**
 >
 > ```
@@ -274,11 +279,19 @@ ppgan.apps.DAINPredictor(output='output', weight_path=None，time_step=None, use
 
 > 构建插帧DAIN模型的实例。DAIN: Depth-Aware Video Frame Interpolation，论文链接: https://arxiv.org/abs/1904.00830 ，对视频做插帧，获得帧率更高的视频。
 >
+> *注意：目前该接口仅支持在静态图下使用，需在使用前添加如下代码开启静态图：
+>
+> ```
+> import paddle
+> paddle.enable_static() #开启静态图
+> paddle.disable_static() #关闭静态图
+> ```
+>
 > **示例**
 >
 > ```
 > from ppgan.apps import DAINPredictor
-> dain = DAINPredictor()
+> dain = DAINPredictor(time_step=0.5) #目前 time_step 无默认值，需手动指定
 > # 测试一个视频文件
 > dain.run("docs/imgs/test.mp4")
 > ```
@@ -313,7 +326,9 @@ run(video_path)
 ppgan.apps.FirstOrderPredictor(output='output', weight_path=None，config=None, relative=False, adapt_scale=False，find_best_frame=False, best_frame=None)
 ```
 
-> 构建FirsrOrder模型的实例，此模型用来做Image Animation，即给定一张源图片和一个驱动视频，生成一段视频，其中主体是源图片，动作是驱动视频中的动作。论文是First Order Motion Model for Image Animation，论文链接: https://arxiv.org/abs/2003.00196 。
+> 构建FirsrOrder模型的实例，此模型用来做Image Animation，即给定一张源图片和一个驱动视频，生成一段视频，其中主体是源图片，动作是驱动视频中的动作。
+>
+> 论文是First Order Motion Model for Image Animation，论文链接: https://arxiv.org/abs/2003.00196 。
 >
 > **示例**
 >
@@ -354,11 +369,22 @@ run(source_image，driving_video)
 ```pyhton
 ppgan.apps.FaceParsePredictor(output_path='output')
 ```
-> 构建人脸解析模型实例，此模型用来做人脸解析， 即给定一个输入的人脸图像，人脸解析将为每个语义成分(如头发、嘴唇、鼻子、耳朵等)分配一个像素级标签。我们用BiseNet来完成这项任务。论文是 BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation, 论文链接: https://arxiv.org/abs/1808.00897v1.
+> 构建人脸解析模型实例，此模型用来做人脸解析， 即给定一个输入的人脸图像，人脸解析将为每个语义成分(如头发、嘴唇、鼻子、耳朵等)分配一个像素级标签。我们用BiseNet来完成这项任务。
+>
+> 论文是 BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation, 论文链接: https://arxiv.org/abs/1808.00897v1.
+>
+> *注意：此接口需要dlib包，使用前需用以下代码安装：
+>
+> ```
+> pip install dlib
+> ```
 
+> Windows下安装此包时间可能过长，请耐心等待。
+>
 > **参数:**
 >
 > > - input_image: 输入待解析的图片文件路径
+> > - output_path：输出保存的路径
 
 > **示例:**
 >
@@ -368,6 +394,7 @@ ppgan.apps.FaceParsePredictor(output_path='output')
 > parser.run('docs/imgs/face.png')
 > ```
 > **返回值:**
+>
 > > - mask(numpy.ndarray): 返回解析完成的人脸成分mask矩阵, 数据类型为numpy.ndarray
 
 ## ppgan.apps.AnimeGANPredictor
@@ -375,7 +402,9 @@ ppgan.apps.FaceParsePredictor(output_path='output')
 ```pyhton
 ppgan.apps.AnimeGANPredictor(output_path='output_dir',weight_path=None,use_adjust_brightness=True)
 ```
-> 利用animeganv2来对景物图像进行动漫风格化。论文是 AnimeGAN: A Novel Lightweight GAN for Photo Animation, 论文链接: https://link.springer.com/chapter/10.1007/978-981-15-5577-0_18.
+> 利用AnimeGAN v2来对景物图像进行动漫风格化。
+>
+> 论文是 AnimeGAN: A Novel Lightweight GAN for Photo Animation, 论文链接: https://link.springer.com/chapter/10.1007/978-981-15-5577-0_18.
 
 > **参数:**
 >
@@ -389,6 +418,7 @@ ppgan.apps.AnimeGANPredictor(output_path='output_dir',weight_path=None,use_adjus
 > predictor.run('docs/imgs/animeganv2_test.jpg')
 > ```
 > **返回值:**
+>
 > > - anime_image(numpy.ndarray): 返回风格化后的景色图像
 
 
@@ -398,7 +428,9 @@ ppgan.apps.AnimeGANPredictor(output_path='output_dir',weight_path=None,use_adjus
 ppgan.apps.MiDaSPredictor(output=None, weight_path=None)
 ```
 
-> 单目深度估计模型MiDaSv2, 参考 https://github.com/intel-isl/MiDaS, 论文是 Towards Robust Monocular Depth Estimation: Mixing Datasets for Zero-shot Cross-dataset Transfer , 论文链接: https://arxiv.org/abs/1907.01341v3
+> 单目深度估计模型MiDaSv2, 参考 https://github.com/intel-isl/MiDaS 单目深度估计是从单幅RGB图像中估计深度的方法
+>
+> 论文是 Towards Robust Monocular Depth Estimation: Mixing Datasets for Zero-shot Cross-dataset Transfer , 论文链接: https://arxiv.org/abs/1907.01341v3
 
 > **示例**
 >
@@ -431,37 +463,37 @@ ppgan.apps.MiDaSPredictor(output=None, weight_path=None)
 > > - weight_path (str): 指定模型路径，默认是None，则会自动下载内置的已经训练好的模型。
 
 > **返回值:**
+>
 > > - prediction (numpy.ndarray): 返回预测结果。
 > > - pfm_f (str): 如果设置output路径，返回pfm文件保存路径。
 > > - png_f (str): 如果设置output路径，返回png文件保存路径。
 
 
-## ppgan.apps.Wav2lipPredictor
+## ppgan.apps.Wav2LipPredictor
 
 ```python
-ppgan.apps.FirstOrderPredictor(args)
+ppgan.apps.Wav2LipPredictor(face=None, ausio_seq=None, outfile=None)
 ```
 
-> 构建Wav2lip模型的实例，此模型用来做唇形合成，即给定一个人物视频和一个音频，实现人物口型与输入语音同步。论文是A Lip Sync Expert Is All You Need for Speech to Lip Generation In the Wild，论文链接: http://arxiv.org/abs/2008.10010.
+> 构建Wav2Lip模型的实例，此模型用来做唇形合成，即给定一个人物视频和一个音频，实现人物口型与输入语音同步。
+>
+> 论文是A Lip Sync Expert Is All You Need for Speech to Lip Generation In the Wild，论文链接: http://arxiv.org/abs/2008.10010.
 >
 > **示例**
 >
 > ```
 > from ppgan.apps import Wav2LipPredictor
-> # The args parameter should be specified by argparse
-> predictor = Wav2LipPredictor(args)
-> predictor.run()
+> import ppgan
+> predictor = Wav2LipPredictor()
+> predictor.run('/home/aistudio/先烈.jpeg', '/home/aistudio/pp_guangquan_zhenzhu46s.mp4','wav2lip')
 > ```
 
 > **参数:**
 
-> - args(ArgumentParser): 参数包含所有的输入参数，用户在运行程序时需要通过argparse指定，主要的参数主要包含以下几项：`
-> > - checkpoint_path (str):  指定模型路径，默认是None，不指定则会自动下载内置的已经训练好的模型。
-> > - face (str): 指定的包含人物的图片或者视频的文件路径。
-> > - audio (str): 指定的输入音频的文件路径，它的格式可以是 `.wav`, `.mp3`, `.m4a`等，任何ffmpeg可以处理的文件格式都可以。
-> > - outfile (str): 指定的输出视频文件路径。
+> - face (str): 指定的包含人物的图片或者视频的文件路径。
+> - audio_seq (str): 指定的输入音频的文件路径，它的格式可以是 `.wav`, `.mp3`, `.m4a`等，任何ffmpeg可以处理的文件格式都可以。
+> - outfile (str): 指定的输出视频文件路径。
 
->
-> **返回值**
->
-> > 无。
+>**返回值**
+> 
+>> 无。
