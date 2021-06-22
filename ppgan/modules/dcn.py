@@ -135,6 +135,26 @@ def deform_conv2d(x,
             out = nn.elementwise_add(pre_bias, bias, axis=1)
         else:
             out = pre_bias
+    else:
+        helper = LayerHelper('deform_conv2d', **locals())
+        attrs = {'strides': stride, 'paddings': padding, 'dilations': dilation, 'deformable_groups': deformable_groups,
+                 'groups': groups, 'im2col_step': 1}
+        if use_deform_conv2d_v1:
+            op_type = 'deformable_conv_v1'
+            inputs = {'Input': x, 'Offset': offset, 'Filter': weight}
+        else:
+            op_type = 'deformable_conv'
+            inputs = {'Input': x, 'Offset': offset,
+                      'Mask': mask, 'Filter': weight}
+
+        pre_bias = helper.create_variable_for_type_inference(dtype=x.dtype)
+        helper.append_op(type=op_type, inputs=inputs, outputs={
+                         'Output': pre_bias}, attrs=attrs)
+
+        if bias is not None:
+            out = nn.elementwise_add(pre_bias, bias, axis=1)
+        else:
+            out = pre_bias
     return out
 
 

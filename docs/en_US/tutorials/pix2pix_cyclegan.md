@@ -43,6 +43,7 @@
 | 模型 | 数据集 | 下载地址 |
 |---|---|---|
 | Pix2Pix_cityscapes  | cityscapes | [Pix2Pix_cityscapes](https://paddlegan.bj.bcebos.com/models/Pix2Pix_cityscapes.pdparams)
+| Pix2Pix_facedes     | facades    | [Pix2Pix_facades](https://paddlegan.bj.bcebos.com/models/Pixel2Pixel_facades.pdparams)
 
 
 

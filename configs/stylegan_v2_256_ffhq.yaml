@@ -23,6 +23,10 @@ model:
   params:
     gen_iters: 4
     disc_iters: 16
+  max_eval_steps: 50000
+
+export_model:
+  - {name: 'gen', inputs_num: 2}
 
 dataset:
   train:
@@ -69,3 +73,11 @@ log_config:
 
 snapshot_config:
   interval: 5000
+
+validate:
+  interval: 5000
+  save_imig: False
+  metrics:
+    fid: # metric name, can be arbitrary
+      name: FID
+      batch_size: 4

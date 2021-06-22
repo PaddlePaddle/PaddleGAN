@@ -41,14 +41,14 @@ class EDVRModel(BaseSRModel):
         init_edvr_weight(self.nets['generator'])
 
     def setup_input(self, input):
-        self.lq = paddle.to_tensor(input['lq'])
+        self.lq = input['lq']
         self.visual_items['lq'] = self.lq[:, 2, :, :, :]
         self.visual_items['lq-2'] = self.lq[:, 0, :, :, :]
         self.visual_items['lq-1'] = self.lq[:, 1, :, :, :]
         self.visual_items['lq+1'] = self.lq[:, 3, :, :, :]
         self.visual_items['lq+2'] = self.lq[:, 4, :, :, :]
         if 'gt' in input:
-            self.gt = paddle.to_tensor(input['gt'])
+            self.gt = input['gt']
             self.visual_items['gt'] = self.gt
         self.image_paths = input['lq_path']
 

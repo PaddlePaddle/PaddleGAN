@@ -25,6 +25,9 @@ model:
     name: GANLoss
     gan_mode: vanilla
 
+export_model:
+  - {name: 'netG', inputs_num: 1}
+
 dataset:
   train:
     name: PairedDataset
@@ -107,3 +110,13 @@ log_config:
 
 snapshot_config:
   interval: 5
+
+validate:
+  interval: 500
+  save_img: false
+  metrics:
+    fid: # metric name, can be arbitrary
+        name: FID
+        batch_size: 8
+
+

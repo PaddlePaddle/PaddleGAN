@@ -2,13 +2,13 @@
 
 ### requirements
 
-* PaddlePaddle >= 2.0.0
+* PaddlePaddle >= 2.1.0
 * Python >= 3.6
-* CUDA >= 9.0
+* CUDA >= 10.1
 
 ### 1. Install PaddlePaddle
 ```
-pip install -U paddlepaddle-gpu==2.0.0
+pip install -U paddlepaddle-gpu
 ```
 
 Note: command above will install paddle with cuda10.2, if your installed cuda is different, please visit home page of [paddlepaddle](https://www.paddlepaddle.org.cn/install/quick) for more help.

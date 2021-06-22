@@ -167,6 +167,8 @@ class DecoderNet(nn.Layer):
         return out
 
 
+
+
 @GENERATORS.register()
 class Encoder(nn.Layer):
     """Encoder of Drafting module.
@@ -231,6 +233,10 @@ class Encoder(nn.Layer):
             nn.Conv2D(512, 512, (3, 3)),
             nn.ReLU()  # relu5-4
         )
+<<<<<<< HEAD
+=======
+
+>>>>>>> 19fe4fbc10ea4394638e227abe5daf5c026a671f
         weight_path = get_path_from_url(
             'https://paddlegan.bj.bcebos.com/models/vgg_normalised.pdparams')
         vgg_net.set_dict(paddle.load(weight_path))
@@ -257,4 +263,56 @@ class Encoder(nn.Layer):
         out['r41'] = x
         x = self.enc_5(x)
         out['r51'] = x
+        return out
+
+
+@GENERATORS.register()
+class RevisionNet(nn.Layer):
+    """RevisionNet of Revision module.
+    Paper:
+        Drafting and Revision: Laplacian Pyramid Network for Fast High-Quality
+        Artistic Style Transfer.
+    """
+    def __init__(self, input_nc=6):
+        super(RevisionNet, self).__init__()
+        DownBlock = []
+        DownBlock += [
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(input_nc, 64, (3, 3)),
+            nn.ReLU()
+        ]
+        DownBlock += [
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(64, 64, (3, 3), stride=2),
+            nn.ReLU()
+        ]
+
+        self.resblock = ResnetBlock(64)
+
+        UpBlock = []
+        UpBlock += [
+            nn.Upsample(scale_factor=2, mode='nearest'),
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(64, 64, (3, 3)),
+            nn.ReLU()
+        ]
+        UpBlock += [
+            nn.Pad2D([1, 1, 1, 1], mode='reflect'),
+            nn.Conv2D(64, 3, (3, 3))
+        ]
+
+        self.DownBlock = nn.Sequential(*DownBlock)
+        self.UpBlock = nn.Sequential(*UpBlock)
+
+    def forward(self, input):
+        """
+        Args:
+            input (Tensor): (b, 6, 256, 256) is concat of last input and this lap.
+
+        Returns:
+            Tensor: (b, 3, 256, 256).
+        """
+        out = self.DownBlock(input)
+        out = self.resblock(out)
+        out = self.UpBlock(out)
         return out

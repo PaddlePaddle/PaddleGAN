@@ -304,7 +304,6 @@ class REDSDataset(Dataset):
             else:
                 add_idx = i
             return_l.append(add_idx)
-        print(return_l)
         name_b = '{:08d}'.format(crt_i)
         return return_l, name_b
 
