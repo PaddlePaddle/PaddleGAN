@@ -75,6 +75,8 @@ The metrics are PSNR / SSIM.
 | EDVR_M_w_tsa_SRx4  | 30.5169 / 0.8699 |
 | EDVR_L_wo_tsa_SRx4  | 30.8649 / 0.8761 |
 | EDVR_L_w_tsa_SRx4  | 30.9336 / 0.8773 |
+| EDVR_L_wo_tsa_deblur  | 34.9587 / 0.9509 |
+| EDVR_L_w_tsa_deblur  | 35.1473 / 0.9526 |
 
 
 ## 1.4 Model Download
@@ -84,6 +86,8 @@ The metrics are PSNR / SSIM.
 | EDVR_M_w_tsa_SRx4  | REDS | [EDVR_M_w_tsa_SRx4](https://paddlegan.bj.bcebos.com/models/EDVR_M_w_tsa_SRx4.pdparams)
 | EDVR_L_wo_tsa_SRx4  | REDS | [EDVR_L_wo_tsa_SRx4](https://paddlegan.bj.bcebos.com/models/EDVR_L_wo_tsa_SRx4.pdparams)
 | EDVR_L_w_tsa_SRx4  | REDS | [EDVR_L_w_tsa_SRx4](https://paddlegan.bj.bcebos.com/models/EDVR_L_w_tsa_SRx4.pdparams)
+| EDVR_L_wo_tsa_deblur  | REDS | [EDVR_L_wo_tsa_deblur](https://paddlegan.bj.bcebos.com/models/EDVR_L_wo_tsa_deblur.pdparams)
+| EDVR_L_w_tsa_deblur  | REDS | [EDVR_L_w_tsa_deblur](https://paddlegan.bj.bcebos.com/models/EDVR_L_w_tsa_deblur.pdparams)
 
 
 
