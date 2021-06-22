@@ -10,13 +10,13 @@ Note that all model configuration files in PaddleGAN are available at [. /Paddle
 ## Contents
 
 * [Installation](#Installation)
-* [Data preparation](#Data preparation)
+* [Data preparation](#Data-preparation)
 * [Training](#Trianing)
-  * Single card training
-    * Parameters
-    * Visualize Training
-    * Resume Training
-  * Multi-card training
+  * [Single Card Training](#Single-Card-Training)
+    * [Parameters](#Parameters)
+    * [Visualize Training](#Visualize-Training)
+    * [Resume Training](#Resume-Training)
+  * [Multi-Card Training](#Multi-Card-Training)
 * [Evaluation](#Evaluation)
 
 ## Installation
@@ -36,7 +36,7 @@ python data/download_cyclegan_data.py --name cityscapes
 ```
 ## Trianing
 
-### 1. Single card training
+### 1. Single Card Training
 
  ```
  python -u tools/main.py --config-file configs/cyclegan_cityscapes.yaml
