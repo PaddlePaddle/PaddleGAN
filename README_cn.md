@@ -13,6 +13,38 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 [![License](https://img.shields.io/badge/license-Apache%202-red.svg)](LICENSE)![python version](https://img.shields.io/badge/python-3.6+-orange.svg)
 
+
+
+## 生成对抗网络七日打卡营🔥🔥🔥
+
+**4月15日~4月22日【原理+实战=7天学会GAN】** 🤓
+
+**百度飞桨一线高级研发工程师团队亲自直播授课，连续7天最强干货，带大家逐步掌握GAN常用模型脉络及代码！**
+
+讲师团队：百度高级研发工程师***4**
+
+助教团队：深度学习领域平均码龄超过**5**年的高阶开发者***7**
+
+**更有万元豪奖、百度实习内推机会等你来拿**🎁🎈🎊
+
+⌨️**一等奖 1 名**：HHKB Professional静电容蓝牙键盘
+
+🖥**二等奖 2 名**：Kindle paperwhite 电子阅读器
+
+📞**三等奖 6 名**：小度无线智能耳机
+
+📘**优秀奖 10 名**：纸质书《Generative Deep Learning》+《Deep Learning》
+
+**还在等什么，快来点击报名吧：https://aistudio.baidu.com/aistudio/course/introduce/16651**
+
+**直播链接：http://live.bilibili.com/21689802**
+
+**直播日期：4月15日～4月20日直播授课，4月22日结营直播**
+
+**具体详情请参见：[PaddleGAN生成对抗七日打卡营](./education/README.md)**
+
+
+
 ## 近期贡献者
 
 [![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/0)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/0)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/1)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/1)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/2)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/2)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/3)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/3)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/4)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/4)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/5)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/5)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/6)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/6)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/7)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/7)
@@ -38,20 +70,23 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 * [Pixel2Pixel](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
 * [CycleGAN](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
+* [LapStyle](./docs/zh_CN/tutorials/lap_style.md)
 * [PSGAN](./docs/zh_CN/tutorials/psgan.md)
-* [First Order Motion Model](./docs/zh_CN/tutorials/motion_driving.md): **🤩「蚂蚁呀嘿🐜 」🤩 换脸视频核心技术**
+* [First Order Motion Model](./docs/zh_CN/tutorials/motion_driving.md)
 * [FaceParsing](./docs/zh_CN/tutorials/face_parse.md)
 * [AnimeGANv2](./docs/zh_CN/tutorials/animegan.md)
 * [U-GAT-IT](./docs/zh_CN/tutorials/ugatit.md)
 * [Photo2Cartoon](docs/zh_CN/tutorials/photo2cartoon.md)
 * [Wav2Lip](docs/zh_CN/tutorials/wav2lip.md)
-* [Super_Resolution](./docs/zh_CN/tutorials/super_resolution.md)
+* [Single Image Super Resolution(SISR)](./docs/zh_CN/tutorials/single_image_super_resolution.md)
+* [Video Super Resolution(VSR)](./docs/zh_CN/tutorials/video_super_resolution.md)
 * [StyleGAN2](./docs/zh_CN/tutorials/styleganv2.md)
+* [Pixel2Style2Pixel](./docs/zh_CN/tutorials/pixel2style2pixel.md)
 
 
 ## 复合应用
 
-* [视频修复](./docs/zh_CN/tutorials/video_restore.md)
+* [智能影像修复](./docs/zh_CN/industrial_solution/video_restore_cn.md)
 
 ## 在线教程
 
@@ -59,78 +94,82 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 |在线教程      |    链接   |
 |--------------|-----------|
-|表情动作迁移-全网爆火的「蚂蚁呀嘿」实现 |[点击体验](https://aistudio.baidu.com/aistudio/projectdetail/1586056?channelType=0&channel=0)|
+|表情动作迁移-一键实现多人版「蚂蚁呀嘿」 | [点击体验](https://aistudio.baidu.com/aistudio/projectdetail/1603391) |
 |老北京视频修复|[点击体验](https://aistudio.baidu.com/aistudio/projectdetail/1161285)|
 |表情动作迁移-当苏大强唱起unravel |[点击体验](https://aistudio.baidu.com/aistudio/projectdetail/1048840)|
 
 
 ## 效果展示
 
-### 蚂蚁呀嘿🤪
-
-<div align='center'>
-  <img src=https://user-images.githubusercontent.com/48054808/109486399-c8ba6b00-7abd-11eb-8f17-5fa8e44f1d81.gif width='300'/>
-</div>
 
 ### 图片变换
 
 <div align='center'>
-  <img src='./docs/imgs/horse2zebra.gif'width='700' height='200'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119464966-d5c1c000-bd75-11eb-9696-9bb75357229f.gif'width='700' height='200'/>
 </div>
+
 
 ### 老视频修复
 
 <div align='center'>
-  <img src='./docs/imgs/color_sr_peking.gif' width='700'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119469496-fc81f580-bd79-11eb-865a-5e38482b1ae8.gif' width='700'/> 
 </div>
+
 
 
 ### 动作迁移
 
 <div align='center'>
-  <img src='./docs/imgs/first_order.gif' width='700'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119469551-0a377b00-bd7a-11eb-9117-e4871c8fb9c0.gif' width='700'/>
 </div>
+
 
 ### 超分辨率
 
 <div align='center'>
-  <img src='./docs/imgs/sr_demo.png'width='700' height='250'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119469753-3e12a080-bd7a-11eb-9cde-4fa01b3201ab.png'width='700' height='250'/>
 </div>
+
 
 
 ### 妆容迁移
 
 <div align='center'>
-  <img src='./docs/imgs/makeup_shifter.png'width='700' height='250'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119469834-4ff44380-bd7a-11eb-93b6-05b705dcfbf2.png'width='700' height='250'/>
 </div>
+
 
 
 ### 人脸动漫化
 
 <div align='center'>
-  <img src='./docs/imgs/ugatit.png'width='700' height='250'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119469952-6bf7e500-bd7a-11eb-89ad-9a78b10bd4ab.png'width='700' height='250'/>
 </div>
+
 
 
 ### 写实人像卡通化
 
 <div align='center'>
-  <img src='./docs/imgs/photo2cartoon.png'width='700' height='250'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119470028-7f0ab500-bd7a-11eb-88e9-78a6b9e2e319.png'width='700' height='250'/>
 </div>
+
 
 
 ### 照片动漫化
 
 <div align='center'>
-  <img src='./docs/imgs/animeganv2.png'width='700' height='250'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119470099-9184ee80-bd7a-11eb-8b12-c9400fe01266.png'width='700' height='250'/>
 </div>
+
 
 
 ### 唇形同步
 
 <div align='center'>
-  <img src='./docs/imgs/mona.gif'width='700'>
+  <img src='https://user-images.githubusercontent.com/48054808/119470166-a6618200-bd7a-11eb-9f98-58052ce21b14.gif'width='700'>
 </div>
+
 
 
 ## 版本更新
@@ -146,6 +185,12 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   《大谷 Spitzer 手把手教你修复百年前老北京影像》b站直播中奖用户名单请点击[PaddleGAN直播中奖名单](./docs/luckydraw.md)查看~
 
   想要看直播回放视频请点击链接：https://www.bilibili.com/video/BV1GZ4y1g7xc
+
+- 2021.4.15~4.22
+
+  生成对抗网络七日打卡营火爆🔥来袭，赶紧让百度资深研发带你上车GAN起来吧！
+
+  报名链接：https://aistudio.baidu.com/aistudio/course/introduce/16651
 
 
 ## 欢迎加入PaddleGAN技术交流群

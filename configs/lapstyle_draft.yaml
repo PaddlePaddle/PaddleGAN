@@ -1,0 +1,67 @@
+total_iters: 30000
+output_dir: output_dir
+checkpoints_dir: checkpoints
+min_max:
+  (0., 1.)
+
+model:
+  name: LapStyleDraModel
+  generator_encode:
+    name: Encoder
+  generator_decode:
+    name: DecoderNet
+  calc_style_emd_loss:
+    name: CalcStyleEmdLoss
+  calc_content_relt_loss:
+    name: CalcContentReltLoss
+  calc_content_loss:
+    name: CalcContentLoss
+  calc_style_loss:
+    name: CalcStyleLoss
+  content_layers: ['r11', 'r21', 'r31', 'r41', 'r51']
+  style_layers: ['r11', 'r21', 'r31', 'r41', 'r51']
+  content_weight: 1.0
+  style_weight: 3.0
+
+
+dataset:
+  train:
+    name: LapStyleDataset
+    content_root: data/coco/train2017/
+    style_root: data/starrynew.png
+    load_size: 136
+    crop_size: 128
+    num_workers: 16
+    batch_size: 5
+  test:
+    name: LapStyleDataset
+    content_root: data/coco/test2017/
+    style_root: data/starrynew.png
+    load_size: 128
+    crop_size: 128
+    num_workers: 0
+    batch_size: 1
+
+lr_scheduler:
+  name: NonLinearDecay
+  learning_rate: 1e-4
+  lr_decay: 5e-5
+
+optimizer:
+  optimG:
+    name: Adam
+    net_names:
+      - net_dec
+    beta1: 0.9
+    beta2: 0.999
+
+validate:
+  interval: 500
+  save_img: false
+
+log_config:
+  interval: 10
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 5000

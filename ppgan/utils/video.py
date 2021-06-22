@@ -24,14 +24,14 @@ def video2frames(video_path, outpath, **kargs):
         return cmd_str
 
     ffmpeg = ['ffmpeg ', ' -y -loglevel ', ' error ']
-    vid_name = video_path.split('/')[-1].split('.')[0]
+    vid_name = os.path.basename(video_path).split('.')[0]
     out_full_path = os.path.join(outpath, vid_name)
 
     if not os.path.exists(out_full_path):
         os.makedirs(out_full_path)
 
     # video file name
-    outformat = out_full_path + '/%08d.png'
+    outformat = os.path.join(out_full_path, '%08d.png')
 
     cmd = ffmpeg
     cmd = ffmpeg + [' -i ', video_path, ' -start_number ', ' 0 ', outformat]

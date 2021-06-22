@@ -97,11 +97,28 @@ parser.add_argument(
     action='store_true',
     help='Prevent smoothing face detections over a short temporal window')
 parser.add_argument("--cpu", dest="cpu", action="store_true", help="cpu mode.")
+parser.add_argument(
+    "--face_detector",
+    dest="face_detector",
+    type=str,
+    default='sfd',
+    help="face detector to be used, can choose s3fd or blazeface")
 
 if __name__ == "__main__":
     args = parser.parse_args()
     if args.cpu:
         paddle.set_device('cpu')
 
-    predictor = Wav2LipPredictor(args)
-    predictor.run()
+    predictor = Wav2LipPredictor(checkpoint_path = args.checkpoint_path,
+                                 static = args.static,
+                                 fps = args.fps,
+                                 pads = args.pads,
+                                 face_det_batch_size = args.face_det_batch_size,
+                                 wav2lip_batch_size = args.wav2lip_batch_size,
+                                 resize_factor = args.resize_factor,
+                                 crop = args.crop,
+                                 box = args.box,
+                                 rotate = args.rotate,
+                                 nosmooth = args.nosmooth,
+                                 face_detector = args.face_detector)
+    predictor.run(args.face, args.audio, args.outfile)

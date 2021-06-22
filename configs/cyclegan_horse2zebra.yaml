@@ -1,5 +1,6 @@
 epochs: 200
 output_dir: output_dir
+find_unused_parameters: True
 
 model:
   name: CycleGANModel
@@ -25,6 +26,10 @@ model:
   gan_criterion:
     name: GANLoss
     gan_mode: lsgan
+
+export_model:
+  - {name: 'netG_A', inputs_num: 1}
+  - {name: 'netG_B', inputs_num: 1}
 
 dataset:
   train:

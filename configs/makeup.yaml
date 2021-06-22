@@ -1,6 +1,7 @@
 epochs: 100
 output_dir: tmp
 checkpoints_dir: checkpoints
+find_unused_parameters: True
 
 model:
   name: MakeupModel

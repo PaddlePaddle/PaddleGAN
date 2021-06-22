@@ -89,7 +89,7 @@ if __name__ == "__main__":
     temp_video_path = None
 
     for order in orders:
-        print('Model {} proccess start..'.format(order))
+        print('Model {} process start..'.format(order))
         if temp_video_path is None:
             temp_video_path = args.input
         if order == 'DAIN':
@@ -119,11 +119,9 @@ if __name__ == "__main__":
                                         weight_path=args.RealSR_weight)
             frames_path, temp_video_path = predictor.run(temp_video_path)
         elif order == 'EDVR':
-            paddle.enable_static()
             predictor = EDVRPredictor(args.output, weight_path=args.EDVR_weight)
             frames_path, temp_video_path = predictor.run(temp_video_path)
-            paddle.disable_static()
 
         print('Model {} output frames path:'.format(order), frames_path)
         print('Model {} output video path:'.format(order), temp_video_path)
-        print('Model {} proccess done!'.format(order))
+        print('Model {} process done!'.format(order))

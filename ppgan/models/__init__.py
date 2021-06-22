@@ -26,3 +26,7 @@ from .animeganv2_model import AnimeGANV2Model, AnimeGANV2PreTrainModel
 from .styleganv2_model import StyleGAN2Model
 from .wav2lip_model import Wav2LipModel
 from .wav2lip_hq_model import Wav2LipModelHq
+from .starganv2_model import StarGANv2Model
+from .edvr_model import EDVRModel
+from .firstorder_model import FirstOrderModel
+from .lapstyle_model import LapStyleDraModel, LapStyleRevFirstModel, LapStyleRevSecondModel

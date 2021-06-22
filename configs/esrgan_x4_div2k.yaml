@@ -1,5 +1,6 @@
 total_iters: 250000
 output_dir: output_dir
+find_unused_parameters: True
 # tensor range for function tensor2img
 min_max:
   (0., 1.)
@@ -30,6 +31,9 @@ model:
     name: GANLoss
     gan_mode: vanilla
     loss_weight: !!float 5e-3
+
+export_model:
+  - {name: 'generator', inputs_num: 1}
 
 dataset:
   train:
@@ -118,6 +122,8 @@ validate:
       name: SSIM
       crop_border: 4
       test_y_channel: false
+    lpips:
+      name: LPIPSMetric
 
 log_config:
   interval: 100

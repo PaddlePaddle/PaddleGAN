@@ -141,5 +141,10 @@ class Pix2PixModel(BaseModel):
         optimizers['optimG'].step()
 
     def test_iter(self, metrics=None):
+        self.nets['netG'].eval()
+        self.forward()
         with paddle.no_grad():
-            self.forward()
+            if metrics is not None:
+                for metric in metrics.values():
+                    metric.update(self.fake_B, self.real_B)
+        self.nets['netG'].train()

@@ -439,7 +439,7 @@ ppgan.apps.MiDaSPredictor(output=None, weight_path=None)
 ## ppgan.apps.Wav2lipPredictor
 
 ```python
-ppgan.apps.FirstOrderPredictor(args)
+ppgan.apps.FirstOrderPredictor()
 ```
 
 > 构建Wav2lip模型的实例，此模型用来做唇形合成，即给定一个人物视频和一个音频，实现人物口型与输入语音同步。论文是A Lip Sync Expert Is All You Need for Speech to Lip Generation In the Wild，论文链接: http://arxiv.org/abs/2008.10010.
@@ -449,8 +449,8 @@ ppgan.apps.FirstOrderPredictor(args)
 > ```
 > from ppgan.apps import Wav2LipPredictor
 > # The args parameter should be specified by argparse
-> predictor = Wav2LipPredictor(args)
-> predictor.run()
+> predictor = Wav2LipPredictor()
+> predictor.run(face, audio, outfile)
 > ```
 
 > **参数:**

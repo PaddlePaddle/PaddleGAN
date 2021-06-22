@@ -31,21 +31,24 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 * More applications, please refer to [ppgan.apps apis](./docs/en_US/apis/apps.md)
 * More tutorials:
   - [Data preparation](./docs/en_US/data_prepare.md)
-  - [Training/Evaluating/Testing basic usage](./docs/zh_CN/get_started.md)
+  - [Training/Evaluating/Testing basic usage](./docs/en_US/get_started.md)
 
 ## Model Tutorial
 
 * [Pixel2Pixel](./docs/en_US/tutorials/pix2pix_cyclegan.md)
 * [CycleGAN](./docs/en_US/tutorials/pix2pix_cyclegan.md)
+* [LapStyle](./docs/en_US/tutorials/lap_style.md)
 * [PSGAN](./docs/en_US/tutorials/psgan.md)
-* [First Order Motion Model](./docs/en_US/tutorials/motion_driving.md): **🤩Key Technology of "Mayiyahei🐜" (Face Swapping)🤩**
+* [First Order Motion Model](./docs/en_US/tutorials/motion_driving.md)
 * [FaceParsing](./docs/en_US/tutorials/face_parse.md)
 * [AnimeGANv2](./docs/en_US/tutorials/animegan.md)
 * [U-GAT-IT](./docs/en_US/tutorials/ugatit.md)
 * [Photo2Cartoon](./docs/en_US/tutorials/photo2cartoon.md)
 * [Wav2Lip](./docs/en_US/tutorials/wav2lip.md)
-* [Super_Resolution](./docs/en_US/tutorials/super_resolution.md)
+* [Single Image Super Resolution(SISR)](./docs/en_US/tutorials/single_image_super_resolution.md)
+* [Video Super Resolution(VSR)](./docs/en_US/tutorials/video_super_resolution.md)
 * [StyleGAN2](./docs/en_US/tutorials/styleganv2.md)
+* [Pixel2Style2Pixel](./docs/en_US/tutorials/pixel2style2pixel.md)
 
 
 ## Composite Application
@@ -58,75 +61,79 @@ You can run those projects in the [AI Studio](https://aistudio.baidu.com/aistudi
 
 |Online Tutorial      |    link  |
 |--------------|-----------|
-|Face Swapping-"Mayiyahei" |[Click and Try](https://aistudio.baidu.com/aistudio/projectdetail/1586056?channelType=0&channel=0)|
+|Motion Driving-multi-personal "Mai-ha-hi" | [Click and Try](https://aistudio.baidu.com/aistudio/projectdetail/1603391) |
 |Restore the video of Beijing hundreds years ago|[Click and Try](https://aistudio.baidu.com/aistudio/projectdetail/1161285)|
-|Face Swapping-When "Su Daqiang" sings "unravel" |[Click and Try](https://aistudio.baidu.com/aistudio/projectdetail/1048840)|
+|Motion Driving-When "Su Daqiang" sings "unravel" |[Click and Try](https://aistudio.baidu.com/aistudio/projectdetail/1048840)|
 
 ## Examples
 
-### Face Swapping:"Mayiyahei"
-
-<div align='center'>
-  <img src=https://user-images.githubusercontent.com/48054808/109486399-c8ba6b00-7abd-11eb-8f17-5fa8e44f1d81.gif width='300'/>
-</div>
 
 ### Image Translation
 
 <div align='center'>
-  <img src='./docs/imgs/horse2zebra.gif'width='700' height='200'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119464966-d5c1c000-bd75-11eb-9696-9bb75357229f.gif'width='700' height='200'/>
 </div>
+
 
 ### Old video restore
 <div align='center'>
-  <img src='./docs/imgs/color_sr_peking.gif' width='700'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119469496-fc81f580-bd79-11eb-865a-5e38482b1ae8.gif' width='700'/>
 </div>
+
 
 
 ### Motion driving
 <div align='center'>
-  <img src='./docs/imgs/first_order.gif' width='700'>
+  <img src='https://user-images.githubusercontent.com/48054808/119469551-0a377b00-bd7a-11eb-9117-e4871c8fb9c0.gif' width='700'>
 </div>
+
 
 ### Super resolution
 
 <div align='center'>
-  <img src='./docs/imgs/sr_demo.png'width='700' height='250'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119469753-3e12a080-bd7a-11eb-9cde-4fa01b3201ab.png'width='700' height='250'/>
 </div>
+
 
 
 ### Makeup shifter
 
 <div align='center'>
-  <img src='./docs/imgs/makeup_shifter.png'width='700' height='250'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119469834-4ff44380-bd7a-11eb-93b6-05b705dcfbf2.png'width='700' height='250'/>
 </div>
+
 
 
 ### Face cartoonization
 
 <div align='center'>
-  <img src='./docs/imgs/ugatit.png'width='700' height='250'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119469952-6bf7e500-bd7a-11eb-89ad-9a78b10bd4ab.png'width='700' height='250'/>
 </div>
+
 
 
 ### Realistic face cartoonization
 
 <div align='center'>
-  <img src='./docs/imgs/photo2cartoon.png'width='700' height='250'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119470028-7f0ab500-bd7a-11eb-88e9-78a6b9e2e319.png'width='700' height='250'/>
 </div>
+
 
 
 ### Photo animation
 
 <div align='center'>
-  <img src='./docs/imgs/animeganv2.png'width='700' height='250'/>
+  <img src='https://user-images.githubusercontent.com/48054808/119470099-9184ee80-bd7a-11eb-8b12-c9400fe01266.png'width='700' height='250'/>
 </div>
+
 
 
 ### Lip-syncing
 
 <div align='center'>
-  <img src='./docs/imgs/mona.gif'width='700'>
+  <img src='https://user-images.githubusercontent.com/48054808/119470166-a6618200-bd7a-11eb-9f98-58052ce21b14.gif'width='700'>
 </div>
+
 
 
 ## Changelog

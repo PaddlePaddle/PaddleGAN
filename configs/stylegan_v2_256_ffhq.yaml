@@ -24,6 +24,9 @@ model:
     gen_iters: 4
     disc_iters: 16
 
+export_model:
+  - {name: 'gen', inputs_num: 2}
+
 dataset:
   train:
     name: SingleDataset

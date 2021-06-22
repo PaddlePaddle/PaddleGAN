@@ -27,7 +27,7 @@ The user could use the following command to generate and select the local image 
 
 ```
 cd applications/
-python -u tools/styleganv2.py \
+python -u tools/pixel2style2pixel.py \
        --input_image <YOUR INPUT IMAGE> \
        --output_path <DIRECTORY TO STORE OUTPUT IMAGE> \
        --weight_path <YOUR PRETRAINED MODEL PATH> \

@@ -22,6 +22,17 @@ LRSCHEDULERS.register(MultiStepDecay)
 
 
 @LRSCHEDULERS.register()
+class NonLinearDecay(LRScheduler):
+    def __init__(self, learning_rate, lr_decay, last_epoch=-1):
+        self.lr_decay = lr_decay
+        super(NonLinearDecay, self).__init__(learning_rate, last_epoch)
+
+    def get_lr(self):
+        lr = self.base_lr / (1.0 + self.lr_decay * self.last_epoch)
+        return lr
+
+
+@LRSCHEDULERS.register()
 class LinearDecay(LambdaDecay):
     def __init__(self, learning_rate, start_epoch, decay_epochs,
                  iters_per_epoch):

@@ -78,7 +78,7 @@ class DAINPredictor(BasePredictor):
 
         out_path = video2frames(video_path, frame_path_input)
 
-        vidname = video_path.split('/')[-1].split('.')[0]
+        vidname = os.path.basename(video_path).split('.')[0]
 
         frames = sorted(glob.glob(os.path.join(out_path, '*.png')))
 
@@ -122,8 +122,8 @@ class DAINPredictor(BasePredictor):
         for i in tqdm(range(frame_num - 1)):
             first = frames[i]
             second = frames[i + 1]
-            first_index = int(first.split('/')[-1].split('.')[-2])
-            second_index = int(second.split('/')[-1].split('.')[-2])
+            first_index = int(first.split(os.sep)[-1].split('.')[-2])
+            second_index = int(second.split(os.sep)[-1].split('.')[-2])
 
             img_first = imread(first)
             img_second = imread(second)
@@ -224,7 +224,7 @@ class DAINPredictor(BasePredictor):
 
         for i in range(num1):
             src = frames1[i]
-            imgname = int(src.split('/')[-1].split('.')[-2])
+            imgname = int(src.split(os.sep)[-1].split('.')[-2])
             assert i == imgname
             dst = os.path.join(combined,
                                '{:08d}.png'.format(i * (num_frames + 1)))
@@ -249,14 +249,14 @@ class DAINPredictor(BasePredictor):
 
         for i in range(num1):
             src = frames1[i]
-            index = int(src.split('/')[-1].split('.')[-2])
+            index = int(src.split(os.sep)[-1].split('.')[-2])
             dst = os.path.join(combined,
                                '{:08d}.png'.format(times_interp * index))
             shutil.copy2(src, dst)
 
         for i in range(num2):
             src = frames2[i]
-            imgname = src.split('/')[-1]
+            imgname = src.split(os.sep)[-1]
             dst = os.path.join(combined, imgname)
             shutil.copy2(src, dst)
 
@@ -279,9 +279,10 @@ class DAINPredictor(BasePredictor):
 
         for (h, hashed_paths) in hashes.items():
             if len(hashed_paths) > 1:
-                first_index = int(hashed_paths[0].split('/')[-1].split('.')[-2])
-                last_index = int(
-                    hashed_paths[-1].split('/')[-1].split('.')[-2]) + 1
+                first_index = int(hashed_paths[0].split(
+                    os.sep)[-1].split('.')[-2])
+                last_index = int(hashed_paths[-1].split(
+                    os.sep)[-1].split('.')[-2]) + 1
                 gap = 2 * (last_index - first_index) - 1
                 if gap > 2 * max_interp:
                     cut1 = len(hashed_paths) // 3
