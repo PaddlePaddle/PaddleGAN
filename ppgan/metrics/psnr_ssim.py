@@ -43,6 +43,14 @@ class PSNR(paddle.metric.Metric):
             self.results.append(value)
 
     def accumulate(self):
+        # print('debug:', self.results)
+        if paddle.distributed.get_world_size() > 1:
+            results = paddle.to_tensor(self.results)
+            # print(results)
+            results_list = []
+            paddle.distributed.all_gather(results_list, results)
+            self.results = paddle.concat(results_list).numpy()
+
         if len(self.results) <= 0:
             return 0.
         return np.mean(self.results)

@@ -79,6 +79,7 @@ class Trainer:
         self.max_eval_steps = cfg.model.get('max_eval_steps', None)
 
         self.local_rank = ParallelEnv().local_rank
+        self.world_size = ParallelEnv().nranks
         self.log_interval = cfg.log_config.interval
         self.visual_interval = cfg.log_config.visiual_interval
         self.weight_interval = cfg.snapshot_config.interval
@@ -214,8 +215,7 @@ class Trainer:
     def test(self):
         if not hasattr(self, 'test_dataloader'):
             self.test_dataloader = build_dataloader(self.cfg.dataset.test,
-                                                    is_train=False,
-                                                    distributed=False)
+                                                    is_train=False)
         iter_loader = IterLoader(self.test_dataloader)
         if self.max_eval_steps is None:
             self.max_eval_steps = len(self.test_dataloader)
@@ -227,8 +227,23 @@ class Trainer:
         # set model.is_train = False
         self.model.setup_train_mode(is_train=False)
 
+        # avoid memory leak
+        use_dataset =  self.cfg.get('use_dataset', False)
         for i in range(self.max_eval_steps):
-            data = next(iter_loader)
+            if use_dataset:
+                import numpy as np
+                import numbers
+                print('use dataset:')
+                data_ = self.test_dataloader.dataset[i * self.world_size + self.local_rank]
+                data = {}
+                for k, v in data_.items():
+                    if isinstance(v, np.ndarray):
+                        data[k] = paddle.to_tensor(v).unsqueeze(0)
+                    else:
+                        data[k] = [v]
+            else:
+                data = next(iter_loader)
+
             self.model.setup_input(data)
             self.model.test_iter(metrics=self.metrics)
 
@@ -260,9 +275,9 @@ class Trainer:
                         step=self.batch_id,
                         is_save_image=True)
 
-            if i % self.log_interval == 0:
+            if self.max_eval_steps < self.log_interval or i % self.log_interval == 0:
                 self.logger.info('Test iter: [%d/%d]' %
-                                 (i, self.max_eval_steps))
+                                ((i + 1) * ParallelEnv().nranks, self.max_eval_steps * ParallelEnv().nranks))
 
         if self.metrics:
             for metric_name, metric in self.metrics.items():

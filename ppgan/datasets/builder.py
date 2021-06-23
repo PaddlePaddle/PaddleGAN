@@ -19,9 +19,23 @@ import numpy as np
 
 from paddle.distributed import ParallelEnv
 from paddle.io import DistributedBatchSampler
-from ..utils.registry import Registry
+
+from .repeat_dataset import RepeatDataset
+from ..utils.registry import Registry, build_from_config
 
 DATASETS = Registry("DATASETS")
+
+
+def build_dataset(cfg):
+    name = cfg.pop('name')
+
+    if name == 'RepeatDataset':
+        dataset_ = build_from_config(cfg['dataset'], DATASETS)
+        dataset = RepeatDataset(dataset_, cfg['times'])
+    else:
+        dataset = dataset = DATASETS.get(name)(**cfg)
+
+    return dataset
 
 
 def build_dataloader(cfg, is_train=True, distributed=True):
@@ -31,9 +45,9 @@ def build_dataloader(cfg, is_train=True, distributed=True):
     num_workers = cfg_.pop('num_workers', 0)
     use_shared_memory = cfg_.pop('use_shared_memory', True)
 
-    name = cfg_.pop('name')
+    # name = cfg_.pop('name')
 
-    dataset = DATASETS.get(name)(**cfg_)
+    dataset = build_dataset(cfg_)
 
     if distributed:
         sampler = DistributedBatchSampler(dataset,

@@ -66,6 +66,9 @@ class BasicVSRModel(BaseSRModel):
                     if 'spynet' in name:
                         param.optimize_attr['learning_rate'] = 0.125
                 self.flag = False
+                for net in self.nets.values():
+                    net.find_unused_parameters = False
+                    
         self.output = self.nets['generator'](self.lq)
         self.visual_items['output'] = self.output[:, 0, :, :, :]
         # pixel loss
