@@ -89,6 +89,12 @@ class LPIPSMetric(paddle.metric.Metric):
                 self.results.append(value.item())
 
     def accumulate(self):
+        if paddle.distributed.get_world_size() > 1:
+            results = paddle.to_tensor(self.results)
+            results_list = []
+            paddle.distributed.all_gather(results_list, results)
+            self.results = paddle.concat(results_list).numpy()
+            
         if len(self.results) <= 0:
             return 0.
         return np.mean(self.results)
