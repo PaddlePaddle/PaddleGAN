@@ -14,14 +14,14 @@ model:
 dataset:
   train:
     name: MPRTrain
-    rgb_dir: 'Datasets/GoPro/train'
+    rgb_dir: 'data/GoPro/train'
     num_workers: 16
     batch_size: 4
     img_options:
       patch_size: 256
   test:
     name: MPRTrain
-    rgb_dir: 'Datasets/GoPro/test'
+    rgb_dir: 'data/GoPro/test'
     num_workers: 16
     batch_size: 4
     img_options:
