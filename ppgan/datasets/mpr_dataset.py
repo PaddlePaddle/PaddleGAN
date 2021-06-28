@@ -109,8 +109,8 @@ class MPRTrain(Dataset):
             inp_img = rotate(vflip(inp_img), 90)
             tar_img = rotate(vflip(tar_img), 90)
         elif aug == 7:
-            inp_img = rotate(hflip(tar_img), 90)
-            tar_img = rotate(vflip(tar_img), 90)
+            inp_img = rotate(hflip(inp_img), 90)
+            tar_img = rotate(hflip(tar_img), 90)
 
         inp_img = to_tensor(inp_img)
         tar_img = to_tensor(tar_img)
