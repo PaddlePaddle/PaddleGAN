@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
 import os
 import random
 import numpy as np
@@ -24,120 +23,7 @@ import random
 import numbers
 from paddle.io import Dataset
 from .builder import DATASETS
-
-logger = logging.getLogger(__name__)
-
-
-def to_tensor(pic):
-    """Convert a ``PIL Image`` to tensor.
-
-    See ``ToTensor`` for more details.
-
-    Args:
-        pic (PIL Image or numpy.ndarray): Image to be converted to tensor.
-
-    Returns:
-        Tensor: Converted image.
-    """
-    if not (_is_pil_image(pic)):
-        raise TypeError('pic should be PIL Image or ndarray. Got {}'.format(
-            type(pic)))
-
-    pic = np.array(pic)
-    pic = pic.transpose(2, 0, 1)
-    pic = pic / 255
-    pic = pic.astype(np.float32)
-    return pic
-
-
-def crop(img, i, j, h, w):
-    """Crop the given PIL Image.
-
-    Args:
-        img (PIL Image): Image to be cropped.
-        i (int): i in (i,j) i.e coordinates of the upper left corner.
-        j (int): j in (i,j) i.e coordinates of the upper left corner.
-        h (int): Height of the cropped image.
-        w (int): Width of the cropped image.
-
-    Returns:
-        PIL Image: Cropped image.
-    """
-    if not _is_pil_image(img):
-        raise TypeError('img should be PIL Image. Got {}'.format(type(img)))
-
-    return img.crop((j, i, j + w, i + h))
-
-
-def center_crop(img, output_size):
-    if isinstance(output_size, numbers.Number):
-        output_size = (int(output_size), int(output_size))
-    w, h = img.size
-    th, tw = output_size
-    i = int(round((h - th) / 2.))
-    j = int(round((w - tw) / 2.))
-    return crop(img, i, j, th, tw)
-
-
-def _is_pil_image(img):
-    return isinstance(img, Image.Image)
-
-
-def adjust_gamma(img, gamma, gain=1):
-    r"""Perform gamma correction on an image.
-
-    Also known as Power Law Transform. Intensities in RGB mode are adjusted
-    based on the following equation:
-
-    .. math::
-        I_{\text{out}} = 255 \times \text{gain} \times \left(\frac{I_{\text{in}}}{255}\right)^{\gamma}
-
-    See `Gamma Correction`_ for more details.
-
-    .. _Gamma Correction: https://en.wikipedia.org/wiki/Gamma_correction
-
-    Args:
-        img (PIL Image): PIL Image to be adjusted.
-        gamma (float): Non negative real number, same as :math:`\gamma` in the equation.
-            gamma larger than 1 make the shadows darker,
-            while gamma smaller than 1 make dark regions lighter.
-        gain (float): The constant multiplier.
-    """
-    if not _is_pil_image(img):
-        raise TypeError('img should be PIL Image. Got {}'.format(type(img)))
-
-    if gamma < 0:
-        raise ValueError('Gamma should be a non-negative real number')
-
-    input_mode = img.mode
-    img = img.convert('RGB')
-
-    gamma_map = [255 * gain * pow(ele / 255., gamma) for ele in range(256)] * 3
-    img = img.point(
-        gamma_map)  # use PIL's point-function to accelerate this part
-
-    img = img.convert(input_mode)
-    return img
-
-
-def adjust_saturation(img, saturation_factor):
-    """Adjust color saturation of an image.
-
-    Args:
-        img (PIL Image): PIL Image to be adjusted.
-        saturation_factor (float):  How much to adjust the saturation. 0 will
-            give a black and white image, 1 will give the original image while
-            2 will enhance the saturation by a factor of 2.
-
-    Returns:
-        PIL Image: Saturation adjusted image.
-    """
-    if not _is_pil_image(img):
-        raise TypeError('img should be PIL Image. Got {}'.format(type(img)))
-
-    enhancer = ImageEnhance.Color(img)
-    img = enhancer.enhance(saturation_factor)
-    return img
+from paddle.vision.transforms.functional import to_tensor, adjust_brightness, adjust_saturation, rotate, hflip, hflip, vflip, center_crop
 
 
 def is_image_file(filename):
@@ -194,14 +80,37 @@ class MPRTrain(Dataset):
 
         aug = random.randint(0, 2)
         if aug == 1:
-            inp_img = adjust_gamma(inp_img, 1)
-            tar_img = adjust_gamma(tar_img, 1)
+            inp_img = adjust_brightness(inp_img, 1)
+            tar_img = adjust_brightness(tar_img, 1)
 
         aug = random.randint(0, 2)
         if aug == 1:
             sat_factor = 1 + (0.2 - 0.4 * np.random.rand())
             inp_img = adjust_saturation(inp_img, sat_factor)
             tar_img = adjust_saturation(tar_img, sat_factor)
+
+        # Data Augmentations
+        if aug == 1:
+            inp_img = vflip(inp_img)
+            tar_img = vflip(tar_img)
+        elif aug == 2:
+            inp_img = hflip(inp_img)
+            tar_img = hflip(tar_img)
+        elif aug == 3:
+            inp_img = rotate(inp_img, 90)
+            tar_img = rotate(tar_img, 90)
+        elif aug == 4:
+            inp_img = rotate(inp_img, 90 * 2)
+            tar_img = rotate(tar_img, 90 * 2)
+        elif aug == 5:
+            inp_img = rotate(inp_img, 90 * 3)
+            tar_img = rotate(tar_img, 90 * 3)
+        elif aug == 6:
+            inp_img = rotate(vflip(inp_img), 90)
+            tar_img = rotate(vflip(tar_img), 90)
+        elif aug == 7:
+            inp_img = rotate(hflip(tar_img), 90)
+            tar_img = rotate(vflip(tar_img), 90)
 
         inp_img = to_tensor(inp_img)
         tar_img = to_tensor(tar_img)
@@ -215,30 +124,6 @@ class MPRTrain(Dataset):
         # Crop patch
         inp_img = inp_img[:, rr:rr + ps, cc:cc + ps]
         tar_img = tar_img[:, rr:rr + ps, cc:cc + ps]
-
-        # Data Augmentations
-        if aug == 1:
-            inp_img = np.flip(inp_img, 1)
-            tar_img = np.flip(tar_img, 1)
-        elif aug == 2:
-            inp_img = np.flip(inp_img, 2)
-            tar_img = np.flip(tar_img, 2)
-        elif aug == 3:
-            inp_img = np.rot90(inp_img, axes=(1, 2))
-            tar_img = np.rot90(tar_img, axes=(1, 2))
-        elif aug == 4:
-            inp_img = np.rot90(inp_img, axes=(1, 2), k=2)
-            tar_img = np.rot90(tar_img, axes=(1, 2), k=2)
-        elif aug == 5:
-            inp_img = np.rot90(inp_img, axes=(1, 2), k=3)
-            tar_img = np.rot90(tar_img, axes=(1, 2), k=3)
-        elif aug == 6:
-
-            inp_img = np.rot90(np.flip(inp_img, 1), axes=(1, 2))
-            tar_img = np.rot90(np.flip(tar_img, 1), axes=(1, 2))
-        elif aug == 7:
-            inp_img = np.rot90(np.flip(inp_img, 2), axes=(1, 2))
-            tar_img = np.rot90(np.flip(tar_img, 2), axes=(1, 2))
 
         filename = os.path.splitext(os.path.split(tar_path)[-1])[0]
 
