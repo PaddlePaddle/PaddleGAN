@@ -1,55 +1,81 @@
-## Install PaddleGAN
 
-### requirements
+
+## Installation
+
+This document contains how to install PaddleGAN and related dependencies. For more product overview, please refer to [README](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/README_en.md).
+
+### Requirements
 
 * PaddlePaddle >= 2.1.0
 * Python >= 3.6
 * CUDA >= 10.1
 
-### 1. Install PaddlePaddle
+### Install PaddlePaddle
 ```
-pip install -U paddlepaddle-gpu
+# CUDA10.1
+python -m pip install paddlepaddle-gpu==2.1.0.post101 -f https://mirror.baidu.com/pypi/simple
+
+# CPU
+python -m pip install paddlepaddle -i https://mirror.baidu.com/pypi/simple
 ```
 
-Note: command above will install paddle with cuda10.2, if your installed cuda is different, please visit home page of [paddlepaddle](https://www.paddlepaddle.org.cn/install/quick) for more help.
+For more installation methods such as conda or source compilation installation methods, please refer to the [PaddlePaddle installation documentation](https://www.paddlepaddle.org.cn/documentation/docs/en/install/index_en.html).
 
-### 2. Install paddleGAN
-
-#### 2.1 Install through pip
+Make sure that your PaddlePaddle is successfully installed in the required or higher version, and then please use the following command to verify.
 
 ```
-# only support Python3
+# verify that PaddlePaddle is installed successfully in your Python interpreter
+>>> import paddle
+>>> paddle.utils.run_check()
+
+# Confirm PaddlePaddle version
+python -c "import paddle; print(paddle.__version__)"
+```
+
+### Install PaddleGAN
+
+#### 1. Install via PIP (only Python3 is available)
+
+* Install
+
+```
 python3 -m pip install --upgrade ppgan
 ```
 
-Download the examples and configuration files via cloning the source code:
+* Download the examples and configuration files via cloning the source code:
 
 ```
 git clone https://github.com/PaddlePaddle/PaddleGAN
 cd PaddleGAN
 ```
 
-#### 2.2 Install through source code
+#### 2. Install via source code
 
 ```
 git clone https://github.com/PaddlePaddle/PaddleGAN
 cd PaddleGAN
+
 pip install -v -e .  # or "python setup.py develop"
+
+# Install other dependencies
+pip install -r requirements.txt
 ```
 
-### 4. Installation of other tools that may be used
+### Other Third-Party Tool Installation
 
-#### 4.1 ffmpeg
+#### 1. ffmpeg
 
-If you need to use ppgan to handle video-related tasks, you need to install ffmpeg. It is recommended that you use [conda](https://docs.conda.io/en/latest/miniconda.html) to install:
+All tasks involving video require `ffmpeg` to be installed, here we recommend using conda
 
 ```
 conda install x264=='1!152.20180717' ffmpeg=4.0.2 -c conda-forge
 ```
 
-#### 4.2 Visual DL
-If you want to use [PaddlePaddle VisualDL](https://github.com/PaddlePaddle/VisualDL) to monitor the training process, Please install `VisualDL`(For more detail refer [here](./get_started.md)):
+#### 2. VisualDL
+If you want to use [PaddlePaddle VisualDL](https://github.com/PaddlePaddle/VisualDL) to visualize the training process, Please install `VisualDL`(For more detail refer [here](./get_started.md)):
 
 ```
 python -m pip install visualdl -i https://mirror.baidu.com/pypi/simple
 ```
+
+*Note: Only versions installed under Python 3 or higher are maintained by VisualDL officially.
