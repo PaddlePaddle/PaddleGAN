@@ -34,8 +34,7 @@ deoldify.run("/home/aistudio/先烈.jpg") #原图片所在路径
 ```
 !python applications/tools/video-enhance.py --input /home/aistudio/先烈.jpg \ #Original image path
                                --process_order DeOldify \ #Order of processing of the original image
-                               --output output_dir#Path of the final image
-Online project experience
+                               --output output_dir #Path of the final image
 ```
 
 ### Experience Online Projects
