@@ -31,3 +31,4 @@ from .edvr import EDVRNet
 from .generator_firstorder import FirstOrderGenerator
 from .generater_lapstyle import DecoderNet, Encoder, RevisionNet
 from .basicvsr import BasicVSRNet
+from .mpr import MPRNet

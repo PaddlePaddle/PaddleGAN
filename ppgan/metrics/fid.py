@@ -48,31 +48,35 @@ class FID(paddle.metric.Metric):
         self.premodel_path = premodel_path
         if model is None:
             block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[dims]
-            model = InceptionV3([block_idx])
+            model = InceptionV3([block_idx], normalize_input=False)
         if premodel_path is None:
             premodel_path = get_weights_path_from_url(INCEPTIONV3_WEIGHT_URL)
         self.model = model
         param_dict = paddle.load(premodel_path)
-        model.load_dict(param_dict)
-        model.eval()
+        self.model.load_dict(param_dict)
+        self.model.eval()
         self.reset()   
         
     def reset(self):
+        self.preds = []
+        self.gts = []
         self.results = []
 
     def update(self, preds, gts):
-        value = calculate_fid_given_img(preds, gts, self.batch_size, self.model, self.use_GPU, self.dims)
-        self.results.append(value)
+        preds_inception, gts_inception = calculate_inception_val(
+            preds, gts, self.batch_size, self.model, self.use_GPU, self.dims)
+        self.preds.append(preds_inception)
+        self.gts.append(gts_inception)
 
     def accumulate(self):
-        if len(self.results) <= 0:
-            return 0.
-        return np.mean(self.results)
+        self.preds = np.concatenate(self.preds, axis=0)
+        self.gts = np.concatenate(self.gts, axis=0)
+        value = calculate_fid_given_img(self.preds, self.gts)
+        self.reset() 
+        return value
 
     def name(self):
         return 'FID'
-
-
 
 
 def _calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
@@ -102,7 +106,6 @@ def _calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
             m = np.max(np.abs(covmean.imag))
             raise ValueError('Imaginary component {}'.format(m))
         covmean = covmean.real
-
     tr_covmean = np.trace(covmean)
 
     return (diff.dot(diff) + np.trace(sigma1) + np.trace(sigma2) -
@@ -123,33 +126,32 @@ def _get_activations_from_ims(img, model, batch_size, dims, use_gpu):
         images = img[start:end]
         if images.shape[1] != 3:
             images = images.transpose((0, 3, 1, 2))
-        images /= 255
-
+        
         images = paddle.to_tensor(images)
         pred = model(images)[0][0]
         pred_arr[start:end] = pred.reshape([end - start, -1]).cpu().numpy()
     return pred_arr
 
 
-def _compute_statistic_of_img(img, model, batch_size, dims, use_gpu):
-    act = _get_activations_from_ims(img, model, batch_size, dims, use_gpu)
+def _compute_statistic_of_img(act):
     mu = np.mean(act, axis=0)
     sigma = np.cov(act, rowvar=False)
     return mu, sigma
 
-
-def calculate_fid_given_img(img_fake,
+def calculate_inception_val(img_fake,
                             img_real,
                             batch_size,
                             model,
                             use_gpu = True,
                             dims = 2048):
+    act_fake = _get_activations_from_ims(img_fake, model, batch_size, dims, use_gpu)
+    act_real = _get_activations_from_ims(img_real, model, batch_size, dims, use_gpu)
+    return act_fake, act_real
 
-    m1, s1 = _compute_statistic_of_img(img_fake, model, batch_size, dims,
-                                       use_gpu)
-    m2, s2 = _compute_statistic_of_img(img_real, model, batch_size, dims,
-                                       use_gpu)
+def calculate_fid_given_img(act_fake, act_real):
 
+    m1, s1 = _compute_statistic_of_img(act_fake)
+    m2, s2 = _compute_statistic_of_img(act_real)
     fid_value = _calculate_frechet_distance(m1, s1, m2, s2)
     return fid_value
 
@@ -297,3 +299,4 @@ def calculate_fid_given_paths(paths,
 
     fid_value = _calculate_frechet_distance(m1, s1, m2, s2)
     return fid_value
+

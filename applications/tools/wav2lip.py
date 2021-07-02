@@ -109,5 +109,16 @@ if __name__ == "__main__":
     if args.cpu:
         paddle.set_device('cpu')
 
-    predictor = Wav2LipPredictor(args)
-    predictor.run()
+    predictor = Wav2LipPredictor(checkpoint_path = args.checkpoint_path,
+                                 static = args.static,
+                                 fps = args.fps,
+                                 pads = args.pads,
+                                 face_det_batch_size = args.face_det_batch_size,
+                                 wav2lip_batch_size = args.wav2lip_batch_size,
+                                 resize_factor = args.resize_factor,
+                                 crop = args.crop,
+                                 box = args.box,
+                                 rotate = args.rotate,
+                                 nosmooth = args.nosmooth,
+                                 face_detector = args.face_detector)
+    predictor.run(args.face, args.audio, args.outfile)

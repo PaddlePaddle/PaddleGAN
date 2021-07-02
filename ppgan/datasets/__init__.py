@@ -25,3 +25,4 @@ from .edvr_dataset import REDSDataset
 from .firstorder_dataset import FirstOrderDataset
 from .lapstyle_dataset import LapStyleDataset
 from .sr_reds_multiple_gt_dataset import SRREDSMultipleGTDataset
+from .mpr_dataset import MPRTrain, MPRVal, MPRTest

@@ -36,7 +36,7 @@ class FusedLeakyReLU(nn.Layer):
  
 def fused_leaky_relu(input, bias=None, negative_slope=0.2, scale=2 ** 0.5):
     if bias is not None:
-        rest_dim = [1] * (input.ndim - bias.ndim - 1)
+        rest_dim = [1] * (len(input.shape) - len(bias.shape) - 1)
         return (
             F.leaky_relu(
                 input + bias.reshape((1, bias.shape[0], *rest_dim)), negative_slope=0.2

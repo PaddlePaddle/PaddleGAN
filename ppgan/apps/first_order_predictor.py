@@ -33,7 +33,6 @@ from ppgan.faceutils import face_detection
 
 from .base_predictor import BasePredictor
 
-IMAGE_SIZE = 256
 
 class FirstOrderPredictor(BasePredictor):
     def __init__(self,
@@ -47,7 +46,8 @@ class FirstOrderPredictor(BasePredictor):
                  ratio=1.0,
                  filename='result.mp4',
                  face_detector='sfd',
-                 multi_person=False):
+                 multi_person=False,
+                 image_size=256):
         if config is not None and isinstance(config, str):
             with open(config) as f:
                 self.cfg = yaml.load(f, Loader=yaml.SafeLoader)
@@ -85,8 +85,12 @@ class FirstOrderPredictor(BasePredictor):
                     }
                 }
             }
+            self.image_size = image_size
             if weight_path is None:
-                vox_cpk_weight_url = 'https://paddlegan.bj.bcebos.com/applications/first_order_model/vox-cpk.pdparams'
+                if self.image_size == 512:
+                    vox_cpk_weight_url = 'https://paddlegan.bj.bcebos.com/applications/first_order_model/vox-cpk-512.pdparams'
+                else:
+                    vox_cpk_weight_url = 'https://paddlegan.bj.bcebos.com/applications/first_order_model/vox-cpk.pdparams'
                 weight_path = get_path_from_url(vox_cpk_weight_url)
 
         self.weight_path = weight_path
@@ -161,42 +165,21 @@ class FirstOrderPredictor(BasePredictor):
         reader.close()
 
         driving_video = [
-            cv2.resize(frame, (IMAGE_SIZE, IMAGE_SIZE)) / 255.0 for frame in driving_video
+            cv2.resize(frame, (self.image_size, self.image_size)) / 255.0 for frame in driving_video
         ]
         results = []
 
-        # for single person
-        if not self.multi_person:
-            h, w, _ = source_image.shape
-            source_image = cv2.resize(source_image, (IMAGE_SIZE, IMAGE_SIZE)) / 255.0
-            predictions = get_prediction(source_image)
-            imageio.mimsave(os.path.join(self.output, self.filename), [
-                cv2.resize((frame * 255.0).astype('uint8'), (h, w))
-                for frame in predictions
-            ],
-                            fps=fps)
-            return
-
         bboxes = self.extract_bbox(source_image.copy())
         print(str(len(bboxes)) + " persons have been detected")
-        if len(bboxes) <= 1:
-            h, w, _ = source_image.shape
-            source_image = cv2.resize(source_image, (IMAGE_SIZE, IMAGE_SIZE)) / 255.0
-            predictions = get_prediction(source_image)
-            imageio.mimsave(os.path.join(self.output, self.filename), [
-                cv2.resize((frame * 255.0).astype('uint8'), (h, w))
-                for frame in predictions
-            ],
-                            fps=fps)
-            return
 
         # for multi person
         for rec in bboxes:
             face_image = source_image.copy()[rec[1]:rec[3], rec[0]:rec[2]]
-            face_image = cv2.resize(face_image, (IMAGE_SIZE, IMAGE_SIZE)) / 255.0
+            face_image = cv2.resize(face_image, (self.image_size, self.image_size)) / 255.0
             predictions = get_prediction(face_image)
             results.append({'rec': rec, 'predict': predictions})
-
+            if len(bboxes) == 1 or not self.multi_person:
+                break 
         out_frame = []
 
         for i in range(len(driving_video)):
@@ -209,6 +192,7 @@ class FirstOrderPredictor(BasePredictor):
                 out = cv2.resize(out.astype(np.uint8), (x2 - x1, y2 - y1))
                 if len(results) == 1:
                     frame[y1:y2, x1:x2] = out
+                    break
                 else:
                     patch = np.zeros(frame.shape).astype('uint8')
                     patch[y1:y2, x1:x2] = out

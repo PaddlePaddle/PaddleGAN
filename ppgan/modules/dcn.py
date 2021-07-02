@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import math
 import numpy as np
 import paddle
 from paddle.fluid.layer_helper import LayerHelper
@@ -22,10 +23,10 @@ from paddle.fluid.layers import nn, utils
 from paddle.nn import Layer
 from paddle.fluid.initializer import Normal
 from paddle.common_ops_import import *
+from .init import uniform_, constant_
 
 
 class DeformConv2D(Layer):
-
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -69,8 +70,21 @@ class DeformConv2D(Layer):
             shape=filter_shape,
             attr=self._weight_attr,
             default_initializer=_get_default_param_initializer())
-        self.bias = self.create_parameter(
-            attr=self._bias_attr, shape=[self._out_channels], is_bias=True)
+
+        self.bias = self.create_parameter(attr=self._bias_attr,
+                                          shape=[self._out_channels],
+                                          is_bias=True)
+
+        self.init_weight()
+
+    def init_weight(self):
+        n = self._in_channels
+        for k in self._kernel_size:
+            n *= k
+        stdv = 1. / math.sqrt(n)
+        uniform_(self.weight, -stdv, stdv)
+        if hasattr(self, 'bias') and self.bias is not None:
+            constant_(self.bias, 0.)
 
     def forward(self, x, offset, mask):
         out = deform_conv2d(
@@ -84,7 +98,7 @@ class DeformConv2D(Layer):
             dilation=self._dilation,
             deformable_groups=self._deformable_groups,
             groups=self._groups,
-            )
+        )
         return out
 
 
@@ -99,7 +113,7 @@ def deform_conv2d(x,
                   deformable_groups=1,
                   groups=1,
                   name=None):
-    
+
     stride = utils.convert_to_list(stride, 2, 'stride')
     padding = utils.convert_to_list(padding, 2, 'padding')
     dilation = utils.convert_to_list(dilation, 2, 'dilation')
@@ -107,8 +121,9 @@ def deform_conv2d(x,
     use_deform_conv2d_v1 = True if mask is None else False
 
     if in_dygraph_mode():
-        attrs = ('strides', stride, 'paddings', padding, 'dilations', dilation, 'deformable_groups',deformable_groups,
-                 'groups', groups, 'im2col_step', 1)
+        attrs = ('strides', stride, 'paddings', padding, 'dilations', dilation,
+                 'deformable_groups', deformable_groups, 'groups', groups,
+                 'im2col_step', 1)
         if use_deform_conv2d_v1:
             op_type = 'deformable_conv_v1'
             pre_bias = getattr(core.ops, op_type)(x, offset, weight, *attrs)
@@ -120,12 +135,38 @@ def deform_conv2d(x,
             out = nn.elementwise_add(pre_bias, bias, axis=1)
         else:
             out = pre_bias
+    else:
+        helper = LayerHelper('deform_conv2d', **locals())
+        attrs = {'strides': stride, 'paddings': padding, 'dilations': dilation, 'deformable_groups': deformable_groups,
+                 'groups': groups, 'im2col_step': 1}
+        if use_deform_conv2d_v1:
+            op_type = 'deformable_conv_v1'
+            inputs = {'Input': x, 'Offset': offset, 'Filter': weight}
+        else:
+            op_type = 'deformable_conv'
+            inputs = {'Input': x, 'Offset': offset,
+                      'Mask': mask, 'Filter': weight}
+
+        pre_bias = helper.create_variable_for_type_inference(dtype=x.dtype)
+        helper.append_op(type=op_type, inputs=inputs, outputs={
+                         'Output': pre_bias}, attrs=attrs)
+
+        if bias is not None:
+            out = nn.elementwise_add(pre_bias, bias, axis=1)
+        else:
+            out = pre_bias
     return out
 
 
 class DeformableConv_dygraph(Layer):
-    def __init__(self,num_filters,filter_size,dilation,
-                 stride,padding,deformable_groups=1,groups=1):
+    def __init__(self,
+                 num_filters,
+                 filter_size,
+                 dilation,
+                 stride,
+                 padding,
+                 deformable_groups=1,
+                 groups=1):
         super(DeformableConv_dygraph, self).__init__()
         self.num_filters = num_filters
         self.filter_size = filter_size
@@ -134,12 +175,18 @@ class DeformableConv_dygraph(Layer):
         self.padding = padding
         self.deformable_groups = deformable_groups
         self.groups = groups
-        self.defor_conv = DeformConv2D(in_channels=self.num_filters, out_channels=self.num_filters, 
-                                                           kernel_size=self.filter_size, stride=self.stride, padding=self.padding, 
-                                                           dilation=self.dilation, deformable_groups=self.deformable_groups, groups=self.groups, weight_attr=None, bias_attr=None)
+        self.defor_conv = DeformConv2D(in_channels=self.num_filters,
+                                       out_channels=self.num_filters,
+                                       kernel_size=self.filter_size,
+                                       stride=self.stride,
+                                       padding=self.padding,
+                                       dilation=self.dilation,
+                                       deformable_groups=self.deformable_groups,
+                                       groups=self.groups,
+                                       weight_attr=None,
+                                       bias_attr=None)
 
-
-    def forward(self,*input):
+    def forward(self, *input):
         x = input[0]
         offset = input[1]
         mask = input[2]
