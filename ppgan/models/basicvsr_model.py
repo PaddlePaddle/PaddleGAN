@@ -84,7 +84,6 @@ class BasicVSRModel(BaseSRModel):
     def test_iter(self, metrics=None):
         self.nets['generator'].eval()
         with paddle.no_grad():
-            # print('debug input:', self.lq.shape)
             self.output = self.nets['generator'](self.lq)
             self.visual_items['output'] = self.output[:, 0, :, :, :]
         self.nets['generator'].train()

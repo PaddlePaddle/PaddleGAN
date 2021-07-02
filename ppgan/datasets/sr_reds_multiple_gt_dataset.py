@@ -1,4 +1,4 @@
-# Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
+# Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -111,13 +111,6 @@ class SRREDSMultipleGTDataset(Dataset):
         data_infos = []
         for key in keys:
             data_infos.append(key)
-            # data_infos.append(
-            #     dict(
-            #         lq_path=self.lq_folder,
-            #         gt_path=self.gt_folder,
-            #         key=key,
-            #         sequence_length=100,  # REDS has 100 frames for each clip
-            #         number_frames=self.number_frames))
 
         return data_infos
 

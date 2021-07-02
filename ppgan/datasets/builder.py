@@ -45,8 +45,6 @@ def build_dataloader(cfg, is_train=True, distributed=True):
     num_workers = cfg_.pop('num_workers', 0)
     use_shared_memory = cfg_.pop('use_shared_memory', True)
 
-    # name = cfg_.pop('name')
-
     dataset = build_dataset(cfg_)
 
     if distributed:

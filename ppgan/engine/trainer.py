@@ -249,7 +249,6 @@ class Trainer:
                     num_samples = list(current_visuals.values())[0].shape[0]
                 else:
                     num_samples = 1
-<<<<<<< HEAD
 
                 for j in range(num_samples):
                     if j < len(current_paths):
@@ -264,22 +263,6 @@ class Trainer:
                         else:
                             visual_results.update({name: img_tensor})
 
-=======
-
-                for j in range(num_samples):
-                    if j < len(current_paths):
-                        short_path = os.path.basename(current_paths[j])
-                        basename = os.path.splitext(short_path)[0]
-                    else:
-                        basename = '{:04d}_{:04d}'.format(i, j)
-                    for k, img_tensor in current_visuals.items():
-                        name = '%s_%s' % (basename, k)
-                        if len(img_tensor.shape) == 4:
-                            visual_results.update({name: img_tensor[j]})
-                        else:
-                            visual_results.update({name: img_tensor})
-
->>>>>>> 058faa8768527d300dffecfaf44bcfe3c91aec45
                 self.visual('visual_test',
                             visual_results=visual_results,
                             step=self.batch_id,
