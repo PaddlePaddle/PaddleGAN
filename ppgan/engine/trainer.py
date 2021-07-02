@@ -99,9 +99,12 @@ class Trainer:
 
         # build metrics
         self.metrics = None
+        self.is_save_img = True
         validate_cfg = cfg.get('validate', None)
         if validate_cfg and 'metrics' in validate_cfg:
             self.metrics = self.model.setup_metrics(validate_cfg['metrics'])
+        if validate_cfg and 'save_img' in validate_cfg:
+            self.is_save_img = validate_cfg['save_img']
 
         self.enable_visualdl = cfg.get('enable_visualdl', False)
         if self.enable_visualdl:
@@ -227,57 +230,44 @@ class Trainer:
         # set model.is_train = False
         self.model.setup_train_mode(is_train=False)
 
-        # avoid memory leak
-        use_dataset =  self.cfg.get('use_dataset', False)
         for i in range(self.max_eval_steps):
-            if use_dataset:
-                import numpy as np
-                import numbers
-                print('use dataset:')
-                data_ = self.test_dataloader.dataset[i * self.world_size + self.local_rank]
-                data = {}
-                for k, v in data_.items():
-                    if isinstance(v, np.ndarray):
-                        data[k] = paddle.to_tensor(v).unsqueeze(0)
-                    else:
-                        data[k] = [v]
-            else:
-                data = next(iter_loader)
+            if self.max_eval_steps < self.log_interval or i % self.log_interval == 0:
+                self.logger.info('Test iter: [%d/%d]' %
+                                 (i * self.world_size, self.max_eval_steps * self.world_size))
 
+            data = next(iter_loader)
             self.model.setup_input(data)
             self.model.test_iter(metrics=self.metrics)
 
-            visual_results = {}
-            current_paths = self.model.get_image_paths()
-            current_visuals = self.model.get_current_visuals()
+            if self.is_save_img:
+                visual_results = {}
+                current_paths = self.model.get_image_paths()
+                current_visuals = self.model.get_current_visuals()
 
-            if len(current_visuals) > 0 and list(
-                    current_visuals.values())[0].shape == 4:
-                num_samples = list(current_visuals.values())[0].shape[0]
-            else:
-                num_samples = 1
-
-            for j in range(num_samples):
-                if j < len(current_paths):
-                    short_path = os.path.basename(current_paths[j])
-                    basename = os.path.splitext(short_path)[0]
+                if len(current_visuals) > 0 and list(
+                        current_visuals.values())[0].shape == 4:
+                    num_samples = list(current_visuals.values())[0].shape[0]
                 else:
-                    basename = '{:04d}_{:04d}'.format(i, j)
-                for k, img_tensor in current_visuals.items():
-                    name = '%s_%s' % (basename, k)
-                    if len(img_tensor.shape) == 4:
-                        visual_results.update({name: img_tensor[j]})
+                    num_samples = 1
+
+                for j in range(num_samples):
+                    if j < len(current_paths):
+                        short_path = os.path.basename(current_paths[j])
+                        basename = os.path.splitext(short_path)[0]
                     else:
-                        visual_results.update({name: img_tensor})
+                        basename = '{:04d}_{:04d}'.format(i, j)
+                    for k, img_tensor in current_visuals.items():
+                        name = '%s_%s' % (basename, k)
+                        if len(img_tensor.shape) == 4:
+                            visual_results.update({name: img_tensor[j]})
+                        else:
+                            visual_results.update({name: img_tensor})
 
-            self.visual('visual_test',
-                        visual_results=visual_results,
-                        step=self.batch_id,
-                        is_save_image=True)
+                self.visual('visual_test',
+                            visual_results=visual_results,
+                            step=self.batch_id,
+                            is_save_image=True)
 
-            if self.max_eval_steps < self.log_interval or i % self.log_interval == 0:
-                self.logger.info('Test iter: [%d/%d]' %
-                                ((i + 1) * ParallelEnv().nranks, self.max_eval_steps * ParallelEnv().nranks))
 
         if self.metrics:
             for metric_name, metric in self.metrics.items():
@@ -333,7 +323,6 @@ class Trainer:
                is_save_image=False):
         """
         visual the images, use visualdl or directly write to the directory
-
         Parameters:
             results_dir (str)     --  directory name which contains saved images
             visual_results (dict) --  the results images dict
@@ -450,7 +439,6 @@ class Trainer:
     def close(self):
         """
         when finish the training need close file handler or other.
-
         """
         if self.enable_visualdl:
             self.vdl_logger.close()

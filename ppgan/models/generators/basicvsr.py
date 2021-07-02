@@ -412,8 +412,13 @@ class SPyNet(nn.Layer):
                              align_corners=False)
 
         # adjust the flow values
-        flow[:, 0, :, :] *= float(w) / float(w_up)
-        flow[:, 1, :, :] *= float(h) / float(h_up)
+        # todo: grad bug
+        # flow[:, 0, :, :] *= (float(w) / float(w_up))
+        # flow[:, 1, :, :] *= (float(h) / float(h_up))
+
+        flow_x = flow[:, 0:1, :, :] * (float(w) / float(w_up))
+        flow_y = flow[:, 1:2, :, :] * (float(h) / float(h_up))
+        flow = paddle.concat([flow_x, flow_y], 1)
 
         return flow
 

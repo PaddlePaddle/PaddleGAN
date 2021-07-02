@@ -1,4 +1,4 @@
-#   Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
+#   Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class BasicVSRModel(BaseSRModel):
         """
         super(BasicVSRModel, self).__init__(generator, pixel_criterion)
         self.fix_iter = fix_iter
-        self.current_iter = 30000
+        self.current_iter = 1
         self.flag = True
         init_basicvsr_weight(self.nets['generator'])
 
@@ -68,7 +68,7 @@ class BasicVSRModel(BaseSRModel):
                 self.flag = False
                 for net in self.nets.values():
                     net.find_unused_parameters = False
-                    
+
         self.output = self.nets['generator'](self.lq)
         self.visual_items['output'] = self.output[:, 0, :, :, :]
         # pixel loss
@@ -77,10 +77,6 @@ class BasicVSRModel(BaseSRModel):
         loss_pixel.backward()
         optims['optim'].step()
         
-        # world_size = paddle.distributed.get_world_size()
-        # if world_size > 1:
-        #     self.losses['loss_pixel'] = paddle.distributed.all_reduce(loss_pixel.clone()) / world_size
-        # else:
         self.losses['loss_pixel'] = loss_pixel
 
         self.current_iter += 1

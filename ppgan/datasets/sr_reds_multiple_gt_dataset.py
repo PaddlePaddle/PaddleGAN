@@ -177,13 +177,11 @@ class SRREDSMultipleGTDataset(Dataset):
         gt_list = rlt[number_frames:]
 
         # stack LQ images to NHWC, N is the frame number
+        frame_list = [v.transpose(2, 0, 1).astype('float32') for v in frame_list]
+        gt_list = [v.transpose(2, 0, 1).astype('float32') for v in gt_list]
+
         img_LQs = np.stack(frame_list, axis=0)
         img_GTs = np.stack(gt_list, axis=0)
-        # BGR to RGB, HWC to CHW, numpy to tensor
-        img_GTs = img_GTs[:, :, :, [2, 1, 0]]
-        img_LQs = img_LQs[:, :, :, [2, 1, 0]]
-        img_GTs = np.transpose(img_GTs, (0, 3, 1, 2)).astype('float32')
-        img_LQs = np.transpose(img_LQs, (0, 3, 1, 2)).astype('float32')
 
         return img_LQs, img_GTs
 
@@ -206,7 +204,6 @@ class SRREDSMultipleGTDataset(Dataset):
 
         return: Numpy float32, HWC, BGR, [0,1]
         """
-        # print(path)
         img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
         img = img.astype(np.float32) / 255.
         if img.ndim == 2:
@@ -214,7 +211,7 @@ class SRREDSMultipleGTDataset(Dataset):
         # some images have 4 channels
         if img.shape[2] > 3:
             img = img[:, :, :3]
-        return img
+        return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
     def img_augment(self, img_list, hflip=True, rot=True):
         """horizontal flip OR rotate (0, 90, 180, 270 degrees)
