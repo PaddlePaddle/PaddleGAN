@@ -323,7 +323,6 @@ class Trainer:
                is_save_image=False):
         """
         visual the images, use visualdl or directly write to the directory
-
         Parameters:
             results_dir (str)     --  directory name which contains saved images
             visual_results (dict) --  the results images dict
@@ -440,7 +439,6 @@ class Trainer:
     def close(self):
         """
         when finish the training need close file handler or other.
-
         """
         if self.enable_visualdl:
             self.vdl_logger.close()
