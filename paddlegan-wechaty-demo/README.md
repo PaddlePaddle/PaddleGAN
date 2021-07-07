@@ -25,10 +25,10 @@
 
 ## 安装和使用
 
-1. Clone本项目代码
+1. 安装PaddleGAN，详情请见[安装方式](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/install.md)
 
    ```shell
-   git clone 
+   git clone https://github.com/PaddlePaddle/paddlegan
    cd paddlegan-wechaty-demo
    ```
 
@@ -40,7 +40,7 @@
 
 3. 安装项目所需的PaddleGAN的module
 
-    此demo以`first order motion`为示例，其他module根据项目所需安装，更多的模型请查阅[PaddleGAN官网](https://github.com/PaddlePaddle/PaddleGAN)。
+    此demo以`first order motion`为示例，其他module根据项目所需安装，更多的模型请查阅[PaddleGAN模型API接口说明](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/apis/apps.md)。
 
 4. Set token for your bot
 
@@ -125,4 +125,7 @@ async def on_message(msg: Message):
 ```
 
 脚本成功运行后，所登陆的账号即可作为一个Chatbot，下图左侧的内容由Chatbot生成和回复。
+<div align='center'>
+  <img src='https://user-images.githubusercontent.com/48054808/124779361-4ca4c800-df74-11eb-9a45-e4c82bab346b.jpeg'width='300'/>
+</div>
 
