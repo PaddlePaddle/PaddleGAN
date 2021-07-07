@@ -17,6 +17,7 @@ from ..generators.generater_lapstyle import calc_mean_std, mean_variance_norm
 
 import paddle
 import paddle.nn as nn
+import paddle.nn.functional as F
 from .builder import CRITERIONS
 
 
@@ -58,8 +59,9 @@ class CharbonnierLoss():
         eps (float): Default: 1e-12.
 
     """
-    def __init__(self, eps=1e-12):
+    def __init__(self, eps=1e-12, reduction='sum'):
         self.eps = eps
+        self.reduction = reduction
 
     def __call__(self, pred, target, **kwargs):
         """Forward Function.
@@ -68,7 +70,14 @@ class CharbonnierLoss():
             pred (Tensor): of shape (N, C, H, W). Predicted tensor.
             target (Tensor): of shape (N, C, H, W). Ground truth tensor.
         """
-        return paddle.sum(paddle.sqrt((pred - target)**2 + self.eps))
+        if self.reduction == 'sum':
+            out = paddle.sum(paddle.sqrt((pred - target)**2 + self.eps))
+        elif self.reduction == 'mean':
+            out = paddle.mean(paddle.sqrt((pred - target)**2 + self.eps))
+        else:
+            raise NotImplementedError('CharbonnierLoss %s not implemented' %
+                                      self.reduction)
+        return out
 
 
 @CRITERIONS.register()
@@ -234,3 +243,29 @@ class CalcStyleLoss():
         target_mean, target_std = calc_mean_std(target)
         return self.mse_loss(pred_mean, target_mean) + self.mse_loss(
             pred_std, target_std)
+
+
+@CRITERIONS.register()
+class EdgeLoss():
+    def __init__(self):
+        k = paddle.to_tensor([[.05, .25, .4, .25, .05]])
+        self.kernel = paddle.matmul(k.t(),k).unsqueeze(0).tile([3,1,1,1])
+        self.loss = CharbonnierLoss()
+
+    def conv_gauss(self, img):
+        n_channels, _, kw, kh = self.kernel.shape
+        img = F.pad(img, [kw//2, kh//2, kw//2, kh//2], mode='replicate')
+        return F.conv2d(img, self.kernel, groups=n_channels)
+
+    def laplacian_kernel(self, current):
+        filtered    = self.conv_gauss(current)    # filter
+        down        = filtered[:,:,::2,::2]               # downsample
+        new_filter  = paddle.zeros_like(filtered)
+        new_filter[:,:,::2,::2] = down*4                  # upsample
+        filtered    = self.conv_gauss(new_filter) # filter
+        diff = current - filtered
+        return diff
+
+    def __call__(self, x, y):
+        loss = self.loss(self.laplacian_kernel(x), self.laplacian_kernel(y))
+        return loss
