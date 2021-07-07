@@ -45,6 +45,21 @@ dataset:
           - name: Normalize
             mean: [127.5, 127.5, 127.5]
             std: [127.5, 127.5, 127.5]
+  test:
+    name: SingleDataset
+    dataroot: data/ffhq/images256x256/
+    num_workers: 3
+    batch_size: 3
+    preprocess:
+      - name: LoadImageFromFile
+        key: A
+      - name: Transforms
+        input_keys: [A]
+        pipeline:
+          - name: Transpose
+          - name: Normalize
+            mean: [127.5, 127.5, 127.5]
+            std: [127.5, 127.5, 127.5]
 
 lr_scheduler:
   name: MultiStepDecay
