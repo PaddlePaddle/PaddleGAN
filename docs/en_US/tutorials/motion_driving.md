@@ -61,7 +61,8 @@ python -u tools/first-order-demo.py  \
 ### 2 Training
 **Datasets:**
 - fashion See[here](https://vision.cs.ubc.ca/datasets/fashion/)
-- VoxCeleb See[here](https://github.com/AliaksandrSiarohin/video-preprocessing)
+- VoxCeleb See[here](https://github.com/AliaksandrSiarohin/video-preprocessing). Here you can process the data sizes according to your requirements. We deal with two sizes: 256 and 512, the results can be seen below
+![](../../imgs/fom_512_vs_256.png)
 
 **params:**
 - dataset_name.yaml: Create a config of your own dataset

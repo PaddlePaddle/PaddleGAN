@@ -65,7 +65,8 @@ python -u tools/first-order-demo.py  \
 ### 2 训练
 **数据集:**
 - fashion 可以参考[这里](https://vision.cs.ubc.ca/datasets/fashion/)
-- VoxCeleb 可以参考[这里](https://github.com/AliaksandrSiarohin/video-preprocessing)
+- VoxCeleb 可以参考[这里](https://github.com/AliaksandrSiarohin/video-preprocessing). 将数据按照需求处理为想要的大小，即可开始训练，这里我们处理了256和512两种分辨率大小，结果对比如下：
+![](../../imgs/fom_512_vs_256.png)
 
 **参数说明:**
 - dataset_name.yaml: 需要配置自己的yaml文件及参数
