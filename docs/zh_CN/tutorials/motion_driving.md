@@ -39,7 +39,8 @@ python -u tools/first-order-demo.py  \
      --driving_video ../docs/imgs/fom_dv.mp4 \
      --source_image ../docs/imgs/fom_source_image.png \
      --ratio 0.4 \
-     --relative --adapt_scale
+     --relative --adapt_scale \
+     --image_size 512
 ```
 - 多人脸：
 ```
@@ -49,6 +50,7 @@ python -u tools/first-order-demo.py  \
      --source_image ../docs/imgs/fom_source_image_multi_person.jpg \
      --ratio 0.4 \
      --relative --adapt_scale \
+     --image_size 512 \
      --multi_person
 
 - driving_video: 驱动视频，视频中人物的表情动作作为待迁移的对象
@@ -56,7 +58,9 @@ python -u tools/first-order-demo.py  \
 - relative: 指示程序中使用视频和图片中人物关键点的相对坐标还是绝对坐标，建议使用相对坐标，若使用绝对坐标，会导致迁移后人物扭曲变形
 - adapt_scale: 根据关键点凸包自适应运动尺度
 - ratio: 贴回驱动生成的人脸区域占原图的比例, 用户需要根据生成的效果调整该参数，尤其对于多人脸距离比较近的情况下需要调整改参数, 默认为0.4，调整范围是[0.4, 0.5]
+- image_size: 图片人脸大小，默认为256
 - multi_person: 表示图片中有多张人脸，不加则默认为单人脸
+```
 
 ### 2 训练
 **数据集:**
