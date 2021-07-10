@@ -23,6 +23,6 @@ from .animegan_predictor import AnimeGANPredictor
 from .midas_predictor import MiDaSPredictor
 from .photo2cartoon_predictor import Photo2CartoonPredictor
 from .styleganv2_predictor import StyleGANv2Predictor
+from .styleganv2fitting_predictor import StyleGANv2FittingPredictor
 from .pixel2style2pixel_predictor import Pixel2Style2PixelPredictor
 from .wav2lip_predictor import Wav2LipPredictor
-from .mpr_predictor import MPRPredictor
