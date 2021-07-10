@@ -22,7 +22,6 @@ python -u tools/styleganv2mixing.py \
        --output_path <替换为生成图片存放的文件夹> \
        --weight_path <替换为你的预训练模型路径> \
        --model_type ffhq-config-f \
-       --seed 233 \
        --size 1024 \
        --style_dim 512 \
        --n_mlp 8 \
