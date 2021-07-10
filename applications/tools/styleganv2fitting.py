@@ -60,11 +60,6 @@ if __name__ == "__main__":
                         default=None,
                         help="type of model for loading pretrained model")
 
-    parser.add_argument("--seed",
-                        type=int,
-                        default=None,
-                        help="sample random seed for model's image generation")
-
     parser.add_argument("--size",
                         type=int,
                         default=1024,
@@ -99,7 +94,7 @@ if __name__ == "__main__":
         output_path=args.output_path,
         weight_path=args.weight_path,
         model_type=args.model_type,
-        seed=args.seed,
+        seed=None,
         size=args.size,
         style_dim=args.style_dim,
         n_mlp=args.n_mlp,
