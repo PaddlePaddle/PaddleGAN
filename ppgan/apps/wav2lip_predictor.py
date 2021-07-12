@@ -32,7 +32,7 @@ class Wav2LipPredictor(BasePredictor):
         self.img_size = 96
         self.checkpoint_path = checkpoint_path
         self.static = static
-        self.fps = fps,
+        self.fps = fps
         self.pads = pads
         self.face_det_batch_size = face_det_batch_size
         self.wav2lip_batch_size = wav2lip_batch_size

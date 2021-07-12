@@ -79,6 +79,7 @@ class Trainer:
         self.max_eval_steps = cfg.model.get('max_eval_steps', None)
 
         self.local_rank = ParallelEnv().local_rank
+        self.world_size = ParallelEnv().nranks
         self.log_interval = cfg.log_config.interval
         self.visual_interval = cfg.log_config.visiual_interval
         self.weight_interval = cfg.snapshot_config.interval
@@ -217,8 +218,7 @@ class Trainer:
     def test(self):
         if not hasattr(self, 'test_dataloader'):
             self.test_dataloader = build_dataloader(self.cfg.dataset.test,
-                                                    is_train=False,
-                                                    distributed=False)
+                                                    is_train=False)
         iter_loader = IterLoader(self.test_dataloader)
         if self.max_eval_steps is None:
             self.max_eval_steps = len(self.test_dataloader)
@@ -231,6 +231,10 @@ class Trainer:
         self.model.setup_train_mode(is_train=False)
 
         for i in range(self.max_eval_steps):
+            if self.max_eval_steps < self.log_interval or i % self.log_interval == 0:
+                self.logger.info('Test iter: [%d/%d]' %
+                                 (i * self.world_size, self.max_eval_steps * self.world_size))
+
             data = next(iter_loader)
             self.model.setup_input(data)
             self.model.test_iter(metrics=self.metrics)
@@ -264,9 +268,6 @@ class Trainer:
                             step=self.batch_id,
                             is_save_image=True)
 
-            if i % self.log_interval == 0:
-                self.logger.info('Test iter: [%d/%d]' %
-                                 (i, self.max_eval_steps))
 
         if self.metrics:
             for metric_name, metric in self.metrics.items():
@@ -322,7 +323,6 @@ class Trainer:
                is_save_image=False):
         """
         visual the images, use visualdl or directly write to the directory
-
         Parameters:
             results_dir (str)     --  directory name which contains saved images
             visual_results (dict) --  the results images dict
@@ -439,7 +439,6 @@ class Trainer:
     def close(self):
         """
         when finish the training need close file handler or other.
-
         """
         if self.enable_visualdl:
             self.vdl_logger.close()

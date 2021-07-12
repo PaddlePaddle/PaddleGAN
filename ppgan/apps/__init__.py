@@ -25,3 +25,4 @@ from .photo2cartoon_predictor import Photo2CartoonPredictor
 from .styleganv2_predictor import StyleGANv2Predictor
 from .pixel2style2pixel_predictor import Pixel2Style2PixelPredictor
 from .wav2lip_predictor import Wav2LipPredictor
+from .mpr_predictor import MPRPredictor
