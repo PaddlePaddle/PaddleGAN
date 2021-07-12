@@ -1,0 +1,3 @@
+paddlepaddle >= 2.1.0
+ppgan >= 2.0.0
+wechaty ~= 0.7dev16
