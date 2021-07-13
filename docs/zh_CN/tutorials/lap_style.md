@@ -12,13 +12,25 @@ LapStyle首先通过绘图网络（Drafting Network）传输低分辨率的全�
 ![lapstyle_overview](https://user-images.githubusercontent.com/79366697/118654987-b24dc100-b81b-11eb-9430-d84630f80511.png)
 
 
-## 2 如何使用
+## 2 快速体验
+```
+python applications/tools/lapstyle.py --content_img ${PATH_OF_CONTENT_IMG}
+```
+### **参数**
 
-### 2.1 数据准备
+- `--content_img (str)`: 输入的内容图像路径。
+- `--output_path (str)`: 输出的图像路径，默认为`output_dir`。
+- `--weight_path (str)`: 模型权重路径，设置`None`时会自行下载预训练模型，默认为`None`。
+- `--style (str)`: 生成图像风格，当`weight_path`为`None`时，可以在`starrynew`, `circuit`, `ocean` 和 `stars`中选择，默认为`starrynew`。
+- `--style_image_path (str)`: 输入的风格图像路径，当`weight_path`不为`None`时需要输入，默认为`None`。
+
+## 3 如何使用
+
+### 3.1 数据准备
 
 为了训练LapStyle，我们使用COCO数据集作为内容数据集。您可以任意选择您喜欢的风格图片。在开始训练与测试之前，记得修改配置文件的数据路径。
 
-### 2.2 训练
+### 3.2 训练
 
 示例以COCO数据为例。如果您想使用自己的数据集，可以在配置文件中修改数据集为您自己的数据集。
 
@@ -37,14 +49,14 @@ python -u tools/main.py --config-file configs/lapstyle_rev_first.yaml --load ${P
 python -u tools/main.py --config-file configs/lapstyle_rev_second.yaml --load ${PATH_OF_LAST_STAGE_WEIGHT}
 ```
 
-### 2.4 测试
+### 3.4 测试
 
 测试训练好的模型，您可以直接测试 "lapstyle_rev_second"，因为它包含了之前步骤里的训练权重：
 ```
 python tools/main.py --config-file configs/lapstyle_rev_second.yaml --evaluate-only --load ${PATH_OF_WEIGHT}
 ```
 
-## 3 结果展示
+## 4 结果展示
 
 | Style | Stylized Results |
 | --- | --- |
@@ -54,7 +66,7 @@ python tools/main.py --config-file configs/lapstyle_rev_second.yaml --evaluate-o
 | ![circuit](https://user-images.githubusercontent.com/79366697/118655399-196b7580-b81c-11eb-8bc5-d5ece80c18ba.jpg) | ![chicago_stylized_circuit](https://user-images.githubusercontent.com/79366697/118655660-56376c80-b81c-11eb-87f2-64ae5a82375c.png)|
 
 
-## 4 模型下载
+## 5 模型下载
 
 我们提供几个训练好的权重。
 

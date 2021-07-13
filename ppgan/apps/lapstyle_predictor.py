@@ -147,7 +147,10 @@ class LapStylePredictor(BasePredictor):
             else:
                 raise Exception(f'has not implemented {style}.')
         else:
-            self.style_image_path = style_image_path
+            if style_image_path is None:
+                raise Exception('style_image_path can not be None.')
+            else:
+                self.style_image_path = style_image_path
         self.net_enc.set_dict(paddle.load(weight_path)['net_enc'])
         self.net_enc.eval()
         self.net_dec.set_dict(paddle.load(weight_path)['net_dec'])
@@ -195,5 +198,7 @@ class LapStylePredictor(BasePredictor):
         stylized_visual = tensor2img(stylized, min_max=(0., 1.))
         stylized_visual = cv.cvtColor(stylized_visual, cv.COLOR_RGB2BGR)
         cv.imwrite(os.path.join(self.output, 'stylized.png'), stylized_visual)
+
+        print('Model LapStyle output images path:', self.output)
 
         return stylized

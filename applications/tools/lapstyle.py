@@ -18,7 +18,7 @@ if __name__ == "__main__":
     parser.add_argument("--weight_path",
                         type=str,
                         default=None,
-                        help="path to model checkpoint path")
+                        help="path to model weight path")
 
     parser.add_argument(
         "--style",
