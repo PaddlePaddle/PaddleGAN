@@ -36,7 +36,7 @@ python -u tools/styleganv2fitting.py \
 - need_align: 是否将图像裁剪为模型能识别的图像，对于输入为已经裁剪过的图像，如使用Pixel2Style2Pixel生成风格向量时预生成的`src.png`，可不填写need_align参数
 - start_lr: 拟合的初始学习率
 - final_lr: 拟合结束时的学习率
-- latent_level: 参与拟合的风格向量层次，1024分辨率下为0~17，512分辨率下则为0~15，以此类推。级别越低越偏向于整体风格改变，越高越偏向于细节风格改变
+- latent_level: 参与拟合的风格向量层次，1024分辨率下为0到17，512分辨率下则为0到15，以此类推。级别越低越偏向于整体风格改变，越高越偏向于细节风格改变
 - step: 拟合图像所需步数，步数越大，花费时间越久，效果也更好
 - mse_weight: MSE损失的权重
 - pre_latent: 预制的风格向量保存的文件，便于更好效果的拟合。默认为空，可填入使用Pixel2Style2Pixel生成的`dst.npy`文件路径
