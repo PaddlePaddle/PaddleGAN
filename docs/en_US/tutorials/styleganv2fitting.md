@@ -8,11 +8,6 @@ The task of StyleGAN V2 is image generation while the Fitting module inversely d
 
 ### Fitting
 
-Install package `paddle-lpips` first. Use the following command to install:
-  ```sh
-  pip install paddle-lpips
-  ```
-
 The user can use the following command to fit images：
 
 ```

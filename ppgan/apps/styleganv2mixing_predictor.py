@@ -16,14 +16,7 @@ import os
 import cv2
 import numpy as np
 import paddle
-from .base_predictor import BasePredictor
 from .styleganv2_predictor import StyleGANv2Predictor
-
-
-def get_lr(t, ts, initial_lr, final_lr):
-    alpha = pow(final_lr / initial_lr, 1 / ts)**(t * ts)
-
-    return initial_lr * alpha
 
 
 def make_image(tensor):

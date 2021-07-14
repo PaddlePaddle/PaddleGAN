@@ -8,11 +8,6 @@ StyleGAN V2 的任务是使用风格向量进行image generation，而Fitting模
 
 ### 拟合
 
-前置条件，感知损失包 `paddle-lpips`，使用以下命令进行安装:
-  ```sh
-  pip install paddle-lpips
-  ```
-
 用户使用如下命令中进行拟合：
 
 ```

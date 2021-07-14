@@ -14,18 +14,16 @@
 
 import os
 import cv2
-import random
 import numpy as np
 import paddle
 from paddle import optimizer as optim
 from paddle.nn import functional as F
 from paddle.vision import transforms
-from paddle.utils import try_import
 from tqdm import tqdm
 from PIL import Image
-from .base_predictor import BasePredictor
 from .styleganv2_predictor import StyleGANv2Predictor
 from .pixel2style2pixel_predictor import run_alignment
+from ..metrics.lpips import LPIPS
 
 
 def get_lr(t, ts, initial_lr, final_lr):
@@ -60,10 +58,9 @@ class StyleGANv2FittingPredictor(StyleGANv2Predictor):
         generator = self.generator
         generator.train()
 
-        lpips = try_import("paddle_lpips")
-        percept = lpips.LPIPS(net='vgg')
-        percept.train(
-        )  # on PaddlePaddle, lpips's default eval mode means no gradients.
+        percept = LPIPS(net='vgg')
+        # on PaddlePaddle, lpips's default eval mode means no gradients.
+        percept.train()
 
         n_mean_latent = 4096
 
@@ -106,8 +103,6 @@ class StyleGANv2FittingPredictor(StyleGANv2Predictor):
         latent_in.stop_gradient = False
 
         optimizer = optim.Adam(parameters=[latent_in], learning_rate=start_lr)
-
-        frames = []
 
         pbar = tqdm(range(step))
 
