@@ -13,14 +13,26 @@ Artistic style transfer aims at migrating the style from an example image to a c
 ![lapstyle_overview](https://user-images.githubusercontent.com/79366697/118654987-b24dc100-b81b-11eb-9430-d84630f80511.png)
 
 
-## 2 How to use  
+## 2 Quick experience
+```
+python applications/tools/lapstyle.py --content_img ${PATH_OF_CONTENT_IMG}
+```
+### Parameters
 
-### 2.1 Prepare Datasets
+- `--content_img (str)`: path to content image.
+- `--output_path (str)`: path to output image dir, default value:`output_dir`.
+- `--weight_path (str)`: path to model weight path, if `weight_path` is `None`, the pre-training model will be downloaded automatically, default value:`None`.
+- `--style (str)`: style of output image, if `weight_path` is `None`, `style` can be chosen in `starrynew`, `circuit`, `ocean` and `stars`, default value:`starrynew`.
+- `--style_image_path (str)`: path to style image, it need to input when `weight_path` is not `None`, default value:`None`.
+
+## 3 How to use  
+
+### 3.1 Prepare Datasets
 
 To train LapStyle, we use the COCO dataset as content set. And you can choose any style image you like. Before training or testing, remember modify the data path of style image in the config file.
 
 
-### 2.2 Train
+### 3.2 Train
 
 Datasets used in example is COCO, you can also change it to your own dataset in the config file.
 
@@ -40,14 +52,14 @@ python -u tools/main.py --config-file configs/lapstyle_rev_first.yaml --load ${P
 python -u tools/main.py --config-file configs/lapstyle_rev_second.yaml --load ${PATH_OF_LAST_STAGE_WEIGHT}
 ```
 
-### 2.4 Test
+### 3.4 Test
 
 To test the trained model, you can directly test the "lapstyle_rev_second", since it also contains the trained weight of previous stages:
 ```
 python tools/main.py --config-file configs/lapstyle_rev_second.yaml --evaluate-only --load ${PATH_OF_WEIGHT}
 ```
 
-## 3 Results
+## 4 Results
 
 | Style | Stylized Results |
 | --- | --- |
@@ -56,7 +68,7 @@ python tools/main.py --config-file configs/lapstyle_rev_second.yaml --evaluate-o
 | ![stars](https://user-images.githubusercontent.com/79366697/118655423-20928380-b81c-11eb-92bd-0deeb320ff14.png) | ![chicago_stylized_stars_512](https://user-images.githubusercontent.com/79366697/118655638-50da2200-b81c-11eb-9223-58d5df022fa5.png)|
 | ![circuit](https://user-images.githubusercontent.com/79366697/118655399-196b7580-b81c-11eb-8bc5-d5ece80c18ba.jpg) | ![chicago_stylized_circuit](https://user-images.githubusercontent.com/79366697/118655660-56376c80-b81c-11eb-87f2-64ae5a82375c.png)|
 
-## 4 Pre-trained models
+## 5 Pre-trained models
 
 We also provide several trained models.
 
