@@ -28,7 +28,7 @@ python applications/tools/lapstyle.py --content_img ${PATH_OF_CONTENT_IMG}
 
 ### 3.1 数据准备
 
-为了训练LapStyle，我们使用COCO数据集作为内容数据集。您可以任意选择您喜欢的风格图片。在开始训练与测试之前，记得修改配置文件的数据路径。
+为了训练LapStyle，我们使用COCO数据集作为内容图像数据集。您可以从[starrynew](https://user-images.githubusercontent.com/79366697/118655415-1ec8c000-b81c-11eb-8002-90bf8d477860.png)，[ocean](https://user-images.githubusercontent.com/79366697/118655407-1c666600-b81c-11eb-83a6-300ee1952415.png)，[stars](https://user-images.githubusercontent.com/79366697/118655423-20928380-b81c-11eb-92bd-0deeb320ff14.png)或[circuit](https://user-images.githubusercontent.com/79366697/118655399-196b7580-b81c-11eb-8bc5-d5ece80c18ba.jpg)中选择一张风格图片，也可以任意选择您喜欢的图片作为风格图片。在开始训练与测试之前，记得修改配置文件的数据路径。
 
 ### 3.2 训练
 
@@ -51,6 +51,7 @@ python -u tools/main.py --config-file configs/lapstyle_rev_second.yaml --load ${
 
 ### 3.4 测试
 
+测试时需要将配置文件中的`validate/save_img`参数改成`True`以保存输出图像。
 测试训练好的模型，您可以直接测试 "lapstyle_rev_second"，因为它包含了之前步骤里的训练权重：
 ```
 python tools/main.py --config-file configs/lapstyle_rev_second.yaml --evaluate-only --load ${PATH_OF_WEIGHT}
