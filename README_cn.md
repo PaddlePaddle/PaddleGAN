@@ -68,10 +68,6 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 - [API接口使用文档](./docs/zh_CN/apis/apps.md)
 - 配置文件说明（敬请期待）
 
-### 产业级应用
-
-- [智能影像修复](./docs/zh_CN/industrial_solution/video_restore_cn.md)
-
 ## 模型库
 
 * 图像翻译
@@ -96,10 +92,9 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 * 语义分割
   * 人脸解析：[FaceParsing](./docs/zh_CN/tutorials/face_parse.md)
 
+## 产业级应用
 
-## 复合应用
-
-* [智能影像修复](./docs/zh_CN/industrial_solution/video_restore_cn.md)
+- [智能影像修复](./docs/zh_CN/industrial_solution/video_restore_cn.md)
 
 ## 在线教程
 
