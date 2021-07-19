@@ -17,18 +17,6 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 ## 近期活动更新🔥🔥🔥
 
-- 2020.12.10
-
-  《大谷 Spitzer 手把手教你修复百年前老北京影像》b站直播中奖用户名单请点击[PaddleGAN直播中奖名单](./docs/luckydraw.md)查看~
-
-  **想要看直播回放视频请点击链接：https://www.bilibili.com/video/BV1GZ4y1g7xc**
-
-- 2021.4.15~4.22
-
-  生成对抗网络七日打卡营火爆来袭，赶紧让百度资深研发带你上车GAN起来吧！
-
-  **直播回放与课件资料：https://aistudio.baidu.com/aistudio/course/introduce/16651**
-
 - 🔥**2021.7.9-2021.9**🔥
 
   **💙AI创造营：Metaverse启动机之重构现世💙**
@@ -50,6 +38,18 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   **如何用PaddleGAN在比赛中杀出重围？请见：[PaddleGAN X WeChaty Demo示例](./paddlegan-wechaty-demo/REAME.md)**
 
   **更多详情，请查看[比赛讲解直播回放](https://www.bilibili.com/video/BV18y4y1T7Ek)💞**
+
+- 2021.4.15~4.22
+
+  生成对抗网络七日打卡营火爆来袭，赶紧让百度资深研发带你上车GAN起来吧！
+
+  **直播回放与课件资料：https://aistudio.baidu.com/aistudio/course/introduce/16651**
+
+- 2020.12.10
+
+  《大谷 Spitzer 手把手教你修复百年前老北京影像》b站直播中奖用户名单请点击[PaddleGAN直播中奖名单](./docs/luckydraw.md)查看~
+
+  **想要看直播回放视频请点击链接：https://www.bilibili.com/video/BV1GZ4y1g7xc**
 
 ## 文档教程
 
