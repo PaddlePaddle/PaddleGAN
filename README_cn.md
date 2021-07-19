@@ -15,7 +15,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 
 
-## 近期活动更新🔥🔥🔥
+## 近期活动🔥🔥🔥
 
 - 🔥**2021.7.9-2021.9**🔥
 
@@ -51,6 +51,10 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
   **想要看直播回放视频请点击链接：https://www.bilibili.com/video/BV1GZ4y1g7xc**
 
+## 产品动态
+
+- 新增First Order Motion分辨率512清晰版本，详情见[教程](./docs/zh_CN/tutorials/motion_driving.md)。
+
 ## 文档教程
 
 ### 安装
@@ -59,14 +63,13 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   - PaddlePaddle >= 2.1.0
   - Python >= 3.6
   - CUDA >= 10.1
-- [PaddleGAN详细安装教程](./docs/zh_CN/install.md)
+- [完整安装教程](./docs/zh_CN/install.md)
 
 ### 入门教程
 
 - [快速开始](./docs/zh_CN/get_started.md)
 - [数据准备](./docs/zh_CN/data_prepare.md)
 - [API接口使用文档](./docs/zh_CN/apis/apps.md)
-- 配置文件说明（敬请期待）
 
 ## 模型库
 
@@ -182,6 +185,12 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 ## 版本更新
 
+- v2.0.0 (2021.6.2)
+  - 发布[Fisrt Order Motion](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/motion_driving.md)模型以及多个预训练权重
+  - 发布支持[多人脸驱动](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/motion_driving.md#1-test-for-face)的应用
+  - 发布视频超分辨模型[EDVR](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/video_super_resolution.md)以及多个预训练权重
+  - 发布PaddleGAN对应的[七日打卡训练营](https://github.com/PaddlePaddle/PaddleGAN/tree/develop/education)内容
+  - 增强PaddleGAN在windows平台运行的鲁棒性
 - v0.1.0 (2020.11.02)
   - 初版发布，支持Pixel2Pixel、CycleGAN、PSGAN模型，支持视频插针、超分、老照片/视频上色、视频动作生成等应用。
   - 模块化设计，接口简单易用。
