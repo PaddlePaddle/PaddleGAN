@@ -15,11 +15,24 @@
 import argparse
 
 import paddle
-from ppgan.apps import Pixel2Style2PixelPredictor
+from ppgan.apps import StyleGANv2MixingPredictor
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_image", type=str, help="path to source image")
+    parser.add_argument("--latent1",
+                        type=str,
+                        help="path to first image latent codes")
+
+    parser.add_argument("--latent2",
+                        type=str,
+                        help="path to second image latent codes")
+
+    parser.add_argument(
+        "--weights",
+        type=float,
+        nargs="+",
+        default=[0.5] * 18,
+        help="different weights at each level of two latent codes")
 
     parser.add_argument("--output_path",
                         type=str,
@@ -35,11 +48,6 @@ if __name__ == "__main__":
                         type=str,
                         default=None,
                         help="type of model for loading pretrained model")
-
-    parser.add_argument("--seed",
-                        type=int,
-                        default=None,
-                        help="sample random seed for model's image generation")
 
     parser.add_argument("--size",
                         type=int,
@@ -71,13 +79,13 @@ if __name__ == "__main__":
     if args.cpu:
         paddle.set_device('cpu')
 
-    predictor = Pixel2Style2PixelPredictor(
+    predictor = StyleGANv2MixingPredictor(
         output_path=args.output_path,
         weight_path=args.weight_path,
         model_type=args.model_type,
-        seed=args.seed,
+        seed=None,
         size=args.size,
         style_dim=args.style_dim,
         n_mlp=args.n_mlp,
         channel_multiplier=args.channel_multiplier)
-    predictor.run(args.input_image)
+    predictor.run(args.latent1, args.latent2, args.weights)
