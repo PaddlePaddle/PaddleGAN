@@ -17,8 +17,10 @@
 import paddle
 from paddle import nn
 import paddle.nn.functional as F
-from ...modules.first_order import ResBlock2d, SameBlock2d, UpBlock2d, DownBlock2d
+from ...modules.first_order import ResBlock2d, SameBlock2d, UpBlock2d, DownBlock2d, make_coordinate_grid
 from ...modules.dense_motion import DenseMotionNetwork
+import numpy as np
+import cv2
 
 
 class OcclusionAwareGenerator(nn.Layer):
@@ -35,7 +37,8 @@ class OcclusionAwareGenerator(nn.Layer):
                  num_bottleneck_blocks,
                  estimate_occlusion_map=False,
                  dense_motion_params=None,
-                 estimate_jacobian=False):
+                 estimate_jacobian=False,
+                 inference=False):
         super(OcclusionAwareGenerator, self).__init__()
 
         if dense_motion_params is not None:
@@ -89,6 +92,8 @@ class OcclusionAwareGenerator(nn.Layer):
                                padding=(3, 3))
         self.estimate_occlusion_map = estimate_occlusion_map
         self.num_channels = num_channels
+        self.inference = inference
+        self.pad = 5
 
     def deform_input(self, inp, deformation):
         _, h_old, w_old, _ = deformation.shape
@@ -100,6 +105,16 @@ class OcclusionAwareGenerator(nn.Layer):
                                         mode='bilinear',
                                         align_corners=False)
             deformation = deformation.transpose([0, 2, 3, 1])
+        if self.inference:
+            identity_grid = make_coordinate_grid((h, w),
+                                                 type=inp.dtype)
+            identity_grid = identity_grid.reshape([1, h, w, 2])
+            visualization_matrix = np.zeros((h,w)).astype("float32")
+            visualization_matrix[self.pad:h-self.pad, self.pad:w-self.pad] = 1.0
+            gauss_kernel = paddle.to_tensor(cv2.GaussianBlur(visualization_matrix , (9, 9), 0.0, borderType=cv2.BORDER_ISOLATED))
+            gauss_kernel = gauss_kernel.unsqueeze(0).unsqueeze(-1)
+            deformation = gauss_kernel * deformation + (1-gauss_kernel) * identity_grid
+
         return F.grid_sample(inp,
                              deformation,
                              mode='bilinear',
@@ -136,6 +151,12 @@ class OcclusionAwareGenerator(nn.Layer):
                                                   size=out.shape[2:],
                                                   mode='bilinear',
                                                   align_corners=False)
+                if self.inference:
+                    h,w = occlusion_map.shape[2:]
+                    occlusion_map[:,:,0:self.pad,:] = 1.0
+                    occlusion_map[:,:,:,0:self.pad] = 1.0
+                    occlusion_map[:,:,h-self.pad:h,:] = 1.0
+                    occlusion_map[:,:,:,w-self.pad:w] = 1.0 
                 out = out * occlusion_map
 
             output_dict["deformed"] = self.deform_input(source_image,
