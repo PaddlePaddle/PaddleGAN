@@ -32,7 +32,8 @@ python -u tools/first-order-demo.py  \
      --driving_video ../docs/imgs/fom_dv.mp4 \
      --source_image ../docs/imgs/fom_source_image.png \
      --ratio 0.4 \
-     --relative --adapt_scale
+     --relative --adapt_scale \
+     --image_size 512
 ```
 
 - multi face：
@@ -43,6 +44,7 @@ python -u tools/first-order-demo.py  \
      --source_image ../docs/imgs/fom_source_image_multi_person.png \
      --ratio 0.4 \
      --relative --adapt_scale \
+     --image_size 512 \
      --multi_person
 
 
@@ -52,12 +54,15 @@ python -u tools/first-order-demo.py  \
 - relative: indicate whether the relative or absolute coordinates of the key points in the video are used in the program. It is recommended to use relative coordinates. If absolute coordinates are used, the characters will be distorted after animation.
 - adapt_scale: adapt movement scale based on convex hull of keypoints.
 - ratio: The pasted face percentage of generated image, this parameter should be adjusted in the case of multi-person image in which the adjacent faces are close. The defualt value is 0.4 and the range is [0.4, 0.5].
+- image_size: The image size of the face. Default is 256
 - multi_person: There are multi faces in the images. Default means only one face in the image
+```
 
 ### 2 Training
 **Datasets:**
 - fashion See[here](https://vision.cs.ubc.ca/datasets/fashion/)
-- VoxCeleb See[here](https://github.com/AliaksandrSiarohin/video-preprocessing)
+- VoxCeleb See[here](https://github.com/AliaksandrSiarohin/video-preprocessing). Here you can process the data sizes according to your requirements. We deal with two sizes: 256 and 512, the results can be seen below
+![](../../imgs/fom_512_vs_256.png)
 
 **params:**
 - dataset_name.yaml: Create a config of your own dataset
