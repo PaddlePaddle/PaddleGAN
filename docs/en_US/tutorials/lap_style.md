@@ -36,6 +36,8 @@ To train LapStyle, we use the COCO dataset as content image set. You can choose 
 
 Datasets used in example is COCO, you can also change it to your own dataset in the config file.
 
+Note that train of lapstyle model does not currently support Windows system.
+
 (1) Train the Draft Network of LapStyle under 128*128 resolution:
 ```
 python -u tools/main.py --config-file configs/lapstyle_draft.yaml
