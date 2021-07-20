@@ -24,7 +24,7 @@ model:
     num_domains: *NUM_DOMAINS
   fan:
     name: FAN
-    fname_pretrained: models/stargan-v2/wing.pdparams
+    fname_pretrained: None
   discriminator:
     name: StarGANv2Discriminator
     img_size: *IMAGE_SIZE
