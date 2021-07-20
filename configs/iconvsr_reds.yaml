@@ -71,7 +71,7 @@ optimizer:
 
 validate:
   # FIXME: avoid oom
-  interval: 5000
+  interval: 50000000
   save_img: false
 
   metrics:
@@ -85,8 +85,8 @@ validate:
       test_y_channel: False
 
 log_config:
-  interval: 10
+  interval: 100
   visiual_interval: 500
 
 snapshot_config:
-  interval: 50
+  interval: 5000

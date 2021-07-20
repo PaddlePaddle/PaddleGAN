@@ -17,7 +17,8 @@ import paddle.nn as nn
 
 from .builder import MODELS
 from .sr_model import BaseSRModel
-from .generators.basicvsr import ResidualBlockNoBN, PixelShufflePack, SPyNet
+from .generators.iconvsr import EDVRFeatureExtractor
+from .generators.basicvsr import ResidualBlockNoBN, PixelShufflePack, SPyNet 
 from ..modules.init import reset_parameters
 from ..utils.visual import tensor2img
 
@@ -57,7 +58,7 @@ class BasicVSRModel(BaseSRModel):
                 print('Train BasicVSR with fixed spynet for', self.fix_iter,
                       'iters.')
                 for name, param in self.nets['generator'].named_parameters():
-                    if 'spynet' in name:
+                    if 'spynet'  or 'edvr' in name:
                         param.trainable = False
             elif self.current_iter >= self.fix_iter + 1 and self.flag:
                 print('Train all the parameters.')
@@ -107,5 +108,5 @@ def init_basicvsr_weight(net):
             continue
 
         if (not isinstance(
-                    m, (ResidualBlockNoBN, PixelShufflePack, SPyNet))):
+                    m, (ResidualBlockNoBN, PixelShufflePack, SPyNet, EDVRFeatureExtractor))):
             init_basicvsr_weight(m)
