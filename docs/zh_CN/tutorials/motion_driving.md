@@ -40,7 +40,8 @@ python -u tools/first-order-demo.py  \
      --source_image ../docs/imgs/fom_source_image.png \
      --ratio 0.4 \
      --relative --adapt_scale \
-     --image_size 512
+     --image_size 512 \
+     --face_enhancement
 ```
 - 多人脸：
 ```
@@ -60,6 +61,7 @@ python -u tools/first-order-demo.py  \
 - ratio: 贴回驱动生成的人脸区域占原图的比例, 用户需要根据生成的效果调整该参数，尤其对于多人脸距离比较近的情况下需要调整改参数, 默认为0.4，调整范围是[0.4, 0.5]
 - image_size: 图片人脸大小，默认为256
 - multi_person: 表示图片中有多张人脸，不加则默认为单人脸
+- face_enhancement: 添加人脸增强，默认为false
 ```
 
 ### 2 训练
