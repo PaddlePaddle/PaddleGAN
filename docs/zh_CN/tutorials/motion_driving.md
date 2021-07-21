@@ -62,6 +62,8 @@ python -u tools/first-order-demo.py  \
 - image_size: 图片人脸大小，默认为256
 - multi_person: 表示图片中有多张人脸，不加则默认为单人脸
 - face_enhancement: 添加人脸增强，默认为false
+添加人脸增强对比如下：
+![](../../imgs/father_23_ori.mp4)  ![](../../imgs/father_23.mp4)
 ```
 
 ### 2 训练

@@ -136,18 +136,18 @@ class ModulatedConv2D(nn.Layer):
 
 
 class NoiseInjection(nn.Layer):
-    def __init__(self, isconcat=False):
+    def __init__(self, is_concat=False):
         super().__init__()
 
         self.weight = self.create_parameter(
             (1, ), default_initializer=nn.initializer.Constant(0.0))
-        self.isconcat = isconcat
+        self.is_concat = is_concat
 
     def forward(self, image, noise=None):
         if noise is None:
             batch, _, height, width = image.shape
             noise = paddle.randn((batch, 1, height, width))
-        if self.isconcat: 
+        if self.is_concat: 
             return paddle.concat([image, self.weight * noise], axis=1)
         else:
             return image + self.weight * noise
@@ -178,7 +178,7 @@ class StyledConv(nn.Layer):
         upsample=False,
         blur_kernel=[1, 3, 3, 1],
         demodulate=True,
-        isconcat=False
+        is_concat=False
     ):
         super().__init__()
 
@@ -192,8 +192,8 @@ class StyledConv(nn.Layer):
             demodulate=demodulate,
         )
 
-        self.noise = NoiseInjection(isconcat=isconcat)
-        self.activate = FusedLeakyReLU(out_channel*2 if isconcat else out_channel)
+        self.noise = NoiseInjection(is_concat=is_concat)
+        self.activate = FusedLeakyReLU(out_channel*2 if is_concat else out_channel)
 
     def forward(self, input, style, noise=None):
         out = self.conv(input, style)
@@ -244,7 +244,7 @@ class StyleGANv2Generator(nn.Layer):
         channel_multiplier=2,
         blur_kernel=[1, 3, 3, 1],
         lr_mlp=0.01,
-        isconcat=False
+        is_concat=False
     ):
         super().__init__()
 
@@ -281,8 +281,8 @@ class StyleGANv2Generator(nn.Layer):
                                 3,
                                 style_dim,
                                 blur_kernel=blur_kernel,
-                                isconcat=isconcat)
-        self.to_rgb1 = ToRGB(self.channels[4]*2 if isconcat else self.channels[4], style_dim, upsample=False)
+                                is_concat=is_concat)
+        self.to_rgb1 = ToRGB(self.channels[4]*2 if is_concat else self.channels[4], style_dim, upsample=False)
 
         self.log_size = int(math.log(size, 2))
         self.num_layers = (self.log_size - 2) * 2 + 1
@@ -305,29 +305,29 @@ class StyleGANv2Generator(nn.Layer):
 
             self.convs.append(
                 StyledConv(
-                    in_channel*2 if isconcat else in_channel,
+                    in_channel*2 if is_concat else in_channel,
                     out_channel,
                     3,
                     style_dim,
                     upsample=True,
                     blur_kernel=blur_kernel,
-                    isconcat=isconcat,
+                    is_concat=is_concat,
                 ))
 
             self.convs.append(
-                StyledConv(out_channel*2 if isconcat else out_channel,
+                StyledConv(out_channel*2 if is_concat else out_channel,
                            out_channel,
                            3,
                            style_dim,
                            blur_kernel=blur_kernel,
-                           isconcat=isconcat))
+                           is_concat=is_concat))
 
-            self.to_rgbs.append(ToRGB(out_channel*2 if isconcat else out_channel, style_dim))
+            self.to_rgbs.append(ToRGB(out_channel*2 if is_concat else out_channel, style_dim))
 
             in_channel = out_channel
 
         self.n_latent = self.log_size * 2 - 2
-        self.isconcat = isconcat
+        self.is_concat = is_concat
 
     def make_noise(self):
         noises = [paddle.randn((1, 1, 2**2, 2**2))]
@@ -404,7 +404,7 @@ class StyleGANv2Generator(nn.Layer):
         skip = self.to_rgb1(out, latent[:, 1])
 
         i = 1
-        if self.isconcat:
+        if self.is_concat:
             noise_i = 1
 
             outs = []
