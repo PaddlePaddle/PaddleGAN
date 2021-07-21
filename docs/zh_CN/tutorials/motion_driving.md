@@ -62,7 +62,7 @@ python -u tools/first-order-demo.py  \
 - image_size: 图片人脸大小，默认为256
 - multi_person: 表示图片中有多张人脸，不加则默认为单人脸
 - face_enhancement: 添加人脸增强，默认为false
-
+```
 添加人脸增强对比如下：
 <div align='center'>
   <img src='https://user-images.githubusercontent.com/17897185/126444836-b68593e3-ae43-4450-b18f-1a549230bf07.gif' width='700'/>
@@ -70,7 +70,7 @@ python -u tools/first-order-demo.py  \
 <div align='center'>
   <img src='https://user-images.githubusercontent.com/17897185/126444194-436cc885-259d-4636-ad4c-c3dcc52fe175.gif' width='700'/> 
 </div>
-```
+
 
 ### 2 训练
 **数据集:**
