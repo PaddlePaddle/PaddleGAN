@@ -63,7 +63,12 @@ python -u tools/first-order-demo.py  \
 - multi_person: 表示图片中有多张人脸，不加则默认为单人脸
 - face_enhancement: 添加人脸增强，默认为false
 添加人脸增强对比如下：
-![](../../imgs/father_23_ori.mp4)  ![](../../imgs/father_23.mp4)
+<div align='center'>
+  <img src='https://user-images.githubusercontent.com/17897185/126444836-b68593e3-ae43-4450-b18f-1a549230bf07.gif' width='700'/>
+</div>
+<div align='center'>
+  <img src='https://user-images.githubusercontent.com/17897185/126444194-436cc885-259d-4636-ad4c-c3dcc52fe175.gif' width='700'/> 
+</div>
 ```
 
 ### 2 训练
