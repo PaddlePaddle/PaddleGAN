@@ -83,9 +83,15 @@ parser.add_argument(
     dest="face_enhancement",
     action="store_true",
     help="use face enhance for face")
+parser.add_argument(
+    "--mobile_net",
+    dest="mobile_net",
+    action="store_true",
+    help="use mobile_net for fom")
 parser.set_defaults(relative=False)
 parser.set_defaults(adapt_scale=False)
 parser.set_defaults(face_enhancement=False)
+parser.set_defaults(mobile_net=False)
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -105,5 +111,7 @@ if __name__ == "__main__":
                                     multi_person=args.multi_person,
                                     image_size=args.image_size,
                                     batch_size=args.batch_size,
-                                    face_enhancement=args.face_enhancement)
+                                    face_enhancement=args.face_enhancement,
+                                    mobile_net=args.mobile_net)
     predictor.run(args.source_image, args.driving_video)
+

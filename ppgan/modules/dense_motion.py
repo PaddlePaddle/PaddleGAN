@@ -33,13 +33,15 @@ class DenseMotionNetwork(nn.Layer):
                  num_channels,
                  estimate_occlusion_map=False,
                  scale_factor=1,
-                 kp_variance=0.01):
+                 kp_variance=0.01,
+                 mobile_net=False):
         super(DenseMotionNetwork, self).__init__()
         self.hourglass = Hourglass(block_expansion=block_expansion,
                                    in_features=(num_kp + 1) *
                                    (num_channels + 1),
                                    max_features=max_features,
-                                   num_blocks=num_blocks)
+                                   num_blocks=num_blocks,
+                                   mobile_net=mobile_net)
 
         self.mask = nn.Conv2D(self.hourglass.out_filters,
                               num_kp + 1,

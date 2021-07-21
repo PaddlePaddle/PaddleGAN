@@ -123,6 +123,40 @@ class ResBlock2d(nn.Layer):
         out += x
         return out
 
+class MobileResBlock2d(nn.Layer):
+    """
+    Res block, preserve spatial resolution.
+    """
+
+    def __init__(self, in_features, kernel_size, padding):
+        super(MobileResBlock2d, self).__init__()
+        out_features = in_features * 2
+        self.conv_pw = nn.Conv2D(in_channels=in_features, out_channels=out_features, kernel_size=1,
+                               padding=0, bias_attr=False)
+        self.conv_dw = nn.Conv2D(in_channels=out_features, out_channels=out_features, kernel_size=kernel_size,
+                               padding=padding, groups=out_features, bias_attr=False)
+        self.conv_pw_linear = nn.Conv2D(in_channels=out_features, out_channels=in_features, kernel_size=1,
+                              padding=0, bias_attr=False)
+        self.norm1 = SyncBatchNorm(in_features)
+        self.norm_pw = SyncBatchNorm(out_features)
+        self.norm_dw = SyncBatchNorm(out_features)
+        self.norm_pw_linear = SyncBatchNorm(in_features)
+
+    def forward(self, x):
+        out = self.norm1(x)
+        out = F.relu(out)
+        out = self.conv_pw(out)
+        out = self.norm_pw(out)
+
+        out = self.conv_dw(out)
+        out = self.norm_dw(out)
+        out = F.relu(out)
+
+        out = self.conv_pw_linear(out)
+        out = self.norm_pw_linear(out)
+        out += x
+        return out
+
 
 class UpBlock2d(nn.Layer):
     """
@@ -149,6 +183,32 @@ class UpBlock2d(nn.Layer):
         out = self.norm(out)
         out = F.relu(out)
         return out
+
+class MobileUpBlock2d(nn.Layer):
+    """
+    Upsampling block for use in decoder.
+    """
+
+    def __init__(self, in_features, out_features, kernel_size=3, padding=1, groups=1):
+        super(MobileUpBlock2d, self).__init__()
+
+        self.conv = nn.Conv2D(in_channels=in_features, out_channels=in_features, kernel_size=kernel_size,
+                              padding=padding, groups=in_features, bias_attr=False)
+        self.conv1 = nn.Conv2D(in_channels=in_features, out_channels=out_features, kernel_size=1,
+                              padding=0, bias_attr=False)
+        self.norm = SyncBatchNorm(in_features)
+        self.norm1 = SyncBatchNorm(out_features)
+    
+    def forward(self, x):
+        out = F.interpolate(x, scale_factor=2)
+        out = self.conv(out)
+        out = self.norm(out)
+        out = F.relu(out)
+        out = self.conv1(out)
+        out = self.norm1(out)
+        out = F.relu(out)
+        return out
+
 
 
 class DownBlock2d(nn.Layer):
@@ -178,6 +238,33 @@ class DownBlock2d(nn.Layer):
         return out
 
 
+class MobileDownBlock2d(nn.Layer):
+    """
+    Downsampling block for use in encoder.
+    """
+
+    def __init__(self, in_features, out_features, kernel_size=3, padding=1, groups=1):
+        super(MobileDownBlock2d, self).__init__()
+        self.conv = nn.Conv2D(in_channels=in_features, out_channels=in_features, kernel_size=kernel_size,
+                              padding=padding, groups=in_features, bias_attr=False)
+        self.norm = SyncBatchNorm(in_features)
+        self.pool = nn.AvgPool2D(kernel_size=(2, 2))
+
+        self.conv1 = nn.Conv2D(in_features, out_features, kernel_size=1, padding=0, stride=1, bias_attr=False)
+        self.norm1 = SyncBatchNorm(out_features)
+        
+
+    def forward(self, x):
+        out = self.conv(x)
+        out = self.norm(out)
+        out = F.relu(out)
+        out = self.conv1(out)
+        out = self.norm1(out)
+        out = F.relu(out)
+        out = self.pool(out)
+        return out
+
+
 class SameBlock2d(nn.Layer):
     """
     Simple block, preserve spatial resolution.
@@ -187,13 +274,15 @@ class SameBlock2d(nn.Layer):
                  out_features,
                  groups=1,
                  kernel_size=3,
-                 padding=1):
+                 padding=1,
+                 mobile_net=False):
         super(SameBlock2d, self).__init__()
         self.conv = nn.Conv2D(in_channels=in_features,
                               out_channels=out_features,
                               kernel_size=kernel_size,
                               padding=padding,
-                              groups=groups)
+                              groups=groups,
+                              bias_attr=(mobile_net==False))
         self.norm = SyncBatchNorm(out_features)
 
     def forward(self, x):
@@ -211,17 +300,25 @@ class Encoder(nn.Layer):
                  block_expansion,
                  in_features,
                  num_blocks=3,
-                 max_features=256):
+                 max_features=256,
+                 mobile_net = False):
         super(Encoder, self).__init__()
 
         down_blocks = []
         for i in range(num_blocks):
-            down_blocks.append(
-                DownBlock2d(in_features if i == 0 else min(
-                    max_features, block_expansion * (2**i)),
-                            min(max_features, block_expansion * (2**(i + 1))),
-                            kernel_size=3,
-                            padding=1))
+            if mobile_net:
+                down_blocks.append(
+                    MobileDownBlock2d(in_features if i == 0 else min(
+                        max_features, block_expansion * (2**i)),
+                                min(max_features, block_expansion * (2**(i + 1))),
+                                kernel_size=3, padding=1))
+            else:
+                down_blocks.append(
+                    DownBlock2d(in_features if i == 0 else min(
+                        max_features, block_expansion * (2**i)),
+                                min(max_features, block_expansion * (2**(i + 1))),
+                                kernel_size=3,
+                                padding=1))
         self.down_blocks = nn.LayerList(down_blocks)
 
     def forward(self, x):
@@ -239,17 +336,24 @@ class Decoder(nn.Layer):
                  block_expansion,
                  in_features,
                  num_blocks=3,
-                 max_features=256):
+                 max_features=256,
+                 mobile_net = False):
         super(Decoder, self).__init__()
 
         up_blocks = []
 
         for i in range(num_blocks)[::-1]:
-            in_filters = (1 if i == num_blocks - 1 else 2) * min(
-                max_features, block_expansion * (2**(i + 1)))
             out_filters = min(max_features, block_expansion * (2**i))
-            up_blocks.append(
-                UpBlock2d(in_filters, out_filters, kernel_size=3, padding=1))
+            if mobile_net:
+                in_filters = (1 if i == num_blocks - 1 else 2) * min(
+                max_features, block_expansion * (2**(i + 1)))
+                up_blocks.append(
+                    MobileUpBlock2d(in_filters, out_filters, kernel_size=3, padding=1))
+            else:
+                in_filters = (1 if i == num_blocks - 1 else 2) * min(
+                    max_features, block_expansion * (2**(i + 1)))
+                up_blocks.append(
+                    UpBlock2d(in_filters, out_filters, kernel_size=3, padding=1))
 
         self.up_blocks = nn.LayerList(up_blocks)
         self.out_filters = block_expansion + in_features
@@ -271,12 +375,13 @@ class Hourglass(nn.Layer):
                  block_expansion,
                  in_features,
                  num_blocks=3,
-                 max_features=256):
+                 max_features=256,
+                 mobile_net=False):
         super(Hourglass, self).__init__()
         self.encoder = Encoder(block_expansion, in_features, num_blocks,
-                               max_features)
+                               max_features, mobile_net=mobile_net)
         self.decoder = Decoder(block_expansion, in_features, num_blocks,
-                               max_features)
+                               max_features, mobile_net=mobile_net)
         self.out_filters = self.decoder.out_filters
 
     def forward(self, x):
