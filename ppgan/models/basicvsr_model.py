@@ -58,7 +58,7 @@ class BasicVSRModel(BaseSRModel):
                 print('Train BasicVSR with fixed spynet for', self.fix_iter,
                       'iters.')
                 for name, param in self.nets['generator'].named_parameters():
-                    if 'spynet'  or 'edvr' in name:
+                    if 'spynet' in name or 'edvr' in name:
                         param.trainable = False
             elif self.current_iter >= self.fix_iter + 1 and self.flag:
                 print('Train all the parameters.')

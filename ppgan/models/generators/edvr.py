@@ -283,7 +283,7 @@ class TSAFusion(nn.Layer):
             Tensor: Features after TSA with the shape (b, c, h, w).
         """
         B, N, C, H, W = aligned_fea.shape
-        x_center = aligned_fea[:, self.center, :, :, :].clone()
+        x_center = aligned_fea[:, self.center, :, :, :]#.clone()
         emb_rf = self.tAtt_2(x_center)
         emb = aligned_fea.reshape([-1, C, H, W])
         emb = self.tAtt_1(emb)
