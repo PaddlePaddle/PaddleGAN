@@ -73,6 +73,7 @@
 | EDVR_L_w_tsa_SRx4  | 30.9336 / 0.8773 |
 | EDVR_L_wo_tsa_deblur  | 34.9587 / 0.9509 |
 | EDVR_L_w_tsa_deblur  | 35.1473 / 0.9526 |
+| BasicVSR_x4  | 31.4325 / 0.8913 |
 
 
 ## 1.4 模型下载
@@ -84,6 +85,7 @@
 | EDVR_L_w_tsa_SRx4  | REDS | [EDVR_L_w_tsa_SRx4](https://paddlegan.bj.bcebos.com/models/EDVR_L_w_tsa_SRx4.pdparams)
 | EDVR_L_wo_tsa_deblur  | REDS | [EDVR_L_wo_tsa_deblur](https://paddlegan.bj.bcebos.com/models/EDVR_L_wo_tsa_deblur.pdparams)
 | EDVR_L_w_tsa_deblur  | REDS | [EDVR_L_w_tsa_deblur](https://paddlegan.bj.bcebos.com/models/EDVR_L_w_tsa_deblur.pdparams)
+| BasicVSR_x4  | REDS | [BasicVSR_x4](https://paddlegan.bj.bcebos.com/models/BasicVSR_reds_x4.pdparams)
 
 
 
@@ -99,5 +101,15 @@
     booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},
     month = {June},
     year = {2019}
+    }
+  ```
+- 2. [BasicVSR: The Search for Essential Components in Video Super-Resolution and Beyond](https://arxiv.org/pdf/2012.02181.pdf)
+
+  ```
+  @InProceedings{chan2021basicvsr,
+    author = {Chan, Kelvin C.K. and Wang, Xintao and Yu, Ke and Dong, Chao and Loy, Chen Change},
+    title = {BasicVSR: The Search for Essential Components in Video Super-Resolution and Beyond},
+    booktitle = {Proceedings of the IEEE conference on computer vision and pattern recognition},
+    year = {2021}
     }
   ```
