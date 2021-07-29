@@ -103,6 +103,12 @@ parser.add_argument(
     type=str,
     default='sfd',
     help="face detector to be used, can choose s3fd or blazeface")
+parser.add_argument(
+    "--face_enhancement",
+    dest="face_enhancement",
+    action="store_true",
+    help="use face enhance for face")
+parser.set_defaults(face_enhancement=False)
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -120,5 +126,6 @@ if __name__ == "__main__":
                                  box = args.box,
                                  rotate = args.rotate,
                                  nosmooth = args.nosmooth,
-                                 face_detector = args.face_detector)
+                                 face_detector = args.face_detector,
+                                 face_enhancement = args.face_enhancement)
     predictor.run(args.face, args.audio, args.outfile)

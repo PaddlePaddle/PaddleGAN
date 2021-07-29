@@ -34,6 +34,8 @@ python applications/tools/lapstyle.py --content_img ${PATH_OF_CONTENT_IMG}
 
 示例以COCO数据为例。如果您想使用自己的数据集，可以在配置文件中修改数据集为您自己的数据集。
 
+注意，LapStyle模型训练暂时不支持Windows系统。
+
 (1) 首先在128*128像素下训练LapStyle的绘图网络（Drafting Network）:
 ```
 python -u tools/main.py --config-file configs/lapstyle_draft.yaml
