@@ -28,7 +28,7 @@ class BasicVSRModel(BaseSRModel):
 
     Paper: BasicVSR: The Search for Essential Components in Video Super-Resolution and Beyond, CVPR, 2021
     """
-    def __init__(self, generator, fix_iter, pixel_criterion=None):
+    def __init__(self, generator, fix_iter, lr_mult, pixel_criterion=None):
         """Initialize the BasicVSR class.
 
         Args:
@@ -40,6 +40,7 @@ class BasicVSRModel(BaseSRModel):
         self.fix_iter = fix_iter
         self.current_iter = 1
         self.flag = True
+        self.lr_mult = lr_mult
         init_basicvsr_weight(self.nets['generator'])
 
     def setup_input(self, input):
@@ -64,7 +65,7 @@ class BasicVSRModel(BaseSRModel):
                 for name, param in self.nets['generator'].named_parameters():
                     param.trainable = True
                     if 'spynet' in name:
-                        param.optimize_attr['learning_rate'] = 0.125
+                        param.optimize_attr['learning_rate'] = self.lr_mult
                 self.flag = False
                 for net in self.nets.values():
                     net.find_unused_parameters = False
@@ -73,10 +74,10 @@ class BasicVSRModel(BaseSRModel):
         self.visual_items['output'] = self.output[:, 0, :, :, :]
         # pixel loss
         loss_pixel = self.pixel_criterion(self.output, self.gt)
-        
+
         loss_pixel.backward()
         optims['optim'].step()
-        
+
         self.losses['loss_pixel'] = loss_pixel
 
         self.current_iter += 1
@@ -102,10 +103,11 @@ class BasicVSRModel(BaseSRModel):
 
 def init_basicvsr_weight(net):
     for m in net.children():
-        if hasattr(m, 'weight') and not isinstance(m, (nn.BatchNorm, nn.BatchNorm2D)):
+        if hasattr(m,
+                   'weight') and not isinstance(m,
+                                                (nn.BatchNorm, nn.BatchNorm2D)):
             reset_parameters(m)
             continue
 
-        if (not isinstance(
-                    m, (ResidualBlockNoBN, PixelShufflePack, SPyNet))):
+        if (not isinstance(m, (ResidualBlockNoBN, PixelShufflePack, SPyNet))):
             init_basicvsr_weight(m)

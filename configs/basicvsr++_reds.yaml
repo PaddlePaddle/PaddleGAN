@@ -1,4 +1,4 @@
-total_iters: 300000
+total_iters: 600000
 output_dir: output_dir
 find_unused_parameters: True
 checkpoints_dir: checkpoints
@@ -10,11 +10,12 @@ min_max:
 model:
   name: BasicVSRModel
   fix_iter: 5000
-  lr_mult: 0.125
+  lr_mult: 0.25
   generator:
-    name: BasicVSRNet
+    name: BasicVSRPlusPlus
     mid_channels: 64
-    num_blocks: 30
+    num_blocks: 7
+    is_low_res_input: True
   pixel_criterion:
     name: CharbonnierLoss
     reduction: mean
@@ -23,8 +24,8 @@ dataset:
   train:
     name: RepeatDataset
     times: 1000
-    num_workers: 4  # 6
-    batch_size: 2  # 4*2
+    num_workers: 4
+    batch_size: 2  #4 gpus
     dataset:
       name: SRREDSMultipleGTDataset
       mode: train
@@ -33,7 +34,7 @@ dataset:
       crop_size: 256
       interval_list: [1]
       random_reverse: False
-      number_frames: 15
+      number_frames: 30
       use_flip: True
       use_rot: True
       scale: 4
@@ -56,8 +57,8 @@ dataset:
 
 lr_scheduler:
   name: CosineAnnealingRestartLR
-  learning_rate: !!float 2e-4
-  periods: [300000]
+  learning_rate: !!float 1e-4
+  periods: [600000]
   restart_weights: [1]
   eta_min: !!float 1e-7
 
@@ -85,7 +86,7 @@ validate:
       test_y_channel: False
 
 log_config:
-  interval: 100
+  interval: 10
   visiual_interval: 500
 
 snapshot_config:

@@ -12,16 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import paddle
-
 import numpy as np
 
+import paddle
 import paddle.nn as nn
+from paddle.vision.ops import DeformConv2D
+
 from ...modules.init import kaiming_normal_, constant_, constant_init
-
-from ...modules.dcn import DeformableConv_dygraph
-# from paddle.vision.ops import DeformConv2D  #to be compiled
-
 from .builder import GENERATORS
 
 
@@ -373,14 +370,14 @@ class DCNPack(nn.Layer):
         self.total_channels = self.deformable_groups * 3 * self.kernel_size[
             0] * self.kernel_size[1]
         self.split_channels = self.total_channels // 3
-        self.dcn = DeformableConv_dygraph(
-            num_filters=self.num_filters,
-            filter_size=self.kernel_size,
-            dilation=dilation,
-            stride=stride,
-            padding=padding,
-            deformable_groups=self.deformable_groups)
-        # self.dcn = DeformConv2D(in_channels=self.num_filters,out_channels=self.num_filters,kernel_size=self.kernel_size,stride=stride,padding=padding,dilation=dilation,deformable_groups=self.deformable_groups,groups=1) # to be compiled
+        self.dcn = DeformConv2D(in_channels=self.num_filters,
+                                out_channels=self.num_filters,
+                                kernel_size=self.kernel_size,
+                                stride=stride,
+                                padding=padding,
+                                dilation=dilation,
+                                deformable_groups=self.deformable_groups,
+                                groups=1)
         self.sigmoid = nn.Sigmoid()
         # init conv offset
         constant_init(self.conv_offset_mask, 0., 0.)
