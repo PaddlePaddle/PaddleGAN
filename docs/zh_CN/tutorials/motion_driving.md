@@ -39,7 +39,9 @@ python -u tools/first-order-demo.py  \
      --driving_video ../docs/imgs/fom_dv.mp4 \
      --source_image ../docs/imgs/fom_source_image.png \
      --ratio 0.4 \
-     --relative --adapt_scale
+     --relative --adapt_scale \
+     --image_size 512 \
+     --face_enhancement
 ```
 - 多人脸：
 ```
@@ -49,6 +51,7 @@ python -u tools/first-order-demo.py  \
      --source_image ../docs/imgs/fom_source_image_multi_person.jpg \
      --ratio 0.4 \
      --relative --adapt_scale \
+     --image_size 512 \
      --multi_person
 
 - driving_video: 驱动视频，视频中人物的表情动作作为待迁移的对象
@@ -56,12 +59,24 @@ python -u tools/first-order-demo.py  \
 - relative: 指示程序中使用视频和图片中人物关键点的相对坐标还是绝对坐标，建议使用相对坐标，若使用绝对坐标，会导致迁移后人物扭曲变形
 - adapt_scale: 根据关键点凸包自适应运动尺度
 - ratio: 贴回驱动生成的人脸区域占原图的比例, 用户需要根据生成的效果调整该参数，尤其对于多人脸距离比较近的情况下需要调整改参数, 默认为0.4，调整范围是[0.4, 0.5]
+- image_size: 图片人脸大小，默认为256
 - multi_person: 表示图片中有多张人脸，不加则默认为单人脸
+- face_enhancement: 添加人脸增强，默认为false
+```
+添加人脸增强对比如下：
+<div align='center'>
+  <img src='https://user-images.githubusercontent.com/17897185/126444836-b68593e3-ae43-4450-b18f-1a549230bf07.gif' width='700'/>
+</div>
+<div align='center'>
+  <img src='https://user-images.githubusercontent.com/17897185/126444194-436cc885-259d-4636-ad4c-c3dcc52fe175.gif' width='700'/> 
+</div>
+
 
 ### 2 训练
 **数据集:**
 - fashion 可以参考[这里](https://vision.cs.ubc.ca/datasets/fashion/)
-- VoxCeleb 可以参考[这里](https://github.com/AliaksandrSiarohin/video-preprocessing)
+- VoxCeleb 可以参考[这里](https://github.com/AliaksandrSiarohin/video-preprocessing). 将数据按照需求处理为想要的大小，即可开始训练，这里我们处理了256和512两种分辨率大小，结果对比如下：
+![](../../imgs/fom_512_vs_256.png)
 
 **参数说明:**
 - dataset_name.yaml: 需要配置自己的yaml文件及参数

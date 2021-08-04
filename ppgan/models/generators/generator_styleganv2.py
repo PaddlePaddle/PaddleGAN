@@ -136,18 +136,21 @@ class ModulatedConv2D(nn.Layer):
 
 
 class NoiseInjection(nn.Layer):
-    def __init__(self):
+    def __init__(self, is_concat=False):
         super().__init__()
 
         self.weight = self.create_parameter(
             (1, ), default_initializer=nn.initializer.Constant(0.0))
+        self.is_concat = is_concat
 
     def forward(self, image, noise=None):
         if noise is None:
             batch, _, height, width = image.shape
             noise = paddle.randn((batch, 1, height, width))
-
-        return image + self.weight * noise
+        if self.is_concat: 
+            return paddle.concat([image, self.weight * noise], axis=1)
+        else:
+            return image + self.weight * noise
 
 
 class ConstantInput(nn.Layer):
@@ -175,6 +178,7 @@ class StyledConv(nn.Layer):
         upsample=False,
         blur_kernel=[1, 3, 3, 1],
         demodulate=True,
+        is_concat=False
     ):
         super().__init__()
 
@@ -188,8 +192,8 @@ class StyledConv(nn.Layer):
             demodulate=demodulate,
         )
 
-        self.noise = NoiseInjection()
-        self.activate = FusedLeakyReLU(out_channel)
+        self.noise = NoiseInjection(is_concat=is_concat)
+        self.activate = FusedLeakyReLU(out_channel*2 if is_concat else out_channel)
 
     def forward(self, input, style, noise=None):
         out = self.conv(input, style)
@@ -240,6 +244,7 @@ class StyleGANv2Generator(nn.Layer):
         channel_multiplier=2,
         blur_kernel=[1, 3, 3, 1],
         lr_mlp=0.01,
+        is_concat=False
     ):
         super().__init__()
 
@@ -275,8 +280,9 @@ class StyleGANv2Generator(nn.Layer):
                                 self.channels[4],
                                 3,
                                 style_dim,
-                                blur_kernel=blur_kernel)
-        self.to_rgb1 = ToRGB(self.channels[4], style_dim, upsample=False)
+                                blur_kernel=blur_kernel,
+                                is_concat=is_concat)
+        self.to_rgb1 = ToRGB(self.channels[4]*2 if is_concat else self.channels[4], style_dim, upsample=False)
 
         self.log_size = int(math.log(size, 2))
         self.num_layers = (self.log_size - 2) * 2 + 1
@@ -299,26 +305,29 @@ class StyleGANv2Generator(nn.Layer):
 
             self.convs.append(
                 StyledConv(
-                    in_channel,
+                    in_channel*2 if is_concat else in_channel,
                     out_channel,
                     3,
                     style_dim,
                     upsample=True,
                     blur_kernel=blur_kernel,
+                    is_concat=is_concat,
                 ))
 
             self.convs.append(
-                StyledConv(out_channel,
+                StyledConv(out_channel*2 if is_concat else out_channel,
                            out_channel,
                            3,
                            style_dim,
-                           blur_kernel=blur_kernel))
+                           blur_kernel=blur_kernel,
+                           is_concat=is_concat))
 
-            self.to_rgbs.append(ToRGB(out_channel, style_dim))
+            self.to_rgbs.append(ToRGB(out_channel*2 if is_concat else out_channel, style_dim))
 
             in_channel = out_channel
 
         self.n_latent = self.log_size * 2 - 2
+        self.is_concat = is_concat
 
     def make_noise(self):
         noises = [paddle.randn((1, 1, 2**2, 2**2))]
@@ -395,16 +404,29 @@ class StyleGANv2Generator(nn.Layer):
         skip = self.to_rgb1(out, latent[:, 1])
 
         i = 1
-        for conv1, conv2, noise1, noise2, to_rgb in zip(self.convs[::2],
-                                                        self.convs[1::2],
-                                                        noise[1::2],
-                                                        noise[2::2],
-                                                        self.to_rgbs):
-            out = conv1(out, latent[:, i], noise=noise1)
-            out = conv2(out, latent[:, i + 1], noise=noise2)
-            skip = to_rgb(out, latent[:, i + 2], skip)
+        if self.is_concat:
+            noise_i = 1
 
-            i += 2
+            outs = []
+            for conv1, conv2, to_rgb in zip(
+                self.convs[::2], self.convs[1::2], self.to_rgbs):
+                out = conv1(out, latent[:, i], noise=noise[(noise_i + 1)//2]) ### 1 for 2
+                out = conv2(out, latent[:, i + 1], noise=noise[(noise_i + 2)//2]) ### 1 for 2
+                skip = to_rgb(out, latent[:, i + 2], skip)
+                
+                i += 2
+                noise_i += 2
+        else:    
+            for conv1, conv2, noise1, noise2, to_rgb in zip(self.convs[::2],
+                                                            self.convs[1::2],
+                                                            noise[1::2],
+                                                            noise[2::2],
+                                                            self.to_rgbs):
+                out = conv1(out, latent[:, i], noise=noise1)
+                out = conv2(out, latent[:, i + 1], noise=noise2)
+                skip = to_rgb(out, latent[:, i + 2], skip)
+
+                i += 2
 
         image = skip
 

@@ -15,78 +15,89 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 
 
-## 生成对抗网络七日打卡营🔥🔥🔥
+## 近期活动🔥🔥🔥
 
-**4月15日~4月22日【原理+实战=7天学会GAN】** 🤓
+- 🔥**2021.7.9-2021.9**🔥
 
-**百度飞桨一线高级研发工程师团队亲自直播授课，连续7天最强干货，带大家逐步掌握GAN常用模型脉络及代码！**
+  **💙AI创造营：Metaverse启动机之重构现世💙**
 
-讲师团队：百度高级研发工程师***4**
+  **PaddlePaddle × Wechaty × Mixlab 创意赛，参赛者可大开脑洞，运用PaddleGAN的花式能力，打造属于你自己的聊天机器人！**
 
-助教团队：深度学习领域平均码龄超过**5**年的高阶开发者***7**
+  **奖品丰厚，等你来拿🎁🎈🎊**
 
-**更有万元豪奖、百度实习内推机会等你来拿**🎁🎈🎊
+  💰**一等奖 1 名**：3万元人民币 / 队
 
-⌨️**一等奖 1 名**：HHKB Professional静电容蓝牙键盘
+  🎮**二等奖 2 名**：PS5游戏机 1个(价值5000元) / 队
 
-🖥**二等奖 2 名**：Kindle paperwhite 电子阅读器
+  🕶**三等奖 3 名**：VR眼镜 1个(价值3000元) / 队
 
-📞**三等奖 6 名**：小度无线智能耳机
+  💝**最佳人气奖 1 名**：3D打印机 1个(价值2000元) / 队
 
-📘**优秀奖 10 名**：纸质书《Generative Deep Learning》+《Deep Learning》
+  **还在等什么，快来点击报名吧：https://aistudio.baidu.com/aistudio/competition/detail/98**
 
-**还在等什么，快来点击报名吧：https://aistudio.baidu.com/aistudio/course/introduce/16651**
+  **如何用PaddleGAN在比赛中杀出重围？请见：[PaddleGAN X WeChaty Demo示例](./paddlegan-wechaty-demo/REAME.md)**
 
-**直播链接：http://live.bilibili.com/21689802**
+  **更多详情，请查看[比赛讲解直播回放](https://www.bilibili.com/video/BV18y4y1T7Ek)💞**
 
-**直播日期：4月15日～4月20日直播授课，4月22日结营直播**
+- 2021.4.15~4.22
 
-**具体详情请参见：[PaddleGAN生成对抗七日打卡营](./education/README.md)**
+  生成对抗网络七日打卡营火爆来袭，赶紧让百度资深研发带你上车GAN起来吧！
 
+  **直播回放与课件资料：https://aistudio.baidu.com/aistudio/course/introduce/16651**
 
+- 2020.12.10
 
-## 近期贡献者
+  《大谷 Spitzer 手把手教你修复百年前老北京影像》b站直播中奖用户名单请点击[PaddleGAN直播中奖名单](./docs/luckydraw.md)查看~
 
-[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/0)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/0)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/1)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/1)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/2)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/2)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/3)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/3)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/4)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/4)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/5)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/5)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/6)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/6)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/7)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/7)
+  **想要看直播回放视频请点击链接：https://www.bilibili.com/video/BV1GZ4y1g7xc**
 
-## 快速开始
+## 产品动态
 
-* 请确保您按照[安装文档](./docs/zh_CN/install.md)的说明正确安装了PaddlePaddle和PaddleGAN
+- 新增First Order Motion分辨率512清晰版本，详情见[教程](./docs/zh_CN/tutorials/motion_driving.md)。
 
-* 通过ppgan.apps接口直接使用应用:
+## 文档教程
 
-  ```python
-  from ppgan.apps import RealSRPredictor
-  sr = RealSRPredictor()
-  sr.run("docs/imgs/monarch.png")
-  ```
+### 安装
 
-* 更多应用的使用请参考[ppgan.apps API](./docs/zh_CN/apis/apps.md)
-* 更多训练、评估教程:
-  * [数据准备](./docs/zh_CN/data_prepare.md)
-  * [训练/评估/推理教程](./docs/zh_CN/get_started.md)
+- 环境依赖：
+  - PaddlePaddle >= 2.1.0
+  - Python >= 3.6
+  - CUDA >= 10.1
+- [完整安装教程](./docs/zh_CN/install.md)
 
-## 经典模型实现
+### 入门教程
 
-* [Pixel2Pixel](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
-* [CycleGAN](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
-* [LapStyle](./docs/zh_CN/tutorials/lap_style.md)
-* [PSGAN](./docs/zh_CN/tutorials/psgan.md)
-* [First Order Motion Model](./docs/zh_CN/tutorials/motion_driving.md)
-* [FaceParsing](./docs/zh_CN/tutorials/face_parse.md)
-* [AnimeGANv2](./docs/zh_CN/tutorials/animegan.md)
-* [U-GAT-IT](./docs/zh_CN/tutorials/ugatit.md)
-* [Photo2Cartoon](docs/zh_CN/tutorials/photo2cartoon.md)
-* [Wav2Lip](docs/zh_CN/tutorials/wav2lip.md)
-* [Single Image Super Resolution(SISR)](./docs/zh_CN/tutorials/single_image_super_resolution.md)
-* [Video Super Resolution(VSR)](./docs/zh_CN/tutorials/video_super_resolution.md)
-* [StyleGAN2](./docs/zh_CN/tutorials/styleganv2.md)
-* [Pixel2Style2Pixel](./docs/zh_CN/tutorials/pixel2style2pixel.md)
+- [快速开始](./docs/zh_CN/get_started.md)
+- [数据准备](./docs/zh_CN/data_prepare.md)
+- [API接口使用文档](./docs/zh_CN/apis/apps.md)
 
+## 模型库
 
-## 复合应用
+* 图像翻译
+  * 风格迁移：[Pixel2Pixel](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
+  * 风格迁移：[CycleGAN](./docs/zh_CN/tutorials/pix2pix_cyclegan.md)
+  * 图像艺术风格转换：[LapStyle](./docs/zh_CN/tutorials/lap_style.md)
+  * 人脸换妆：[PSGAN](./docs/zh_CN/tutorials/psgan.md)
+  * 照片动漫化：[AnimeGANv2](./docs/zh_CN/tutorials/animegan.md)
+  * 人像动漫化：[U-GAT-IT](./docs/zh_CN/tutorials/ugatit.md)
+  * 人脸卡通化：[Photo2Cartoon](docs/zh_CN/tutorials/photo2cartoon.md)
+* 动作迁移
+  * 人脸表情迁移：[First Order Motion Model](./docs/zh_CN/tutorials/motion_driving.md)
+  * 唇形合成：[Wav2Lip](docs/zh_CN/tutorials/wav2lip.md)
+* 生成
+  * [DCGAN](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/ppgan/models/dc_gan_model.py)
+  * WGAN
+  * 人脸生成：[StyleGAN2](./docs/zh_CN/tutorials/styleganv2.md)
+  * 图像编码：[Pixel2Style2Pixel](./docs/zh_CN/tutorials/pixel2style2pixel.md)
+* 分辨率提升
+  * 单张图片超分：[Single Image Super Resolution(SISR)](./docs/zh_CN/tutorials/single_image_super_resolution.md)
+  * 视频超分：[Single Image Super Resolution(SISR)](./docs/zh_CN/tutorials/single_image_super_resolution.md)
+* 语义分割
+  * 人脸解析：[FaceParsing](./docs/zh_CN/tutorials/face_parse.md)
 
-* [智能影像修复](./docs/zh_CN/industrial_solution/video_restore_cn.md)
+## 产业级应用
+
+- [智能影像修复](./docs/zh_CN/industrial_solution/video_restore_cn.md)
 
 ## 在线教程
 
@@ -102,7 +113,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 ## 效果展示
 
 
-### 图片变换
+### 风格迁移
 
 <div align='center'>
   <img src='https://user-images.githubusercontent.com/48054808/119464966-d5c1c000-bd75-11eb-9696-9bb75357229f.gif'width='700' height='200'/>
@@ -174,23 +185,15 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 ## 版本更新
 
+- v2.0.0 (2021.6.2)
+  - 发布[Fisrt Order Motion](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/motion_driving.md)模型以及多个预训练权重
+  - 发布支持[多人脸驱动](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/motion_driving.md#1-test-for-face)的应用
+  - 发布视频超分辨模型[EDVR](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/video_super_resolution.md)以及多个预训练权重
+  - 发布PaddleGAN对应的[七日打卡训练营](https://github.com/PaddlePaddle/PaddleGAN/tree/develop/education)内容
+  - 增强PaddleGAN在windows平台运行的鲁棒性
 - v0.1.0 (2020.11.02)
   - 初版发布，支持Pixel2Pixel、CycleGAN、PSGAN模型，支持视频插针、超分、老照片/视频上色、视频动作生成等应用。
   - 模块化设计，接口简单易用。
-
-## 近期活动更新
-
-- 2020.12.10
-
-  《大谷 Spitzer 手把手教你修复百年前老北京影像》b站直播中奖用户名单请点击[PaddleGAN直播中奖名单](./docs/luckydraw.md)查看~
-
-  想要看直播回放视频请点击链接：https://www.bilibili.com/video/BV1GZ4y1g7xc
-
-- 2021.4.15~4.22
-
-  生成对抗网络七日打卡营火爆🔥来袭，赶紧让百度资深研发带你上车GAN起来吧！
-
-  报名链接：https://aistudio.baidu.com/aistudio/course/introduce/16651
 
 
 ## 欢迎加入PaddleGAN技术交流群
@@ -213,8 +216,9 @@ SIG贡献:
 
 - [zhen8838](https://github.com/zhen8838): 贡献AnimeGANv2.
 - [Jay9z](https://github.com/Jay9z): 贡献DCGAN的示例、修改安装文档等。
-- [HighCWu](https://github.com/HighCWu): 贡献c-DCGAN和WGAN，以及对`paddle.vision.datasets`数据集的支持。
+- [HighCWu](https://github.com/HighCWu): 贡献c-DCGAN和WGAN，以及对`paddle.vision.datasets`数据集的支持；贡献inversion部分代码复现。
 - [hao-qiang](https://github.com/hao-qiang) & [ minivision-ai ](https://github.com/minivision-ai): 贡献人像卡通化photo2cartoon项目。
+- [lyl120117](https://github.com/lyl120117)：贡献去模糊MPRNet推理代码。
 
 
 ## 贡献代码

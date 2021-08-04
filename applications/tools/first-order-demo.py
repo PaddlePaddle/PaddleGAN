@@ -73,8 +73,19 @@ parser.add_argument("--image_size",
                     type=int,
                     default=256,
                     help="size of image")
+parser.add_argument("--batch_size",
+                    dest="batch_size",
+                    type=int,
+                    default=1,
+                    help="Batch size for fom model")
+parser.add_argument(
+    "--face_enhancement",
+    dest="face_enhancement",
+    action="store_true",
+    help="use face enhance for face")
 parser.set_defaults(relative=False)
 parser.set_defaults(adapt_scale=False)
+parser.set_defaults(face_enhancement=False)
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -92,5 +103,7 @@ if __name__ == "__main__":
                                     ratio=args.ratio,
                                     face_detector=args.face_detector,
                                     multi_person=args.multi_person,
-                                    image_size=args.image_size)
+                                    image_size=args.image_size,
+                                    batch_size=args.batch_size,
+                                    face_enhancement=args.face_enhancement)
     predictor.run(args.source_image, args.driving_video)

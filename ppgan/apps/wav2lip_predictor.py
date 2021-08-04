@@ -28,7 +28,8 @@ class Wav2LipPredictor(BasePredictor):
                  box = [-1, -1, -1, -1],
                  rotate = False,
                  nosmooth = False,
-                 face_detector = 'sfd'):
+                 face_detector = 'sfd',
+                 face_enhancement = False):
         self.img_size = 96
         self.checkpoint_path = checkpoint_path
         self.static = static
@@ -42,6 +43,10 @@ class Wav2LipPredictor(BasePredictor):
         self.rotate = rotate
         self.nosmooth = nosmooth
         self.face_detector = face_detector
+        self.face_enhancement = face_enhancement
+        if face_enhancement:
+            from ppgan.faceutils.face_enhancement import FaceEnhancement
+            self.faceenhancer = FaceEnhancement()
         makedirs('./temp', exist_ok=True)
 
     def get_smoothened_boxes(self, boxes, T):
@@ -271,6 +276,8 @@ class Wav2LipPredictor(BasePredictor):
 
             for p, f, c in zip(pred, frames, coords):
                 y1, y2, x1, x2 = c
+                if self.face_enhancement:
+                    p = self.faceenhancer.enhance_from_image(p)
                 p = cv2.resize(p.astype(np.uint8), (x2 - x1, y2 - y1))
 
                 f[y1:y2, x1:x2] = p
