@@ -14,17 +14,15 @@
 
 # basicvsr and iconvsr code are heavily based on mmedit
 import paddle
-
 import numpy as np
-
 import paddle.nn as nn
 import paddle.nn.functional as F
-from ...utils.download import get_path_from_url
 
 from .builder import GENERATORS
+from .edvr import PCDAlign, TSAFusion
 from .basicvsr import SPyNet, PixelShufflePack, ResidualBlockNoBN, \
                       ResidualBlocksWithInputConv, flow_warp
-from .edvr import PCDAlign, TSAFusion
+from ...utils.download import get_path_from_url
 
 
 @GENERATORS.register()
@@ -41,6 +39,11 @@ class IconVSR(nn.Layer):
             Default: 64.
         num_blocks (int): Number of residual blocks in each propagation branch.
             Default: 30.
+        padding (int): Number of frames to be padded at two ends of the
+            sequence. 2 for REDS and 3 for Vimeo-90K. Default: 2.
+        keyframe_stride (int): Number determining the keyframes. If stride=5,
+            then the (0, 5, 10, 15, ...)-th frame will be the keyframes.
+            Default: 5.
     """
     def __init__(self,
                  mid_channels=64,
@@ -139,6 +142,9 @@ class IconVSR(nn.Layer):
 
         Args:
             lrs (tensor): Input LR images with shape (n, t, c, h, w)
+
+        Returns:
+            bool: whether the input is a mirror-extended sequence
         """
 
         self.is_mirror_extended = False
@@ -163,9 +169,9 @@ class IconVSR(nn.Layer):
             lrs = [
                 lrs[:, 4:5, :, :], lrs[:, 3:4, :, :], lrs, lrs[:, -4:-3, :, :],
                 lrs[:, -5:-4, :, :]
-            ]  # padding
+            ]
         elif self.padding == 3:
-            lrs = [lrs[:, [6, 5, 4]], lrs, lrs[:, [-5, -6, -7]]]  # padding
+            lrs = [lrs[:, [6, 5, 4]], lrs, lrs[:, [-5, -6, -7]]]
         lrs = paddle.concat(lrs, axis=1)
 
         num_frames = 2 * self.padding + 1
@@ -243,7 +249,8 @@ class IconVSR(nn.Layer):
         feat_prop = paddle.to_tensor(
             np.zeros([n, self.mid_channels, h, w], 'float32'))
         for i in range(t - 1, -1, -1):
-            if i < t - 1:  # no warping required for the last timestep
+            # no warping required for the last timestep
+            if i < t - 1:
                 flow = flows_backward[:, i, :, :, :]
                 feat_prop = flow_warp(feat_prop, flow.transpose([0, 2, 3, 1]))
 
@@ -311,7 +318,6 @@ class EDVRFeatureExtractor(nn.Layer):
         center_frame_idx (int): The index of center frame. Frame counting from
             0. Default: 2.
         with_tsa (bool): Whether to use TSA module. Default: True.
-        pretrained (str): The pretrained model path. Default: None.
     """
     def __init__(self,
                  in_channels=3,
@@ -328,7 +334,6 @@ class EDVRFeatureExtractor(nn.Layer):
 
         self.center_frame_idx = center_frame_idx
         self.with_tsa = with_tsa
-        # act_cfg = dict(type='LeakyReLU', negative_slope=0.1)
 
         self.conv_first = nn.Conv2D(in_channels, mid_channels, 3, 1, 1)
         self.feature_extraction = make_layer(ResidualBlockNoBN,
