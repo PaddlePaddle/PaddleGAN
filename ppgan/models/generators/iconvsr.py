@@ -24,7 +24,9 @@ from ...utils.download import get_path_from_url
 from ...modules.init import kaiming_normal_, constant_
 
 from .builder import GENERATORS
+from .basicvsr import SPyNet
 from .edvr import PCDAlign, TSAFusion
+
 
 @paddle.no_grad()
 def default_init_weights(layer_list, scale=1, bias_fill=0, **kwargs):
@@ -198,231 +200,6 @@ def flow_warp(x,
     return output
 
 
-class SPyNetBasicModule(nn.Layer):
-    """Basic Module for SPyNet.
-
-    Paper:
-        Optical Flow Estimation using a Spatial Pyramid Network, CVPR, 2017
-    """
-    def __init__(self):
-        super().__init__()
-
-        self.conv1 = nn.Conv2D(in_channels=8,
-                               out_channels=32,
-                               kernel_size=7,
-                               stride=1,
-                               padding=3)
-        self.conv2 = nn.Conv2D(in_channels=32,
-                               out_channels=64,
-                               kernel_size=7,
-                               stride=1,
-                               padding=3)
-        self.conv3 = nn.Conv2D(in_channels=64,
-                               out_channels=32,
-                               kernel_size=7,
-                               stride=1,
-                               padding=3)
-        self.conv4 = nn.Conv2D(in_channels=32,
-                               out_channels=16,
-                               kernel_size=7,
-                               stride=1,
-                               padding=3)
-        self.conv5 = nn.Conv2D(in_channels=16,
-                               out_channels=2,
-                               kernel_size=7,
-                               stride=1,
-                               padding=3)
-        self.relu = nn.ReLU()
-
-    def forward(self, tensor_input):
-        """
-        Args:
-            tensor_input (Tensor): Input tensor with shape (b, 8, h, w).
-                8 channels contain:
-                [reference image (3), neighbor image (3), initial flow (2)].
-
-        Returns:
-            Tensor: Refined flow with shape (b, 2, h, w)
-        """
-        out = self.relu(self.conv1(tensor_input))
-        out = self.relu(self.conv2(out))
-        out = self.relu(self.conv3(out))
-        out = self.relu(self.conv4(out))
-        out = self.conv5(out)
-        return out
-
-
-class SPyNet(nn.Layer):
-    """SPyNet network structure.
-
-    The difference to the SPyNet in paper is that
-        1. more SPyNetBasicModule is used in this version, and
-        2. no batch normalization is used in this version.
-
-    Paper:
-        Optical Flow Estimation using a Spatial Pyramid Network, CVPR, 2017
-
-    """
-    def __init__(self):
-        super().__init__()
-
-        self.basic_module0 = SPyNetBasicModule()
-        self.basic_module1 = SPyNetBasicModule()
-        self.basic_module2 = SPyNetBasicModule()
-        self.basic_module3 = SPyNetBasicModule()
-        self.basic_module4 = SPyNetBasicModule()
-        self.basic_module5 = SPyNetBasicModule()
-
-        self.register_buffer(
-            'mean',
-            paddle.to_tensor([0.485, 0.456, 0.406]).reshape([1, 3, 1, 1]))
-        self.register_buffer(
-            'std',
-            paddle.to_tensor([0.229, 0.224, 0.225]).reshape([1, 3, 1, 1]))
-
-    def compute_flow(self, ref, supp):
-        """Compute flow from ref to supp.
-
-        Note that in this function, the images are already resized to a
-        multiple of 32.
-
-        Args:
-            ref (Tensor): Reference image with shape of (n, 3, h, w).
-            supp (Tensor): Supporting image with shape of (n, 3, h, w).
-
-        Returns:
-            Tensor: Estimated optical flow: (n, 2, h, w).
-        """
-
-        n, _, h, w = ref.shape
-
-        # normalize the input images
-        ref = [(ref - self.mean) / self.std]
-        supp = [(supp - self.mean) / self.std]
-
-        # generate downsampled frames
-        for level in range(5):
-            ref.append(F.avg_pool2d(ref[-1], kernel_size=2, stride=2))
-            supp.append(F.avg_pool2d(supp[-1], kernel_size=2, stride=2))
-        ref = ref[::-1]
-        supp = supp[::-1]
-
-        # flow computation
-        flow = paddle.to_tensor(np.zeros([n, 2, h // 32, w // 32], 'float32'))
-
-        # level=0
-        flow_up = flow
-        flow = flow_up + self.basic_module0(
-            paddle.concat([
-                ref[0],
-                flow_warp(supp[0],
-                          flow_up.transpose([0, 2, 3, 1]),
-                          padding_mode='border'), flow_up
-            ], 1))
-
-        # level=1
-        flow_up = F.interpolate(
-            flow, scale_factor=2, mode='bilinear', align_corners=True) * 2.0
-        flow = flow_up + self.basic_module1(
-            paddle.concat([
-                ref[1],
-                flow_warp(supp[1],
-                          flow_up.transpose([0, 2, 3, 1]),
-                          padding_mode='border'), flow_up
-            ], 1))
-
-        # level=2
-        flow_up = F.interpolate(
-            flow, scale_factor=2, mode='bilinear', align_corners=True) * 2.0
-        flow = flow_up + self.basic_module2(
-            paddle.concat([
-                ref[2],
-                flow_warp(supp[2],
-                          flow_up.transpose([0, 2, 3, 1]),
-                          padding_mode='border'), flow_up
-            ], 1))
-
-        # level=3
-        flow_up = F.interpolate(
-            flow, scale_factor=2, mode='bilinear', align_corners=True) * 2.0
-        flow = flow_up + self.basic_module3(
-            paddle.concat([
-                ref[3],
-                flow_warp(supp[3],
-                          flow_up.transpose([0, 2, 3, 1]),
-                          padding_mode='border'), flow_up
-            ], 1))
-
-        # level=4
-        flow_up = F.interpolate(
-            flow, scale_factor=2, mode='bilinear', align_corners=True) * 2.0
-        flow = flow_up + self.basic_module4(
-            paddle.concat([
-                ref[4],
-                flow_warp(supp[4],
-                          flow_up.transpose([0, 2, 3, 1]),
-                          padding_mode='border'), flow_up
-            ], 1))
-
-        # level=5
-        flow_up = F.interpolate(
-            flow, scale_factor=2, mode='bilinear', align_corners=True) * 2.0
-        flow = flow_up + self.basic_module5(
-            paddle.concat([
-                ref[5],
-                flow_warp(supp[5],
-                          flow_up.transpose([0, 2, 3, 1]),
-                          padding_mode='border'), flow_up
-            ], 1))
-
-        return flow
-
-    def forward(self, ref, supp):
-        """Forward function of SPyNet.
-
-        This function computes the optical flow from ref to supp.
-
-        Args:
-            ref (Tensor): Reference image with shape of (n, 3, h, w).
-            supp (Tensor): Supporting image with shape of (n, 3, h, w).
-
-        Returns:
-            Tensor: Estimated optical flow: (n, 2, h, w).
-        """
-
-        # upsize to a multiple of 32
-        h, w = ref.shape[2:4]
-        w_up = w if (w % 32) == 0 else 32 * (w // 32 + 1)
-        h_up = h if (h % 32) == 0 else 32 * (h // 32 + 1)
-        ref = F.interpolate(ref,
-                            size=(h_up, w_up),
-                            mode='bilinear',
-                            align_corners=False)
-        supp = F.interpolate(supp,
-                             size=(h_up, w_up),
-                             mode='bilinear',
-                             align_corners=False)
-        ref.stop_gradient = False
-        supp.stop_gradient = False
-        # compute flow, and resize back to the original resolution
-        flow_up = self.compute_flow(ref, supp)
-        flow = F.interpolate(flow_up,
-                             size=(h, w),
-                             mode='bilinear',
-                             align_corners=False)
-
-        # adjust the flow values
-        # todo: grad bug
-        # flow[:, 0, :, :] *= (float(w) / float(w_up))
-        # flow[:, 1, :, :] *= (float(h) / float(h_up))
-
-        flow_x = flow[:, 0:1, :, :] * (float(w) / float(w_up))
-        flow_y = flow[:, 1:2, :, :] * (float(h) / float(h_up))
-        flow = paddle.concat([flow_x, flow_y], 1)
-
-        return flow
-
-
 class ResidualBlocksWithInputConv(nn.Layer):
     """Residual blocks with a convolution in front.
 
@@ -474,7 +251,11 @@ class IconVSR(nn.Layer):
         num_blocks (int): Number of residual blocks in each propagation branch.
             Default: 30.
     """
-    def __init__(self, mid_channels=64, num_blocks=30, padding=2, keyframe_stride=5):
+    def __init__(self,
+                 mid_channels=64,
+                 num_blocks=30,
+                 padding=2,
+                 keyframe_stride=5):
 
         super().__init__()
 
@@ -489,16 +270,25 @@ class IconVSR(nn.Layer):
         self.spynet.set_state_dict(paddle.load(weight_path))
 
         # information-refill
-        self.edvr = EDVRFeatureExtractor(
-            num_frames=padding * 2 + 1,
-            center_frame_idx=padding,
-            pretrained=None)
-        self.edvr.set_state_dict(paddle.load('edvrm.pdparams'))
-        # paddle.save(self.edvr.state_dict(), 'edvrm.pdparams')
-        self.backward_fusion = nn.Conv2D(
-            2 * mid_channels, mid_channels, 3, 1, 1, bias_attr=True)
-        self.forward_fusion = nn.Conv2D(
-            2 * mid_channels, mid_channels, 3, 1, 1, bias_attr=True)
+        self.edvr = EDVRFeatureExtractor(num_frames=padding * 2 + 1,
+                                         center_frame_idx=padding,
+                                         pretrained=None)
+        edvr_wight_path = get_path_from_url(
+            'https://paddlegan.bj.bcebos.com/models/edvrm.pdparams')
+        self.edvr.set_state_dict(paddle.load(edvr_wight_path))
+        # https://paddlegan.bj.bcebos.com/models/IconVSR_reds_x4.pdparams
+        self.backward_fusion = nn.Conv2D(2 * mid_channels,
+                                         mid_channels,
+                                         3,
+                                         1,
+                                         1,
+                                         bias_attr=True)
+        self.forward_fusion = nn.Conv2D(2 * mid_channels,
+                                        mid_channels,
+                                        3,
+                                        1,
+                                        1,
+                                        bias_attr=True)
 
         # propagation branches
         self.backward_resblocks = ResidualBlocksWithInputConv(
@@ -579,7 +369,10 @@ class IconVSR(nn.Layer):
         """
 
         if self.padding == 2:
-            lrs = [lrs[:, 4:5, :, :], lrs[:, 3:4, :, :], lrs, lrs[:, -4:-3, :, :], lrs[:, -5:-4, :, :]]  # padding
+            lrs = [
+                lrs[:, 4:5, :, :], lrs[:, 3:4, :, :], lrs, lrs[:, -4:-3, :, :],
+                lrs[:, -5:-4, :, :]
+            ]  # padding
         elif self.padding == 3:
             lrs = [lrs[:, [6, 5, 4]], lrs, lrs[:, [-5, -6, -7]]]  # padding
         lrs = paddle.concat(lrs, axis=1)
@@ -655,7 +448,7 @@ class IconVSR(nn.Layer):
 
         # backward-time propgation
         outputs = []
-        
+
         feat_prop = paddle.to_tensor(
             np.zeros([n, self.mid_channels, h, w], 'float32'))
         for i in range(t - 1, -1, -1):
@@ -704,7 +497,8 @@ class IconVSR(nn.Layer):
             out += base
             outputs[i] = out
 
-        return paddle.stack(outputs, axis=1)#[:, :, :, :4 * h_input, :4 * w_input]
+        return paddle.stack(outputs,
+                            axis=1)  #[:, :, :, :4 * h_input, :4 * w_input]
 
 
 def make_layer(block, num_blocks, **kwarg):
@@ -747,7 +541,6 @@ class EDVRFeatureExtractor(nn.Layer):
         with_tsa (bool): Whether to use TSA module. Default: True.
         pretrained (str): The pretrained model path. Default: None.
     """
-
     def __init__(self,
                  in_channels=3,
                  out_channel=3,
@@ -757,8 +550,7 @@ class EDVRFeatureExtractor(nn.Layer):
                  num_blocks_extraction=5,
                  num_blocks_reconstruction=10,
                  center_frame_idx=2,
-                 with_tsa=True,
-                 pretrained=None):
+                 with_tsa=True):
 
         super().__init__()
 
@@ -767,50 +559,29 @@ class EDVRFeatureExtractor(nn.Layer):
         # act_cfg = dict(type='LeakyReLU', negative_slope=0.1)
 
         self.conv_first = nn.Conv2D(in_channels, mid_channels, 3, 1, 1)
-        self.feature_extraction = make_layer(
-            ResidualBlockNoBN,
-            num_blocks_extraction,
-            nf=mid_channels)
+        self.feature_extraction = make_layer(ResidualBlockNoBN,
+                                             num_blocks_extraction,
+                                             nf=mid_channels)
 
         # generate pyramid features
-        self.feat_l2_conv1 = nn.Conv2D(
-            mid_channels, mid_channels, 3, 2, 1)
-        self.feat_l2_conv2 = nn.Conv2D(
-            mid_channels, mid_channels, 3, 1, 1)
-        self.feat_l3_conv1 = nn.Conv2D(
-            mid_channels, mid_channels, 3, 2, 1)
-        self.feat_l3_conv2 = nn.Conv2D(
-            mid_channels, mid_channels, 3, 1, 1)
-        # self.feat_l2_conv1 = ConvModule(
-        #     mid_channels, mid_channels, 3, 2, 1, act_cfg=act_cfg)
-        # self.feat_l2_conv2 = ConvModule(
-        #     mid_channels, mid_channels, 3, 1, 1, act_cfg=act_cfg)
-        # self.feat_l3_conv1 = ConvModule(
-        #     mid_channels, mid_channels, 3, 2, 1, act_cfg=act_cfg)
-        # self.feat_l3_conv2 = ConvModule(
-        #     mid_channels, mid_channels, 3, 1, 1, act_cfg=act_cfg)
+        self.feat_l2_conv1 = nn.Conv2D(mid_channels, mid_channels, 3, 2, 1)
+        self.feat_l2_conv2 = nn.Conv2D(mid_channels, mid_channels, 3, 1, 1)
+        self.feat_l3_conv1 = nn.Conv2D(mid_channels, mid_channels, 3, 2, 1)
+        self.feat_l3_conv2 = nn.Conv2D(mid_channels, mid_channels, 3, 1, 1)
+
         # pcd alignment
-        self.pcd_alignment = PCDAlign(
-            nf=mid_channels, groups=deform_groups)
+        self.pcd_alignment = PCDAlign(nf=mid_channels, groups=deform_groups)
         # fusion
         if self.with_tsa:
-            self.fusion = TSAFusion(
-                nf=mid_channels,
-                nframes=num_frames,
-                center=self.center_frame_idx)
+            self.fusion = TSAFusion(nf=mid_channels,
+                                    nframes=num_frames,
+                                    center=self.center_frame_idx)
         else:
             self.fusion = nn.Conv2d(num_frames * mid_channels, mid_channels, 1,
                                     1)
 
         # activation function
         self.lrelu = nn.LeakyReLU(negative_slope=0.1)
-
-        if isinstance(pretrained, str):
-            logger = get_root_logger()
-            load_checkpoint(self, pretrained, strict=True, logger=logger)
-        elif pretrained is not None:
-            raise TypeError(f'"pretrained" must be a str or None. '
-                            f'But received {type(pretrained)}.')
 
     def forward(self, x):
         """Forward function for EDVRFeatureExtractor.
@@ -827,9 +598,11 @@ class EDVRFeatureExtractor(nn.Layer):
         l1_feat = self.lrelu(self.conv_first(x.reshape([-1, c, h, w])))
         l1_feat = self.feature_extraction(l1_feat)
         # L2
-        l2_feat = self.lrelu(self.feat_l2_conv2(self.lrelu(self.feat_l2_conv1(l1_feat))))
+        l2_feat = self.lrelu(
+            self.feat_l2_conv2(self.lrelu(self.feat_l2_conv1(l1_feat))))
         # L3
-        l3_feat = self.lrelu(self.feat_l3_conv2(self.lrelu(self.feat_l3_conv1(l2_feat))))
+        l3_feat = self.lrelu(
+            self.feat_l3_conv2(self.lrelu(self.feat_l3_conv1(l2_feat))))
 
         l1_feat = l1_feat.reshape([n, t, -1, h, w])
         l2_feat = l2_feat.reshape([n, t, -1, h // 2, w // 2])

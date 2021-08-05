@@ -50,7 +50,7 @@ dataset:
     use_rot: False
     scale: 4
     val_partition: REDS4
-    num_workers: 1
+    num_workers: 0
     batch_size: 1
 
 lr_scheduler:
@@ -70,8 +70,7 @@ optimizer:
   beta2: 0.99
 
 validate:
-  # FIXME: avoid oom
-  interval: 50000000
+  interval: 5000
   save_img: false
 
   metrics:
