@@ -22,7 +22,8 @@ import paddle.nn.functional as F
 from ...utils.download import get_path_from_url
 
 from .builder import GENERATORS
-from .basicvsr import SPyNet, default_init_weights, PixelShufflePack, MakeMultiBlocks, ResidualBlockNoBN, flow_warp, ResidualBlocksWithInputConv
+from .basicvsr import SPyNet, PixelShufflePack, ResidualBlockNoBN, \
+                      ResidualBlocksWithInputConv, flow_warp
 from .edvr import PCDAlign, TSAFusion
 
 
@@ -288,22 +289,6 @@ class IconVSR(nn.Layer):
         return paddle.stack(outputs, axis=1)
 
 
-def make_layer(block, num_blocks, **kwarg):
-    """Make layers by stacking the same blocks.
-
-    Args:
-        block (nn.module): nn.module class for basic block.
-        num_blocks (int): number of blocks.
-
-    Returns:
-        nn.Sequential: Stacked blocks in nn.Sequential.
-    """
-    layers = []
-    for _ in range(num_blocks):
-        layers.append(block(**kwarg))
-    return nn.Sequential(*layers)
-
-
 class EDVRFeatureExtractor(nn.Layer):
     """EDVR feature extractor for information-refill in IconVSR.
 
@@ -364,7 +349,7 @@ class EDVRFeatureExtractor(nn.Layer):
                                     nframes=num_frames,
                                     center=self.center_frame_idx)
         else:
-            self.fusion = nn.Conv2d(num_frames * mid_channels, mid_channels, 1,
+            self.fusion = nn.Conv2D(num_frames * mid_channels, mid_channels, 1,
                                     1)
 
         # activation function
@@ -417,3 +402,17 @@ class EDVRFeatureExtractor(nn.Layer):
             feat = self.fusion(aligned_feat)
 
         return feat
+
+
+def make_layer(block, num_blocks, **kwarg):
+    """Make layers by stacking the same blocks.
+    Args:
+        block (nn.Layer): nn.module class for basic block.
+        num_blocks (int): number of blocks.
+    Returns:
+        nn.Sequential: Stacked blocks in nn.Sequential.
+    """
+    layers = []
+    for _ in range(num_blocks):
+        layers.append(block(**kwarg))
+    return nn.Sequential(*layers)

@@ -15,11 +15,9 @@
 import paddle
 
 import numpy as np
-import scipy.io as scio
 
 import paddle.nn as nn
 import paddle.nn.functional as F
-from paddle.nn import initializer
 from ...utils.download import get_path_from_url
 from ...modules.init import kaiming_normal_, constant_
 
