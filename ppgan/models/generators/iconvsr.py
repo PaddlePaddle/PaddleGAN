@@ -271,12 +271,12 @@ class IconVSR(nn.Layer):
 
         # information-refill
         self.edvr = EDVRFeatureExtractor(num_frames=padding * 2 + 1,
-                                         center_frame_idx=padding,
-                                         pretrained=None)
+                                         center_frame_idx=padding)
+
         edvr_wight_path = get_path_from_url(
             'https://paddlegan.bj.bcebos.com/models/edvrm.pdparams')
         self.edvr.set_state_dict(paddle.load(edvr_wight_path))
-        # https://paddlegan.bj.bcebos.com/models/IconVSR_reds_x4.pdparams
+
         self.backward_fusion = nn.Conv2D(2 * mid_channels,
                                          mid_channels,
                                          3,
@@ -487,8 +487,6 @@ class IconVSR(nn.Layer):
             feat_prop = self.forward_resblocks(feat_prop)
 
             # upsampling given the backward and forward features
-            # out = paddle.concat([outputs[i], feat_prop], axis=1)
-            # out = self.lrelu(self.fusion(out))
             out = self.lrelu(self.upsample1(feat_prop))
             out = self.lrelu(self.upsample2(out))
             out = self.lrelu(self.conv_hr(out))
@@ -497,8 +495,7 @@ class IconVSR(nn.Layer):
             out += base
             outputs[i] = out
 
-        return paddle.stack(outputs,
-                            axis=1)  #[:, :, :, :4 * h_input, :4 * w_input]
+        return paddle.stack(outputs, axis=1)
 
 
 def make_layer(block, num_blocks, **kwarg):
