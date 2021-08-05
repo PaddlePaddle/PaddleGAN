@@ -11,13 +11,19 @@ Runing the following command to complete the lip-syning task. The output is the 
 
 ```
 cd applications
-python tools/wav2lip.py --face ../docs/imgs/mona7s.mp4 --audio ../docs/imgs/guangquan.m4a --outfile pp_guangquan_mona7s.mp4
+python tools/wav2lip.py \
+    --face ../docs/imgs/mona7s.mp4 \
+    --audio ../docs/imgs/guangquan.m4a \
+    --outfile pp_guangquan_mona7s.mp4 \
+    --face_enhancement
 ```
 
 **params:**
 
 - face: path of the input image or video file including faces.
 - audio: path of the input audio file, format can be `.wav`， `.mp3`, `.m4a`. It can be any file supported by `FFMPEG` containing audio data.
+- outfile: result video of wav2lip
+- face_enhancement: enhance the face, default is False
 
 ### 2.2 Training
 1. Our model are trained on LRS2. See [here](https://github.com/Rudrabha/Wav2Lip#training-on-datasets-other-than-lrs2) for a few suggestions regarding training on other datasets.

@@ -29,12 +29,14 @@ python applications/tools/lapstyle.py --content_img ${PATH_OF_CONTENT_IMG}
 
 ### 3.1 Prepare Datasets
 
-To train LapStyle, we use the COCO dataset as content set. And you can choose any style image you like. Before training or testing, remember modify the data path of style image in the config file.
+To train LapStyle, we use the COCO dataset as content image set. You can choose one style image from [starrynew](https://user-images.githubusercontent.com/79366697/118655415-1ec8c000-b81c-11eb-8002-90bf8d477860.png), [ocean](https://user-images.githubusercontent.com/79366697/118655407-1c666600-b81c-11eb-83a6-300ee1952415.png), [stars](https://user-images.githubusercontent.com/79366697/118655423-20928380-b81c-11eb-92bd-0deeb320ff14.png) or [circuit](https://user-images.githubusercontent.com/79366697/118655399-196b7580-b81c-11eb-8bc5-d5ece80c18ba.jpg). Or you can choose any style image you like. Before training or testing, remember modify the data path of style image in the config file.
 
 
 ### 3.2 Train
 
 Datasets used in example is COCO, you can also change it to your own dataset in the config file.
+
+Note that train of lapstyle model does not currently support Windows system.
 
 (1) Train the Draft Network of LapStyle under 128*128 resolution:
 ```
@@ -54,6 +56,7 @@ python -u tools/main.py --config-file configs/lapstyle_rev_second.yaml --load ${
 
 ### 3.4 Test
 
+When testing, you need to change the parameter `validate/save_img` in the configuration file to `true` to save the output image.
 To test the trained model, you can directly test the "lapstyle_rev_second", since it also contains the trained weight of previous stages:
 ```
 python tools/main.py --config-file configs/lapstyle_rev_second.yaml --evaluate-only --load ${PATH_OF_WEIGHT}

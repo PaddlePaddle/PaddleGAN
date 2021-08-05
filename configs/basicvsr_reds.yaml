@@ -70,8 +70,7 @@ optimizer:
   beta2: 0.99
 
 validate:
-  # FIXME: avoid oom
-  interval: 5000000
+  interval: 5000
   save_img: false
 
   metrics:

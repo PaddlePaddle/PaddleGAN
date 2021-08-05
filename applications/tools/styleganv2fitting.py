@@ -15,11 +15,46 @@
 import argparse
 
 import paddle
-from ppgan.apps import Pixel2Style2PixelPredictor
+from ppgan.apps import StyleGANv2FittingPredictor
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_image", type=str, help="path to source image")
+
+    parser.add_argument("--need_align",
+                        action="store_true",
+                        help="whether to align input image")
+
+    parser.add_argument("--start_lr",
+                        type=float,
+                        default=0.1,
+                        help="learning rate at the begin of training")
+
+    parser.add_argument("--final_lr",
+                        type=float,
+                        default=0.025,
+                        help="learning rate at the end of training")
+
+    parser.add_argument("--latent_level",
+                        type=int,
+                        nargs="+",
+                        default=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                        help="indices of latent code for training")
+
+    parser.add_argument("--step",
+                        type=int,
+                        default=100,
+                        help="optimize iterations")
+
+    parser.add_argument("--mse_weight",
+                        type=float,
+                        default=1,
+                        help="weight of the mse loss")
+
+    parser.add_argument("--pre_latent",
+                        type=str,
+                        default=None,
+                        help="path to pre-prepared latent codes")
 
     parser.add_argument("--output_path",
                         type=str,
@@ -35,11 +70,6 @@ if __name__ == "__main__":
                         type=str,
                         default=None,
                         help="type of model for loading pretrained model")
-
-    parser.add_argument("--seed",
-                        type=int,
-                        default=None,
-                        help="sample random seed for model's image generation")
 
     parser.add_argument("--size",
                         type=int,
@@ -71,13 +101,20 @@ if __name__ == "__main__":
     if args.cpu:
         paddle.set_device('cpu')
 
-    predictor = Pixel2Style2PixelPredictor(
+    predictor = StyleGANv2FittingPredictor(
         output_path=args.output_path,
         weight_path=args.weight_path,
         model_type=args.model_type,
-        seed=args.seed,
+        seed=None,
         size=args.size,
         style_dim=args.style_dim,
         n_mlp=args.n_mlp,
         channel_multiplier=args.channel_multiplier)
-    predictor.run(args.input_image)
+    predictor.run(args.input_image,
+                  need_align=args.need_align,
+                  start_lr=args.start_lr,
+                  final_lr=args.final_lr,
+                  latent_level=args.latent_level,
+                  step=args.step,
+                  mse_weight=args.mse_weight,
+                  pre_latent=args.pre_latent)

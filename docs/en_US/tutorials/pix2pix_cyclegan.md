@@ -18,7 +18,7 @@
   ```
   You can download from wget, download facades from wget for example:
   ```
-    wget https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/facades.zip --no-check-certificate
+    wget http://efrosgans.eecs.berkeley.edu/pix2pix/datasets/facades.tar.gz --no-check-certificate
   ```
 
 ### 1.2.2 Train/Test
@@ -72,7 +72,7 @@
   ```
   You can download from wget, download facades from wget for example:
   ```
-    wget http://efrosgans.eecs.berkeley.edu/pix2pix/datasets/facades.tar.gz --no-check-certificate
+    wget https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/facades.zip --no-check-certificate
   ```
 
 ### 2.2.2 Train/Test

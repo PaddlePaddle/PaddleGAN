@@ -9,6 +9,9 @@ import math
 
 from ppgan.modules.wing import CoordConvTh, ConvBlock, HourGlass, preprocess
 
+from ppgan.utils.download import get_path_from_url
+
+FAN_WEIGHT_URL = "https://paddlegan.bj.bcebos.com/models/wing.pdparams"
 
 class AvgPool2D(nn.Layer):
     """
@@ -298,6 +301,9 @@ class FAN(nn.Layer):
 
         if fname_pretrained is not None:
             self.load_pretrained_weights(fname_pretrained)
+        else:
+            weight_path = get_path_from_url(FAN_WEIGHT_URL)
+            self.load_pretrained_weights(weight_path)
 
     def load_pretrained_weights(self, fname):
         import pickle
