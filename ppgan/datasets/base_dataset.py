@@ -13,10 +13,10 @@
 # limitations under the License.
 
 import os
+import copy
 from pathlib import Path
-from abc import ABCMeta, abstractmethod
-
 from paddle.io import Dataset
+from abc import ABCMeta, abstractmethod
 
 from .preprocess import build_preprocess
 
@@ -119,7 +119,7 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
         return samples
 
     def __getitem__(self, idx):
-        datas = self.data_infos[idx]
+        datas = copy.deepcopy(self.data_infos[idx])
 
         if hasattr(self, 'preprocess') and self.preprocess:
             datas = self.preprocess(datas)
