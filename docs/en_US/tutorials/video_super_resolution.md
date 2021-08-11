@@ -78,6 +78,7 @@ The metrics are PSNR / SSIM.
 | EDVR_L_wo_tsa_deblur  | 34.9587 / 0.9509 |
 | EDVR_L_w_tsa_deblur  | 35.1473 / 0.9526 |
 | BasicVSR_x4  | 31.4325 / 0.8913 |
+| IconVSR_x4  | 31.6882 / 0.8950 |
 
 
 ## 1.4 Model Download
@@ -90,6 +91,7 @@ The metrics are PSNR / SSIM.
 | EDVR_L_wo_tsa_deblur  | REDS | [EDVR_L_wo_tsa_deblur](https://paddlegan.bj.bcebos.com/models/EDVR_L_wo_tsa_deblur.pdparams)
 | EDVR_L_w_tsa_deblur  | REDS | [EDVR_L_w_tsa_deblur](https://paddlegan.bj.bcebos.com/models/EDVR_L_w_tsa_deblur.pdparams)
 | BasicVSR_x4  | REDS | [BasicVSR_x4](https://paddlegan.bj.bcebos.com/models/BasicVSR_reds_x4.pdparams)
+| IconVSR_x4  | REDS | [IconVSR_x4](https://paddlegan.bj.bcebos.com/models/IconVSR_reds_x4.pdparams)
 
 
 

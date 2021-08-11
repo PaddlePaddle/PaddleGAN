@@ -62,7 +62,7 @@ def build_dataloader(cfg, is_train=True, distributed=True):
                                           batch_size=batch_size,
                                           shuffle=True if is_train else False,
                                           drop_last=True if is_train else False,
-                                          use_shared_memory=False,
+                                          use_shared_memory=use_shared_memory,
                                           num_workers=num_workers)
 
     return dataloader
