@@ -53,7 +53,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 ## 产品动态
 
-- ⭐**新增人脸融合能力，结合新版Frirst Order Motion，实现人脸完美融合并带有丰富表情(๑^ں^๑)**⭐
+- ⭐ **新增人脸融合能力，结合新版Frirst Order Motion，实现人脸完美融合并带有丰富表情(๑^ں^๑)** ⭐
 
   - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/2254031 )**
 
