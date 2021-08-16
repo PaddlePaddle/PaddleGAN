@@ -13,9 +13,46 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 [![License](https://img.shields.io/badge/license-Apache%202-red.svg)](LICENSE)![python version](https://img.shields.io/badge/python-3.6+-orange.svg)
 
+## 🎪 Hot Activities
 
-## Recent Contributors
-[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/0)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/0)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/1)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/1)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/2)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/2)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/3)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/3)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/4)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/4)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/5)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/5)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/6)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/6)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/7)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/7)
+- 🔥 **2021.7.9-2021.9** 🔥
+
+  **💙 AI Creation Camp 💙: **
+
+  **You can implement any abilities in PaddleGAN with Wechaty to create your own chat robot 🤖 !**
+
+  **A plenty of gifts 🎁 waiting for you!**
+
+  **💰First Prize: 30,000RMB**
+
+  **🎮 Second Prize: PS5**
+
+  **🕶 Third Prize: VR Glass**
+
+  **🏵 Most Popular Prize: 3D Printer**
+
+  **Still hezitating? Click here and sign up!**  **https://aistudio.baidu.com/aistudio/competition/detail/98**
+
+- 2021.4.15~4.22
+
+  GAN 7 Days Course Camp: Baidu Senior Research Developers help you learn the basic and advanced GAN knowledge in 7 days!
+
+  **Courses videos and related materials: https://aistudio.baidu.com/aistudio/course/introduce/16651**
+
+## 🚀 Recent Updates
+
+- **💞Add Face Morphing function💞: you can perfectly merge any two faces and make the new face get any facial expressions!**
+
+  - Tutorials: https://aistudio.baidu.com/aistudio/projectdetail/2254031
+
+    <div align='center'>
+      <img src='https://user-images.githubusercontent.com/48054808/128299870-66a73bb3-57a4-4985-aadc-8ddeab048145.gif' width='300'/>
+    </div>
+
+- **Publish a new version of First Oder Motion model by having two impressive features:**
+  - High resolution 512x512 
+  - Face Enhancement
+  - Tutorials: https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/tutorials/motion_driving.md 
 
 ## Quick Start
 
@@ -67,6 +104,14 @@ You can run those projects in the [AI Studio](https://aistudio.baidu.com/aistudi
 
 ## Examples
 
+### 
+
+<div align='center'>
+  <img src='https://user-images.githubusercontent.com/48054808/129020371-75de20d1-705b-44b1-8254-e09710124244.gif'width='700' />
+</div>
+
+
+### 
 
 ### Image Translation
 
