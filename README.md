@@ -17,7 +17,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 - 🔥 **2021.7.9-2021.9** 🔥
 
-  **💙 AI Creation Camp 💙: **
+  **💙 AI Creation Camp 💙**
 
   **You can implement any abilities in PaddleGAN with Wechaty to create your own chat robot 🤖 !**
 
