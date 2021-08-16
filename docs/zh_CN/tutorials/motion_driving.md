@@ -131,9 +131,7 @@ python -m paddle.distributed.launch \
 <div align='center'>
   <img src='https://user-images.githubusercontent.com/48054808/119469551-0a377b00-bd7a-11eb-9117-e4871c8fb9c0.gif' width='700'/>
 </div>
-<div align='center'>
-  <img src='https://user-images.githubusercontent.com/48054808/119469551-0a377b00-bd7a-11eb-9117-e4871c8fb9c0.gif' width='700'/>
-</div>
+
 
 
 ### 2. 模型压缩
