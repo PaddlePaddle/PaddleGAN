@@ -157,10 +157,10 @@ class DenseMotionNetwork(nn.Layer):
             source_image, sparse_motion)
         out_dict['sparse_deformed'] = deformed_source
 
-        input = paddle.concat([heatmap_representation, deformed_source], axis=2)
-        input = input.reshape([bs, -1, h, w])
+        temp = paddle.concat([heatmap_representation, deformed_source], axis=2)
+        temp = temp.reshape([bs, -1, h, w])
 
-        prediction = self.hourglass(input)
+        prediction = self.hourglass(temp)
 
         mask = self.mask(prediction)
         mask = F.softmax(mask, axis=1)
