@@ -51,6 +51,7 @@ def img_read(content_img_path, style_image_path):
         content_img = cv.cvtColor(content_img, cv.COLOR_GRAY2RGB)
     else:
         content_img = cv.cvtColor(content_img, cv.COLOR_BGR2RGB)
+    h, w, c = content_img.shape
     content_img = Image.fromarray(content_img)
     content_img = content_img.resize((512, 512), Image.BILINEAR)
     content_img = np.array(content_img)
@@ -67,7 +68,7 @@ def img_read(content_img_path, style_image_path):
 
     content_img = paddle.unsqueeze(content_img, axis=0)
     style_img = paddle.unsqueeze(style_img, axis=0)
-    return content_img, style_img
+    return content_img, style_img, h, w
 
 
 def tensor_resample(tensor, dst_size, mode='bilinear'):
@@ -161,8 +162,8 @@ class LapStylePredictor(BasePredictor):
         self.net_rev_2.eval()
 
     def run(self, content_img_path):
-        content_img, style_img = img_read(content_img_path,
-                                          self.style_image_path)
+        content_img, style_img, h, w = img_read(content_img_path,
+                                                self.style_image_path)
         content_img_visual = tensor2img(content_img, min_max=(0., 1.))
         content_img_visual = cv.cvtColor(content_img_visual, cv.COLOR_RGB2BGR)
         cv.imwrite(os.path.join(self.output, 'content.png'), content_img_visual)
@@ -197,6 +198,7 @@ class LapStylePredictor(BasePredictor):
         stylized = stylized_rev_second
         stylized_visual = tensor2img(stylized, min_max=(0., 1.))
         stylized_visual = cv.cvtColor(stylized_visual, cv.COLOR_RGB2BGR)
+        stylized_visual = cv.resize(stylized_visual, (w, h))
         cv.imwrite(os.path.join(self.output, 'stylized.png'), stylized_visual)
 
         print('Model LapStyle output images path:', self.output)

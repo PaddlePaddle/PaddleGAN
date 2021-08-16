@@ -90,7 +90,7 @@ snapshot_config:
   interval: 5000
 
 validate:
-  interval: 5000
+  interval: 50000
   save_imig: False
   metrics:
     fid: # metric name, can be arbitrary

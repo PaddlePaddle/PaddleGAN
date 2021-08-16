@@ -37,6 +37,7 @@ First Order Motion的任务是图像动画/Image Animation，即输入为一张�
 
   - **人脸增强特效使得驱动后的视频中人脸清晰度大大提升。**
 
+
 - #### 丰富的在线体验应用
 
   - 🐜**蚂蚁呀嘿**🐜：https://aistudio.baidu.com/aistudio/projectdetail/1603391
@@ -67,6 +68,7 @@ python -u tools/first-order-demo.py  \
      --multi_person
 ```
 #### 参数说明：
+
 
 | 参数             | 使用说明                                                     |
 | ---------------- | ------------------------------------------------------------ |
@@ -129,6 +131,10 @@ python -m paddle.distributed.launch \
 <div align='center'>
   <img src='https://user-images.githubusercontent.com/48054808/119469551-0a377b00-bd7a-11eb-9117-e4871c8fb9c0.gif' width='700'/>
 </div>
+<div align='center'>
+  <img src='https://user-images.githubusercontent.com/48054808/119469551-0a377b00-bd7a-11eb-9117-e4871c8fb9c0.gif' width='700'/>
+</div>
+
 
 ### 2. 模型压缩
 数据处理同上述，模型分为kp_detector和generator，首先固定原始generator部分，训练压缩版的kp_detector部分，然后固定原始kp_detector部分,去训练generator部分，最后将两个压缩的模型一起训练，同时添加中间的蒸馏loss。
@@ -163,6 +169,8 @@ python tools/fom_export.py \
        --output_path output_inference/
 ```
 预测模型会导出到`output_inference/fom_dy2st/`目录下，分别为`model.pdiparams`,  `model.pdiparams.info`, `model.pdmodel`。
+
+
 
 #### 3.3 PaddleLite部署
 - [使用PaddleLite部署FOM模型](./lite/README.md)
