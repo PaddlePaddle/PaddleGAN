@@ -126,3 +126,5 @@ snapshot_config:
 optimizer:
   name: Adam
 
+export_model:
+  - {}

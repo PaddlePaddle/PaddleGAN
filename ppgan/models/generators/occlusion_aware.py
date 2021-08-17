@@ -17,7 +17,8 @@
 import paddle
 from paddle import nn
 import paddle.nn.functional as F
-from ...modules.first_order import *
+from ...modules.first_order import ResBlock2d, SameBlock2d, UpBlock2d, DownBlock2d, make_coordinate_grid
+from ...modules.first_order import MobileResBlock2d, MobileUpBlock2d, MobileDownBlock2d
 from ...modules.dense_motion import DenseMotionNetwork
 import numpy as np
 import cv2

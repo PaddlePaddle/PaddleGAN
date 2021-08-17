@@ -24,7 +24,7 @@ def SyncBatchNorm(*args, **kwargs):
     if paddle.get_device() == 'cpu':
         return nn.BatchNorm(*args, **kwargs)
     else:
-        return nn.SyncBatchNorm(*args, **kwargs)
+        return nn.BatchNorm(*args, **kwargs)
 
 
 class ImagePyramide(nn.Layer):
@@ -430,7 +430,7 @@ class AntiAliasInterpolation2d(nn.Layer):
         inv_scale = 1 / self.scale
         int_inv_scale = int(inv_scale)
         assert (inv_scale == int_inv_scale)
-        out = out[:, :, ::int_inv_scale, ::int_inv_scale]
+        #out = out[:, :, ::int_inv_scale, ::int_inv_scale]
         # patch end
-
+        out = paddle.fluid.layers.resize_nearest(out, scale=self.scale)
         return out
