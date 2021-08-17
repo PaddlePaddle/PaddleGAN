@@ -109,11 +109,9 @@ snapshot_config:
   interval: 5
 
 validate:
-  interval: 500
+  interval: 4000
   save_img: false
   metrics:
     fid: # metric name, can be arbitrary
         name: FID
         batch_size: 8
-
-

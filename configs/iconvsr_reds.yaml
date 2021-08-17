@@ -11,7 +11,7 @@ model:
   name: BasicVSRModel
   fix_iter: 5000
   generator:
-    name: BasicVSRNet
+    name: IconVSR
     mid_channels: 64
     num_blocks: 30
   pixel_criterion:

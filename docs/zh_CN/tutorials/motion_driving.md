@@ -68,6 +68,7 @@ python -u tools/first-order-demo.py  \
 ```
 #### 参数说明：
 
+
 | 参数             | 使用说明                                                     |
 | ---------------- | ------------------------------------------------------------ |
 | driving_video    | 驱动视频，视频中人物的表情动作作为待迁移的对象。             |
@@ -168,6 +169,7 @@ python tools/export_model.py \
     --export_model output_inference/
 ```
 预测模型会导出到`output_inference/fom_dy2st/`目录下，分别为`model.pdiparams`,  `model.pdiparams.info`, `model.pdmodel`。
+
 
 #### 3.3 PaddleLite部署
 - [使用PaddleLite部署FOM模型](./lite/README.md)

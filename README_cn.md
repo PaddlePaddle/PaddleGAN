@@ -53,6 +53,14 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 ## 产品动态
 
+- ⭐ **新增人脸融合能力，结合新版Frirst Order Motion，实现人脸完美融合并带有丰富表情(๑^ں^๑)** ⭐
+
+  - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/2254031 )**
+
+  <div align='center'>
+    <img src='https://user-images.githubusercontent.com/48054808/128299870-66a73bb3-57a4-4985-aadc-8ddeab048145.gif' width='300'/>
+  </div>
+
 - 新增First Order Motion分辨率512清晰版本，详情见[教程](./docs/zh_CN/tutorials/motion_driving.md)。
 
 ## 文档教程
@@ -91,7 +99,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   * 图像编码：[Pixel2Style2Pixel](./docs/zh_CN/tutorials/pixel2style2pixel.md)
 * 分辨率提升
   * 单张图片超分：[Single Image Super Resolution(SISR)](./docs/zh_CN/tutorials/single_image_super_resolution.md)
-  * 视频超分：[Single Image Super Resolution(SISR)](./docs/zh_CN/tutorials/single_image_super_resolution.md)
+  * 视频超分：[Video Super Resolution(VSR)](./docs/zh_CN/tutorials/video_super_resolution.md)
 * 语义分割
   * 人脸解析：[FaceParsing](./docs/zh_CN/tutorials/face_parse.md)
 
@@ -105,6 +113,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 |在线教程      |    链接   |
 |--------------|-----------|
+|人脸融合-PaddleGAN七夕特辑 | [点击体验](https://aistudio.baidu.com/aistudio/projectdetail/2254031 ) |
 |表情动作迁移-一键实现多人版「蚂蚁呀嘿」 | [点击体验](https://aistudio.baidu.com/aistudio/projectdetail/1603391) |
 |老北京视频修复|[点击体验](https://aistudio.baidu.com/aistudio/projectdetail/1161285)|
 |表情动作迁移-当苏大强唱起unravel |[点击体验](https://aistudio.baidu.com/aistudio/projectdetail/1048840)|
@@ -112,6 +121,11 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 ## 效果展示
 
+### 人脸融合
+
+<div align='center'>
+  <img src='https://user-images.githubusercontent.com/48054808/129020371-75de20d1-705b-44b1-8254-e09710124244.gif'width='700' />
+</div>
 
 ### 风格迁移
 

@@ -26,7 +26,7 @@ from .builder import METRICS
 
 lpips = True
 
-VGG16_TORCHVISION_URL = 'https://paddlegan.bj.bcebos.com/models/vgg16_from_torch.pdparams'
+VGG16_TORCHVISION_URL = 'https://paddlegan.bj.bcebos.com/models/vgg16_official.pdparams'
 LINS_01_VGG_URL = 'https://paddlegan.bj.bcebos.com/models/lins_0.1_vgg.pdparams'
 
 
@@ -94,7 +94,7 @@ class LPIPSMetric(paddle.metric.Metric):
             results_list = []
             paddle.distributed.all_gather(results_list, results)
             self.results = paddle.concat(results_list).numpy()
-            
+
         if len(self.results) <= 0:
             return 0.
         return np.mean(self.results)
