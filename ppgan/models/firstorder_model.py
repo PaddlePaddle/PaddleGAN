@@ -206,18 +206,17 @@ class FirstOrderModel(BaseModel):
 
     
     def export_model(self, export_model=None, output_dir=None, inputs_size=[]):
-        print(inputs_size)
+        
         source = paddle.rand(shape=inputs_size[0], dtype='float32')
         driving = paddle.rand(shape=inputs_size[1], dtype='float32')
         value = paddle.rand(shape=inputs_size[2], dtype='float32')
         j = paddle.rand(shape=inputs_size[3], dtype='float32')
         value2 = paddle.rand(shape=inputs_size[2], dtype='float32')
         j2 = paddle.rand(shape=inputs_size[3], dtype='float32')
-        #source = paddle.to_tensor(source)
         driving1 = {'value': value, 'jacobian': j}
         driving2 = {'value': value2, 'jacobian': j2}
         driving3 = {'value': value, 'jacobian': j}
-        #driving = paddle.to_tensor(driving)
+        
         outpath = os.path.join(output_dir, "fom_dy2st")
         if not os.path.exists(outpath):
             os.makedirs(outpath)
