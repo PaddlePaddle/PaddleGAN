@@ -8,7 +8,7 @@ dataset:
     num_workers: 1
     use_shared_memory: False
     phase: train
-    dataroot: /workspace_data/vox_256/
+    dataroot: data/first_order/Voxceleb/
     frame_shape: [256, 256, 3]
     id_sampling: True
     pairs_list: None
@@ -27,7 +27,7 @@ dataset:
         keys: [image, image]
   test:
     name: FirstOrderDataset
-    dataroot: /workspace_data/vox_256/
+    dataroot: data/first_order/Voxceleb/
     phase: test
     batch_size: 1
     num_workers: 1
