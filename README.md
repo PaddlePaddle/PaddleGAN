@@ -117,6 +117,7 @@ You can run those projects in the [AI Studio](https://aistudio.baidu.com/aistudi
 <div align='center'>
   <img src='https://user-images.githubusercontent.com/48054808/129020371-75de20d1-705b-44b1-8254-e09710124244.gif'width='700' />
 </div>
+
 ### Image Translation
 
 <div align='center'>
