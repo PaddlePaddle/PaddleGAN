@@ -53,6 +53,14 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
   - High resolution 512x512 
   - Face Enhancement
   - Tutorials: https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/tutorials/motion_driving.md 
+  
+- **New image translation ability--transfer photo into oil painting style:**
+
+  - Complete tutorials for deployment: https://github.com/wzmsltw/PaintTransformer
+
+    <div align='center'>
+      <img src='https://user-images.githubusercontent.com/48054808/129904830-8b87e310-ea51-4aff-b29b-88920ee82447.png' width='700'/>
+    </div>
 
 ## Quick Start
 
@@ -104,15 +112,11 @@ You can run those projects in the [AI Studio](https://aistudio.baidu.com/aistudi
 
 ## Examples
 
-### 
+### Face Morphing 
 
 <div align='center'>
   <img src='https://user-images.githubusercontent.com/48054808/129020371-75de20d1-705b-44b1-8254-e09710124244.gif'width='700' />
 </div>
-
-
-### 
-
 ### Image Translation
 
 <div align='center'>
