@@ -61,7 +61,17 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
     <img src='https://user-images.githubusercontent.com/48054808/128299870-66a73bb3-57a4-4985-aadc-8ddeab048145.gif' width='300'/>
   </div>
 
-- 新增First Order Motion分辨率512清晰版本，详情见[教程](./docs/zh_CN/tutorials/motion_driving.md)。
+- 新增First Order Motion分辨率512清晰版本，并加上人脸增强特效，使得面部细节更清晰，详情见[教程](./docs/zh_CN/tutorials/motion_driving.md)。
+
+- 新增真实照片转油画风格能力
+
+  - 完整推理代码及教程见： https://github.com/wzmsltw/PaintTransformer
+
+    <div align='center'>
+      <img src='https://user-images.githubusercontent.com/48054808/129904830-8b87e310-ea51-4aff-b29b-88920ee82447.png' width='700'/>
+    </div>
+
+## 
 
 ## 文档教程
 
