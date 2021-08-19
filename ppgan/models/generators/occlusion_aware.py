@@ -18,6 +18,7 @@ import paddle
 from paddle import nn
 import paddle.nn.functional as F
 from ...modules.first_order import ResBlock2d, SameBlock2d, UpBlock2d, DownBlock2d, make_coordinate_grid
+from ...modules.first_order import MobileResBlock2d, MobileUpBlock2d, MobileDownBlock2d
 from ...modules.dense_motion import DenseMotionNetwork
 import numpy as np
 import cv2
@@ -38,7 +39,8 @@ class OcclusionAwareGenerator(nn.Layer):
                  estimate_occlusion_map=False,
                  dense_motion_params=None,
                  estimate_jacobian=False,
-                 inference=False):
+                 inference=False,
+                 mobile_net=False):
         super(OcclusionAwareGenerator, self).__init__()
 
         if dense_motion_params is not None:
@@ -46,45 +48,74 @@ class OcclusionAwareGenerator(nn.Layer):
                 num_kp=num_kp,
                 num_channels=num_channels,
                 estimate_occlusion_map=estimate_occlusion_map,
-                **dense_motion_params)
+                **dense_motion_params, mobile_net=mobile_net)
         else:
             self.dense_motion_network = None
 
         self.first = SameBlock2d(num_channels,
                                  block_expansion,
                                  kernel_size=(7, 7),
-                                 padding=(3, 3))
+                                 padding=(3, 3),
+                                 mobile_net=mobile_net)
 
         down_blocks = []
-        for i in range(num_down_blocks):
-            in_features = min(max_features, block_expansion * (2**i))
-            out_features = min(max_features, block_expansion * (2**(i + 1)))
-            down_blocks.append(
-                DownBlock2d(in_features,
-                            out_features,
-                            kernel_size=(3, 3),
-                            padding=(1, 1)))
+        if mobile_net:
+            for i in range(num_down_blocks):
+                in_features = min(max_features, block_expansion * (2**i))
+                out_features = min(max_features, block_expansion * (2**(i + 1)))
+                down_blocks.append(
+                        MobileDownBlock2d(in_features,
+                                out_features,
+                                kernel_size=(3, 3),
+                                padding=(1, 1)))
+        else:
+            for i in range(num_down_blocks):
+                in_features = min(max_features, block_expansion * (2**i))
+                out_features = min(max_features, block_expansion * (2**(i + 1)))
+                down_blocks.append(
+                    DownBlock2d(in_features,
+                                out_features,
+                                kernel_size=(3, 3),
+                                padding=(1, 1)))
         self.down_blocks = nn.LayerList(down_blocks)
 
         up_blocks = []
-        for i in range(num_down_blocks):
-            in_features = min(max_features,
-                              block_expansion * (2**(num_down_blocks - i)))
-            out_features = min(max_features,
-                               block_expansion * (2**(num_down_blocks - i - 1)))
-            up_blocks.append(
-                UpBlock2d(in_features,
-                          out_features,
-                          kernel_size=(3, 3),
-                          padding=(1, 1)))
+        if mobile_net:
+            for i in range(num_down_blocks):
+                in_features = min(max_features,
+                                block_expansion * (2**(num_down_blocks - i)))
+                out_features = min(max_features,
+                                block_expansion * (2**(num_down_blocks - i - 1)))
+                up_blocks.append(
+                    MobileUpBlock2d(in_features,
+                            out_features,
+                            kernel_size=(3, 3),
+                            padding=(1, 1)))
+        else:
+            for i in range(num_down_blocks):
+                in_features = min(max_features,
+                                  block_expansion * (2**(num_down_blocks - i)))
+                out_features = min(max_features,
+                                   block_expansion * (2**(num_down_blocks - i - 1)))
+                up_blocks.append(
+                    UpBlock2d(in_features,
+                              out_features,
+                              kernel_size=(3, 3),
+                              padding=(1, 1)))
         self.up_blocks = nn.LayerList(up_blocks)
 
         self.bottleneck = paddle.nn.Sequential()
         in_features = min(max_features, block_expansion * (2**num_down_blocks))
-        for i in range(num_bottleneck_blocks):
-            self.bottleneck.add_sublayer(
-                'r' + str(i),
-                ResBlock2d(in_features, kernel_size=(3, 3), padding=(1, 1)))
+        if mobile_net:
+            for i in range(num_bottleneck_blocks):            
+                self.bottleneck.add_sublayer(
+                    'r' + str(i),
+                    MobileResBlock2d(in_features, kernel_size=(3, 3), padding=(1, 1)))
+        else:
+            for i in range(num_bottleneck_blocks):
+                self.bottleneck.add_sublayer(
+                    'r' + str(i),
+                    ResBlock2d(in_features, kernel_size=(3, 3), padding=(1, 1)))
 
         self.final = nn.Conv2D(block_expansion,
                                num_channels,

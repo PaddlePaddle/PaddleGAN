@@ -34,13 +34,15 @@ class KPDetector(nn.Layer):
                  estimate_jacobian=False,
                  scale_factor=1,
                  single_jacobian_map=False,
-                 pad=0):
+                 pad=0,
+                 mobile_net=False):
         super(KPDetector, self).__init__()
 
         self.predictor = Hourglass(block_expansion,
                                    in_features=num_channels,
                                    max_features=max_features,
-                                   num_blocks=num_blocks)
+                                   num_blocks=num_blocks,
+                                   mobile_net=mobile_net)
 
         self.kp = nn.Conv2D(in_channels=self.predictor.out_filters,
                             out_channels=num_kp,
