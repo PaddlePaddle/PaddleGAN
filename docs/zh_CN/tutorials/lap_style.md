@@ -38,7 +38,7 @@ python applications/tools/lapstyle.py --content_img ${PATH_OF_CONTENT_IMG}
 
 ## 3. 模型训练
 
-配置文件参数详情：[Config文件使用说明](./docs/zh_CN/config_doc.md)
+配置文件参数详情：[Config文件使用说明](../config_doc.md)
 
 ### 3.1 数据准备
 
