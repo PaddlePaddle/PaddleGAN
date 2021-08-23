@@ -29,7 +29,7 @@ import numpy as np
 from paddle.utils import try_import
 import paddle.nn.functional as F
 import cv2
-
+import os
 
 def init_weight(net):
     def reset_func(m):
@@ -185,6 +185,47 @@ class FirstOrderModel(BaseModel):
         print("Reconstruction loss: %s" % np.mean(loss_list))
         self.nets['kp_detector'].train()
         self.nets['generator'].train()
+
+    class InferGenerator(paddle.nn.Layer):
+        def set_generator(self, generator):
+            self.generator = generator
+
+        def forward(self, source, kp_source, kp_driving, kp_driving_initial):
+            kp_norm = {k: v for k, v in kp_driving.items()}
+
+            kp_value_diff = (kp_driving['value'] - kp_driving_initial['value'])
+            kp_norm['value'] = kp_value_diff + kp_source['value']
+
+            jacobian_diff = paddle.matmul(
+                kp_driving['jacobian'],
+                paddle.inverse(kp_driving_initial['jacobian']))
+            kp_norm['jacobian'] = paddle.matmul(jacobian_diff,
+                                               kp_source['jacobian'])
+            out = self.generator(source, kp_source=kp_source, kp_driving=kp_norm)
+            return out['prediction']
+
+    
+    def export_model(self, export_model=None, output_dir=None, inputs_size=[]):
+        
+        source = paddle.rand(shape=inputs_size[0], dtype='float32')
+        driving = paddle.rand(shape=inputs_size[1], dtype='float32')
+        value = paddle.rand(shape=inputs_size[2], dtype='float32')
+        j = paddle.rand(shape=inputs_size[3], dtype='float32')
+        value2 = paddle.rand(shape=inputs_size[2], dtype='float32')
+        j2 = paddle.rand(shape=inputs_size[3], dtype='float32')
+        driving1 = {'value': value, 'jacobian': j}
+        driving2 = {'value': value2, 'jacobian': j2}
+        driving3 = {'value': value, 'jacobian': j}
+        
+        outpath = os.path.join(output_dir, "fom_dy2st")
+        if not os.path.exists(outpath):
+            os.makedirs(outpath)
+        paddle.jit.save(self.nets['Gen_Full'].kp_extractor, os.path.join(outpath, "kp_detector"), input_spec=[source])
+        infer_generator = self.InferGenerator()
+        infer_generator.set_generator(self.nets['Gen_Full'].generator)
+        paddle.jit.save(infer_generator, os.path.join(outpath, "generator"), input_spec=[source, driving1, driving2, driving3])
+
+
 
 
 class Visualizer:

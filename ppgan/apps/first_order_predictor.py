@@ -49,7 +49,8 @@ class FirstOrderPredictor(BasePredictor):
                  multi_person=False,
                  image_size=256,
                  face_enhancement=False,
-                 batch_size=1):
+                 batch_size=1,
+                 mobile_net=False):
         if config is not None and isinstance(config, str):
             with open(config) as f:
                 self.cfg = yaml.load(f, Loader=yaml.SafeLoader)
@@ -87,13 +88,17 @@ class FirstOrderPredictor(BasePredictor):
                     }
                 }
             }
-            self.image_size = image_size
-            if weight_path is None:
+        self.image_size = image_size
+        if weight_path is None:
+            if mobile_net:
+                vox_cpk_weight_url = 'https://paddlegan.bj.bcebos.com/applications/first_order_model/vox_mobile.pdparams'
+            
+            else:
                 if self.image_size == 512:
                     vox_cpk_weight_url = 'https://paddlegan.bj.bcebos.com/applications/first_order_model/vox-cpk-512.pdparams'
                 else:
                     vox_cpk_weight_url = 'https://paddlegan.bj.bcebos.com/applications/first_order_model/vox-cpk.pdparams'
-                weight_path = get_path_from_url(vox_cpk_weight_url)
+            weight_path = get_path_from_url(vox_cpk_weight_url)
 
         self.weight_path = weight_path
         if not os.path.exists(output):

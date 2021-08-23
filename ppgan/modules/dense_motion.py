@@ -33,13 +33,15 @@ class DenseMotionNetwork(nn.Layer):
                  num_channels,
                  estimate_occlusion_map=False,
                  scale_factor=1,
-                 kp_variance=0.01):
+                 kp_variance=0.01,
+                 mobile_net=False):
         super(DenseMotionNetwork, self).__init__()
         self.hourglass = Hourglass(block_expansion=block_expansion,
                                    in_features=(num_kp + 1) *
                                    (num_channels + 1),
                                    max_features=max_features,
-                                   num_blocks=num_blocks)
+                                   num_blocks=num_blocks,
+                                   mobile_net=mobile_net)
 
         self.mask = nn.Conv2D(self.hourglass.out_filters,
                               num_kp + 1,
@@ -155,10 +157,10 @@ class DenseMotionNetwork(nn.Layer):
             source_image, sparse_motion)
         out_dict['sparse_deformed'] = deformed_source
 
-        input = paddle.concat([heatmap_representation, deformed_source], axis=2)
-        input = input.reshape([bs, -1, h, w])
+        temp = paddle.concat([heatmap_representation, deformed_source], axis=2)
+        temp = temp.reshape([bs, -1, h, w])
 
-        prediction = self.hourglass(input)
+        prediction = self.hourglass(temp)
 
         mask = self.mask(prediction)
         mask = F.softmax(mask, axis=1)

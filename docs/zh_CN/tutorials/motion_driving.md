@@ -68,6 +68,7 @@ python -u tools/first-order-demo.py  \
 ```
 #### 参数说明：
 
+
 | 参数             | 使用说明                                                     |
 | ---------------- | ------------------------------------------------------------ |
 | driving_video    | 驱动视频，视频中人物的表情动作作为待迁移的对象。             |
@@ -131,6 +132,52 @@ python -m paddle.distributed.launch \
 </div>
 
 
+### 2. 模型压缩
+数据处理同上述，模型分为kp_detector和generator，首先固定原始generator部分，训练压缩版的kp_detector部分，然后固定原始kp_detector部分,去训练generator部分，最后将两个压缩的模型一起训练，同时添加中间的蒸馏loss。
+
+**预测:**
+```
+cd applications/
+python -u tools/first-order-demo.py  \
+     --driving_video ../docs/imgs/mayiyahei.MP4 \
+     --source_image ../docs/imgs/father_23.jpg \
+     --config ../configs/firstorder_vox_mobile_256.yaml \
+     --ratio 0.4 \
+     --relative \
+     --adapt_scale \
+     --mobile_net
+```
+目前压缩采用mobilenet+剪枝的方法，和之前对比：
+|                  |        大小(M)    | reconstruction loss |
+| :--------------: | :--------------: | :-----------------: |
+|       原始        |        229       |        0.012058867    |
+|       压缩        |        6.1       |      0.015025159    |
+
+### 3. 模型部署
+#### 3.1 导出模型
+使用`tools/fom_export.py`脚本导出模型已经部署时使用的配置文件，配置文件名字为`firstorder_vox_mobile_256.yml`。模型导出脚本如下：
+```bash
+# 导出FOM模型
+需要将 “/ppgan/modules/first_order.py”中的nn.SyncBatchNorm 改为nn.BatchNorm，因为export目前不支持SyncBatchNorm
+将 out = out[:, :, ::int_inv_scale, ::int_inv_scale] 改为 
+out = paddle.fluid.layers.resize_nearest(out, scale=self.scale)
+
+python tools/export_model.py \
+    --config-file configs/firstorder_vox_mobile_256.yaml \
+    --load /root/.cache/ppgan/vox_mobile.pdparams \
+    --inputs_size "1,3,256,256;1,3,256,256;1,10,2;1,10,2,2" \
+    --export_model output_inference/
+```
+预测模型会导出到`output_inference/fom_dy2st/`目录下，分别为`model.pdiparams`,  `model.pdiparams.info`, `model.pdmodel`。
+
+
+#### 3.3 PaddleLite部署
+- [使用PaddleLite部署FOM模型](./lite/README.md)
+- [FOM-Lite-Demo](https://paddlegan.bj.bcebos.com/applications/first_order_model/paddle_lite/apk/face_detection_demo%202.zip)。更多内容，请参考[Paddle-Lite](https://github.com/PaddlePaddle/Paddle-Lite)
+目前问题：
+(a).paddlelite运行效果略差于inference，正在优化中
+(b).单线程跑generator，帧数多了会跑到小核不跑大核
+
 ## 参考文献
 
 ```
@@ -143,3 +190,4 @@ python -m paddle.distributed.launch \
 }
 
 ```
+
