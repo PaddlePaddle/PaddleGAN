@@ -71,8 +71,6 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
       <img src='https://user-images.githubusercontent.com/48054808/129904830-8b87e310-ea51-4aff-b29b-88920ee82447.png' width='700'/>
     </div>
 
-## 
-
 ## 文档教程
 
 ### 安装
