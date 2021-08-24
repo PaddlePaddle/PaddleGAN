@@ -71,8 +71,6 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
       <img src='https://user-images.githubusercontent.com/48054808/129904830-8b87e310-ea51-4aff-b29b-88920ee82447.png' width='700'/>
     </div>
 
-## 
-
 ## 文档教程
 
 ### 安装
@@ -88,6 +86,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 - [快速开始](./docs/zh_CN/get_started.md)
 - [数据准备](./docs/zh_CN/data_prepare.md)
 - [API接口使用文档](./docs/zh_CN/apis/apps.md)
+- [配置文件/Config使用说明](./docs/zh_CN/config_doc.md)
 
 ## 模型库
 
