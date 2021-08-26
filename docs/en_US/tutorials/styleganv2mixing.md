@@ -72,6 +72,25 @@ The result of mixing two style vectors in a specific ratio:
     <img src="../../imgs/stylegan2mixing-sample.png" width="256"/>
 </div>
 
+## Results with different weight
+The image corresponding to the first style vector:
+
+<div align="center">
+    <img src="https://user-images.githubusercontent.com/50691816/130604304-292e2de4-5dc3-4613-a355-ff6163f9390f.png" width="300"/>
+</div>
+
+The image corresponding to the second style vector:
+
+<div align="center">
+    <img src="https://user-images.githubusercontent.com/50691816/130604334-3550d429-742a-4b12-a445-e54c867dbd24.png" width="256"/>
+</div>
+
+The result of mixing two style vectors with different weight:
+<div align="center">
+    <img src="https://user-images.githubusercontent.com/50691816/130603897-05f76968-bfdd-4bca-a00c-417a6e1d70af.png" height="256"/>
+</div>
+
+
 ## Reference
 
 - 1. [Analyzing and Improving the Image Quality of StyleGAN](https://arxiv.org/abs/1912.04958)
