@@ -133,7 +133,6 @@ python -m paddle.distributed.launch \
 
 
 ### 3. 模型压缩
-数据处理同上述，模型分为kp_detector和generator，首先固定原始generator部分，训练压缩版的kp_detector部分，然后固定原始kp_detector部分,去训练generator部分，最后将两个压缩的模型一起训练，同时添加中间的蒸馏loss。
 
 **预测:**
 ```
@@ -153,13 +152,21 @@ python -u tools/first-order-demo.py  \
 |       原始        |        229       |        0.012058867    |
 |       压缩        |        6.1       |      0.015025159    |
 
+**训练:**
+先将configs/firstorder_vox_mobile_256.yaml 中的mode设置成kp_detector, 训练压缩版
+的kp_detector的模型，固定原始generator模型；然后将configs/firstorder_vox_mobile_256.yaml 中的mode设置成generator，训练压缩版的generator的模型，固定原始kp_detector模型；最后将mode设置为both，修改配置文件中的kp_weight_path和gen_weight_path为>已经训练好的模型路径，一起训练。
+```
+export CUDA_VISIBLE_DEVICES=0
+python tools/main.py --config-file configs/firstorder_vox_mobile_256.yaml
+```
+
 ### 4. 模型部署
 #### 4.1 导出模型
 使用`tools/fom_export.py`脚本导出模型已经部署时使用的配置文件，配置文件名字为`firstorder_vox_mobile_256.yml`。模型导出脚本如下：
 ```bash
 # 导出FOM模型
 需要将 “/ppgan/modules/first_order.py”中的nn.SyncBatchNorm 改为nn.BatchNorm，因为export目前不支持SyncBatchNorm
-将 out = out[:, :, ::int_inv_scale, ::int_inv_scale] 改为 
+将 out = out[:, :, ::int_inv_scale, ::int_inv_scale] 改为
 out = paddle.fluid.layers.resize_nearest(out, scale=self.scale)
 
 python tools/export_model.py \
@@ -169,10 +176,10 @@ python tools/export_model.py \
     --export_model output_inference/
 ```
 预测模型会导出到`output_inference/fom_dy2st/`目录下，分别为`model.pdiparams`,  `model.pdiparams.info`, `model.pdmodel`。
-
+- [预训练模型](https://paddlegan.bj.bcebos.com/applications/first_order_model/paddle_lite/inference/lite.zip)
 
 #### 4.2 PaddleLite部署
-- [使用Paddle Lite部署FOM模型](./lite/README.md)
+- [使用Paddle Lite部署FOM模型](https://github.com/PaddlePaddle/PaddleGAN/tree/develop/deploy/lite)
 - [FOM-Lite-Demo](https://paddlegan.bj.bcebos.com/applications/first_order_model/paddle_lite/apk/face_detection_demo%202.zip)。更多内容，请参考[Paddle-Lite](https://github.com/PaddlePaddle/Paddle-Lite)
 目前问题：
 (a).Paddle Lite运行效果略差于Paddle Inference，正在优化中
@@ -190,4 +197,3 @@ python tools/export_model.py \
 }
 
 ```
-
