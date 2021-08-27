@@ -103,6 +103,7 @@ export CUDA_VISIBLE_DEVICES=0
 python tools/main.py --config-file configs/dataset_name.yaml
 ```
 - GPU多卡训练:
+需要将 “/ppgan/modules/first_order.py”中的nn.BatchNorm 改为nn.SyncBatchNorm
 ```
 export CUDA_VISIBLE_DEVICES=0,1,2,3
 python -m paddle.distributed.launch \
@@ -165,9 +166,6 @@ python tools/main.py --config-file configs/firstorder_vox_mobile_256.yaml
 使用`tools/fom_export.py`脚本导出模型已经部署时使用的配置文件，配置文件名字为`firstorder_vox_mobile_256.yml`。模型导出脚本如下：
 ```bash
 # 导出FOM模型
-需要将 “/ppgan/modules/first_order.py”中的nn.SyncBatchNorm 改为nn.BatchNorm，因为export目前不支持SyncBatchNorm
-将 out = out[:, :, ::int_inv_scale, ::int_inv_scale] 改为
-out = paddle.fluid.layers.resize_nearest(out, scale=self.scale)
 
 python tools/export_model.py \
     --config-file configs/firstorder_vox_mobile_256.yaml \

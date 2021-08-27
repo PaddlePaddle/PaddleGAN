@@ -234,21 +234,21 @@ class FirstOrderModel(BaseModel):
 
 @MODELS.register()
 class FirstOrderModelMobile(FirstOrderModel):
-    """ This class implements the FirstOrderMotion model, FirstOrderMotion paper:
+    """ This class implements the FirstOrderMotionMobile model, modified according to the FirstOrderMotion paper:
     https://proceedings.neurips.cc/paper/2019/file/31c0b36aef265d9221af80872ceb62f9-Paper.pdf.
     """
-    def __init__(
-            self,
-            common_params,
-            train_params,
-            generator_ori,
-            generator,
-            mode,  # mode contains: train kp_detector,generator,both
-            kp_weight_path=None,
-            gen_weight_path=None,
-            discriminator=None):
+    def __init__(self,
+                 common_params,
+                 train_params,
+                 generator_ori,
+                 generator,
+                 mode,
+                 kp_weight_path=None,
+                 gen_weight_path=None,
+                 discriminator=None):
         super(FirstOrderModel, self).__init__()
-
+        modes = ["kp_detector", "generator", "both"]
+        assert mode in modes
         # def local var
         self.input_data = None
         self.generated = None
@@ -309,12 +309,10 @@ class FirstOrderModelMobile(FirstOrderModel):
         checkpoint = paddle.load(weight_path)
         if (self.mode == "kp_detector"):
             self.nets['generator'].set_state_dict(checkpoint['generator'])
-            #self.nets['generator'].eval()
             for param in self.nets['generator'].parameters():
                 param.stop_gradient = True
         elif self.mode == "generator":
             self.nets['kp_detector'].set_state_dict(checkpoint['kp_detector'])
-            #self.nets['kp_detector'].eval()
             for param in self.nets['kp_detector'].parameters():
                 param.stop_gradient = True
         elif self.mode == "both":
@@ -324,7 +322,6 @@ class FirstOrderModelMobile(FirstOrderModel):
             self.nets['generator'].set_state_dict(checkpoint['generator'])
 
         self.kp_detector_ori.set_state_dict(checkpoint['kp_detector'])
-        #self.kp_detector_ori.eval()
         for param in self.kp_detector_ori.parameters():
             param.stop_gradient = True
 
