@@ -20,8 +20,10 @@ import paddle.nn.functional as F
 
 
 def SyncBatchNorm(*args, **kwargs):
-    """If you use multi gpu, please change the nn.BatchNorm into nn.SyncBatchNorm"""
-    return nn.BatchNorm(*args, **kwargs)
+    if paddle.distributed.get_world_size() > 1:
+        return nn.SyncBatchNorm(*args, **kwargs)
+    else:
+        return nn.BatchNorm(*args, **kwargs)
 
 
 class ImagePyramide(nn.Layer):
