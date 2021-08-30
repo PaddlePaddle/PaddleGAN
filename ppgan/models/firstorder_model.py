@@ -294,14 +294,13 @@ class FirstOrderModelMobile(FirstOrderModel):
             self.nets['kp_detector'] = self.nets[
                 'Gen_Full']._layers.kp_extractor
             self.nets['generator'] = self.nets['Gen_Full']._layers.generator
-            self.kp_detector_ori = self.Gen_Full_ori._layers.kp_extractor
             self.nets['generator'] = self.nets['Gen_Full']._layers.generator
             self.nets['discriminator'] = self.nets['Dis']._layers.discriminator
         else:
             self.nets['kp_detector'] = self.nets['Gen_Full'].kp_extractor
             self.nets['generator'] = self.nets['Gen_Full'].generator
-            self.kp_detector_ori = self.Gen_Full_ori.kp_extractor
             self.nets['discriminator'] = self.nets['Dis'].discriminator
+        self.kp_detector_ori = self.Gen_Full_ori.kp_extractor
 
         from ppgan.utils.download import get_path_from_url
         vox_cpk_weight_url = 'https://paddlegan.bj.bcebos.com/applications/first_order_model/vox-cpk.pdparams'
