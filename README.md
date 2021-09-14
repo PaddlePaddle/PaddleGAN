@@ -41,6 +41,15 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 ## 🚀 Recent Updates
 
+- 🧙‍♂️**Latest Creative Project：create magic/dynamic profile for your student ID in Hogwarts** 🧙‍♀️
+
+  - **[Toturials](https://aistudio.baidu.com/aistudio/projectdetail/2288888?channelType=0&channel=0)**
+
+  <center><img src="https://ai-studio-static-online.cdn.bcebos.com/da1c51844ac048aa8d4fa3151be95215eee75d8bb488409d92ec17285b227c2c" width = "250"></center>
+  <center><br>
+  
+- 
+
 - **💞Add Face Morphing function💞: you can perfectly merge any two faces and make the new face get any facial expressions!**
 
   - Tutorials: https://aistudio.baidu.com/aistudio/projectdetail/2254031
