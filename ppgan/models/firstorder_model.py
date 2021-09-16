@@ -346,6 +346,7 @@ class FirstOrderModelMobile(FirstOrderModel):
             self.nets['kp_detector'].set_state_dict(checkpoint['kp_detector'])
             checkpoint = paddle.load(self.gen_weight_path)
             self.nets['generator'].set_state_dict(checkpoint['generator'])
+
         # define loss functions
         self.losses = {}
 
