@@ -22,7 +22,7 @@ import paddle.nn.functional as F
 from .builder import GENERATORS
 
 
-def MakeMultiBlocks(func, num_layers):
+def make_multi_blocks(func, num_layers):
     """Make layers by stacking the same blocks.
 
     Args:
@@ -149,7 +149,7 @@ class PAN(nn.Layer):
         self.conv_first = nn.Conv2D(in_nc, nf, 3, 1, 1)
 
         ### main blocks
-        self.SCPA_trunk = MakeMultiBlocks(SCPA_block_f, nb)
+        self.SCPA_trunk = make_multi_blocks(SCPA_block_f, nb)
         self.trunk_conv = nn.Conv2D(nf, nf, 3, 1, 1)
 
         #### upsampling
