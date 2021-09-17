@@ -154,7 +154,6 @@ class FirstOrderModel(BaseModel):
         self.optimizers['optimizer_KP'].clear_grad()
         self.optimizers['optimizer_Gen'].clear_grad()
         self.backward_G()
-        outs = {}
         self.optimizers['optimizer_KP'].step()
         self.optimizers['optimizer_Gen'].step()
 
@@ -314,11 +313,6 @@ class FirstOrderModelMobile(FirstOrderModel):
             self.nets['kp_detector'].set_state_dict(checkpoint['kp_detector'])
             for param in self.nets['kp_detector'].parameters():
                 param.stop_gradient = True
-        elif self.mode == "both":
-            checkpoint = paddle.load(self.kp_weight_path)
-            self.nets['kp_detector'].set_state_dict(checkpoint['kp_detector'])
-            checkpoint = paddle.load(self.gen_weight_path)
-            self.nets['generator'].set_state_dict(checkpoint['generator'])
 
         self.kp_detector_ori.set_state_dict(checkpoint['kp_detector'])
         for param in self.kp_detector_ori.parameters():
@@ -348,6 +342,11 @@ class FirstOrderModelMobile(FirstOrderModel):
         elif self.mode == "both":
             super(FirstOrderModelMobile,
                   self).setup_optimizers(lr_cfg, optimizer)
+            checkpoint = paddle.load(self.kp_weight_path)
+            self.nets['kp_detector'].set_state_dict(checkpoint['kp_detector'])
+            checkpoint = paddle.load(self.gen_weight_path)
+            self.nets['generator'].set_state_dict(checkpoint['generator'])
+
         # define loss functions
         self.losses = {}
 
@@ -375,7 +374,6 @@ class FirstOrderModelMobile(FirstOrderModel):
             self.optimizers['optimizer_Gen'].clear_grad()
             self.backward_G()
             self.optimizers['optimizer_Gen'].step()
-        outs = {}
 
         # update D
         if self.train_params['loss_weights']['generator_gan'] != 0:
