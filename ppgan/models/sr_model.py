@@ -20,13 +20,14 @@ from .criterions.builder import build_criterion
 from .base_model import BaseModel
 from .builder import MODELS
 from ..utils.visual import tensor2img
+from ..modules.init import reset_parameters
 
 
 @MODELS.register()
 class BaseSRModel(BaseModel):
     """Base SR model for single image super-resolution.
     """
-    def __init__(self, generator, pixel_criterion=None):
+    def __init__(self, generator, pixel_criterion=None, use_init_weight=False):
         """
         Args:
             generator (dict): config of generator.
@@ -38,6 +39,8 @@ class BaseSRModel(BaseModel):
 
         if pixel_criterion:
             self.pixel_criterion = build_criterion(pixel_criterion)
+        if use_init_weight:
+            init_sr_weight(self.nets['generator'])
 
     def setup_input(self, input):
         self.lq = paddle.to_tensor(input['lq'])
@@ -78,3 +81,12 @@ class BaseSRModel(BaseModel):
         if metrics is not None:
             for metric in metrics.values():
                 metric.update(out_img, gt_img)
+
+
+def init_sr_weight(net):
+    def reset_func(m):
+        if hasattr(m, 'weight') and (not isinstance(
+                m, (nn.BatchNorm, nn.BatchNorm2D))):
+            reset_parameters(m)
+
+    net.apply(reset_func)
