@@ -1,6 +1,8 @@
-## Data prepare
+## Data preparation
 
-The config will suppose your data put in `$PaddleGAN/data`. You can symlink your datasets to `$PaddleGAN/data`.
+## **1. Routes Configuration of datasets**
+
+The config will suppose your data is in `$PaddleGAN/data`. You can symlink your datasets to `$PaddleGAN/data`.
 
 ```
 PaddleGAN
@@ -28,7 +30,7 @@ PaddleGAN
 
 ```
 
-If you put your datasets on other place，for example ```your/data/path```, you can also change ```dataroot``` in config file:
+If you put the datasets on other place，for example ```your/data/path```, you can also change ```dataroot``` in config file: 
 
 ```
 dataset:
@@ -38,15 +40,21 @@ dataset:
     num_workers: 4
 ```
 
-### Datasets of CycleGAN
+## 2. Datasets Preparation
 
-#### download form website
+### 2.1 Download of Datasets
 
-Datasets for CycleGAN can be downloaded from [here](https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/)
+#### 2.1.1 Download of Datasets of CycleGAN
 
-#### download by script
+#### ● download from website
 
-You can use ```download_cyclegan_data.py``` in ```PaddleGAN/data``` to download datasets you wanted. Supported datasets are: apple2orange, summer2winter_yosemite,horse2zebra, monet2photo, cezanne2photo, ukiyoe2photo, vangogh2photo, maps, cityscapes, facades, iphone2dslr_flower, ae_photos, cityscapes。
+Datasets of CycleGAN can be downloaded from [here](https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/), remember to  symlink your datasets to `$PaddleGAN/data`.
+
+#### ● download by script
+
+A footnote is provided You can use ```download_cyclegan_data.py``` in ```PaddleGAN/data``` to download datasets you wanted. 
+
+Supported datasets are: apple2orange, summer2winter_yosemite,horse2zebra, monet2photo, cezanne2photo, ukiyoe2photo, vangogh2photo, maps, cityscapes, facades, iphone2dslr_flower, ae_photos, cityscapes。
 
 run following command. Dataset will be downloaded to ```~/.cache/ppgan``` and symlink to ```PaddleGAN/data/``` .
 ```
