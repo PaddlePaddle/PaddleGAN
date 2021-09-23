@@ -46,11 +46,13 @@ dataset:
 
 #### 2.1.1  Datasets of CycleGAN
 
-#### - download from website
+- #### Download from website
+
 
 Datasets of CycleGAN can be downloaded from [here](https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/), remember to  symlink your datasets to `$PaddleGAN/data`.
 
-#### - download by script
+- #### Download by script
+
 
 You can use ```download_cyclegan_data.py``` in ```PaddleGAN/data``` to download datasets you wanted. 
 
@@ -61,7 +63,7 @@ run following command. Dataset will be downloaded to ```~/.cache/ppgan``` and sy
 python data/download_cyclegan_data.py --name horse2zebra
 ```
 
-#### custom dataset
+#### Custom dataset
 
 Data should be arranged in following way if you use custom dataset.
 
@@ -75,11 +77,13 @@ custom_datasets
 
 #### 2.1.2 Datasets of Pix2Pix
 
-#### -Download from website
+- #### Download from website
+
 
 Dataset for pix2pix can be downloaded from [here](https://people.eecs.berkeley.edu/~tinghuiz/projects/pix2pix/datasets/)
 
-#### -Download by script
+- #### Download by script
+
 
 You can use ```download_pix2pix_data.py``` in ```PaddleGAN/data``` to download datasets you wanted. Supported datasets are: apple2orange, summer2winter_yosemite,horse2zebra, monet2photo, cezanne2photo, ukiyoe2photo, vangogh2photo, maps, cityscapes, facades, iphone2dslr_flower, ae_photos, cityscapes.
 
@@ -90,7 +94,7 @@ python data/download_pix2pix_data.py --name cityscapes
 ```
 
 #### Custom datasets
-Data should be arranged in following way if you use custom dataset. And image content shoubld be same with example image.
+Data should be arranged in following way if you use custom dataset. And image content should be the same with example image.
 
 ```
 facades
