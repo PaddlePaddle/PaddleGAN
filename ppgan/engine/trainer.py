@@ -186,9 +186,9 @@ class Trainer:
             self.model.setup_input(data)
             self.model.train_iter(self.optimizers)
 
-            batch_cost_averager.record(time.time() - step_start_time,
-                                       num_samples=self.cfg.get(
-                                           'batch_size', 1))
+            batch_cost_averager.record(
+                time.time() - step_start_time,
+                num_samples=self.cfg['dataset']['train'].get('batch_size', 1))
 
             step_start_time = time.time()
 
@@ -233,7 +233,8 @@ class Trainer:
         for i in range(self.max_eval_steps):
             if self.max_eval_steps < self.log_interval or i % self.log_interval == 0:
                 self.logger.info('Test iter: [%d/%d]' %
-                                 (i * self.world_size, self.max_eval_steps * self.world_size))
+                                 (i * self.world_size,
+                                  self.max_eval_steps * self.world_size))
 
             data = next(iter_loader)
             self.model.setup_input(data)
@@ -267,7 +268,6 @@ class Trainer:
                             visual_results=visual_results,
                             step=self.batch_id,
                             is_save_image=True)
-
 
         if self.metrics:
             for metric_name, metric in self.metrics.items():
