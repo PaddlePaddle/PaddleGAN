@@ -1,0 +1,1 @@
+python applications/tools/photopen.py --semantic_label_path test/sem.png  --weight_path test/n_g.pdparams --output_path test/pic.jpg

@@ -35,3 +35,4 @@ from .mpr import MPRNet
 from .iconvsr import IconVSR
 from .gpen import GPEN
 from .pan import PAN
+from .generater_photopen import SPADEGenerator
