@@ -18,7 +18,8 @@ import paddle.nn as nn
 import paddle.nn.functional as F
 from paddle.nn.utils import spectral_norm
 
-from ppgan.utils.photopen import build_norm_layer, simam
+from ppgan.utils.photopen import build_norm_layer, simam, Dict
+from .builder import GENERATORS
 
 class SPADE(nn.Layer):
     def __init__(self, config_text, norm_nc, label_nc):
@@ -107,33 +108,54 @@ class SPADEResnetBlock(nn.Layer):
             x_s = x
         return x_s
 
+@GENERATORS.register()
 class SPADEGenerator(nn.Layer):
-    def __init__(self, opt):
+    def __init__(self, 
+                 ngf,
+                 num_upsampling_layers,
+                 crop_size,
+                 aspect_ratio,
+                 norm_G,
+                 semantic_nc,
+                 use_vae,
+                 nef,
+                 ):
         super(SPADEGenerator, self).__init__()
-
-        self.opt = opt
-        nf = opt.ngf
-        self.sw, self.sh = self.compute_latent_vector_size(opt)
+        
+        opt = {
+             'ngf': ngf,
+             'num_upsampling_layers': num_upsampling_layers,
+             'crop_size': crop_size,
+             'aspect_ratio': aspect_ratio,
+             'norm_G': norm_G,
+             'semantic_nc': semantic_nc,
+             'use_vae': use_vae,
+             'nef': nef,
+            }
+        self.opt = Dict(opt)
+        
+        nf = self.opt.ngf
+        self.sw, self.sh = self.compute_latent_vector_size(self.opt)
 
         if self.opt.use_vae:
             self.fc = nn.Linear(opt.z_dim, 16 * opt.nef * self.sw * self.sh)
-            self.head_0 = SPADEResnetBlock(16 * opt.nef, 16 * nf, opt)
+            self.head_0 = SPADEResnetBlock(16 * opt.nef, 16 * nf, self.opt)
         else:
             self.fc = nn.Conv2D(self.opt.semantic_nc, 16 * nf, 3, 1, 1)
-            self.head_0 = SPADEResnetBlock(16 * nf, 16 * nf, opt)
+            self.head_0 = SPADEResnetBlock(16 * nf, 16 * nf, self.opt)
 
-        self.G_middle_0 = SPADEResnetBlock(16 * nf, 16 * nf, opt)
-        self.G_middle_1 = SPADEResnetBlock(16 * nf, 16 * nf, opt)
+        self.G_middle_0 = SPADEResnetBlock(16 * nf, 16 * nf, self.opt)
+        self.G_middle_1 = SPADEResnetBlock(16 * nf, 16 * nf, self.opt)
 
-        self.up_0 = SPADEResnetBlock(16 * nf, 8 * nf, opt)
-        self.up_1 = SPADEResnetBlock(8 * nf, 4 * nf, opt)
-        self.up_2 = SPADEResnetBlock(4 * nf, 2 * nf, opt)
-        self.up_3 = SPADEResnetBlock(2 * nf, 1 * nf, opt)
+        self.up_0 = SPADEResnetBlock(16 * nf, 8 * nf, self.opt)
+        self.up_1 = SPADEResnetBlock(8 * nf, 4 * nf, self.opt)
+        self.up_2 = SPADEResnetBlock(4 * nf, 2 * nf, self.opt)
+        self.up_3 = SPADEResnetBlock(2 * nf, 1 * nf, self.opt)
 
         final_nc = nf
 
-        if opt.num_upsampling_layers == 'most':
-            self.up_4 = SPADEResnetBlock(1 * nf, nf // 2, opt)
+        if self.opt.num_upsampling_layers == 'most':
+            self.up_4 = SPADEResnetBlock(1 * nf, nf // 2, self.opt)
             final_nc = nf // 2
 
         self.conv_img = nn.Conv2D(final_nc, 3, 3, 1, 1)

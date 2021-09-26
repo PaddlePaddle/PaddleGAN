@@ -133,3 +133,7 @@ def simam(x, e_lambda=1e-4):
     x_minus_mu_square = (x - x.mean(axis=[2, 3], keepdim=True)) ** 2
     y = x_minus_mu_square / (4 * (x_minus_mu_square.sum(axis=[2, 3], keepdim=True) / n + e_lambda)) + 0.5
     return x * nn.functional.sigmoid(y)
+
+class Dict(dict):
+    __setattr__ = dict.__setitem__
+    __getattr__ = dict.__getitem__

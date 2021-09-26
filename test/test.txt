@@ -1,1 +1,3 @@
-python applications/tools/photopen.py --semantic_label_path test/sem.png  --weight_path test/n_g.pdparams --output_path test/pic.jpg
+python applications/tools/photopen.py --semantic_label_path test/sem.png  --weight_path test/n_g.pdparams --output_path test/pic.jpg --config-file configs/photopen.yaml
+
+python -u tools/main.py --config-file configs/photopen.yaml

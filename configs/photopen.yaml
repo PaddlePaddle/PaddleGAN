@@ -5,23 +5,17 @@ min_max:
   (0., 1.)
 
 model:
-  name: LapStyleDraModel
-  generator_encode:
-    name: Encoder
-  generator_decode:
-    name: DecoderNet
-  calc_style_emd_loss:
-    name: CalcStyleEmdLoss
-  calc_content_relt_loss:
-    name: CalcContentReltLoss
-  calc_content_loss:
-    name: CalcContentLoss
-  calc_style_loss:
-    name: CalcStyleLoss
-  content_layers: ['r11', 'r21', 'r31', 'r41', 'r51']
-  style_layers: ['r11', 'r21', 'r31', 'r41', 'r51']
-  content_weight: 1.0
-  style_weight: 3.0
+  name: PhotoPenModel
+  generator:
+    name: SPADEGenerator
+    ngf: 24
+    num_upsampling_layers: normal
+    crop_size: 256
+    aspect_ratio: 1.0
+    norm_G: spectralspadebatch3x3
+    semantic_nc: 14
+    use_vae: False
+    nef: 16
 
 
 dataset:
@@ -64,3 +58,18 @@ log_config:
 
 snapshot_config:
   interval: 5000
+
+predict:
+  name: SPADEGenerator
+  ngf: 24
+  num_upsampling_layers: normal
+  crop_size: 256
+  aspect_ratio: 1.0
+  norm_G: spectralspadebatch3x3
+  semantic_nc: 14
+  use_vae: False
+  nef: 16
+  contain_dontcare_label: True
+  label_nc: 12
+  batchSize: 1
+ 
