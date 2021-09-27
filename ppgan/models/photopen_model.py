@@ -27,13 +27,18 @@ from ..modules.init import init_weights
 @MODELS.register()
 class PhotoPenModel(BaseModel):
     def __init__(self,
-                 generator):
+                 generator,
+                 discriminator,
+                 criterion,
+                ):
 
         super(PhotoPenModel, self).__init__()
-        # define generators
+        # define nets
         self.nets['net_gen'] = build_generator(generator)
-#         self.nets['net_dec'] = build_generator(generator_decode)
-#         init_weights(self.nets['net_dec'])
+#         init_weights(self.nets['net_gen'])
+        self.nets['net_des'] = build_discriminator(discriminator)
+#         init_weights(self.nets['net_des'])
+        self.nets['net_vgg'] = build_criterion(criterion)
         print('model init --------------------------------------------------------')
 
     def setup_input(self, input):

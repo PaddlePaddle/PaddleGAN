@@ -137,3 +137,21 @@ def simam(x, e_lambda=1e-4):
 class Dict(dict):
     __setattr__ = dict.__setitem__
     __getattr__ = dict.__getitem__
+
+# spade 模型输出尺寸是256*256，vgg 模型尺寸为224
+def random_crop(img_tensor, opt, size=224):
+    left = np.random.randint(0, opt.crop_size - size + 1)
+    top = np.random.randint(0, opt.crop_size - size + 1)
+    img_tensor = img_tensor[:, :, top:top+size, left:left+size]
+    return img_tensor
+
+def center_crop(img_tensor, opt, size=224):
+    left_top = (opt.crop_size - size) // 2
+    img_tensor = img_tensor[:, :, left_top:left_top+size, left_top:left_top+size]
+    return img_tensor
+
+def resize(img_tensor, opt, size=224):
+    resized = F.interpolate(img_tensor, (size, size))
+    # print(resized.shape)
+    return resized
+

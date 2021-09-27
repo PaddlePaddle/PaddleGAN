@@ -1,8 +1,8 @@
 total_iters: 30000
 output_dir: output_dir
 checkpoints_dir: checkpoints
-min_max:
-  (0., 1.)
+# min_max:
+#   (0., 1.)
 
 model:
   name: PhotoPenModel
@@ -16,6 +16,18 @@ model:
     semantic_nc: 14
     use_vae: False
     nef: 16
+  discriminator:
+    name: MultiscaleDiscriminator
+    ndf: 128
+    num_D: 4
+    crop_size: 256
+    label_nc: 12
+    output_nc: 3
+    contain_dontcare_label: True
+    no_instance: False
+    n_layers_D: 6
+  criterion:
+    name: VGG19
 
 
 dataset:

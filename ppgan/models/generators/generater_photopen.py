@@ -37,7 +37,6 @@ class SPADE(nn.Layer):
         pw = ks // 2
         self.mlp_shared = nn.Sequential(*[
             nn.Conv2D(label_nc, nhidden, ks, 1, pw),
-#             nn.ReLU(),
             nn.GELU(),
         ])
         self.mlp_gamma = nn.Conv2D(nhidden, norm_nc, ks, 1, pw)
