@@ -2,7 +2,7 @@ StyleGANv2:
   dataset_web: https://paddlegan.bj.bcebos.com/datasets/ffhq.tar
   config: configs/stylegan_v2_256_ffhq.yaml
   fp_item: fp32
-  bs_item: 1
+  bs_item: 3 8
   total_iters: 300
   log_interval: 10
 
