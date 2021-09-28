@@ -74,8 +74,7 @@ class PhotoPenDataset(Dataset):
             pos=[left, top, left + self.crop_size, top + self.crop_size], flip=flip, is_image=True)
         ins = data_transform(ins, resize_w, resize_h, load_size=self.load_size, 
             pos=[left, top, left + self.crop_size, top + self.crop_size], flip=flip, is_image=False)
-        return img, ins, self.inst_list[idx]
-#         return {'ci': content_img, 'si': style_img, 'ci_path': path}
+        return {'img': img, 'ins': ins, 'img_path': self.inst_list[idx]}
 
     def __len__(self):
         return len(self.inst_list)

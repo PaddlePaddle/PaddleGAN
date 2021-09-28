@@ -22,6 +22,7 @@ from .criterions import build_criterion
 from .discriminators.builder import build_discriminator
 
 from ..modules.init import init_weights
+from ppgan.utils.photopen import data_onehot_pro, Dict
 
 
 @MODELS.register()
@@ -30,40 +31,86 @@ class PhotoPenModel(BaseModel):
                  generator,
                  discriminator,
                  criterion,
+                 label_nc,
+                 contain_dontcare_label,
+                 batchSize,
+                 crop_size,
+                 lambda_feat,
                 ):
 
         super(PhotoPenModel, self).__init__()
+        
+        opt = {
+             'label_nc': label_nc,
+             'contain_dontcare_label': contain_dontcare_label,
+             'batchSize': batchSize,
+             'crop_size': crop_size,
+             'lambda_feat': lambda_feat,
+#              'semantic_nc': semantic_nc,
+#              'use_vae': use_vae,
+#              'nef': nef,
+            }
+        self.opt = Dict(opt)
+        
+        
         # define nets
         self.nets['net_gen'] = build_generator(generator)
 #         init_weights(self.nets['net_gen'])
         self.nets['net_des'] = build_discriminator(discriminator)
 #         init_weights(self.nets['net_des'])
         self.nets['net_vgg'] = build_criterion(criterion)
-        print('model init --------------------------------------------------------')
 
     def setup_input(self, input):
-        pass
-#         self.ci = paddle.to_tensor(input['ci'])
-#         self.visual_items['ci'] = self.ci
-#         self.si = paddle.to_tensor(input['si'])
-#         self.visual_items['si'] = self.si
-#         self.image_paths = input['ci_path']
+        self.img = paddle.to_tensor(input['img'])
+        self.visual_items['img'] = self.img
+        self.ins = paddle.to_tensor(input['ins'])
+        self.visual_items['ins'] = self.ins
+        self.img_paths = input['img_path']
 
     def forward(self):
         pass
-#         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
-#         self.cF = self.nets['net_enc'](self.ci)
-#         self.sF = self.nets['net_enc'](self.si)
-#         self.stylized = self.nets['net_dec'](self.cF, self.sF)
-#         self.visual_items['stylized'] = self.stylized
+        """Run forward pass; called by both functions <optimize_parameters> and <test>."""
+        self.one_hot = data_onehot_pro(self.ins, self.opt)
+        self.img_f = self.nets['net_gen'](self.one_hot)
+        self.visual_items['img_f'] = self.img_f
+
+    def backward_G(self):
+        fake_data = paddle.concat((self.one_hot, self.img_f), 1)
+        real_data = paddle.concat((self.one_hot, self.img), 1)
+        fake_and_real_data = paddle.concat((fake_data, real_data), 0)
+        pred = self.nets['net_des'](fake_and_real_data)
+        
+        """content loss"""
+        g_ganloss = 0.
+        for i in range(len(pred)):
+            pred_i = pred[i][-1][:self.opt.batchSize]
+            new_loss = -pred_i.mean() # hinge loss
+            g_ganloss += new_loss
+        g_ganloss /= len(pred)
+
+        g_featloss = 0.
+        for i in range(len(pred)):
+            for j in range(len(pred[i]) - 1): # 除去最后一层的中间层featuremap
+                unweighted_loss = (pred[i][j][:self.opt.batchSize] - pred[i][j][self.opt.batchSize:]).abs().mean() # L1 loss
+                g_featloss += unweighted_loss * self.opt.lambda_feat / len(pred)
+                
+        g_vggloss = self.nets['net_vgg'](self.img, self.img_f)
+        self.g_loss = g_ganloss + g_featloss + g_vggloss
+        
+        self.g_loss.backward()
+        self.losses['g_ganloss'] = g_ganloss
+        self.losses['g_featloss'] = g_featloss
+        self.losses['g_vggloss'] = g_vggloss
+        print(self.losses['g_ganloss'], self.losses['g_featloss'], self.losses['g_vggloss'])
+        
 
     def train_iter(self, optimizers=None):
         pass
-#         """Calculate losses, gradients, and update network weights"""
-#         self.forward()
-#         optimizers['optimG'].clear_grad()
-#         self.backward_Dec()
-#         self.optimizers['optimG'].step()
+        """Calculate losses, gradients, and update network weights"""
+        self.forward()
+        optimizers['optimG'].clear_grad()
+        self.backward_G()
+        self.optimizers['optimG'].step()
 
 # @MODELS.register()
 # class LapStyleDraModel(BaseModel):

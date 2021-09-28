@@ -27,7 +27,14 @@ model:
     no_instance: False
     n_layers_D: 6
   criterion:
-    name: VGG19
+    name: PhotoPenPerceptualLoss
+    crop_size: 256
+    lambda_vgg: 1.6
+  label_nc: 12
+  contain_dontcare_label: True
+  batchSize: 1
+  crop_size: 256
+  lambda_feat: 10.0
 
 
 dataset:
@@ -38,34 +45,43 @@ dataset:
     crop_size: 256
     num_workers: 0
     batch_size: 1
-  test:
-    name: PhotoPenDataset
-    content_root: data/coco/test2017/
-    style_root: data/starrynew.png
-    load_size: 128
-    crop_size: 128
-    num_workers: 0
-    batch_size: 1
+#   test:
+#     name: PhotoPenDataset
+#     content_root: data/coco/test2017/
+#     style_root: data/starrynew.png
+#     load_size: 128
+#     crop_size: 128
+#     num_workers: 0
+#     batch_size: 1
 
 lr_scheduler:
-  name: NonLinearDecay
-  learning_rate: 1e-4
-  lr_decay: 5e-5
+  name: LinearDecay
+  learning_rate: 0.0001
+  start_epoch: 99999
+  decay_epochs: 99999
+  # will get from real dataset
+  iters_per_epoch: 1
 
 optimizer:
   optimG:
     name: Adam
     net_names:
-      - net_dec
+      - net_gen
+    beta1: 0.9
+    beta2: 0.999
+  optimD:
+    name: Adam
+    net_names:
+      - net_des
     beta1: 0.9
     beta2: 0.999
 
-validate:
-  interval: 500
-  save_img: false
+# validate:
+#   interval: 500
+#   save_img: false
 
 log_config:
-  interval: 10
+  interval: 1
   visiual_interval: 500
 
 snapshot_config:
