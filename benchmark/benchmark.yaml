@@ -13,3 +13,19 @@ FOMM:
   bs_item: 8 16
   epochs: 30
   log_interval: 10
+
+esrgan:
+  dataset_web: https://paddlegan.bj.bcebos.com/datasets/DIV2KandSet14.tar
+  config: configs/esrgan_psnr_x4_div2k.yaml
+  fp_item: fp32
+  bs_item: 32 64
+  total_iters: 300
+  log_interval: 10
+
+edvr:
+  dataset_web: https://paddlegan.bj.bcebos.com/datasets/REDS.tar
+  config: configs/edvr_m_wo_tsa.yaml
+  fp_item: fp32
+  bs_item: 4 64
+  total_iters: 300
+  log_interval: 10
