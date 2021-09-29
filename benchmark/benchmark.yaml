@@ -23,9 +23,17 @@ esrgan:
   log_interval: 10
 
 edvr:
-  dataset_web: https://paddlegan.bj.bcebos.com/datasets/REDS.tar
+  dataset: data/REDS
   config: configs/edvr_m_wo_tsa.yaml
   fp_item: fp32
   bs_item: 4 64
+  total_iters: 300
+  log_interval: 10
+
+basicvsr:
+  dataset: data/REDS
+  config: configs/basicvsr_reds.yaml
+  fp_item: fp32
+  bs_item: 2 4
   total_iters: 300
   log_interval: 10

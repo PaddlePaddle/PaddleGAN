@@ -32,9 +32,14 @@ for model_mode in ${model_mode_list[@]}; do
       eval total_iters='$'"${model_mode}_total_iters"
       eval epochs='$'"${model_mode}_epochs"
       eval dataset_web='$'"${model_mode}_dataset_web"
+      eval dataset='$'"${model_mode}_dataset"
       eval log_interval='$'"${model_mode}_log_interval"
-      wget ${dataset_web} -O data/${model_mode}.tar
-      tar -vxf data/${model_mode}.tar -C data/
+      if [ -n "$dataset" ]; then
+          cp -r ${dataset} data/
+      else
+          wget ${dataset_web} -O data/${model_mode}.tar
+          tar -vxf data/${model_mode}.tar -C data/
+      fi
       if [ -n "$total_iters" ]; then
           mode="total_iters"
           max_iter=$total_iters
@@ -52,7 +57,12 @@ for model_mode in ${model_mode_list[@]}; do
             sleep 60
             echo "index is speed, 8gpus, run_mode is multi_process, begin, ${model_name}"
             run_mode=mp
-            CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 bash benchmark/run_benchmark.sh ${run_mode} ${bs_item} ${fp_item} ${mode} ${max_iter} ${model_mode} ${config} ${log_interval}
+            basicvsr_name=basicvsr
+            if [ ${model_mode} = ${basicvsr_name} ]; then
+                CUDA_VISIBLE_DEVICES=0,1,2,3 bash benchmark/run_benchmark.sh ${run_mode} ${bs_item} ${fp_item} ${mode} ${max_iter} ${model_mode} ${config} ${log_interval}
+            else
+                CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 bash benchmark/run_benchmark.sh ${run_mode} ${bs_item} ${fp_item} ${mode} ${max_iter} ${model_mode} ${config} ${log_interval}
+            fi
             sleep 60
             done
       done
