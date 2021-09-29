@@ -1,8 +1,6 @@
 total_iters: 30000
 output_dir: output_dir
 checkpoints_dir: checkpoints
-# min_max:
-#   (0., 1.)
 
 model:
   name: PhotoPenModel
@@ -28,14 +26,13 @@ model:
     n_layers_D: 6
   criterion:
     name: PhotoPenPerceptualLoss
-    crop_size: 256
+    crop_size: 224
     lambda_vgg: 1.6
   label_nc: 12
   contain_dontcare_label: True
   batchSize: 1
   crop_size: 256
   lambda_feat: 10.0
-
 
 dataset:
   train:
@@ -45,14 +42,6 @@ dataset:
     crop_size: 256
     num_workers: 0
     batch_size: 1
-#   test:
-#     name: PhotoPenDataset
-#     content_root: data/coco/test2017/
-#     style_root: data/starrynew.png
-#     load_size: 128
-#     crop_size: 128
-#     num_workers: 0
-#     batch_size: 1
 
 lr_scheduler:
   name: LinearDecay
@@ -76,16 +65,12 @@ optimizer:
     beta1: 0.9
     beta2: 0.999
 
-# validate:
-#   interval: 500
-#   save_img: false
-
 log_config:
   interval: 1
-  visiual_interval: 500
+  visiual_interval: 1
 
 snapshot_config:
-  interval: 5000
+  interval: 1
 
 predict:
   name: SPADEGenerator

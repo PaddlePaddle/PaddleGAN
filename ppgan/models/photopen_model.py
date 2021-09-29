@@ -62,9 +62,7 @@ class PhotoPenModel(BaseModel):
 
     def setup_input(self, input):
         self.img = paddle.to_tensor(input['img'])
-        self.visual_items['img'] = self.img
         self.ins = paddle.to_tensor(input['ins'])
-        self.visual_items['ins'] = self.ins
         self.img_paths = input['img_path']
 
     def forward(self):
@@ -101,9 +99,35 @@ class PhotoPenModel(BaseModel):
         self.losses['g_ganloss'] = g_ganloss
         self.losses['g_featloss'] = g_featloss
         self.losses['g_vggloss'] = g_vggloss
-        print(self.losses['g_ganloss'], self.losses['g_featloss'], self.losses['g_vggloss'])
         
 
+    def backward_D(self):
+        fake_data = paddle.concat((self.one_hot, self.img_f), 1)
+        real_data = paddle.concat((self.one_hot, self.img), 1)
+        fake_and_real_data = paddle.concat((fake_data, real_data), 0)
+        pred = self.nets['net_des'](fake_and_real_data)
+        
+        """content loss"""
+        df_ganloss = 0.
+        for i in range(len(pred)):
+            pred_i = pred[i][-1][:self.opt.batchSize]
+            new_loss = -paddle.minimum(-pred_i - 1, paddle.zeros_like(pred_i)).mean() # hingle loss
+            df_ganloss += new_loss
+        df_ganloss /= len(pred)
+
+        dr_ganloss = 0.
+        for i in range(len(pred)):
+            pred_i = pred[i][-1][self.opt.batchSize:]
+            new_loss = -paddle.minimum(pred_i - 1, paddle.zeros_like(pred_i)).mean() # hingle loss
+            dr_ganloss += new_loss
+        dr_ganloss /= len(pred)
+
+        self.d_loss = df_ganloss + dr_ganloss
+        self.d_loss.backward()
+        self.losses['df_ganloss'] = df_ganloss
+        self.losses['dr_ganloss'] = dr_ganloss
+        
+        
     def train_iter(self, optimizers=None):
         pass
         """Calculate losses, gradients, and update network weights"""
@@ -111,6 +135,13 @@ class PhotoPenModel(BaseModel):
         optimizers['optimG'].clear_grad()
         self.backward_G()
         self.optimizers['optimG'].step()
+        
+        self.forward()
+        optimizers['optimD'].clear_grad()
+        self.backward_D()
+        self.optimizers['optimD'].step()
+        
+        
 
 # @MODELS.register()
 # class LapStyleDraModel(BaseModel):
