@@ -1,4 +1,4 @@
-total_iters: 30000
+total_iters: 2
 output_dir: output_dir
 checkpoints_dir: checkpoints
 
@@ -7,6 +7,7 @@ model:
   generator:
     name: SPADEGenerator
     ngf: 24
+#     ngf: 1
     num_upsampling_layers: normal
     crop_size: 256
     aspect_ratio: 1.0
@@ -17,6 +18,7 @@ model:
   discriminator:
     name: MultiscaleDiscriminator
     ndf: 128
+#     ndf: 1
     num_D: 4
     crop_size: 256
     label_nc: 12
@@ -43,7 +45,7 @@ dataset:
     num_workers: 0
     batch_size: 1
 
-lr_scheduler:
+lr_scheduler: # abundoned
   name: LinearDecay
   learning_rate: 0.0001
   start_epoch: 99999
@@ -52,6 +54,7 @@ lr_scheduler:
   iters_per_epoch: 1
 
 optimizer:
+  lr: 0.0001
   optimG:
     name: Adam
     net_names:

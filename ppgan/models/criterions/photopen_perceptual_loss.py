@@ -124,12 +124,15 @@ class PhotoPenPerceptualLoss(nn.Layer):
     def __init__(self, 
                  crop_size, 
                  lambda_vgg, 
-                 pretrained='test/vgg19pretrain.pdparams',
+#                  pretrained='test/vgg19pretrain.pdparams',
+                 pretrained='https://paddlegan.bj.bcebos.com/models/vgg19pretrain.pdparams',
                 ):
         super(PhotoPenPerceptualLoss, self).__init__()
         self.model = VGG19()
-        vgg_weight = paddle.load(pretrained)
+        weight_path = get_path_from_url(pretrained)
+        vgg_weight = paddle.load(weight_path)
         self.model.set_state_dict(vgg_weight)
+        print('PerceptualVGG loaded pretrained weight.')
         self.rates = [1.0 / 32, 1.0 / 16, 1.0 / 8, 1.0 / 4, 1.0]
         self.crop_size = crop_size
         self.lambda_vgg = lambda_vgg

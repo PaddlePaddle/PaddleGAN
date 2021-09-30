@@ -1,3 +1,5 @@
 python applications/tools/photopen.py --semantic_label_path test/sem.png  --weight_path test/n_g.pdparams --output_path test/pic.jpg --config-file configs/photopen.yaml
 
 python -u tools/main.py --config-file configs/photopen.yaml
+
+python -u tools/main.py --config-file configs/photopen.yaml --resume output_dir\photopen-2021-09-30-15-59\iter_3_checkpoint.pdparams
