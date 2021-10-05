@@ -49,13 +49,17 @@ coco_stuff 是数据集根目录可任意改变，其下的 train_img 子目录�
 ### 3.2 gpu 多卡训练
 
 ```
-export CUDA_VISIBLE_DEVICES=0,1,2,3
-python -m paddle.distributed.launch \
+!python -m paddle.distributed.launch \
     tools/main.py \
     --config-file configs/photopen.yaml \
-```
+    -o model.generator.norm_G=spectralspadesyncbatch3x3 \
+       model.batchSize=4 \
+       dataset.train.batch_size=4```
 
 * config-file：训练使用的超参设置 yamal 文件的存储路径
+* model.generator.norm_G：设置使用 syncbatch 归一化，使多个 GPU 中的数据一起进行归一化
+* model.batchSize：设置模型的 batch size，一般为 GPU 个数的整倍数
+* dataset.train.batch_size：设置数据读取的 batch size，要和模型的 batch size 一致
 
 ### 3.3 继续训练
 
