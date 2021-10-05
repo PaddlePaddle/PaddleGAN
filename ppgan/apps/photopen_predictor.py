@@ -21,6 +21,7 @@ import paddle
 from .base_predictor import BasePredictor
 from ppgan.models.generators import SPADEGenerator
 from ppgan.utils.photopen import data_onehot_pro
+from ..utils.filesystem import load
 
 
 class PhotoPenPredictor(BasePredictor):
@@ -41,8 +42,11 @@ class PhotoPenPredictor(BasePredictor):
                  gen_cfg.nef,
                  )
         gen.eval()
-        gpara = paddle.load(weight_path)
-        gen.set_state_dict(gpara)
+        para = load(weight_path)
+        if 'net_gen' in para:
+            gen.set_state_dict(para['net_gen'])
+        else:
+            gen.set_state_dict(para)
         
         self.gen = gen
         self.output_path = output_path

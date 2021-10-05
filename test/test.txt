@@ -1,5 +1,14 @@
-python applications/tools/photopen.py --semantic_label_path test/sem.png  --weight_path test/n_g.pdparams --output_path test/pic.jpg --config-file configs/photopen.yaml
+# 预测
+python applications/tools/photopen.py --semantic_label_path test/sem.png  --weight_path test/n_g.pdparams --output_path output_dir/pic.jpg --config-file configs/photopen.yaml
 
+python applications/tools/photopen.py --semantic_label_path test/sem.png  --weight_path output_dir/photopen-2021-10-05-14-38/iter_1_weight.pdparams --output_path output_dir/pic.jpg --config-file configs/photopen.yaml
+
+
+# 训练
 python -u tools/main.py --config-file configs/photopen.yaml
 
+# 继续训练
 python -u tools/main.py --config-file configs/photopen.yaml --resume output_dir\photopen-2021-09-30-15-59\iter_3_checkpoint.pdparams
+
+#训练，覆盖参数
+python -u tools/main.py --config-file configs/photopen.yaml --o model.generator.ngf=1 model.discriminator.ndf=1

@@ -1,4 +1,4 @@
-total_iters: 2
+total_iters: 1
 output_dir: output_dir
 checkpoints_dir: checkpoints
 
@@ -7,7 +7,6 @@ model:
   generator:
     name: SPADEGenerator
     ngf: 24
-#     ngf: 1
     num_upsampling_layers: normal
     crop_size: 256
     aspect_ratio: 1.0
@@ -18,7 +17,6 @@ model:
   discriminator:
     name: MultiscaleDiscriminator
     ndf: 128
-#     ndf: 1
     num_D: 4
     crop_size: 256
     label_nc: 12
