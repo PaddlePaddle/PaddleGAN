@@ -56,7 +56,7 @@ def detect(net, img):
             priors = paddle.to_tensor(
                 [[axc / 1.0, ayc / 1.0, stride * 4 / 1.0, stride * 4 / 1.0]])
             variances = [0.1, 0.2]
-            box = decode(paddle.to_tensor(loc), priors, variances)
+            box = decode(paddle.to_tensor(loc), priors, variances).numpy()
             x1, y1, x2, y2 = box[0] * 1.0
             bboxlist.append([x1, y1, x2, y2, score])
     bboxlist = np.array(bboxlist)
