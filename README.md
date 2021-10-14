@@ -58,7 +58,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
     <div align='center'>
       <img src='https://ai-studio-static-online.cdn.bcebos.com/da1c51844ac048aa8d4fa3151be95215eee75d8bb488409d92ec17285b227c2c' width='250'/>
     </div>
-    
+  
 - **💞Add Face Morphing function💞: you can perfectly merge any two faces and make the new face get any facial expressions!**
 
   - Tutorials: https://aistudio.baidu.com/aistudio/projectdetail/2254031
@@ -80,21 +80,22 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
       <img src='https://user-images.githubusercontent.com/48054808/129904830-8b87e310-ea51-4aff-b29b-88920ee82447.png' width='700'/>
     </div>
 
-## Quick Start
+## Document Tutorial
 
-* Please refer to the [installation document](./docs/en_US/install.md) to make sure you have installed PaddlePaddle and PaddleGAN correctly.
+#### **Installation**
 
-* Get started through ppgan.app interface:
+* Environment dependence: 
+   - PaddlePaddle >= 2.1.0
+   - Python >= 3.6
+   - CUDA >= 10.1
+* [Full installation tutorial](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/install.md)
 
-   ```python
-   from ppgan.apps import RealSRPredictor
-   sr = RealSRPredictor()
-   sr.run("docs/imgs/monarch.png")
-   ```
-* More applications, please refer to [ppgan.apps apis](./docs/en_US/apis/apps.md)
-* More tutorials:
-  - [Data preparation](./docs/en_US/data_prepare.md)
-  - [Training/Evaluating/Testing basic usage](./docs/en_US/get_started.md)
+#### **Starter Tutorial**
+
+- [Quick start](./docs/en_US/get_started.md)
+- [Data Preparation](./docs/en_US/data_prepare.md)
+- [Instruction of APIs](./docs/en_US/apis/apps.md)
+- [Instruction of Config Files](./docs/en_US/config_doc.md)
 
 ## Model Tutorial
 
