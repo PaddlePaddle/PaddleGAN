@@ -92,10 +92,10 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 #### **Starter Tutorial**
 
-- [Quick start](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/get_started.md)
-- [Data Preparation](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/data_prepare.md)
-- [Instruction of APIs](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/apis/apps.md)
-- [Instruction of Config Files](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/config_doc.md)
+- [Quick start](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/get_started.md)
+- [Data Preparation](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/data_prepare.md)
+- [Instruction of APIs](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/apis/apps.md)
+- [Instruction of Config Files](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/config_doc.md)
 
 ## Model Tutorial
 
