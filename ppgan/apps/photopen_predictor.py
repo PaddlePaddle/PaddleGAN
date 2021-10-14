@@ -15,6 +15,7 @@
 from PIL import Image, ImageOps
 import cv2
 import numpy as np
+import os
 
 import paddle
 
@@ -66,6 +67,9 @@ class PhotoPenPredictor(BasePredictor):
         pic = ((pic + 1.) / 2. * 255).astype('uint8')
         
         pic = cv2.cvtColor(pic,cv2.COLOR_BGR2RGB)
+        path, _ = os.path.split(self.output_path)
+        if not os.path.exists(path):
+            os.mkdir(path)
         cv2.imwrite(self.output_path, pic)
         
         

@@ -8,7 +8,7 @@
 
 ## 2.快速体验
 
-预训练模型可以从如下地址下载: （上载后添加）
+预训练模型可以从如下地址下载: （https://paddlegan.bj.bcebos.com/models/photopen.pdparams）
 
 输入一张png格式的语义标签图片给模型，输出一张按标签语义生成的照片风格的图片。预测代码如下：
 
@@ -16,7 +16,7 @@
 python applications/tools/photopen.py \
   --semantic_label_path test/sem.png \
   --weight_path test/n_g.pdparams \
-  --output_path output_dir/pic.jpg \
+  --output_path test/pic.jpg \
   --config-file configs/photopen.yaml
 ```
 
