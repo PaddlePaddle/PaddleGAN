@@ -71,7 +71,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
     <div align='center'>
       <img src='https://ai-studio-static-online.cdn.bcebos.com/da1c51844ac048aa8d4fa3151be95215eee75d8bb488409d92ec17285b227c2c' width='250'/>
     </div>
-  
+
 - ⭐ **新增人脸融合能力，结合新版Frirst Order Motion，实现人脸完美融合并带有丰富表情(๑^ں^๑)** ⭐
 
   - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/2254031 )**
@@ -104,8 +104,8 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 - [快速开始](./docs/zh_CN/get_started.md)
 - [数据准备](./docs/zh_CN/data_prepare.md)
-- [API接口使用文档](./docs/zh_CN/apis/apps.md)
-- [配置文件/Config使用说明](./docs/zh_CN/config_doc.md)
+- [API接口使用文档](./docs/en_US/apis/apps.md)
+- [配置文件/Config使用说明](./docs/en_US/config_doc.md)
 
 ## 模型库
 
@@ -165,7 +165,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 ### 老视频修复
 
 <div align='center'>
-  <img src='https://user-images.githubusercontent.com/48054808/119469496-fc81f580-bd79-11eb-865a-5e38482b1ae8.gif' width='700'/> 
+  <img src='https://user-images.githubusercontent.com/48054808/119469496-fc81f580-bd79-11eb-865a-5e38482b1ae8.gif' width='700'/>
 </div>
 
 

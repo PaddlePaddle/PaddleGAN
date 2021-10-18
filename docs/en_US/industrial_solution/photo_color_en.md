@@ -1,9 +1,9 @@
 # Image Colorization
-PaddleGAN provides [DeOldify](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/apis/apps.md#ppganappsdeoldifypredictor) model for image colorization.
+PaddleGAN provides [DeOldify](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/apis/apps.md#ppganappsdeoldifypredictor) model for image colorization.
 
 ## DeOldifyPredictor
 
-[DeOldify](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/apis/apps.md#ppganappsdeoldifypredictor) generates the adversarial network with a self-attentive mechanism. The generator is a U-NET structured network with better effects in image/video coloring.
+[DeOldify](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/apis/apps.md#ppganappsdeoldifypredictor) generates the adversarial network with a self-attentive mechanism. The generator is a U-NET structured network with better effects in image/video coloring.
 
 <div align='center'>
   <img src='https://user-images.githubusercontent.com/48054808/117925538-fd526a80-b329-11eb-8924-8f2614fcd9e6.png'>
@@ -41,4 +41,3 @@ deoldify.run("/home/aistudio/先烈.jpg") #原图片所在路径
 **1. [Old Beijing City Video Restoration](https://aistudio.baidu.com/aistudio/projectdetail/1161285)**
 
 **2. [PaddleGAN ❤️ 520 Edition](https://aistudio.baidu.com/aistudio/projectdetail/1956943?channelType=0&channel=0)**
-

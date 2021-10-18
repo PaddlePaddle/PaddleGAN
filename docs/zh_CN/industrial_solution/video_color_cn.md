@@ -1,9 +1,9 @@
 # 视频上色
-针对视频上色，PaddleGAN提供两种上色模型：[DeOldify](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/apis/apps.md#ppganappsdeoldifypredictor)与[DeepRemaster](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/apis/apps.md#ppganappsdeepremasterpredictor)。
+针对视频上色，PaddleGAN提供两种上色模型：[DeOldify](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/apis/apps.md#ppganappsdeoldifypredictor)与[DeepRemaster](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/apis/apps.md#ppganappsdeepremasterpredictor)。
 
 ## DeOldifyPredictor
 
-[DeOldify](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/apis/apps.md#ppganappsdeoldifypredictor)采用自注意力机制的生成对抗网络，生成器是一个U-NET结构的网络。在图像/视频的上色方面有着较好的效果。
+[DeOldify](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/apis/apps.md#ppganappsdeoldifypredictor)采用自注意力机制的生成对抗网络，生成器是一个U-NET结构的网络。在图像/视频的上色方面有着较好的效果。
 
 <div align='center'>
   <img src='https://user-images.githubusercontent.com/48054808/117925538-fd526a80-b329-11eb-8924-8f2614fcd9e6.png'>
@@ -38,7 +38,7 @@ deoldify.run("/home/aistudio/Peking_input360p_clip6_5s.mp4") #原视频所在路
 
 ## DeepRemasterPredictor
 
-[DeepRemaster](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/apis/apps.md#ppganappsdeepremasterpredictor) 模型目前只能用于对视频上色，基于时空卷积神经网络和自注意力机制。并且能够根据输入的任意数量的参考帧对视频中的每一帧图片进行上色。
+[DeepRemaster](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/apis/apps.md#ppganappsdeepremasterpredictor) 模型目前只能用于对视频上色，基于时空卷积神经网络和自注意力机制。并且能够根据输入的任意数量的参考帧对视频中的每一帧图片进行上色。
 ![](../../imgs/remaster_network.png)
 
 <div align='center'>
