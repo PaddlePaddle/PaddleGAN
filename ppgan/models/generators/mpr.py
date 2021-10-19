@@ -12,21 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import paddle
-
 import numpy as np
 
+import paddle
 import paddle.nn as nn
+import paddle.nn.functional as F
+
 from ...modules.init import kaiming_normal_, constant_
 
-from ...modules.dcn import DeformableConv_dygraph
-# from paddle.vision.ops import DeformConv2D  #to be compiled
-
 from .builder import GENERATORS
-
-import paddle
-from paddle import nn
-import paddle.nn.functional as F
 
 
 ##########################################################################
