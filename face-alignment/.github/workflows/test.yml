@@ -1,0 +1,42 @@
+name: Test Face alignmnet
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+        pytorch-version: [1.5.1, 1.6.0, 1.7.1, nightly]
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Add conda to system path
+        run: |
+          echo $CONDA/bin >> $GITHUB_PATH
+      - name: Install dependencies
+        run: |
+          conda create -q -n test-environment python=${{ matrix.python-version }}
+          source activate test-environment
+          if [[ "${{ matrix.pytorch-version }}" == "nightly" ]]; then
+            conda install pytorch cpuonly -c pytorch-nightly 
+          else
+            conda install pytorch==${{ matrix.pytorch-version }} cpuonly -c pytorch
+          fi
+          conda install flake8
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          python setup.py install
+      - name: Test with pytest
+        run: |
+          source activate test-environment
+          conda install pytest
+          pytest test/
+      - name : Lint with flake8
+        run: |
+          source activate test-environment
+          flake8 . --exit-zero
