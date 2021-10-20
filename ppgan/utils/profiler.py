@@ -86,7 +86,7 @@ def add_profiler_step(options_str=None):
     One call of this function is treated as a profiler step.
     
     Args:
-      profiler_options - a string to initialize the ProfilerOptions.
+      options_str - a string to initialize the ProfilerOptions.
                          Default is None, and the profiler is disabled.
     '''
     if options_str is None:
