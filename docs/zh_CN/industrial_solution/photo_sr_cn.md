@@ -5,7 +5,7 @@
 
 [完整模型教程](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/tutorials/single_image_super_resolution.md)
 
-[RealSR](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/apis/apps.md#ppganappsrealsrpredictor)模型通过估计各种模糊内核以及实际噪声分布，为现实世界的图像设计一种新颖的真实图片降采样框架。基于该降采样框架，可以获取与真实世界图像共享同一域的低分辨率图像。并且提出了一个旨在提高感知度的真实世界超分辨率模型。对合成噪声数据和真实世界图像进行的大量实验表明，该模型能够有效降低了噪声并提高了视觉质量。
+[RealSR](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/apis/apps.md#ppganappsrealsrpredictor)模型通过估计各种模糊内核以及实际噪声分布，为现实世界的图像设计一种新颖的真实图片降采样框架。基于该降采样框架，可以获取与真实世界图像共享同一域的低分辨率图像。并且提出了一个旨在提高感知度的真实世界超分辨率模型。对合成噪声数据和真实世界图像进行的大量实验表明，该模型能够有效降低了噪声并提高了视觉质量。
 
 <div align='center'>
   <img src='https://user-images.githubusercontent.com/48054808/117925551-02afb500-b32a-11eb-9a11-14e484daa953.png'>
@@ -35,7 +35,7 @@ deep_remaster.run("docs/imgs/先烈.jpg")  #原图片所在路径
                                --process_order DeepRemaster \ #对原视频处理的顺序
                                --output output_dir #成品视频所在的路径
 ```
-## ESRGAN 
+## ESRGAN
 
 [完整模型教程](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/tutorials/single_image_super_resolution.md)
 
@@ -46,7 +46,7 @@ deep_remaster.run("docs/imgs/先烈.jpg")  #原图片所在路径
 | esrgan_psnr_x4  | DIV2K | [esrgan_psnr_x4](https://paddlegan.bj.bcebos.com/models/esrgan_psnr_x4.pdparams)
 | esrgan_x4  | DIV2K | [esrgan_x4](https://paddlegan.bj.bcebos.com/models/esrgan_x4.pdparams)
 
-## LESRCNN 
+## LESRCNN
 
 [完整模型教程](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/tutorials/single_image_super_resolution.md)
 
