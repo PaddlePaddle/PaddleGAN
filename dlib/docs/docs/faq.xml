@@ -1,0 +1,625 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="stylesheet.xsl"?>
+
+<doc>
+   <title>Frequently Asked Questions</title>
+
+   <!-- ************************************************************************* -->
+
+   <questions group="Python">
+
+      <question text="I compiled dlib's Python interface with CUDA enabled, why isn't it using CUDA?">
+         Either you are using a part of dlib that just doesn't use CUDA, of which there
+         are many parts, or you are mistaken about compiling dlib with CUDA enabled.
+         In particular, many users report that "dlib isn't using CUDA even though 
+         I definitely compiled it with CUDA" and in every case either they are not using part of dlib that uses CUDA or they 
+         have installed multiple copies of dlib on their computer, some with CUDA disabled, and
+         they are using a non-CUDA build. 
+         <p>
+            You can check if dlib is compiled to use CUDA by looking at the <tt>dlib.DLIB_USE_CUDA</tt>
+            boolean.  <b>If dlib.DLIB_USE_CUDA is false then you didn't compile it with CUDA enabled, but if it's true then
+            dlib is using all the CUDA it's going to use</b>.
+         </p>
+      </question>
+
+      <question text="Why is dlib.image_window missing from the Python module?">
+         If you are getting the error <tt>module 'dlib' has no attribute 'image_window'</tt>
+         it is because you compiled dlib without GUI support (or you are using a copy of
+         dlib someone else compiled and they built it without GUI support).  So note that
+         it is possible to compile dlib with any GUI tools.  Some people want to do this because
+         they run dlib on systems that don't have any kind of GUI framework installed.
+         <p>
+            But since you are reading this you obviously want to use the GUI tools.  The solution
+            is to get a copy of dlib and <tt>python setup.py install</tt> it yourself.  It's easy.
+            Note that you might get a warning in the build output about X11 not being installed. Maybe that's
+            why you are getting this error in the first place.  <b>READ THAT MESSAGE AND FOLLOW ITS INSTRUCTIONS</b>
+            since it tells you what to do to fix this.
+         </p>
+      </question>
+
+      <question text="Why is some function missing from the dlib Python module?">
+         If you are missing dlib.image_window then read <a href="#Whyisdlib.imagewindowmissing">the FAQ about that</a>.
+         If you are missing any other function then <b>it's because you are using an old version of dlib
+         that just doesn't have that function</b>.  You need to install a newer version
+         of dlib.  Please don't post questions about this on any of dlib's forums or
+         email me about it.  Just install a new dlib.  The only way to use features in 
+         a new version of dlib is to get the new version of dlib.  Often people think they have the
+         new version of dlib installed when really they have some old version installed.  
+         You can see what version of dlib you are using by checking <tt>dlib.__version__</tt>.
+      </question>
+
+   </questions>
+
+
+
+
+
+   <questions group="General">
+
+      <question text="Why do I get USER_ERROR__inconsistent_build_configuration__see_dlib_faq_1?">
+         You are getting this error because you either forgot to link to dlib,
+         or are not compiling all the C++ code in your program with consistent
+         settings. The latter is wrong because it is a violation of
+         <a href="https://en.wikipedia.org/wiki/One_Definition_Rule">C++'s One Definition Rule</a>. 
+         In this case, you are compiling some translation units with dlib's
+         assert macros enabled and others with them disabled.
+         <p>
+            For reference, the code that generates this error is: 
+            <a href="dlib/test_for_odr_violations.h.html">dlib/test_for_odr_violations.h</a> and 
+            <a href="dlib/test_for_odr_violations.cpp.html">dlib/test_for_odr_violations.cpp</a>.
+         </p>
+      </question>
+
+
+      <question text="Why do I get USER_ERROR__inconsistent_build_configuration__see_dlib_faq_2?">
+         You are getting this error because you are not compiling all the C++
+         code in your program with consistent settings. This is a violation of
+         <a href="https://en.wikipedia.org/wiki/One_Definition_Rule">C++'s One Definition Rule</a>. 
+         In this case, you compiled a standalone copy of dlib with CMake and instead of using <tt>make install</tt>
+         or <tt>cmake --build . --target install</tt> to copy the resulting build files somewhere you went
+         and cherry picked files manually and messed it up.  In particular, CMake compiled dlib 
+         with a bunch of settings recorded in the CMake generated config.h file but you instead
+         are now trying to build more dlib related code with the 
+         <a href="dlib/config.h.html">dlib/config.h</a> from source control. 
+         <p>
+            For reference, the code that generates this error is: 
+            <a href="dlib/test_for_odr_violations.h.html">dlib/test_for_odr_violations.h</a> and 
+            <a href="dlib/test_for_odr_violations.cpp.html">dlib/test_for_odr_violations.cpp</a>.
+         </p>
+
+         <p> 
+            Finally, most users who get this error are using Visual Studio.
+            You probably compiled dlib and then went into Visual Studio's
+            output folder, grabbed the .lib file, and then tried to
+            create a project using that .lib file and dlib's .h files from
+            github.  THIS IS WRONG, DO NOT DO THIS.  Instead, <a href="compile.html#Using%20dlib%20from%20C++">read the
+            instructions for using dlib and follow them</a>.  I promise they are
+            much simpler than any process that involves manually copying files
+            around in the file explorer.
+         </p>
+      </question>
+
+      <question text="How do I install/compile dlib?">
+         Follow the <a href="compile.html">official instructions</a>. 
+         They tell you <b>exactly what to type</b> to use dlib.  
+      </question>
+
+      <question text="It doesn't work?">
+         Do not post a question like "I'm using dlib, and it doesn't work?" or
+         "I'm using the object detector and it doesn't work, what do I do?".
+         If this is all you say then I have no idea what is wrong.  99% of the
+         time it's some kind of user error.  1% of the time it's some problem
+         in dlib.  But again, without more information it's impossible to know.
+         So please don't post questions like this.  
+
+         <p>
+         If you think you found some kind of bug or problem in dlib then feel
+         free to submit a dlib issue on <a href="https://github.com/davisking/dlib/issues">github</a>.  
+         But include the version of dlib you are using, what you
+         are trying, what happened, what you expected to have happened instead, etc.
+         </p>
+
+         <p>
+         On the other hand, if you haven't found a bug or problem in dlib, but
+         instead are looking for machine learning/computer vision/programming
+         help then post your question to <a href="http://stackoverflow.com/questions/tagged/dlib">stack overflow with the dlib tag</a>.
+         </p>
+      </question>
+
+      <question text="How can I use dlib in Visual Studio?">
+         <p>
+            First, note that you need a version of Visual Studio with decent
+            C++11 support.  This means you need Visual Studio 2015 or newer.
+         </p>
+         There are instructions on the <a href="compile.html">How to Compile</a> page.  
+         If you do not understand the instructions in the "<b>Compiling on Windows Using Visual Studio</b>" section
+         or are getting errors then follow the instructions in the "<b>Compiling on Any Operating System Using CMake</b>"
+         section.  In particular, <a href="http://www.cmake.org/download/">install CMake</a> and then type 
+         these exact commands from within the root of the dlib distribution:  
+<code_box>
+cd examples
+mkdir build
+cd build
+del /F /S /Q *
+cmake ..
+cmake --build . --config Release
+</code_box>
+         That should compile the dlib examples in visual studio.  The output executables will appear in the Release folder.
+         The <tt>del /F /S /Q *</tt> command is to make sure you clear out any extraneous files you might have placed in 
+         the build folder and is not necessary if build begins empty.
+      </question>
+
+      <!-- ****************************************** -->
+
+      <question text="Why is dlib slow?">
+         Dlib isn't slow.  I get this question many times a week and 95% of the time it's from someone
+         using Visual Studio who has compiled their program in Debug mode rather than the optimized
+         Release mode.  So if you are using Visual Studio then realize that Visual Studio has these two modes.  
+         The default is Debug.  The mode is selectable via a drop down:
+         <p><img src="vs_mode_1.png"/></p>
+         Debug mode disables compiler optimizations.  So the program will be very slow if you run it in Debug mode.
+         So click the drop down,
+         <p><img src="vs_mode_2.png"/></p>
+         and select Release.
+         <p><img src="vs_mode_3.png"/></p>
+         Then when you compile the program it will appear in a folder named Release rather than in a folder named Debug.  
+
+         <br/>
+         <br/>
+         Finally, you can enable either SSE4 or AVX instruction use.  These will make certain operations much faster (e.g. face detection).
+         You do this using <a href="http://www.cmake.org/download/">CMake</a>'s cmake-gui tool.  For example, if you execute
+         these commands you will get the cmake-gui screen:
+<code_box>
+cd examples
+mkdir build
+cd build
+cmake .. 
+cmake-gui .
+</code_box>
+         Which looks like this:
+         <p><img src="vs-cmake-gui.png"/></p>
+         Where you can select SSE4 or AVX instruction use.  Then you click configure and then generate. After that
+         when you build your visual studio project some things will be faster.
+         
+         Finally, note that AVX is a little bit faster than SSE4 but if your computer is fairly old it might
+         not support it.  In that case, either buy a new computer or use SSE4
+         instructions. 
+      </question>
+
+      <!-- ****************************************** -->
+
+
+
+      <question text="How can I cite dlib?">
+         If you use dlib in your research then please use the following citation:
+         <br/>
+         <br/>
+Davis E. King. <a href="http://jmlr.csail.mit.edu/papers/volume10/king09a/king09a.pdf">Dlib-ml: A Machine Learning Toolkit</a>. 
+   <i>Journal of Machine Learning Research</i> 10, pp. 1755-1758, 2009
+         <br/>
+         <pre>
+
+@Article{dlib09,
+  author = {Davis E. King},
+  title = {Dlib-ml: A Machine Learning Toolkit},
+  journal = {Journal of Machine Learning Research},
+  year = {2009},
+  volume = {10},
+  pages = {1755-1758},
+}
+         </pre>
+      </question>
+
+      <!-- ****************************************** -->
+
+
+
+      <question text="Why isn't serialization working?">
+         Here are the possibilities:
+         <ul>
+            <li>You are using a file stream and forgot to put it into binary mode.  
+               You need to do something like this:
+<code_box>
+std::ifstream fin("myfile", std::ios::binary);
+</code_box>
+or
+<code_box>
+std::ofstream fout("myfile", std::ios::binary);
+</code_box>
+
+If you don't give <tt>std::ios::binary</tt> then the iostream will mess with the binary data and cause serialization
+to not work right.  
+            </li>
+
+            <br/>
+            <li>The iostream is in a bad state.  You can check the state by calling <tt>mystream.good()</tt>.
+            If it returns false then the stream is in an error state such as end-of-file or maybe it failed
+            to do the I/O.  Also note that if you close a file stream and reopen it you might have to call
+            <tt>mystream.clear()</tt> to clear out the error flags.
+            </li>
+         </ul>
+
+      </question>
+      <!-- ****************************************** -->
+
+      <question text="How do I set the size of a matrix at runtime?">
+         Long answer, read the <a href="matrix_ex.cpp.html">matrix example program</a>.
+         <br/><br/>
+         Short answer, here are some examples:
+<code_box>
+matrix&lt;double&gt; mat;
+mat.set_size(4,5);
+
+matrix&lt;double,0,1&gt; column_vect;
+column_vect.set_size(6);
+
+matrix&lt;double,0,1&gt; column_vect2(6);  // give size to constructor
+
+matrix&lt;double,1&gt; row_vect;
+row_vect.set_size(5);
+</code_box>
+
+      </question>
+      <!-- ****************************************** -->
+
+      <question text="Where is the documentation for &lt;object/function&gt;?">
+         Every class and function in dlib is documented in detail.  
+         If you can't find something then check the <a href="term_index.html">index</a>.
+         <br/><br/>
+         Also, the bulk of the documentation can be found by clicking the 
+         <more_details/> buttons.  <b>So you should click on the "more details" buttons and read the documentation</b>.  
+         
+         <p>A lot of people
+         post questions like "There is no documentation for some_random_function(), how do I use it?", when
+         in reality the function is documented in detail.  Between the index, site search, and main website which 
+         breaks down functions/classes into topical categories there is no excuse for not being able to find 
+         the documentation for a function or class.  This is especially true if you know its name because you can
+         jump right to it using the <a href="term_index.html">index</a> or even a simple google search.  
+         So if you are posting a question like "I don't understand how something works" and obviously haven't read the
+         documentation then you are just going to get referred to this FAQ.  So please read the documentation before
+         asking questions.
+         </p>
+      </question>
+
+
+      <!-- ****************************************** -->
+
+      <question text="How does dlib interface with other libraries/tools?">
+         There should never be anything in dlib that prevents you from using or 
+         interacting with other libraries.  Moreover, there are some additional tools
+         in dlib to make some interactions easier:  
+
+         <ul>
+            <li><b>BLAS and LAPACK libraries</b> are used by the <a href="linear_algebra.html#matrix">matrix</a>
+            automatically if you <tt>#define</tt> DLIB_USE_BLAS and/or DLIB_USE_LAPACK and link against
+            the appropriate library files.  Note that the CMakeLists.txt file that comes with dlib will
+            do this for you automatically in many instances.</li><br/>
+
+            <li><b>Armadillo and Eigen libraries</b> have matrix objects which can be converted into
+            dlib matrix objects by calling dlib::mat() on them.</li><br/>
+
+            <li><b>OpenCV</b> image objects can be converted into a form usable by dlib routines
+            by using <a href="imaging.html#cv_image">cv_image</a>.  You can also convert from a
+            dlib matrix or image to an OpenCV Mat using dlib::<a href="imaging.html#toMat">toMat</a>().</li><br/>
+
+            <li><b>Google Protocol Buffers</b> can be serialized by the dlib 
+            <a href="other.html#serialize">serialization</a> routines.  
+            This means that, for example, you can pass protocol buffer objects through a 
+            <a href="network.html#bridge">bridge</a>.
+            </li><br/>
+
+            <li><b>libpng and libjpeg</b> are used by <a
+            href="imaging.html#load_image">load_image</a> whenever
+            DLIB_PNG_SUPPORT and DLIB_JPEG_SUPPORT are defined respectively.
+            You must also tell your compiler to link against these libraries to
+            use them. However, CMake will try to link against them
+            automatically if they are installed.</li><br/>
+
+            <!--<li><b>FFTW</b> is used by the fft() and ifft() routines if you #define DLIB_USE_FFTW and
+            link to fftw3.  Otherwise dlib uses its own slower default implementation.  </li><br/> -->
+
+            <li><b>SQLite</b> is used by the <a href="other.html#database">database</a> object.  In
+            fact, it is just a wrapper around SQLite's C interface which simplifies its use (e.g. 
+            makes resource management use RAII).</li>
+
+         </ul>
+      </question>
+
+   </questions>
+
+
+
+
+   <!-- ************************************************************************* -->
+
+   <questions group="Machine Learning">
+
+      <question text="Why is RVM training is really slow?">
+         The optimization algorithm is somewhat unpredictable.  Sometimes it is fast and 
+         sometimes it is slow.  What usually makes it really slow is if you use a radial basis
+         kernel and you set the gamma parameter to something too large.  This causes the
+         algorithm to start using a whole lot of relevance vectors (i.e. basis vectors) which
+         then makes it slow.  The algorithm is only fast as long as the number of relevance vectors
+         remains small but it is hard to know beforehand if that will be the case.  
+         <p>
+            You should try <a href="ml.html#krr_trainer">kernel ridge regression</a> instead since it
+            also doesn't take any parameters but is always very fast.
+         </p>
+
+      </question>
+
+      <!-- ****************************************** -->
+
+      <question text="Why is cross_validate_trainer_threaded() crashing?">
+         This function makes a copy of your training data for each thread.  So you are probably running out
+         of memory.  To avoid this, use the <a href="algorithms.html#randomly_subsample">randomly_subsample</a> function
+         to reduce the amount of data you are using or use fewer threads. 
+         <p>
+            For example, you could reduce the amount of data by saying this:
+<code_box>
+// reduce to only 1000 samples
+cross_validate_trainer_threaded(trainer, 
+                                randomly_subsample(samples, 1000), 
+                                randomly_subsample(labels,  1000), 
+                                4,   // num folds
+                                4);  // num threads
+</code_box>
+         </p>
+      </question>
+
+      <!-- ****************************************** -->
+
+      <question text="How can I define a custom kernel?">
+         See the <a href="using_custom_kernels_ex.cpp.html">Using Custom Kernels</a> example program.
+      </question>
+
+      <!-- ****************************************** -->
+
+      <question text="Can you give advice on feature generation/kernel selection?">
+         <p>
+            Picking the right kernel all comes down to understanding your data, and obviously this is 
+            highly dependent on your problem.  
+         </p>
+
+         <p>
+            One thing that's sometimes useful is to plot each feature against the target value.  You can get an idea of 
+            what your overall feature space looks like and maybe tell if a linear kernel is the right solution.  But 
+            this still hides important information from you.  For example, imagine you have two diagonal lines which 
+            are very close together and are both the same length.  Suppose one line is of the +1 class and the other is the -1 
+            class.  Each feature (the x or y coordinate values) by itself tells you almost nothing about which class 
+            a point belongs to but together they tell you everything you need to know.  
+         </p>
+
+         <p>
+            On the other hand, if you know something about the data you are working with then you can also try and 
+            generate your own features.  So for example, if your data is a bunch of images and you know that one 
+            of your classes contains a lot of lines then you can make a feature that attempts to measure the number 
+            of lines in an image using a hough transform or sobel edge filter or whatever.  Generally, try and 
+            think up features which should be highly correlated with your target value.  A good way to do this is 
+            to try and actually hand code N solutions to the problem using whatever you know about your data or 
+            domain.  If you do a good job then you will have N really great features and a linear or rbf kernel 
+            will probably do very well when using them.
+         </p>
+
+         <p>
+            Or you can just try a whole bunch of kernels, kernel parameters, and training algorithm options while 
+            using cross validation.  I.e. when in doubt, use brute force :)   There is an example of that kind of 
+            thing in the <a href="model_selection_ex.cpp.html">model selection</a> example program. 
+         </p>
+      </question>
+
+      <!-- ****************************************** -->
+
+      <question text="Why does my decision_function always give the same output?">
+         This happens when you use the radial_basis_kernel and you set the gamma value to
+         something highly inappropriate.  To understand what's happening lets imagine your
+         data has just one feature and its value ranges from 0 to 7.  Then what you want is a 
+         gamma value that gives nice Gaussian bumps like the one in this graph: <br/>
+
+         <center><image src="rbf_normal.gif"/></center>
+
+         <br/>
+         However, if you make gamma really huge you will get this (it's zero everywhere except for one place):
+         <br/>
+         <center><image src="rbf_big_gamma.gif"/></center>
+
+         <br/>
+         Or if you make gamma really small then it will be 1.0 everywhere:
+         <br/>
+         <center><image src="rbf_small_gamma.gif"/></center>
+
+         <p>
+            So you need to pick the gamma value so that it is scaled reasonably to your data.  A <i><font color="red">good rule of
+            thumb (i.e. not the optimal gamma, just a heuristic guess)</font></i> is the following:
+         </p>
+         <code_box>const double gamma = 1.0/compute_mean_squared_distance(randomly_subsample(samples, 2000));</code_box>
+           
+      </question>
+
+      <!-- ****************************************** -->
+
+   </questions>
+
+   <!-- ************************************************************************* -->
+
+
+   <questions group="Computer Vision">
+      <question text="Why doesn't the object detector I trained work?">
+         There are three general mistakes people make when trying to train an object detector with dlib. 
+         <ul>
+            <li><h3>Not labeling all the objects in each image</h3>
+               The tools for training object detectors in dlib use the <a href="https://arxiv.org/abs/1502.00046">Max-Margin Object Detection</a>
+               loss.  This loss optimizes the performance of the detector on the whole image, not on some subset of windows cropped from the training data.
+               That means it counts the number of missed detections and false alarms for each of the training images and tries to find a way
+               to minimize the sum of these two error metrics.  For this to be possible, <b>you must label all the objects in each training image</b>.
+               If you leave unannotated objects in some of your training images then the loss will think any detections on these unannotated objects
+               are false alarms, and will therefore try to find a detector that doesn't detect them.  If you have enough unannotated objects, the 
+               most accurate detector will be the one that never detects anything.  That's obviously not what you want.  So make sure you annotate all the
+               objects in each image.
+               <p>
+                  Sometimes annotating all the objects in each image is too
+                  onerous, or there are ambiguous objects you don't care about.
+                  In these cases you should annotate these objects you don't
+                  care about with ignore boxes so that the MMOD loss knows to
+                  ignore them.  You can do this with dlib's imglab tool by
+                  selecting a box and pressing i.  Moreover, there are two ways
+                  the code treats ignore boxes.  When a detector generates a
+                  detection it compares it against any ignore boxes and ignores
+                  it if the boxes "overlap".  Deciding if they overlap is based
+                  on either their intersection over union or just basic percent
+                  coverage of one by another.  You have to think about what
+                  mode you want when you annotate things and configure the
+                  training code appropriately.  The default behavior is to use
+                  intersection over union to measure overlap.  However, if you
+                  wanted to simply mask out large parts of an image you
+                  wouldn't want to use intersection over union to measure
+                  overlap since small boxes contained entirely within the large
+                  ignored region would have small IoU with the big ignore region and thus not "overlap"
+                  the ignore region.  In this case you should change the
+                  settings to reflect this before training.  The available configuration
+                  options are discussed in great detail in parts of <a href="#Whereisthedocumentationforobjectfunction">dlib's documentation</a>.
+               </p>
+            </li>
+
+            <li><h3>Using training images that don't look like the testing images</h3>
+               This should be obvious, but needs to be pointed out.  If there
+               is some clear difference between your training and testing
+               images then you have messed up.  You need to show the training
+               algorithm real images so it can learn what to do.  If instead
+               you only show it images that look obviously different from your
+               testing images don't be surprised if, when you run the detector
+               on the testing images, it doesn't work.  As a rule of thumb,
+               <b>a human should not be able to tell if an image came from the training dataset or testing dataset</b>.  
+
+               <p>
+                  Here are some examples of bad datasets:
+                  <ul>
+                     <li>A training dataset where objects always appear with
+                        some specific orientation but the testing images have a
+                        diverse set of orientations.</li>
+                     <li>A training dataset where objects are tightly cropped, but testing images that are uncropped.</li>
+                     <li>A training dataset where objects appear only on a perfectly white background with nothing else present, but testing images where objects appear in a normal environment like living rooms or in natural scenes.</li>
+                  </ul>
+               </p>
+
+               <p>
+                  Another way you can mess this up is when using the <a
+                  href="imaging.html#random_cropper">random_cropper</a> to jitter your training data, which is
+                  common when training a CNN or other deep model.  In general, the random_cropper finds images
+                  that are more or less centered on your objects of interest and it also scales the images so
+                  the object has some user specified minimum size.  That's all fine.  But what can happen is
+                  you train a model that gets 0 training error but when you go and use it it doesn't detect
+                  any objects.  Why is that?  It's probably because all the objects in your normal images, the
+                  ones you give to the random_cropper, are really small.  Smaller than the min size you told
+                  the cropper to make them. So now your testing images are really different from your training
+                  images.  Moreover, in general object detectors have some minimum size they scan and if
+                  objects are smaller than that they will never be found.  Another related issue is all your
+                  uncropped images might show objects at the very border of the image. But the random_cropper
+                  will center the objects in the crops, by padding with zeros if necessary.  Again, <b>make your
+                  testing images look like the training images</b>.  Pad the edges of your images with zeros if
+                  needed.
+               </p>
+            </li>
+
+            <li><h3>Using a HOG based detector but not understanding the limits of HOG templates</h3>
+               The <a href="fhog_object_detector_ex.cpp.html">HOG detector</a> is very fast and generally easy to train.  However, you
+               have to be aware that HOG detectors are essentially rigid templates that are scanned over an image.  So a single HOG detector
+               isn't going to be able to detect objects that appear in a wide range of orientations or undergo complex deformations or have complex
+               articulation.
+               <p>
+                  For example, a HOG detector isn't going to be able to learn to detect human faces that are upright as well as faces rotated 90 degrees.
+                  If you wanted to deal with that you would be best off training 2 detectors. One for upright faces and another for 90 degree rotated faces.
+                  You can efficiently run multiple HOG detectors at once using the <a href="imaging.html#evaluate_detectors">evaluate_detectors</a> function, so it's not a huge deal to do this.  Dlib's imglab tool also has a --cluster option that will help you split a training dataset into clusters that can 
+                  be detected by a single HOG detector.  You will still need to manually review and clean the dataset after applying --cluster, but it makes
+                  the process of splitting a dataset into coherent poses, from the point of view of HOG, a lot easier.
+               </p>
+               <p>
+                  A related issue arises because HOG is a rigid template, which is that the boxes in your training data need to all have essentially the same
+                  aspect ratio.  For instance, a single HOG filter can't possibly detect objects that are both 100x50 pixels and 50x100 pixels.  To do this you 
+                  would need to split your dataset into two parts, objects with a 2:1 aspect ratio and objects with a 1:2 aspect ratio and then train two separate
+                  HOG detectors, one for each aspect ratio.  
+               </p>
+               <p>
+                  However, it should be emphasized that even using multiple HOG detectors will only get you so far.  So at some point you should consider
+                  using a <a href="ml.html#loss_mmod_">CNN based detection method</a> since CNNs can generally deal with arbitrary
+                  rotations, poses, and deformations with one unified
+                  detector.
+               </p>
+            </li>
+         </ul>
+      </question>
+   </questions>
+
+   <!-- ************************************************************************* -->
+
+   <questions group="Deep Learning">
+      <question text="Why can't I use the DNN module with Visual Studio?">
+         You can, but you need to use Visual Studio 2015 Update 3 or newer since prior versions
+         had bad C++11 support.  To make this as confusing as possible,
+         Microsoft has released multiple different versions of "Visual Studio
+         2015 Update 3".  As of October 2016, the version available from the
+         Microsoft web page has good enough C++11 support to compile the DNN
+         tools in dlib.  So make sure you have a version no older than October
+         2016.
+         <p>
+            To make this even more complicated, Visual Studio 2017 had
+            regressions in its C++11 support.  So all versions of Visual Studio
+            2017 prior to December 2017 would just hang if you tried to compile
+            the DNN examples.  Happily, the newest versions of Visual Studio
+            2017 appear to have good C++11 support and will compile the DNN
+            codes without any issue.  So make sure your Visual Studio is
+            fully updated.
+         </p>
+         <p>
+            Finally, it should be noted that you should give the <tt>-T host=x64</tt>
+            cmake option when generating a Visual Studio project.  If you don't
+            do this then you will get the default Visual Studio toolchain,
+            <b>which runs the compiler in 32bit mode, restricting it to 2GB of
+            RAM, leading to compiler crashes due to it running out of RAM in some
+            cases</b>.  This isn't the 1990s anymore, so you should probably
+            run your compiler in 64bit mode so it can use your computer's RAM.
+            Giving <tt>-T host=x64</tt> will let Visual Studio use as much RAM
+            as it needs.
+         </p>
+      </question>
+
+      <question text="Why can't I change the network architecture at runtime?">
+          A major design goal of this API is to let users create new loss
+          layers, computational layers, and solvers without needing to
+          understand or even look at the dlib internals.  A lot of the API
+          decisions are based on what makes the interface a user needs to
+          implement to create new layers as simple as possible.  In particular,
+          designing the API in this compile-time static way makes it simple for
+          these use cases.  
+          <p>
+             Here is an example of one problem it addresses.  Since dlib
+             exposes the entire network architecture to the C++ type system we
+             can get automatic serialization of networks.  Without this, we
+             would have to resort to the kind of hacky global layer registry
+             used in other tools that compose networks entirely at runtime.
+          </p>
+          <p>
+             Another nice feature is that we get to use C++11 alias template
+             statements to create network sub-blocks, which we can then use to easily
+             define very large networks.  There are examples of this in <a
+             href="dnn_introduction2_ex.cpp.html">this example program</a>.  It
+             should also be pointed out that it takes days or even weeks to
+             train one network.  So it isn't as if you will be writing a
+             program that loops over large numbers of networks and trains them
+             all.  This makes the time needed to recompile a program to change
+             the network irrelevant compared to the entire training time.
+             Moreover, there are plenty of compile time constructs in C++ you
+             can use to enumerate network architectures (e.g. loop
+             over filter widths) if you really wanted to do so.  
+          </p>
+          <p>
+             All that said, if you think you found a compelling use case that isn't supported
+             by the current API feel free to post a <a href="https://github.com/davisking/dlib/issues">github</a> issue.
+          </p>
+      </question>
+   </questions>
+
+   <!-- ************************************************************************* -->
+
+
+</doc>

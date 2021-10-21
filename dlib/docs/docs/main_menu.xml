@@ -1,0 +1,681 @@
+<?html version="1.0" encoding="ISO-8859-1"?>
+
+<doc>
+   <menu width="145">
+    <top>
+      <section>
+         <name>The Library</name>
+         <item>
+            <name>Algorithms</name>
+            <link>algorithms.html</link>
+            <chm_sub>algorithms.xml</chm_sub>
+         </item>
+         <item>
+            <name>Graph Tools</name>
+            <link>graph_tools.html</link>
+            <chm_sub>graph_tools.xml</chm_sub>
+         </item>
+         <item>
+            <name>Optimization</name>
+            <link>optimization.html</link>
+            <chm_sub>optimization.xml</chm_sub>
+         </item>
+         <item>
+            <name>Machine Learning</name>
+            <link>ml.html</link>
+            <chm_sub>ml.xml</chm_sub>
+         </item>
+         <item>
+            <name>Linear Algebra</name>
+            <link>linear_algebra.html</link>
+            <chm_sub>linear_algebra.xml</chm_sub>
+         </item>
+         <item>
+            <name>Bayesian Nets</name>
+            <link>bayes.html</link>
+            <chm_sub>bayes.xml</chm_sub>
+         </item>
+         <item>
+            <name>Containers</name>
+            <link>containers.html</link>
+            <chm_sub>containers.xml</chm_sub>
+         </item>
+         <item>
+            <name>API Wrappers</name>
+            <link>api.html</link>
+            <chm_sub>api.xml</chm_sub>
+         </item>
+         <item>
+            <name>Networking</name>
+            <link>network.html</link>
+            <chm_sub>network.xml</chm_sub>
+         </item>
+         <item>
+            <name>Compression</name>
+            <link>compression.html</link>
+            <chm_sub>compression.xml</chm_sub>
+         </item>
+         <item>
+            <name>Parsing</name>
+            <link>parsing.html</link>
+            <chm_sub>parsing.xml</chm_sub>
+         </item>
+         <item>
+            <name>Image Processing</name>
+            <link>imaging.html</link>
+            <chm_sub>imaging.xml</chm_sub>
+         </item>
+         <item>
+            <name>Metaprogramming</name>
+            <link>metaprogramming.html</link>
+            <chm_sub>metaprogramming.xml</chm_sub>
+         </item>
+         <item>
+            <name>Miscellaneous</name>
+            <link>other.html</link>
+            <chm_sub>other.xml</chm_sub>
+         </item>
+      </section>
+ 
+
+      <section>
+         <name>Help/Info</name>
+         <chm>
+            <item>
+               <name>Home</name>
+               <link>index.html</link>
+            </item>
+         </chm>
+         <web>
+            <item>
+               <name>Home</name>
+               <link>http://dlib.net</link>
+            </item>
+         </web>
+         <item>
+            <name>Dlib Blog</name>
+            <link>http://blog.dlib.net</link>
+         </item>
+         <!--
+         <item>
+            <name>Forums</name>
+            <link>https://sourceforge.net/p/dclib/discussion</link>
+         </item>
+         -->
+         <item>
+            <name>Who uses dlib?</name>
+            <link>http://sourceforge.net/p/dclib/wiki/Known_users/</link>
+         </item>
+
+         <item>
+            <name>Introduction</name>
+            <link>intro.html</link>
+            <chm_sub>intro.xml</chm_sub>
+         </item>
+         <item>
+            <name>Python API</name>
+            <link>python/index.html</link>
+         </item>
+         <item>
+            <name>How to compile</name>
+            <link>compile.html</link>
+         </item>
+         <item>
+            <name>Suggested Books</name>
+            <link>books.html</link>
+         </item>
+         <item>
+            <name>License</name>
+            <link>license.html</link>
+         </item>
+         <item>
+            <name>How to contribute</name>
+            <link>howto_contribute.html</link>
+         </item>
+         <item>
+            <name>FAQ</name>
+            <link>faq.html</link>
+         </item>
+         <item>
+            <name>Index</name>
+            <link>term_index.html</link>
+         </item>
+         <item nolink="true">
+            <name>Examples: Python</name>
+            <sub>
+               <item>
+                  <name>Global Optimization</name>
+                  <link>global_optimization.py.html</link>
+               </item>
+               <item>
+                  <name>Face Clustering</name>
+                  <link>face_clustering.py.html</link>
+               </item>
+               <item>
+                  <name>Face Jittering/Augmentation</name>
+                  <link>face_jitter.py.html</link>
+               </item>
+               <item>
+                  <name>Face Alignment</name>
+                  <link>face_alignment.py.html</link>
+               </item>
+               <item>
+                  <name>Video Object Tracking</name>
+                  <link>correlation_tracker.py.html</link>
+               </item>
+               <item>
+                  <name>Binary Classification</name>
+                  <link>svm_binary_classifier.py.html</link>
+               </item>
+               <item>
+                  <name>Face Landmark Detection</name>
+                  <link>face_landmark_detection.py.html</link>
+               </item>
+               <item>
+                  <name>Face Recognition</name>
+                  <link>face_recognition.py.html</link>
+               </item>
+               <item>
+                  <name>Find Candidate Object Locations</name>
+                  <link>find_candidate_object_locations.py.html</link>
+               </item>
+               <item>
+                  <name>Train Shape Predictor</name>
+                  <link>train_shape_predictor.py.html</link>
+               </item>
+               <item>
+                  <name>Face Detector</name>
+                  <link>face_detector.py.html</link>
+               </item>
+               <item>
+                  <name>CNN Face Detector</name>
+                  <link>cnn_face_detector.py.html</link>
+               </item>
+               <item>
+                  <name>Train Object Detector</name>
+                  <link>train_object_detector.py.html</link>
+               </item>
+               <item>
+                  <name>Sequence Segmenter</name>
+                  <link>sequence_segmenter.py.html</link>
+               </item>
+               <item>
+                  <name>Structural Support Vector Machines</name>
+                  <link>svm_struct.py.html</link>
+               </item>
+               <item>
+                  <name>SVM-Rank</name>
+                  <link>svm_rank.py.html</link>
+               </item>
+               <item>
+                  <name>Linear Assignment Problems</name>
+                  <link>max_cost_assignment.py.html</link>
+               </item>
+            </sub>
+         </item>
+         <item nolink="true">
+            <name>Examples: C++</name>
+            <sub>
+               <item>
+                  <name>Deep Learning Introduction Part 1</name>
+                  <link>dnn_introduction_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Learning Introduction Part 2</name>
+                  <link>dnn_introduction2_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Learning Introduction Part 3</name>
+                  <link>dnn_introduction3_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Learning Imagenet Classifier</name>
+                  <link>dnn_imagenet_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Learning DCGAN</name>
+                  <link>dnn_dcgan_train_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Learning Imagenet Trainer </name>
+                  <link>dnn_imagenet_train_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Learning Inception</name>
+                  <link>dnn_inception_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Metric Learning Introduction</name>
+                  <link>dnn_metric_learning_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Metric Learning on Images</name>
+                  <link>dnn_metric_learning_on_images_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Face Recognition</name>
+                  <link>dnn_face_recognition_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Learning Semantic Segmentation Trainer</name>
+                  <link>dnn_semantic_segmentation_train_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Learning Semantic Segmentation</name>
+                  <link>dnn_semantic_segmentation_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Learning Instance Segmentation</name>
+                  <link>dnn_instance_segmentation_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Learning Instance Segmentation Trainer</name>
+                  <link>dnn_instance_segmentation_train_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Learning Vehicle Detection</name>
+                  <link>dnn_mmod_find_cars_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Learning Multi-Class Vehicle Detection</name>
+                  <link>dnn_mmod_find_cars2_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Learning Vehicle Detection Trainer</name>
+                  <link>dnn_mmod_train_find_cars_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Learning Face Detection</name>
+                  <link>dnn_mmod_face_detection_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Learning Dog Hipsterizer</name>
+                  <link>dnn_mmod_dog_hipsterizer.cpp.html</link>
+               </item>
+               <item>
+                  <name>Deep Learning Max-Margin Object Detection</name>
+                  <link>dnn_mmod_ex.cpp.html</link>
+               </item>
+
+               <item>
+                  <name>Random Cropper</name>
+                  <link>random_cropper_ex.cpp.html</link>
+               </item>
+
+               <item>
+                  <name>Linear Model Predictive Control</name>
+                  <link>mpc_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Video Object Tracking</name>
+                  <link>video_tracking_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>SQLite</name>
+                  <link>sqlite_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Hough Transform</name>
+                  <link>hough_transform_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Webcam Face Pose Estimation</name>
+                  <link>webcam_face_pose_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Linear Assignment Problems</name>
+                  <link>max_cost_assignment_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Learning to Track</name>
+                  <link>learning_to_track_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Structural Support Vector Machines</name>
+                  <link>svm_struct_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Sequence Segmentation</name>
+                  <link>sequence_segmenter_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Train Object Detector</name>
+                  <link>train_object_detector.cpp.html</link>
+               </item>
+               <item>
+                  <name>One Class Classifiers</name>
+                  <link>one_class_classifiers_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Parallel For Loops</name>
+                  <link>parallel_for_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Numerical Integration</name>
+                  <link>integrate_function_adapt_simp_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>SVM-Rank</name>
+                  <link>svm_rank_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>BSP</name>
+                  <link>bsp_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Assignment Learning</name>
+                  <link>assignment_learning_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Graph Labeling</name>
+                  <link>graph_labeling_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Sequence Labeling</name>
+                  <link>sequence_labeler_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Object Detector</name>
+                  <link>object_detector_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Object Detector Advanced</name>
+                  <link>object_detector_advanced_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Running Stats</name>
+                  <link>running_stats_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Config File Reader</name>
+                  <link>config_reader_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Member Function Pointer</name>
+                  <link>member_function_pointer_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Empirical Kernel Map</name>
+                  <link>empirical_kernel_map_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Linear Manifold Regularizer</name>
+                  <link>linear_manifold_regularizer_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Kernel RLS Regression</name>
+                  <link>krls_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Optimization</name>
+                  <link>optimization_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Non-Linear Least Squares</name>
+                  <link>least_squares_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Kernel RLS Filtering</name>
+                  <link>krls_filter_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Kernel Centroid</name>
+                  <link>kcentroid_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Kernel K-Means Clustering</name>
+                  <link>kkmeans_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Matrix</name>
+                  <link>matrix_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Matrix Expressions</name>
+                  <link>matrix_expressions_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>3D Point Cloud</name>
+                  <link>3d_point_cloud_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Image</name>
+                  <link>image_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>FHOG Feature Extraction</name>
+                  <link>fhog_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>FHOG Object Detection</name>
+                  <link>fhog_object_detector_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Face Detection</name>
+                  <link>face_detection_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Face Landmark Detection</name>
+                  <link>face_landmark_detection_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Train Shape Predictor</name>
+                  <link>train_shape_predictor_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>SURF</name>
+                  <link>surf_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Rank Features</name>
+                  <link>rank_features_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Relevance Vector Regression</name>
+                  <link>rvm_regression_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Relevance Vector Classification</name>
+                  <link>rvm_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Kernel Ridge Regression</name>
+                  <link>krr_regression_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>KRR Classification</name>
+                  <link>krr_classification_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Nu-Support Vector Machine</name>
+                  <link>svm_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>C-Support Vector Machine</name>
+                  <link>svm_c_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Using Custom Kernels</name>
+                  <link>using_custom_kernels_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Support Vector Regression</name>
+                  <link>svr_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Multiclass Classification</name>
+                  <link>multiclass_classification_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Custom Trainers</name>
+                  <link>custom_trainer_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Model Selection</name>
+                  <link>model_selection_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Online SVM</name>
+                  <link>svm_pegasos_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Sparse Vectors</name>
+                  <link>svm_sparse_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Neural Network</name>
+                  <link>mlp_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Bayesian Network From Disk</name>
+                  <link>bayes_net_from_disk_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Bayesian Network GUI</name>
+                  <link>bayes_net_gui_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Bayesian Network</name>
+                  <link>bayes_net_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Std C++ Allocator</name>
+                  <link>std_allocator_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>HTTP Server</name>
+                  <link>server_http_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Base64 Encoder</name>
+                  <link>file_to_code_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Sockstreambuf</name>
+                  <link>sockstreambuf_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>IO Streams Server</name>
+                  <link>server_iostream_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>IO Socket Streams</name>
+                  <link>iosockstream_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Logger</name>
+                  <link>logger_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Logger Advanced</name>
+                  <link>logger_ex_2.cpp.html</link>
+               </item>
+               <item>
+                  <name>Logger Custom Output</name>
+                  <link>logger_custom_output_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>XML Parser</name>
+                  <link>xml_parser_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Threads</name>
+                  <link>threads_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Directory Navigation</name>
+                  <link>dir_nav_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>GUI</name>
+                  <link>gui_api_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Sockets</name>
+                  <link>sockets_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Queue</name>
+                  <link>queue_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Quantum Computing</name>
+                  <link>quantum_computing_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Bridge</name>
+                  <link>bridge_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Pipe</name>
+                  <link>pipe_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Pipe 2</name>
+                  <link>pipe_ex_2.cpp.html</link>
+               </item>
+               <item>
+                  <name>Timer</name>
+                  <link>timer_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Compress Stream</name>
+                  <link>compress_stream_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Cmd Line Parser</name>
+                  <link>compress_stream_ex.cpp.html#_top</link>
+               </item>
+               <item>
+                  <name>Threaded Object</name>
+                  <link>threaded_object_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Thread Pool</name>
+                  <link>thread_pool_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Thread Function</name>
+                  <link>thread_function_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Multithreaded Object</name>
+                  <link>multithreaded_object_ex.cpp.html</link>
+               </item>
+            </sub>
+         </item>
+      </section>
+ 
+      <section>
+         <name>Current Release</name>
+         <chm><item nolink="true">Version: <current_release/></item></chm>
+         <item>
+            <name>Release Notes</name>
+            <link>release_notes.html</link>
+         </item>
+         <item>
+            <name>Change Log</name>
+            <link>change_log.html</link>
+         </item>
+      
+      </section>
+
+      <web>
+         <download_button>
+            <name><div id="dlname">Download dlib</div>
+                  <div id="dlib_version">ver.<current_release/></div>
+            </name>
+            <link>http://dlib.net/files/dlib-<current_release/>.tar.bz2</link>
+         </download_button>
+      </web>
+    </top>
+
+   <bottom>
+      Last Modified:<br/>
+      <last_modified_date/>
+   </bottom>
+   
+   </menu>
+
+</doc>
+

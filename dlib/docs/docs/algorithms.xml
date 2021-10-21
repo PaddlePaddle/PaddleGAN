@@ -1,0 +1,1146 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="stylesheet.xsl"?>
+
+<doc>
+   <title>Algorithms</title>
+
+   <!-- ************************************************************************* -->
+
+   <body>
+
+         <p>
+            This page documents library components that are all basically just implementations of 
+            mathematical functions or algorithms that don't fit in any of the other pages
+            of the dlib documentation.  So this includes things like checksums, cryptographic hashes, 
+            sorting, etc.
+         </p>
+
+   </body>
+
+   <!-- ************************************************************************* -->
+
+   <menu width="150">
+    <top>
+      <section>
+         <name>Tools</name>
+         <item>bigint</item> 
+         <item>disjoint_subsets</item> 
+         <item>disjoint_subsets_sized</item> 
+         <item nolink="true">
+            <name>Quantum Computing</name>
+            <sub>
+               <item>quantum_register</item> 
+               <item>gate</item> 
+            </sub>
+         </item>
+         <item>hsort_array</item> 
+         <item>isort_array</item> 
+         <item>numeric_constants</item> 
+         <item>put_in_range</item> 
+         <item>qsort_array</item> 
+         <item>split_array</item> 
+         <item>integrate_function_adapt_simp</item> 
+         <item>square_root</item> 
+         <item nolink="true">
+            <name>Set Utilities</name>
+            <sub>
+               <item>set_intersection_size</item> 
+               <item>set_intersection</item> 
+               <item>set_union</item> 
+               <item>set_difference</item> 
+            </sub>
+         </item>
+      </section>
+
+
+
+      <section>
+         <name>Statistics</name>
+         <item>rand</item> 
+         <item>median</item> 
+         <item>running_stats</item> 
+         <item>running_stats_decayed</item> 
+         <item>running_scalar_covariance_decayed</item> 
+         <item>running_gradient</item> 
+         <item>running_scalar_covariance</item> 
+         <item>mean_sign_agreement</item> 
+         <item>correlation</item> 
+         <item>covariance</item> 
+         <item>r_squared</item> 
+         <item>mean_squared_error</item> 
+         <item>running_covariance</item> 
+         <item>running_cross_covariance</item> 
+         <item>random_subset_selector</item> 
+         <item>randomly_subsample</item> 
+         <item>find_upper_quantile</item> 
+         <item>count_steps_without_decrease_robust</item> 
+         <item>count_steps_without_decrease</item> 
+         <item>count_steps_without_increase</item> 
+         <item>probability_values_are_increasing</item> 
+         <item>probability_values_are_increasing_robust</item> 
+
+         <item>binomial_random_vars_are_different</item> 
+         <item>event_correlation</item> 
+         <item>max_scoring_element</item> 
+         <item>min_scoring_element</item> 
+
+      </section>
+
+      <section>
+         <name>Hashing</name>
+         <item>md5</item> 
+         <item>crc32</item> 
+         <item>hash</item> 
+         <item>count_bits</item> 
+         <item>hamming_distance</item> 
+         <item>murmur_hash3</item> 
+         <item>murmur_hash3_128bit</item> 
+         <item>gaussian_random_hash</item> 
+         <item>uniform_random_hash</item> 
+         <item>projection_hash</item> 
+         <item>create_random_projection_hash</item> 
+         <item>create_max_margin_projection_hash</item> 
+         <item>hash_samples</item> 
+         <item>hash_similar_angles_64</item> 
+         <item>hash_similar_angles_128</item> 
+         <item>hash_similar_angles_256</item> 
+         <item>hash_similar_angles_512</item> 
+      </section>
+
+      <section>
+         <name>Filtering</name>
+         <item>kalman_filter</item> 
+         <item>rls_filter</item> 
+         <item>momentum_filter</item> 
+         <item>rect_filter</item> 
+         <item>find_optimal_rect_filter</item> 
+         <item>find_optimal_momentum_filter</item> 
+      </section>
+
+    </top>  
+   </menu>
+
+   <!-- ************************************************************************* -->
+   <!-- ************************************************************************* -->
+   <!-- ************************************************************************* -->
+
+   <components>
+   
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>hash_similar_angles_64</name>
+         <file>dlib/lsh.h</file>
+         <spec_file link="true">dlib/lsh/hashes_abstract.h</spec_file>
+         <description>
+            This object is a tool for computing locality sensitive hashes that give
+            vectors with small angles between each other similar hash values.  In
+            particular, this object creates 64 random planes which pass though the
+            origin and uses them to create a 64bit hash.
+         </description>
+
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>hash_similar_angles_128</name>
+         <file>dlib/lsh.h</file>
+         <spec_file link="true">dlib/lsh/hashes_abstract.h</spec_file>
+         <description>
+            This object is a tool for computing locality sensitive hashes that give
+            vectors with small angles between each other similar hash values.  In
+            particular, this object creates 128 random planes which pass though the
+            origin and uses them to create a 128bit hash.
+         </description>
+
+      </component>
+
+   <!-- ************************************************************************* -->
+
+
+      <component>
+         <name>hash_similar_angles_256</name>
+         <file>dlib/lsh.h</file>
+         <spec_file link="true">dlib/lsh/hashes_abstract.h</spec_file>
+         <description>
+            This object is a tool for computing locality sensitive hashes that give
+            vectors with small angles between each other similar hash values.  In
+            particular, this object creates 256 random planes which pass though the
+            origin and uses them to create a 256bit hash.
+         </description>
+
+      </component>
+
+   <!-- ************************************************************************* -->
+
+
+      <component>
+         <name>hash_similar_angles_512</name>
+         <file>dlib/lsh.h</file>
+         <spec_file link="true">dlib/lsh/hashes_abstract.h</spec_file>
+         <description>
+            This object is a tool for computing locality sensitive hashes that give
+            vectors with small angles between each other similar hash values.  In
+            particular, this object creates 512 random planes which pass though the
+            origin and uses them to create a 512bit hash.
+         </description>
+
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>hash_samples</name>
+         <file>dlib/graph_utils_threaded.h</file>
+         <spec_file link="true">dlib/graph_utils/find_k_nearest_neighbors_lsh_abstract.h</spec_file>
+         <description>
+            This is a simple function for hashing a bunch of vectors using a
+            locality sensitive hashing object such as <a href="#hash_similar_angles_128">hash_similar_angles_128</a>.  
+            It is also capable of running in parallel on a multi-core CPU.
+         </description>
+
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component checked="true">
+         <name>bigint</name>
+         <file>dlib/bigint.h</file>
+         <spec_file>dlib/bigint/bigint_kernel_abstract.h</spec_file>
+         <description>
+            This object represents an arbitrary precision unsigned integer.  It's pretty simple.  
+            It's interface is just like a normal int, you don't have to tell it how much memory
+            to use or anything unusual.  It just goes :)       
+         </description>
+         
+         <implementations>
+            <implementation>
+               <name>bigint_kernel_1</name>
+               <file>dlib/bigint/bigint_kernel_1.h</file>
+               <description> 
+                  This implementation is done using an array of unsigned shorts.  It is also reference counted.  
+                  For further details see the above link.  Also note that kernel_2 should be 
+      faster in almost every case so you should really just use that version of the bigint object.
+               </description> 
+    
+               <typedefs>
+                  <typedef>
+                     <name>kernel_1a</name>
+                     <description>is a typedef for bigint_kernel_1</description>
+                  </typedef>
+               </typedefs>                
+               
+            </implementation> 
+                     
+            <implementation>
+               <name>bigint_kernel_2</name>
+               <file>dlib/bigint/bigint_kernel_2.h</file>
+               <description> 
+                  This implementation is basically the same as kernel_1 except it uses the 
+                  Fast Fourier Transform to perform multiplications much faster.  
+               </description> 
+    
+               <typedefs>
+                  <typedef>
+                     <name>kernel_2a</name>
+                     <description>is a typedef for bigint_kernel_2</description>
+                  </typedef>
+               </typedefs>                
+               
+            </implementation> 
+                     
+         </implementations>
+                           
+                        
+      </component>
+      
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>crc32</name>
+         <file>dlib/crc32.h</file>
+         <spec_file>dlib/crc32/crc32_kernel_abstract.h</spec_file>
+         <description>
+            This object represents the CRC-32 algorithm for calculating checksums.   
+         </description>
+         
+      </component>
+            
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>gaussian_random_hash</name>
+         <file>dlib/hash.h</file>
+         <spec_file link="true">dlib/general_hash/random_hashing_abstract.h</spec_file>
+         <description>
+              This function uses hashing to generate Gaussian distributed random values
+              with mean 0 and variance 1.  
+         </description>
+         
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>uniform_random_hash</name>
+         <file>dlib/hash.h</file>
+         <spec_file link="true">dlib/general_hash/random_hashing_abstract.h</spec_file>
+         <description>
+              This function uses hashing to generate uniform random values in the range [0,1).
+         </description>
+         
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>murmur_hash3</name>
+         <file>dlib/hash.h</file>
+         <spec_file>dlib/general_hash/murmur_hash3_abstract.h</spec_file>
+         <description>
+            This function takes a block of memory and returns a 32bit hash.  The 
+            hashing algorithm used is Austin Appleby's excellent 
+            <a href="http://code.google.com/p/smhasher/">MurmurHash3</a>. 
+         </description>
+         
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>murmur_hash3_128bit</name>
+         <file>dlib/hash.h</file>
+         <spec_file link="true">dlib/general_hash/murmur_hash3_abstract.h</spec_file>
+         <description>
+            This function takes a block of memory and returns a 128bit hash.  The 
+            hashing algorithm used is Austin Appleby's excellent 
+            <a href="http://code.google.com/p/smhasher/">MurmurHash3</a>. 
+         </description>
+         
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>kalman_filter</name>
+         <file>dlib/filtering.h</file>
+         <spec_file>dlib/filtering/kalman_filter_abstract.h</spec_file>
+         <description>
+                This object implements the Kalman filter, which is a tool for 
+                recursively estimating the state of a process given measurements
+                related to that process.  To use this tool you will have to 
+                be familiar with the workings of the Kalman filter.  An excellent
+                introduction can be found in the paper:
+                <blockquote>
+                    An Introduction to the Kalman Filter
+                    by Greg Welch and Gary Bishop
+                </blockquote>
+         </description>
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>momentum_filter</name>
+         <file>dlib/filtering.h</file>
+         <spec_file link="true">dlib/filtering/kalman_filter_abstract.h</spec_file>
+         <description>
+            This object is a simple tool for filtering a single scalar value that
+            measures the location of a moving object that has some non-trivial
+            momentum.  Importantly, the measurements are noisy and the object can
+            experience sudden unpredictable accelerations.  To accomplish this
+            filtering we use a simple <a href="#kalman_filter">Kalman filter</a> with a 
+            state transition model of:
+<pre>
+
+   position_{i+1} = position_{i} + velocity_{i} 
+   velocity_{i+1} = velocity_{i} + some_unpredictable_acceleration
+
+</pre>
+
+            and a measurement model of:
+<pre>
+
+   measured_position_{i} = position_{i} + measurement_noise
+
+</pre>
+
+            Where <tt>some_unpredictable_acceleration</tt> and <tt>measurement_noise</tt> are 0 mean Gaussian 
+            noise sources.
+
+            To allow for really sudden and large but infrequent accelerations, at each
+            step we check if the current measured position deviates from the predicted
+            filtered position by more than a user specified amount,  
+            and if so we adjust the filter's state to keep it within these bounds.
+            This allows the moving object to undergo large unmodeled accelerations, far
+            in excess of what would be suggested by the basic Kalman filter's noise model, without
+            then experiencing a long lag time where the Kalman filter has to "catch
+            up" to the new position.
+         </description>
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>rect_filter</name>
+         <file>dlib/filtering.h</file>
+         <spec_file link="true">dlib/filtering/kalman_filter_abstract.h</spec_file>
+         <description>
+            This object is just a <a href="#momentum_filter">momentum_filter</a> applied to the
+            four corners of a <a href="linear_algebra.html#rectangle">rectangle</a>.  It allows
+            you to filter a stream of rectangles, for instance, bounding boxes from an object detector
+            applied to a video stream.
+         </description>
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>find_optimal_momentum_filter</name>
+         <file>dlib/filtering.h</file>
+         <spec_file link="true">dlib/filtering/kalman_filter_abstract.h</spec_file>
+         <description>
+            This function finds the "optimal" settings of a <a href="#momentum_filter">momentum_filter</a> 
+            based on unfiltered measurement data.
+         </description>
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>find_optimal_rect_filter</name>
+         <file>dlib/filtering.h</file>
+         <spec_file link="true">dlib/filtering/kalman_filter_abstract.h</spec_file>
+         <description>
+            This function finds the "optimal" settings of a <a href="#rect_filter">rect_filter</a> 
+            based on unfiltered measurement data.
+         </description>
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>rls_filter</name>
+         <file>dlib/filtering.h</file>
+         <spec_file>dlib/filtering/rls_filter_abstract.h</spec_file>
+         <description>
+            This object is a tool for doing time series prediction using 
+            linear <a href="ml.html#rls">recursive least squares</a>.  In particular,
+            this object takes a sequence of points from the user and, at each
+            step, attempts to predict the value of the next point.
+         </description>
+         
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>projection_hash</name>
+         <file>dlib/lsh.h</file>
+         <spec_file>dlib/lsh/projection_hash_abstract.h</spec_file>
+         <description>
+                This is a tool for hashing elements of a vector space into the integers.  
+                It is intended to represent locality sensitive hashing functions such as 
+                the popular <a href="#create_random_projection_hash">random projection hashing</a> method.
+         </description>
+         
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>create_random_projection_hash</name>
+         <file>dlib/lsh.h</file>
+         <spec_file link="true">dlib/lsh/create_random_projection_hash_abstract.h</spec_file>
+         <description>
+            Creates a random projection based locality sensitive 
+            <a href="#projection_hash">hashing function</a>.  The projection matrix
+            is generated by sampling its elements from a Gaussian random number generator.
+         </description>
+         
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>create_max_margin_projection_hash</name>
+         <file>dlib/lsh.h</file>
+         <spec_file link="true">dlib/lsh/create_random_projection_hash_abstract.h</spec_file>
+         <description>
+            Creates a random projection based locality sensitive 
+            <a href="#projection_hash">hashing function</a>.  
+               This is accomplished using a variation on the random hyperplane generation
+               technique from the paper:
+               <blockquote>
+                    Random Maximum Margin Hashing by Alexis Joly and Olivier Buisson
+               </blockquote>
+                  In particular, we use a linear support vector machine to generate planes.
+                  We train it on randomly selected and randomly labeled points from 
+                  the data to be hashed.
+         </description>
+         
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>hash</name>
+         <file>dlib/hash.h</file>
+         <spec_file>dlib/general_hash/hash_abstract.h</spec_file>
+         <description>
+            This is a set of convenience functions for invoking <a href="#murmur_hash3">murmur_hash3</a>
+            on std::strings, std::vectors, std::maps, or <a href="linear_algebra.html#matrix">dlib::matrix</a> objects.
+            <p>
+               As an aside, the hash() for matrix objects is defined <a href="dlib/matrix/matrix_utilities_abstract.h.html#hash">here</a>.
+               It has the same interface as all the others.
+            </p>
+         </description>
+         
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>count_bits</name>
+         <file>dlib/hash.h</file>
+         <spec_file link="true">dlib/general_hash/count_bits_abstract.h</spec_file>
+         <description>
+            This function counts the number of bits in an unsigned integer which are
+            set to 1.
+         </description>
+         
+      </component>
+            
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>hamming_distance</name>
+         <file>dlib/hash.h</file>
+         <spec_file link="true">dlib/general_hash/count_bits_abstract.h</spec_file>
+         <description>
+            This function returns the hamming distance between two unsigned integers.
+            That is, it returns the number of bits which differer in the two integers.
+         </description>
+         
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>rand</name>
+         <file>dlib/rand.h</file>
+         <spec_file>dlib/rand/rand_kernel_abstract.h</spec_file>
+         <description>
+            This object represents a pseudorandom number generator.
+         </description>
+         
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>disjoint_subsets</name>
+         <file>dlib/disjoint_subsets.h</file>
+         <spec_file link="true">dlib/disjoint_subsets/disjoint_subsets_abstract.h</spec_file>
+         <description>
+                This object represents a set of integers which is partitioned into
+                a number of disjoint subsets.  It supports the two fundamental operations
+                of finding which subset a particular integer belongs to as well as 
+                merging subsets. 
+         </description>
+
+      </component>
+      
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>disjoint_subsets_sized</name>
+         <file>dlib/disjoint_subsets.h</file>
+         <spec_file link="true">dlib/disjoint_subsets/disjoint_subsets_sized_abstract.h</spec_file>
+         <description>
+                This object is just like <a href="#disjoint_subsets">disjoint_subsets</a> except that it
+                also keeps track of the size of each set.
+         </description>
+
+      </component>
+      
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>running_stats</name>
+         <file>dlib/statistics.h</file>
+         <spec_file link="true">dlib/statistics/statistics_abstract.h</spec_file>
+         <description>
+                This object represents something that can compute the running mean,
+                variance, skewness, and kurtosis statistics of a stream of real numbers.  
+         </description>
+
+         <examples>
+            <example>running_stats_ex.cpp.html</example>
+            <example>kcentroid_ex.cpp.html</example>
+         </examples>
+                                 
+      </component>
+      
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>running_stats_decayed</name>
+         <file>dlib/statistics.h</file>
+         <spec_file link="true">dlib/statistics/statistics_abstract.h</spec_file>
+         <description>
+                This object represents something that can compute the running mean and
+                variance of a stream of real numbers.  It is similar to <a href="#running_stats">running_stats</a>
+                except that it forgets about data it has seen after a certain period of
+                time.  It does this by exponentially decaying old statistics. 
+         </description>
+      </component>
+      
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>running_scalar_covariance_decayed</name>
+         <file>dlib/statistics.h</file>
+         <spec_file link="true">dlib/statistics/statistics_abstract.h</spec_file>
+         <description>
+                This object represents something that can compute the running covariance of
+                a stream of real number pairs.  It is essentially the same as
+                <a href="#running_scalar_covariance">running_scalar_covariance</a> except that it forgets about data it has seen
+                after a certain period of time.  It does this by exponentially decaying old
+                statistics. 
+         </description>
+      </component>
+      
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>running_gradient</name>
+         <file>dlib/statistics/running_gradient.h</file>
+         <spec_file link="true">dlib/statistics/running_gradient_abstract.h</spec_file>
+         <description>
+                This object is a tool for estimating if a noisy sequence of numbers is
+                trending up or down and by how much.  It does this by finding the least
+                squares fit of a line to the data and then allows you to perform a
+                statistical test on the slope of that line.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>find_upper_quantile</name>
+         <file>dlib/statistics/running_gradient.h</file>
+         <spec_file link="true">dlib/statistics/running_gradient_abstract.h</spec_file>
+         <description>
+              Finds and returns the scalar value such that a user specified percentage of
+              the values in a container are greater than said value.  For example, 0.5
+              would find the median value in a container while 0.1 would find the value
+              that lower bounded the 10% largest values in a container.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>count_steps_without_increase</name>
+         <file>dlib/statistics/running_gradient.h</file>
+         <spec_file link="true">dlib/statistics/running_gradient_abstract.h</spec_file>
+         <description>
+            Given a potentially noisy time series, this function returns a count of how
+            long the time series has gone without noticeably increasing in value.  It does
+            this by adding the elements of the time series into a <a
+            href="#running_gradient">running_gradient</a> object and counting how many
+            elements, starting with the most recent, you need to examine before you
+            are confident that the series has been increasing in value.    
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>binomial_random_vars_are_different</name>
+         <file>dlib/statistics/statistic.h</file>
+         <spec_file link="true">dlib/statistics/statistics_abstract.h</spec_file>
+         <description>
+            This function performs a simple statistical test to check if two binomially
+            distributed random variables have the same parameter (i.e. the chance of
+            "success").  It uses the simple likelihood ratio test discussed in
+            the following paper:
+            <blockquote>
+               Dunning, Ted. "Accurate methods for the statistics of surprise and
+               coincidence." Computational linguistics 19.1 (1993): 61-74.
+            </blockquote>
+            So for an extended discussion of the method see the above paper.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>event_correlation</name>
+         <file>dlib/statistics/statistic.h</file>
+         <spec_file link="true">dlib/statistics/statistics_abstract.h</spec_file>
+         <description>
+            This function does a statistical test to determine if two events co-occur in a
+            statistically significant way.  It uses the simple likelihood ratio
+            test discussed in the following paper:
+            <blockquote>
+               Dunning, Ted. "Accurate methods for the statistics of surprise and
+               coincidence." Computational linguistics 19.1 (1993): 61-74.
+            </blockquote>
+            So for an extended discussion of the method see the above paper.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>max_scoring_element</name>
+         <file>dlib/algs.h</file>
+         <spec_file link="true">dlib/algs.h</spec_file>
+         <description>
+            This function finds the element of container that has the largest score,
+            according to a user supplied score function, and returns a std::pair containing
+            that maximal element along with the score.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>min_scoring_element</name>
+         <file>dlib/algs.h</file>
+         <spec_file link="true">dlib/algs.h</spec_file>
+         <description>
+            This function finds the element of container that has the smallest score,
+            according to a user supplied score function, and returns a std::pair containing
+            that minimal element along with the score.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>count_steps_without_decrease</name>
+         <file>dlib/statistics/running_gradient.h</file>
+         <spec_file link="true">dlib/statistics/running_gradient_abstract.h</spec_file>
+         <description>
+            Given a potentially noisy time series, this function returns a count of how
+            long the time series has gone without noticeably decreasing in value.  It does
+            this by adding the elements of the time series into a <a
+            href="#running_gradient">running_gradient</a> object and counting how many
+            elements, starting with the most recent, you need to examine before you
+            are confident that the series has been decreasing in value.    
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>count_steps_without_decrease_robust</name>
+         <file>dlib/statistics/running_gradient.h</file>
+         <spec_file link="true">dlib/statistics/running_gradient_abstract.h</spec_file>
+         <description>
+            This function behaves just like <a
+            href="#count_steps_without_decrease">count_steps_without_decrease</a> except
+            that it ignores times series values that are anomalously large.  This makes it
+            robust to sudden noisy but transient spikes in the time series values.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>probability_values_are_increasing</name>
+         <file>dlib/statistics/running_gradient.h</file>
+         <spec_file link="true">dlib/statistics/running_gradient_abstract.h</spec_file>
+         <description>
+            Given a potentially noisy time series, this function returns the probability that those
+            values are increasing in magnitude.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>probability_values_are_increasing_robust</name>
+         <file>dlib/statistics/running_gradient.h</file>
+         <spec_file link="true">dlib/statistics/running_gradient_abstract.h</spec_file>
+         <description>
+            This function behaves just like <a
+            href="#probability_values_are_increasing">probability_values_are_increasing</a> except
+            that it ignores times series values that are anomalously large.  This makes it
+            robust to sudden noisy but transient spikes in the time series values.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>running_covariance</name>
+         <file>dlib/statistics.h</file>
+         <spec_file link="true">dlib/statistics/statistics_abstract.h</spec_file>
+         <description>
+                This object is a simple tool for computing the mean and
+                covariance of a sequence of vectors.  
+         </description>
+
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>running_cross_covariance</name>
+         <file>dlib/statistics.h</file>
+         <spec_file link="true">dlib/statistics/statistics_abstract.h</spec_file>
+         <description>
+                This object is a simple tool for computing the mean and
+                cross-covariance matrices of a sequence of pairs of vectors.  
+         </description>
+
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>running_scalar_covariance</name>
+         <file>dlib/statistics.h</file>
+         <spec_file link="true">dlib/statistics/statistics_abstract.h</spec_file>
+         <description>
+                This object is a simple tool for computing the covariance of a 
+                sequence of scalar values.  
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>mean_sign_agreement</name>
+         <file>dlib/statistics.h</file>
+         <spec_file link="true">dlib/statistics/statistics_abstract.h</spec_file>
+         <description>
+               This is a function for computing the probability that 
+               matching elements of two std::vectors have the same sign.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>correlation</name>
+         <file>dlib/statistics.h</file>
+         <spec_file link="true">dlib/statistics/statistics_abstract.h</spec_file>
+         <description>
+               This is a function for computing the correlation between 
+               matching elements of two std::vectors.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>covariance</name>
+         <file>dlib/statistics.h</file>
+         <spec_file link="true">dlib/statistics/statistics_abstract.h</spec_file>
+         <description>
+               This is a function for computing the covariance between 
+               matching elements of two std::vectors.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>r_squared</name>
+         <file>dlib/statistics.h</file>
+         <spec_file link="true">dlib/statistics/statistics_abstract.h</spec_file>
+         <description>
+               This is a function for computing the R squared coefficient between 
+               matching elements of two std::vectors.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>mean_squared_error</name>
+         <file>dlib/statistics.h</file>
+         <spec_file link="true">dlib/statistics/statistics_abstract.h</spec_file>
+         <description>
+               This is a function for computing the mean squared error between 
+               matching elements of two std::vectors.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>random_subset_selector</name>
+         <file>dlib/statistics.h</file>
+         <spec_file>dlib/statistics/random_subset_selector_abstract.h</spec_file>
+         <description>
+               This object is a tool to help you select a random subset of a large body of data.  
+               In particular, it is useful when the body of data is too large to fit into memory.
+         </description>
+
+                                 
+      </component>
+      
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>randomly_subsample</name>
+         <file>dlib/statistics.h</file>
+         <spec_file link="true">dlib/statistics/random_subset_selector_abstract.h</spec_file>
+         <description>
+            This is a set of convenience functions for 
+            creating <a href="#random_subset_selector">random subsets</a> of data.
+         </description>
+                                 
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>hsort_array</name>
+         <file>dlib/sort.h</file>
+         <spec_file link="true">dlib/sort.h</spec_file>
+         <description>
+            hsort_array is an implementation of the heapsort algorithm.  It will sort anything that has an 
+            array like operator[] interface.  
+         </description>
+                                 
+      </component>
+      
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>put_in_range</name>
+         <file>dlib/algs.h</file>
+         <spec_file link="true">dlib/algs.h</spec_file>
+         <description>
+            This is a simple function that takes a range and a value and returns the given
+            value if it is within the range.  If it isn't in the range then it returns the  
+            end of range value that is closest.
+         </description>
+                                 
+      </component>
+               
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>isort_array</name>
+         <file>dlib/sort.h</file>
+         <spec_file link="true">dlib/sort.h</spec_file>
+         <description>
+            isort_array is an implementation of the insertion sort algorithm.  It will sort anything that has an 
+            array like operator[] interface.   
+         </description>
+                                 
+      </component>
+               
+      
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>numeric_constants</name>
+         <file>dlib/numeric_constants.h</file>
+         <spec_file>dlib/numeric_constants.h</spec_file>
+         <description>
+            This is just a header file containing definitions of common numeric constants such as pi and e.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>qsort_array</name>
+         <file>dlib/sort.h</file>
+         <spec_file link="true">dlib/sort.h</spec_file>
+         <description>
+            qsort_array is an implementation of the QuickSort algorithm.  It will sort anything that has an array like 
+            operator[] interface.  If the quick sort becomes unstable then it switches to a heap sort.  This 
+            way sorting is guaranteed to take at most N*log(N) time.
+         </description>
+                                 
+      </component>
+            
+      
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>split_array</name>
+         <file>dlib/array.h</file>
+         <spec_file link="true">dlib/array/array_tools_abstract.h</spec_file>
+         <description>
+            This function is used to efficiently split <a href="containers.html#array">array</a>
+            like objects into two parts.  It uses the global swap() function instead
+            of copying to move elements around, so it works on arrays of non-copyable
+            types.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>integrate_function_adapt_simp</name>
+         <file>dlib/numerical_integration.h</file>
+         <spec_file link="true">dlib/numerical_integration/integrate_function_adapt_simpson_abstract.h</spec_file>
+         <description>
+          Computes an approximation of the integral of a real valued function using the
+          adaptive Simpson method outlined in 
+          <blockquote>
+             Gander, W. and W. Gautshi, "Adaptive
+             Quadrature -- Revisited" BIT, Vol. 40, (2000), pp.84-101
+          </blockquote>
+         </description>
+         <examples>
+            <example>integrate_function_adapt_simp_ex.cpp.html</example>
+         </examples>
+                                 
+      </component>
+            
+      
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>md5</name>
+         <file>dlib/md5.h</file>
+         <spec_file>dlib/md5/md5_kernel_abstract.h</spec_file>
+         <description>
+            This is an implementation of The MD5 Message-Digest Algorithm as described in rfc1321.   
+         </description>
+                                 
+      </component>
+            
+      
+      
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>median</name>
+         <file>dlib/algs.h</file>
+         <spec_file link="true">dlib/algs.h</spec_file>
+         <description>
+            This function takes three parameters and finds the median of the three.  The median is swapped into
+            the first parameter and the first parameter ends up in one of the other two, unless the first parameter was
+            the median to begin with of course. 
+         </description>
+                                 
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>square_root</name>
+         <file>dlib/algs.h</file>
+         <spec_file link="true">dlib/algs.h</spec_file>
+         <description>        
+            square_root is a function which takes an unsigned long and returns the square root of it or
+            if the root is not an integer then it is rounded up to the next integer.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>set_intersection</name>
+         <file>dlib/set_utils.h</file>
+         <spec_file link="true">dlib/set_utils/set_utils_abstract.h</spec_file>
+         <description>        
+            This function takes two <a href="containers.html#set">set</a> objects and 
+            gives you their intersection.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>set_union</name>
+         <file>dlib/set_utils.h</file>
+         <spec_file link="true">dlib/set_utils/set_utils_abstract.h</spec_file>
+         <description>        
+            This function takes two <a href="containers.html#set">set</a> objects and 
+            gives you their union.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>set_difference</name>
+         <file>dlib/set_utils.h</file>
+         <spec_file link="true">dlib/set_utils/set_utils_abstract.h</spec_file>
+         <description>        
+            This function takes two <a href="containers.html#set">set</a> objects and 
+            gives you their difference.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>set_intersection_size</name>
+         <file>dlib/set_utils.h</file>
+         <spec_file link="true">dlib/set_utils/set_utils_abstract.h</spec_file>
+         <description>        
+            This function takes two <a href="containers.html#set">set</a> objects and tells you
+            how many items they have in common.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>quantum_register</name>
+         <file>dlib/quantum_computing.h</file>
+         <spec_file link="true">dlib/quantum_computing/quantum_computing_abstract.h</spec_file>
+         <description>        
+                This object represents a set of quantum bits.  It can be used
+                with the quantum <a href="#gate">gate</a> object to simulate
+                quantum algorithms.
+         </description>
+
+         <examples>
+            <example>quantum_computing_ex.cpp.html</example>
+         </examples>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>gate</name>
+         <file>dlib/quantum_computing.h</file>
+         <spec_file link="true">dlib/quantum_computing/quantum_computing_abstract.h</spec_file>
+         <description>        
+            This object represents a quantum gate that operates on a 
+            <a href="#quantum_register">quantum_register</a>.   
+         </description>
+         <examples>
+            <example>quantum_computing_ex.cpp.html</example>
+         </examples>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+   </components>
+
+   <!-- ************************************************************************* -->
+
+
+</doc>
+

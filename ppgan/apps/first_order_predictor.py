@@ -1,16 +1,16 @@
 #  Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
 #
-#Licensed under the Apache License, Version 2.0 (the "License");
-#you may not use this file except in compliance with the License.
-#You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
 #    http://www.apache.org/licenses/LICENSE-2.0
 #
-#Unless required by applicable law or agreed to in writing, software
-#distributed under the License is distributed on an "AS IS" BASIS,
-#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#See the License for the specific language governing permissions and
-#limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import os
 import sys
@@ -30,8 +30,16 @@ from ppgan.utils.animate import normalize_kp
 from ppgan.modules.keypoint_detector import KPDetector
 from ppgan.models.generators.occlusion_aware import OcclusionAwareGenerator
 from ppgan.faceutils import face_detection
+import dlib
+import skimage
 
 from .base_predictor import BasePredictor
+
+def shape_to_np(shape, dtype="int"):
+    coords = np.zeros((68, 2), dtype=dtype)
+    for i in range(0, 68):
+        coords[i] = (shape.part(i).x, shape.part(i).y)
+    return coords
 
 
 class FirstOrderPredictor(BasePredictor):
@@ -92,7 +100,7 @@ class FirstOrderPredictor(BasePredictor):
         if weight_path is None:
             if mobile_net:
                 vox_cpk_weight_url = 'https://paddlegan.bj.bcebos.com/applications/first_order_model/vox_mobile.pdparams'
-            
+
             else:
                 if self.image_size == 512:
                     vox_cpk_weight_url = 'https://paddlegan.bj.bcebos.com/applications/first_order_model/vox-cpk-512.pdparams'
@@ -126,7 +134,7 @@ class FirstOrderPredictor(BasePredictor):
             img = np.expand_dims(img, axis=2)
         # som images have 4 channels
         if img.shape[2] > 3:
-            img = img[:,:,:3]
+            img = img[:, :, :3]
         return img
 
     def run(self, source_image, driving_video):
@@ -153,7 +161,7 @@ class FirstOrderPredictor(BasePredictor):
                     relative=self.relative,
                     adapt_movement_scale=self.adapt_scale)
                 predictions = predictions_backward[::-1] + predictions_forward[
-                    1:]
+                                                           1:]
             else:
                 predictions = self.make_animation(
                     face_image,
@@ -191,13 +199,23 @@ class FirstOrderPredictor(BasePredictor):
             predictions = get_prediction(face_image)
             results.append({'rec': rec, 'predict': [predictions[i] for i in range(predictions.shape[0])]})
             if len(bboxes) == 1 or not self.multi_person:
-                break 
+                break
         out_frame = []
+
+        predictor = dlib.shape_predictor('/PaddleGAN/ppgan/apps/shape_predictor_68_face_landmarks.dat')
 
         for i in range(len(driving_video)):
             frame = source_image.copy()
+            gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
             for result in results:
                 x1, y1, x2, y2, _ = result['rec']
+                sp = predictor(gray,  dlib.rectangle(x1, y1, x2, y2))
+                landmarks = np.array([[p.x, p.y] for p in sp.parts()])
+
+                vertices = ConvexHull(landmarks).vertices
+                Y, X = skimage.draw.polygon(landmarks[vertices, 1], landmarks[vertices, 0])
+
+
                 h = y2 - y1
                 w = x2 - x1
                 out = result['predict'][i]
@@ -206,13 +224,22 @@ class FirstOrderPredictor(BasePredictor):
                     frame[y1:y2, x1:x2] = out
                     break
                 else:
+
                     patch = np.zeros(frame.shape).astype('uint8')
                     patch[y1:y2, x1:x2] = out
                     mask = np.zeros(frame.shape[:2]).astype('uint8')
-                    cx = int((x1 + x2) / 2)
-                    cy = int((y1 + y2) / 2)
-                    cv2.circle(mask, (cx, cy), math.ceil(h * self.ratio),
-                               (255, 255, 255), -1, 8, 0)
+                    mask[Y, X] = 1
+                    mask = (mask & np.any(patch != [0, 0, 0], axis=-1)).astype('uint8')
+
+                    # cv2.drawContours(mask, convex_hull, -1, (255,255,255), -1)
+                    # cv2.imshow("",cv2.resize(mask, (500, 300)))
+                    # cv2.waitKey()
+
+                    #cv2.polylines(mask, [np.array(convex_hull).astype('uint8')], (255, 255, 255), -1)
+                    # cx = int((x1 + x2) / 2)
+                    # cy = int((y1 + y2) / 2)
+                    # cv2.circle(mask, (cx, cy), math.ceil(h * self.ratio),
+                    #            (255, 255, 255), -1, 8, 0)
                     frame = cv2.copyTo(patch, mask, frame)
 
             out_frame.append(frame)
@@ -258,18 +285,18 @@ class FirstOrderPredictor(BasePredictor):
             kp_source = kp_detector(source)
             kp_driving_initial = kp_detector(driving[0:1])
             kp_source_batch = {}
-            kp_source_batch["value"] = paddle.tile(kp_source["value"], repeat_times=[self.batch_size,1,1])
-            kp_source_batch["jacobian"] = paddle.tile(kp_source["jacobian"], repeat_times=[self.batch_size,1,1,1])
-            source = paddle.tile(source, repeat_times=[self.batch_size,1,1,1])
+            kp_source_batch["value"] = paddle.tile(kp_source["value"], repeat_times=[self.batch_size, 1, 1])
+            kp_source_batch["jacobian"] = paddle.tile(kp_source["jacobian"], repeat_times=[self.batch_size, 1, 1, 1])
+            source = paddle.tile(source, repeat_times=[self.batch_size, 1, 1, 1])
             begin_idx = 0
             for frame_idx in tqdm(range(int(np.ceil(float(driving.shape[0]) / self.batch_size)))):
                 frame_num = min(self.batch_size, driving.shape[0] - begin_idx)
-                driving_frame = driving[begin_idx: begin_idx+frame_num]
+                driving_frame = driving[begin_idx: begin_idx + frame_num]
                 kp_driving = kp_detector(driving_frame)
                 kp_source_img = {}
                 kp_source_img["value"] = kp_source_batch["value"][0:frame_num]
                 kp_source_img["jacobian"] = kp_source_batch["jacobian"][0:frame_num]
-                
+
                 kp_norm = normalize_kp(
                     kp_source=kp_source,
                     kp_driving=kp_driving,
@@ -277,10 +304,10 @@ class FirstOrderPredictor(BasePredictor):
                     use_relative_movement=relative,
                     use_relative_jacobian=relative,
                     adapt_movement_scale=adapt_movement_scale)
-                
+
                 out = generator(source[0:frame_num], kp_source=kp_source_img, kp_driving=kp_norm)
-                img = np.transpose(out['prediction'].numpy(), [0, 2, 3, 1]) * 255.0 
-                
+                img = np.transpose(out['prediction'].numpy(), [0, 2, 3, 1]) * 255.0
+
                 if self.face_enhancement:
                     img = self.faceenhancer.enhance_from_batch(img)
 
@@ -308,7 +335,7 @@ class FirstOrderPredictor(BasePredictor):
         for i, image in tqdm(enumerate(driving)):
             kp_driving = fa.get_landmarks(255 * image)[0]
             kp_driving = normalize_kp(kp_driving)
-            new_norm = (np.abs(kp_source - kp_driving)**2).sum()
+            new_norm = (np.abs(kp_source - kp_driving) ** 2).sum()
             if new_norm < norm:
                 norm = new_norm
                 frame_num = i
@@ -362,8 +389,8 @@ class FirstOrderPredictor(BasePredictor):
         return boxes
 
     def IOU(self, ax1, ay1, ax2, ay2, sa, bx1, by1, bx2, by2, sb):
-        #sa = abs((ax2 - ax1) * (ay2 - ay1))
-        #sb = abs((bx2 - bx1) * (by2 - by1))
+        # sa = abs((ax2 - ax1) * (ay2 - ay1))
+        # sb = abs((bx2 - bx1) * (by2 - by1))
         x1, y1 = max(ax1, bx1), max(ay1, by1)
         x2, y2 = min(ax2, bx2), min(ay2, by2)
         w = x2 - x1
@@ -372,3 +399,4 @@ class FirstOrderPredictor(BasePredictor):
             return 0.0
         else:
             return 1.0 * w * h / (sa + sb - w * h)
+## python -u applications/tools/first-order-demo.py       --driving_video /home/anastasia/paddleGan/PaddleGAN/data/mayiyahei3.mp4      --source_image /home/anastasia/paddleGan/PaddleGAN/data/selfie2.JPEG      --ratio 0.4      --relative --adapt_scale      --image_size 256      --multi_person

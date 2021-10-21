@@ -1,0 +1,1851 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="stylesheet.xsl"?>
+
+<doc>
+   <title>Index</title>
+
+   <!-- ************************************************************************* -->
+
+   <body>
+      <term_list>
+
+         <term file="algorithms.html" name="integrate_function_adapt_simp"       include="dlib/numerical_integration.h"/>
+
+         <term file="algorithms.html" name="numeric_constants"       include="dlib/numeric_constants.h"/>
+         <term link="dlib/numeric_constants.h.html" name="pi"        include="dlib/numeric_constants.h"/>
+         <term link="dlib/numeric_constants.h.html" name="e"         include="dlib/numeric_constants.h"/>
+         <term link="dlib/numeric_constants.h.html" name="sqrt_2"    include="dlib/numeric_constants.h"/>
+         <term link="dlib/numeric_constants.h.html" name="sqrt_3"    include="dlib/numeric_constants.h"/>
+         <term link="dlib/numeric_constants.h.html" name="light_spd" include="dlib/numeric_constants.h"/>
+         <term link="dlib/numeric_constants.h.html" name="newton_G"  include="dlib/numeric_constants.h"/>
+         <term link="dlib/numeric_constants.h.html" name="planck_cst" include="dlib/numeric_constants.h"/>
+
+         <term link="dlib/numeric_constants.h.html" name="log10_2"   include="dlib/numeric_constants.h"/>
+         <term link="dlib/numeric_constants.h.html" name="golden_ratio" include="dlib/numeric_constants.h"/>
+         <term link="dlib/numeric_constants.h.html" name="euler_gamma" include="dlib/numeric_constants.h"/>
+         <term link="dlib/numeric_constants.h.html" name="glaisher"  include="dlib/numeric_constants.h"/>
+         <term link="dlib/numeric_constants.h.html" name="catalan"   include="dlib/numeric_constants.h"/>
+         <term link="dlib/numeric_constants.h.html" name="khinchin"  include="dlib/numeric_constants.h"/>
+         <term link="dlib/numeric_constants.h.html" name="apery"     include="dlib/numeric_constants.h"/>
+
+         <term file="dlib/revision.h.html" name="DLIB_MAJOR_VERSION"     include="dlib/revision.h"/>
+         <term file="dlib/revision.h.html" name="DLIB_MINOR_VERSION"     include="dlib/revision.h"/>
+
+
+
+         <term file="dlib/algs.h.html" name="stack_based_memory_block" include="dlib/algs.h"/>
+         <term file="dlib/dnn/utilities_abstract.h.html" name="net_to_xml" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/utilities_abstract.h.html" name="log1pexp" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/utilities_abstract.h.html" name="randomize_parameters" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/utilities_abstract.h.html" name="input_tensor_to_output_tensor" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/utilities_abstract.h.html" name="output_tensor_to_input_tensor" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="tuple_head" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="tuple_tail" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="get_learning_rate_multiplier" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="get_weight_decay_multiplier" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="sstack" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="make_sstack" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="repeat_group" include="dlib/dnn.h"/>
+
+         <term file="ml.html" name="add_layer" include="dlib/dnn.h"/>
+         <term file="ml.html" name="add_loss_layer" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="repeat_group" include="dlib/dnn.h"/>
+         <term file="ml.html" name="repeat" include="dlib/dnn.h"/>
+         <term file="ml.html" name="add_tag_layer" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="tag_id" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="tag1" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="tag2" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="tag3" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="tag4" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="tag5" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="tag6" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="tag7" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="tag8" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="tag9" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="tag10" include="dlib/dnn.h"/>
+         <term file="ml.html" name="add_skip_layer" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="skip1" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="skip2" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="skip3" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="skip4" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="skip5" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="skip6" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="skip7" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="skip8" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="skip9" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="skip10" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="layer" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="input_layer" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="visit_layers" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="visit_layers_until_tag" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="visit_layer_parameters" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="visit_layer_parameter_gradients" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="visit_layers_backwards" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="visit_layers_backwards_range" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="visit_layers_range" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="test_layer" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="layer_test_results" include="dlib/dnn.h"/>
+
+         <term file="dlib/dnn/core_abstract.h.html" name="dnn_prefer_fastest_algorithms" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="set_dnn_prefer_fastest_algorithms" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/core_abstract.h.html" name="set_dnn_prefer_smallest_algorithms" include="dlib/dnn.h"/>
+
+         <term file="dlib/cuda/cuda_errors.h.html" name="cuda_error" include="dlib/cuda/cuda_errors.h"/>
+         <term file="dlib/cuda/cuda_errors.h.html" name="cudnn_error" include="dlib/cuda/cuda_errors.h"/>
+         <term file="dlib/cuda/cuda_errors.h.html" name="curand_error" include="dlib/cuda/cuda_errors.h"/>
+         <term file="dlib/cuda/cuda_errors.h.html" name="cublas_error" include="dlib/cuda/cuda_errors.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="fc_bias_mode" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="FC_HAS_BIAS" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="FC_NO_BIAS" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="layer_mode" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="CONV_MODE" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="FC_MODE" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="set_all_bn_running_stats_window_sizes" include="dlib/dnn.h"/>
+         <term file="dlib/cuda/tensor_abstract.h.html" name="tensor" include="dlib/cuda/tensor.h"/>
+         <term file="dlib/cuda/tensor_abstract.h.html" name="resizable_tensor" include="dlib/cuda/tensor.h"/>
+         <term file="dlib/cuda/tensor_abstract.h.html" name="alias_tensor_instance" include="dlib/cuda/tensor.h"/>
+         <term file="dlib/cuda/tensor_abstract.h.html" name="alias_tensor_const_instance" include="dlib/cuda/tensor.h"/>
+         <term file="dlib/cuda/tensor_abstract.h.html" name="alias_tensor" include="dlib/cuda/tensor.h"/>
+         <term file="dlib/cuda/tensor_abstract.h.html" name="image_plane" include="dlib/cuda/tensor.h"/>
+         <term name="have_same_dimensions">
+            <term link="dlib/cuda/tensor_abstract.h.html#have_same_dimensions" name="for tensors" include="dlib/cuda/tensor.h"/>
+            <term link="dlib/image_processing/generic_image.h.html#have_same_dimensions" name="for images" include="dlib/image_processing/generic_image.h"/>
+         </term>
+
+         <term file="dlib/cuda/gpu_data_abstract.h.html" name="gpu_data" include="dlib/cuda/gpu_data.h"/>
+         <term name="memcpy">
+            <term link="dlib/cuda/tensor_abstract.h.html#memcpy" name="for tensors"   include="dlib/cuda/tensor.h" />
+            <term link="dlib/cuda/gpu_data_abstract.h.html#memcpy" name="for gpu_data"   include="dlib/cuda/gpu_data.h" />
+         </term>
+
+         <term file="dlib/dnn/input_abstract.h.html" name="EXAMPLE_INPUT_LAYER" include="dlib/dnn.h"/>
+         <term file="ml.html" name="input" include="dlib/dnn.h"/>
+         <term file="ml.html" name="input_rgb_image" include="dlib/dnn.h"/>
+         <term file="ml.html" name="input_rgb_image_sized" include="dlib/dnn.h"/>
+         <term file="ml.html" name="input_rgb_image_pyramid" include="dlib/dnn.h"/>
+         <term file="ml.html" name="input_grayscale_image_pyramid" include="dlib/dnn.h"/>
+
+         <term file="ml.html" name="dnn_trainer" include="dlib/dnn.h"/>
+
+         <term file="dlib/dnn/trainer_abstract.h.html" name="force_flush_to_disk" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/loss_abstract.h.html" name="EXAMPLE_LOSS_LAYER_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/loss_abstract.h.html" name="loss_binary_hinge_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/loss_abstract.h.html" name="loss_binary_log_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/loss_abstract.h.html" name="loss_multimulticlass_log_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/loss_abstract.h.html" name="loss_multiclass_log_weighted_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/loss_abstract.h.html" name="loss_binary_log_per_pixel_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/loss_abstract.h.html" name="loss_multiclass_log_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/loss_abstract.h.html" name="loss_multiclass_log_per_pixel_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/loss_abstract.h.html" name="loss_multiclass_log_per_pixel_weighted_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/loss_abstract.h.html" name="loss_mean_squared_per_channel_and_pixel_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/loss_abstract.h.html" name="loss_multibinary_log_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/loss_abstract.h.html" name="loss_ranking_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/loss_abstract.h.html" name="loss_dot_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/loss_abstract.h.html" name="loss_epsilon_insensitive_" include="dlib/dnn.h"/>
+         <term file="ml.html" name="loss_metric_" include="dlib/dnn.h"/>
+         <term file="ml.html" name="loss_mean_squared_" include="dlib/dnn.h"/>
+         <term file="ml.html" name="loss_mean_squared_multioutput_" include="dlib/dnn.h"/>
+         <term file="ml.html" name="loss_mmod_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/loss_abstract.h.html" name="mmod_options" include="dlib/dnn.h"/>
+
+         <term file="dlib/dnn/solvers_abstract.h.html" name="EXAMPLE_SOLVER" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/solvers_abstract.h.html" name="sgd" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/solvers_abstract.h.html" name="adam" include="dlib/dnn.h"/>
+
+         <term file="dlib/dnn/layers_abstract.h.html" name="num_fc_outputs" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="num_con_outputs" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="EXAMPLE_COMPUTATIONAL_LAYER_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="fc_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="con_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="resize_to_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="resize_prev_to_tagged_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="mult_prev_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="extract_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="upsample_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="cont_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="scale_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="scale_prev_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="l2normalize_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="layer_norm_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="dropout_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="multiply_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="bn_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="affine_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="max_pool_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="avg_pool_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="relu_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="gelu_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="leaky_relu_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="mish_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="prelu_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="sig_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="htan_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="softmax_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="softmax_all_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="add_prev_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="concat_" include="dlib/dnn.h"/>
+         <term file="dlib/dnn/layers_abstract.h.html" name="inception" include="dlib/dnn.h"/>
+
+         <term name="mat">
+            <term link="linear_algebra.html#mat" name="general use"   include="dlib/matrix.h" />
+            <term link="dlib/cuda/tensor_abstract.h.html#mat" name="for tensors"   include="dlib/cuda/tensor.h" />
+         </term>
+         <term file="linear_algebra.html" name="matrix" include="dlib/matrix.h"/>
+         <term file="linear_algebra.html" name="move_rect" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="intersect" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="area" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="translate_rect" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="resize_rect" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="resize_rect_width" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="resize_rect_height" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="centered_rect" include="dlib/geometry.h"/>
+         <term file="dlib/geometry/rectangle_abstract.h.html" name="centered_rects" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="set_aspect_ratio" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="set_rect_area" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="center" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="nearest_point" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="nearest_rect" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="distance_to_rect_edge" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="distance_to_line" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="clip_line_to_rectangle" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="shrink_rect" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="grow_rect" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="dcenter" include="dlib/geometry.h"/>
+
+         <term file="algorithms.html" name="kalman_filter"  include="dlib/filtering.h"/>
+         <term file="algorithms.html" name="rls_filter"     include="dlib/filtering.h"/>
+
+         <term file="algorithms.html" name="momentum_filter"     include="dlib/filtering.h"/>
+         <term file="algorithms.html" name="rect_filter"     include="dlib/filtering.h"/>
+         <term file="algorithms.html" name="find_optimal_rect_filter"     include="dlib/filtering.h"/>
+         <term file="algorithms.html" name="find_optimal_momentum_filter"     include="dlib/filtering.h"/>
+
+         <term file="dlib/error.h.html" name="error_type"      include="dlib/error.h"/>
+         <term file="dlib/error.h.html" name="error"           include="dlib/error.h"/>
+         <term file="dlib/error.h.html" name="fatal_error"     include="dlib/error.h"/>
+         <term file="dlib/error.h.html" name="thread_error"    include="dlib/error.h"/>
+         <term file="dlib/error.h.html" name="socket_error"    include="dlib/error.h"/>
+         <term file="dlib/error.h.html" name="impossible_labeling_error"    include="dlib/error.h"/>
+
+         <term file="dlib/optimization/optimization_abstract.h.html" name="central_differences"    include="dlib/optimization.h"/>
+         <term file="dlib/optimization/optimization_abstract.h.html" name="line_search_funct"      include="dlib/optimization.h"/>
+         <term file="dlib/optimization/optimization_line_search_abstract.h.html" name="optimize_single_variable_failure"   include="dlib/optimization.h"/>
+         <term file="dlib/optimization/optimization_bobyqa_abstract.h.html" name="bobyqa_failure"  include="dlib/optimization.h"/>
+         <term file="dlib/optimization/optimization_oca_abstract.h.html" name="oca_problem"        include="dlib/optimization.h"/>
+         <term file="dlib/svm/svm_abstract.h.html" name="platt_scale"                              include="dlib/svm.h"/>
+         <term file="ml.html" name="learn_platt_scaling"                                           include="dlib/svm.h" />
+         <term file="ml.html" name="structural_svm_problem"                                        include="dlib/svm.h"/>
+         <term file="ml.html" name="structural_svm_problem_threaded"                               include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="structural_svm_object_detection_problem"                       include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="structural_object_detection_trainer"                           include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="svm_struct_controller_node"                                    include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="svm_struct_processing_node"                                    include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="sequence_labeler"                                              include="dlib/svm.h"/>
+         <term file="dlib/svm/sequence_labeler_abstract.h.html" name="contains_invalid_labeling"   include="dlib/svm.h"/>
+         <term file="ml.html" name="structural_svm_sequence_labeling_problem"                      include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="structural_sequence_labeling_trainer"                          include="dlib/svm_threaded.h"/>
+
+         <term file="ml.html" name="sequence_segmenter"                                              include="dlib/svm.h"/>
+         <term file="dlib/svm/sequence_segmenter_abstract.h.html" name="total_feature_vector_size"   include="dlib/svm.h"/>
+         <term file="ml.html" name="structural_sequence_segmentation_trainer"                          include="dlib/svm_threaded.h"/>
+
+         <term file="ml.html" name="is_forced_assignment_problem"          include="dlib/svm.h"/>
+         <term file="ml.html" name="is_assignment_problem"                 include="dlib/svm.h"/>
+         <term file="ml.html" name="is_track_association_problem"          include="dlib/svm.h"/>
+         <term file="ml.html" name="is_graph_labeling_problem"             include="dlib/svm_threaded.h"/>
+         <term file="dlib/svm/structural_svm_graph_labeling_problem_abstract.h.html" name="sizes_match"  include="dlib/svm_threaded.h"/>
+         <term file="dlib/svm/structural_svm_graph_labeling_problem_abstract.h.html" name="all_values_are_nonnegative"  include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="assignment_function"                   include="dlib/svm.h"/>
+         <term file="ml.html" name="track_association_function"            include="dlib/svm.h"/>
+         <term file="dlib/svm/track_association_function_abstract.h.html" name="feature_extractor_track_association"
+               include="dlib/svm.h"/>
+         <term file="dlib/svm/svm_abstract.h.html" name="labeled_detection" include="dlib/svm.h"/>
+         <term file="ml.html" name="graph_labeler"                         include="dlib/graph_cuts.h"/>
+         <term file="ml.html" name="test_assignment_function"              include="dlib/svm.h"/>
+         <term file="ml.html" name="test_track_association_function"       include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="test_graph_labeling_function"          include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="cross_validate_assignment_trainer"     include="dlib/svm.h"/>
+         <term file="ml.html" name="cross_validate_track_association_trainer"     include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="cross_validate_graph_labeling_trainer" include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="structural_svm_assignment_problem"     include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="structural_svm_graph_labeling_problem" include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="structural_assignment_trainer"         include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="structural_track_association_trainer"  include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="structural_graph_labeling_trainer"     include="dlib/svm_threaded.h"/>
+
+         <term file="dlib/optimization/optimization_solve_qp2_using_smo_abstract.h.html" name="invalid_nu_error"  include="dlib/optimization.h"/>
+         <term file="dlib/optimization/optimization_solve_qp2_using_smo_abstract.h.html" name="maximum_nu"        include="dlib/optimization.h"/>
+
+         <term file="optimization.html" name="derivative"                  include="dlib/optimization.h"/>
+         <term file="optimization.html" name="make_line_search_function"   include="dlib/optimization.h"/>
+         <term file="optimization.html" name="poly_min_extrap"             include="dlib/optimization.h"/>
+         <term file="optimization.html" name="lagrange_poly_min_extrap"    include="dlib/optimization.h"/>
+         <term file="optimization.html" name="line_search"                 include="dlib/optimization.h"/>
+         <term file="optimization.html" name="backtracking_line_search"    include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_min"                    include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_min_box_constrained"    include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_max_box_constrained"    include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_max_global"             include="dlib/global_optimization.h"/>
+         <term file="optimization.html" name="find_min_global"             include="dlib/global_optimization.h"/>
+         <term file="optimization.html" name="isotonic_regression"         include="dlib/optimization.h"/>
+         <term file="optimization.html" name="global_function_search"           include="dlib/global_optimization.h"/>
+         <term file="optimization.html" name="upper_bound_function"             include="dlib/global_optimization.h"/>
+         <term file="optimization.html" name="call_function_and_expand_args"    include="dlib/global_optimization.h"/>
+         <term file="dlib/global_optimization/find_max_global_abstract.h.html" name="FOREVER"   include="dlib/global_optimization.h"/>
+         <term file="dlib/global_optimization/find_max_global_abstract.h.html" name="max_function_calls"   include="dlib/global_optimization.h"/>
+         <term file="optimization.html" name="max_cost_assignment"         include="dlib/optimization.h"/>
+         <term link="optimization.html#max_cost_assignment" name="Hungarian Algorithm"         include="dlib/optimization.h"/>
+         <term file="optimization.html" name="max_sum_submatrix"           include="dlib/optimization.h"/>
+         <term file="dlib/optimization/max_cost_assignment_abstract.h.html" name="assignment_cost" include="dlib/optimization.h"/>
+         <term file="optimization.html" name="solve_least_squares"         include="dlib/optimization.h"/>
+         <term file="optimization.html" name="solve_least_squares_lm"      include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_min_trust_region"       include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_max_trust_region"       include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_max_factor_graph_nmplp" include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_max_factor_graph_viterbi" include="dlib/optimization.h"/>
+
+         <term file="optimization.html" name="find_max_parse_cky"                               include="dlib/optimization.h"/>
+         <term file="optimization.html" name="parse_tree_to_string"                             include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_trees_not_rooted_with_tag"                   include="dlib/optimization.h"/>
+         <term link="optimization.html#parse_tree_to_string" name="parse_tree_to_string_tagged" include="dlib/optimization.h"/>
+         <term link="optimization.html#parse_tree_to_string" name="parse_trees_to_string"       include="dlib/optimization.h"/>
+         <term link="optimization.html#parse_tree_to_string" name="parse_trees_to_string_tagged" include="dlib/optimization.h"/>
+         <term file="dlib/optimization/find_max_parse_cky_abstract.h.html" name="parse_tree_to_string_error" include="dlib/optimization.h"/>
+         <term file="dlib/optimization/find_max_parse_cky_abstract.h.html" name="constituent"   include="dlib/optimization.h"/>
+         <term file="dlib/optimization/find_max_parse_cky_abstract.h.html" name="parse_tree_element" include="dlib/optimization.h"/>
+         <term file="dlib/optimization/find_max_parse_cky_abstract.h.html" name="END_OF_TREE"   include="dlib/optimization.h"/>
+
+         <term file="optimization.html" name="find_max_factor_graph_potts"                include="dlib/graph_cuts.h" />
+         <term file="optimization.html" name="min_cut"                                    include="dlib/graph_cuts.h" />
+         <term file="optimization.html" name="graph_cut_score"                            include="dlib/graph_cuts.h" />
+         <term file="optimization.html" name="potts_model_score"                          include="dlib/graph_cuts.h" />
+         <term file="dlib/graph_cuts/find_max_factor_graph_potts_abstract.h.html" name="make_potts_grid_problem" include="dlib/graph_cuts.h" />
+         <term file="dlib/graph_cuts/min_cut_abstract.h.html" name="node_label"           include="dlib/graph_cuts.h" />
+         <term link="dlib/graph_cuts/min_cut_abstract.h.html#node_label" name="SOURCE_CUT" include="dlib/graph_cuts.h" />
+         <term link="dlib/graph_cuts/min_cut_abstract.h.html#node_label" name="SINK_CUT"  include="dlib/graph_cuts.h" />
+         <term link="dlib/graph_cuts/min_cut_abstract.h.html#node_label" name="FREE_NODE" include="dlib/graph_cuts.h" />
+
+         <term file="optimization.html" name="solve_trust_region_subproblem"  include="dlib/optimization.h"/>
+         <term file="optimization.html" name="solve_trust_region_subproblem_bounded"  include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_min_single_variable"       include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_min_using_approximate_derivatives" include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_min_bobyqa"                include="dlib/optimization.h"/>
+         <!-- DEPRECATED  <term file="optimization.html" name="find_optimal_parameters"        include="dlib/optimization/find_optimal_parameters.h"/> -->
+         <term file="optimization.html" name="elastic_net"                    include="dlib/optimization/elastic_net.h"/>
+         <term file="optimization.html" name="solve_qp_box_constrained"       include="dlib/optimization.h"/>
+         <term file="optimization.html" name="solve_qp_box_constrained_blockdiag"       include="dlib/optimization.h"/>
+         <term file="optimization.html" name="solve_qp_using_smo"             include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_gap_between_convex_hulls"  include="dlib/optimization.h"/>
+         <term file="optimization.html" name="solve_qp2_using_smo"            include="dlib/optimization.h"/>
+         <term file="optimization.html" name="solve_qp3_using_smo"            include="dlib/optimization.h"/>
+         <term file="optimization.html" name="solve_qp4_using_smo"            include="dlib/optimization.h"/>
+         <term file="optimization.html" name="oca"                            include="dlib/optimization.h"/>
+         <term file="optimization.html" name="mpc"                            include="dlib/control.h"/>
+         <term link="optimization.html#find_min_bobyqa" name="BOBYQA"         include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_max"                       include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_max_single_variable"       include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_max_using_approximate_derivatives" include="dlib/optimization.h"/>
+         <term file="optimization.html" name="find_max_bobyqa"                include="dlib/optimization.h"/>
+         <term file="optimization.html" name="objective_delta_stop_strategy"  include="dlib/optimization.h"/>
+         <term file="optimization.html" name="gradient_norm_stop_strategy"    include="dlib/optimization.h"/>
+         <term file="optimization.html" name="negate_function"                include="dlib/optimization.h"/>
+         <term file="optimization.html" name="clamp_function"                include="dlib/optimization.h"/>
+         <term file="optimization.html" name="cg_search_strategy"             include="dlib/optimization.h"/>
+         <term file="optimization.html" name="bfgs_search_strategy"           include="dlib/optimization.h"/>
+         <term file="optimization.html" name="newton_search_strategy"         include="dlib/optimization.h"/>
+         <term file="optimization.html" name="newton_search_strategy_obj"     include="dlib/optimization.h"/>
+         <term file="optimization.html" name="lbfgs_search_strategy"          include="dlib/optimization.h"/>
+
+         <term file="bayes.html" name="set_node_value"                  include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="node_value"                      include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="node_is_evidence"                include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="set_node_as_evidence"            include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="set_node_as_nonevidence"         include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="set_node_num_values"             include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="node_num_values"                 include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="node_probability"                include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="set_node_probability"            include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="assignment"                      include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="joint_probability_table"         include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="conditional_probability_table"   include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="bayes_node"                      include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="bayesian_network_gibbs_sampler"  include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="bayesian_network_join_tree"      include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="node_first_parent_assignment"    include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="node_next_parent_assignment"     include="dlib/bayes_utils.h"/>
+         <term file="bayes.html" name="node_cpt_filled_out"             include="dlib/bayes_utils.h"/>
+
+         <term file="algorithms.html" name="hash_samples"                  include="dlib/graph_utils_threaded.h"/>
+         <term file="algorithms.html" name="hash_similar_angles_64"        include="dlib/lsh.h"/>
+         <term file="algorithms.html" name="hash_similar_angles_128"       include="dlib/lsh.h"/>
+         <term file="algorithms.html" name="hash_similar_angles_256"       include="dlib/lsh.h"/>
+         <term file="algorithms.html" name="hash_similar_angles_512"       include="dlib/lsh.h"/>
+         <term file="algorithms.html" name="projection_hash"               include="dlib/lsh.h"/>
+         <term file="algorithms.html" name="create_random_projection_hash" include="dlib/lsh.h"/>
+         <term file="algorithms.html" name="create_max_margin_projection_hash" include="dlib/lsh.h"/>
+         <term file="imaging.html" name="randomly_sample_image_features"   include="dlib/statistics.h"/>
+         <term file="algorithms.html" name="disjoint_subsets"              include="dlib/disjoint_subsets.h"/>
+         <term file="algorithms.html" name="disjoint_subsets_sized"        include="dlib/disjoint_subsets.h"/>
+         <term link="algorithms.html#disjoint_subsets" name="union-find"   include="dlib/disjoint_subsets.h"/>
+         <term file="linear_algebra.html" name="rectangle"                 include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="drectangle"                 include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="border_enumerator"         include="dlib/geometry.h"/>
+         <term file="graph_tools.html" name="edge"                         include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="is_join_tree"                 include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="create_join_tree"             include="dlib/graph_utils.h"/>
+         <term file="algorithms.html" name="set_intersection_size"         include="dlib/set_utils.h"/>
+         <term file="algorithms.html" name="set_intersection"              include="dlib/set_utils.h"/>
+         <term file="algorithms.html" name="set_union"                     include="dlib/set_utils.h"/>
+         <term file="algorithms.html" name="set_difference"                include="dlib/set_utils.h"/>
+
+         <term file="algorithms.html" name="hsort_array"                   include="dlib/sort.h"/>
+         <term file="algorithms.html" name="put_in_range"                  include="dlib/algs.h"/>
+         <term file="algorithms.html" name="isort_array"                   include="dlib/sort.h"/>
+
+         <term file="algorithms.html" name="median"                        include="dlib/algs.h"/>
+         <term file="algorithms.html" name="qsort_array"                   include="dlib/sort.h"/>
+         <term file="algorithms.html" name="split_array"                   include="dlib/array.h"/>
+         <term file="algorithms.html" name="rand"                          include="dlib/rand.h"/>
+         <term link="algorithms.html#rand" name="Mersenne Twister"         include="dlib/rand.h"/>
+         <term file="graph_tools.html" name="graph_contains_undirected_cycle" include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="graph_has_symmetric_edges"    include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="graph_contains_directed_cycle" include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="copy_graph_structure"         include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="copy_graph"                   include="dlib/graph_utils.h"/>
+
+         <term file="graph_tools.html" name="create_moral_graph"           include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="triangulate_graph_and_find_cliques" include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="graph_contains_length_one_cycle" include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="find_connected_nodes"         include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="graph_is_connected"           include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="is_clique"                    include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="is_maximal_clique"            include="dlib/graph_utils.h"/>
+         <term file="algorithms.html" name="square_root"                   include="dlib/algs.h"/>
+         <term file="linear_algebra.html" name="vector"                    include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="point"                     include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="dpoint"                    include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="rotate_point"              include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="point_rotator"             include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="point_transform"           include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="point_transform_affine"    include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="rectangle_transform"       include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="camera_transform"          include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="point_transform_affine3d"  include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="rotate_around_x"           include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="rotate_around_y"           include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="rotate_around_z"           include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="translate_point"           include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="find_affine_transform"     include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="find_similarity_transform" include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="point_transform_projective"    include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="find_projective_transform"     include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="rotation_matrix"           include="dlib/geometry.h"/>
+
+         <term file="linear_algebra.html" name="line"                            include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="signed_distance_to_line"         include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="reverse"                         include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="intersect"                       include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="count_points_on_side_of_line"    include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="count_points_between_lines"      include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="angle_between_lines"             include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="is_convex_quadrilateral"         include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="polygon_area"                    include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="find_convex_quadrilateral"       include="dlib/geometry.h"/>
+         <term file="dlib/geometry/line_abstract.h.html" name="no_convex_quadrilateral"       include="dlib/geometry.h"/>
+
+
+         <term file="algorithms.html" name="running_stats"                 include="dlib/statistics.h"/>
+         <term file="algorithms.html" name="running_stats_decayed"                 include="dlib/statistics.h"/>
+         <term file="algorithms.html" name="running_scalar_covariance_decayed"                 include="dlib/statistics.h"/>
+         <term file="algorithms.html" name="running_gradient"              include="dlib/statistics/running_gradient.h"/>
+         <term file="algorithms.html" name="find_upper_quantile"           include="dlib/statistics/running_gradient.h"/>
+         <term file="dlib/statistics/running_gradient_abstract.h.html" name="probability_gradient_greater_than"  include="dlib/statistics/running_gradient.h"/>
+         <term file="dlib/statistics/running_gradient_abstract.h.html" name="probability_gradient_less_than"  include="dlib/statistics/running_gradient.h"/>
+         <term file="algorithms.html" name="count_steps_without_decrease_robust"  include="dlib/statistics/running_gradient.h"/>
+         <term file="algorithms.html" name="count_steps_without_decrease"  include="dlib/statistics/running_gradient.h"/>
+         <term file="algorithms.html" name="probability_values_are_increasing_robust"  include="dlib/statistics/running_gradient.h"/>
+         <term file="algorithms.html" name="probability_values_are_increasing"  include="dlib/statistics/running_gradient.h"/>
+         <term file="algorithms.html" name="count_steps_without_increase"  include="dlib/statistics/running_gradient.h"/>
+         <term file="algorithms.html" name="running_scalar_covariance"     include="dlib/statistics.h"/>
+         <term file="algorithms.html" name="mean_sign_agreement"           include="dlib/statistics.h"/>
+         <term file="algorithms.html" name="correlation"                   include="dlib/statistics.h"/>
+         <term file="algorithms.html" name="covariance"                    include="dlib/statistics.h"/>
+         <term file="algorithms.html" name="r_squared"                     include="dlib/statistics.h"/>
+         <term file="algorithms.html" name="mean_squared_error"            include="dlib/statistics.h"/>
+         <term file="algorithms.html" name="running_covariance"            include="dlib/statistics.h"/>
+         <term file="algorithms.html" name="running_cross_covariance"      include="dlib/statistics.h"/>
+         <term file="algorithms.html" name="random_subset_selector"        include="dlib/statistics.h"/>
+         <term file="algorithms.html" name="randomly_subsample"            include="dlib/statistics.h"/>
+         <term file="algorithms.html" name="event_correlation"            include="dlib/statistics.h"/>
+         <term file="algorithms.html" name="binomial_random_vars_are_different"            include="dlib/statistics.h"/>
+
+         <term file="ml.html" name="lspi"                                  include="dlib/control.h"/>
+         <term file="ml.html" name="policy"                                include="dlib/control.h"/>
+         <term file="ml.html" name="process_sample"                        include="dlib/control.h"/>
+         <term file="ml.html" name="select_all_distinct_labels"            include="dlib/svm.h"/>
+         <term file="dlib/svm/multiclass_tools_abstract.h.html" name="find_missing_pairs" include="dlib/svm.h"/>
+
+         <term file="ml.html" name="svm_multiclass_linear_trainer"         include="dlib/svm_threaded.h"/>
+         <term link="ml.html#svm_multiclass_linear_trainer" name="Multiclass SVM" include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="one_vs_one_trainer"                    include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="one_vs_one_decision_function"          include="dlib/svm.h"/>
+         <term file="ml.html" name="multiclass_linear_decision_function"   include="dlib/svm.h"/>
+         <term file="ml.html" name="one_vs_all_trainer"                    include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="one_vs_all_decision_function"          include="dlib/svm.h"/>
+
+         <term file="dlib/svm/pegasos_abstract.h.html" name="replicate_settings" include="dlib/svm.h"/>
+         <term file="ml.html" name="mlp"                                         include="dlib/mlp.h"/>
+         <term file="dlib/data_io/image_dataset_metadata.h.html" name="image"    include="dlib/data_io.h"/>
+         <term file="dlib/data_io/image_dataset_metadata.h.html" name="box"      include="dlib/data_io.h"/>
+         <term file="dlib/data_io/image_dataset_metadata.h.html" name="dataset"  include="dlib/data_io.h"/>
+         <term file="dlib/data_io/load_image_dataset_abstract.h.html" name="image_dataset_file"  include="dlib/data_io.h"/>
+         <term link="ml.html#load_image_dataset_metadata" name="image_dataset_metadata"      include="dlib/data_io.h"/>
+         <term file="ml.html" name="load_image_dataset_metadata"                 include="dlib/data_io.h"/>
+         <term file="ml.html" name="load_image_dataset"                          include="dlib/data_io.h"/>
+         <term file="ml.html" name="load_cifar_10_dataset"                       include="dlib/data_io.h"/>
+         <term file="ml.html" name="save_image_dataset_metadata"                 include="dlib/data_io.h"/>
+         <term file="ml.html" name="load_libsvm_formatted_data"                  include="dlib/data_io.h"/>
+         <term file="ml.html" name="save_libsvm_formatted_data"                  include="dlib/data_io.h"/>
+         <term file="ml.html" name="load_mnist_dataset"                          include="dlib/data_io.h"/>
+         <term file="linear_algebra.html" name="sparse_to_dense"                 include="dlib/sparse_vector.h"/>
+         <term file="ml.html" name="fix_nonzero_indexing"                        include="dlib/data_io.h"/>
+         <term link="ml.html#mlp" name="multi-layer perceptron"                  include="dlib/mlp.h"/>
+         <term link="ml.html#mlp" name="neural network"                          include="dlib/mlp.h"/>
+         <term file="ml.html" name="svm_pegasos"                                 include="dlib/svm.h"/>
+         <term file="ml.html" name="empirical_kernel_map"                        include="dlib/svm.h"/>
+
+         <term file="graph_tools.html" name="sample_pair"                        include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="ordered_sample_pair"                include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="order_by_index"                     include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="order_by_distance"                  include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="order_by_descending_distance"       include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="order_by_distance_and_index"        include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="find_percent_shortest_edges_randomly" include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="find_k_nearest_neighbors"           include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="find_k_nearest_neighbors_lsh"       include="dlib/graph_utils_threaded.h"/>
+         <term file="graph_tools.html" name="remove_short_edges"                 include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="remove_duplicate_edges"             include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="is_ordered_by_index"                include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="convert_unordered_to_ordered"       include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="find_neighbor_ranges"               include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="remove_long_edges"                  include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="remove_percent_longest_edges"       include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="remove_percent_shortest_edges"      include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="find_approximate_k_nearest_neighbors" include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="contains_duplicate_pairs"           include="dlib/graph_utils.h"/>
+         <term name="max_index_plus_one">
+            <term link="graph_tools.html#max_index_plus_one" name="for graphs"   include="dlib/graph_utils.h"/>
+            <term link="dlib/svm/sparse_vector_abstract.h.html#max_index_plus_one" name="for sparse vectors" include="dlib/sparse_vector.h"/>
+            <term link="dlib/svm/ranking_tools_abstract.h.html#max_index_plus_one" name="for ranking_pairs"  include="dlib/svm.h"/>
+         </term>
+         <term file="dlib/svm/sparse_vector_abstract.h.html" name="sparse_matrix_vector_multiply" include="dlib/sparse_vector.h"/>
+         <term file="dlib/svm/sparse_vector_abstract.h.html" name="make_sparse_vector"          include="dlib/sparse_vector.h"/>
+         <term file="dlib/svm/sparse_vector_abstract.h.html" name="make_sparse_vector_inplace"  include="dlib/sparse_vector.h"/>
+         <term file="dlib/svm/sparse_vector_abstract.h.html" name="add_to"                      include="dlib/sparse_vector.h"/>
+         <term file="dlib/svm/sparse_vector_abstract.h.html" name="subtract_from"               include="dlib/sparse_vector.h"/>
+         <term file="dlib/svm/sparse_vector_abstract.h.html" name="assign"                      include="dlib/sparse_vector.h"/>
+
+         <term file="ml.html" name="linear_manifold_regularizer"              include="dlib/manifold_regularization.h"/>
+         <term file="graph_tools.html" name="squared_euclidean_distance"      include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="cosine_distance"                 include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="negative_dot_product_distance"   include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="use_weights_of_one"              include="dlib/graph_utils.h"/>
+         <term file="graph_tools.html" name="use_gaussian_weights"            include="dlib/graph_utils.h"/>
+
+         <term file="dlib/svm/empirical_kernel_map_abstract.h.html" name="empirical_kernel_map_error"    include="dlib/svm.h"/>
+         <term file="dlib/svm/empirical_kernel_map_abstract.h.html" name="convert_to_decision_function"  include="dlib/svm.h"/>
+         <term file="ml.html" name="kernel_matrix"                                  include="dlib/svm.h"/>
+         <term file="ml.html" name="batch"                                          include="dlib/svm.h"/>
+         <term file="ml.html" name="verbose_batch"                                  include="dlib/svm.h"/>
+         <term file="ml.html" name="batch_cached"                                   include="dlib/svm.h"/>
+         <term file="ml.html" name="verbose_batch_cached"                           include="dlib/svm.h"/>
+         <term file="ml.html" name="batch_trainer"                                  include="dlib/svm.h"/>
+         <term file="ml.html" name="randomize_samples"                              include="dlib/svm.h"/>
+         <term file="ml.html" name="simplify_linear_decision_function"              include="dlib/svm.h"/>
+         <term file="ml.html" name="is_binary_classification_problem"               include="dlib/svm.h"/>
+         <term file="ml.html" name="is_sequence_labeling_problem"                   include="dlib/svm.h"/>
+         <term file="ml.html" name="is_sequence_segmentation_problem"               include="dlib/svm.h"/>
+         <term file="ml.html" name="is_learning_problem"                            include="dlib/svm.h"/>
+         <term file="ml.html" name="svm_nu_trainer"                                 include="dlib/svm.h"/>
+         <term file="ml.html" name="svm_c_trainer"                                  include="dlib/svm.h"/>
+         <term file="ml.html" name="svm_one_class_trainer"                          include="dlib/svm.h"/>
+         <term file="ml.html" name="svm_c_linear_trainer"                           include="dlib/svm.h"/>
+         <term file="ml.html" name="svm_c_linear_dcd_trainer"                       include="dlib/svm.h"/>
+         <term file="ml.html" name="svm_rank_trainer"                               include="dlib/svm.h"/>
+         <term file="ml.html" name="shape_predictor_trainer"                        include="dlib/image_processing.h"/>
+         <term file="ml.html" name="make_bounding_box_regression_training_data"     include="dlib/image_processing.h"/>
+         <term file="ml.html" name="test_shape_predictor"                           include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="shape_predictor"                           include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="render_face_detections"                    include="dlib/image_processing/render_face_detections.h"/>
+         <term file="ml.html" name="ranking_pair"                                   include="dlib/svm.h"/>
+         <term file="ml.html" name="is_ranking_problem"                             include="dlib/svm.h"/>
+         <term file="ml.html" name="count_ranking_inversions"                       include="dlib/svm.h"/>
+         <term file="ml.html" name="average_precision"                              include="dlib/statistics.h"/>
+         <term file="ml.html" name="equal_error_rate"                               include="dlib/statistics.h"/>
+         <term file="ml.html" name="compute_roc_curve"                              include="dlib/statistics.h"/>
+         <term file="dlib/statistics/lda.h.html" name="roc_point"                   include="dlib/statistics.h"/>
+         <term file="ml.html" name="test_ranking_function"                          include="dlib/svm.h"/>
+         <term file="ml.html" name="cross_validate_ranking_trainer"                 include="dlib/svm.h"/>
+         <term file="ml.html" name="svm_c_ekm_trainer"                              include="dlib/svm.h"/>
+         <term file="ml.html" name="rvm_trainer"                                    include="dlib/svm.h"/>
+         <term file="ml.html" name="krr_trainer"                                    include="dlib/svm.h"/>
+
+         <term file="ml.html" name="random_forest_regression_trainer"               include="dlib/random_forest.h"/>
+         <term file="ml.html" name="random_forest_regression_function"              include="dlib/random_forest.h"/>
+         <term file="dlib/random_forest/random_forest_regression_abstract.h.html" name="dense_feature_extractor"              include="dlib/random_forest.h"/>
+         <term file="dlib/random_forest/random_forest_regression_abstract.h.html" name="internal_tree_node"              include="dlib/random_forest.h"/>
+
+         <term file="ml.html" name="rr_trainer"                                     include="dlib/svm.h"/>
+         <term file="ml.html" name="svr_trainer"                                    include="dlib/svm.h"/>
+         <term file="ml.html" name="svr_linear_trainer"                             include="dlib/svm.h"/>
+         <term file="ml.html" name="rvm_regression_trainer"                         include="dlib/svm.h"/>
+         <term file="ml.html" name="rbf_network_trainer"                            include="dlib/svm.h"/>
+         <term file="ml.html" name="reduced"                                        include="dlib/svm.h"/>
+         <term file="ml.html" name="reduced_decision_function_trainer"              include="dlib/svm.h"/>
+         <term file="ml.html" name="reduced2"                                       include="dlib/svm.h"/>
+         <term file="ml.html" name="approximate_distance_function"                  include="dlib/svm.h"/>
+         <term file="ml.html" name="reduced_decision_function_trainer2"             include="dlib/svm.h"/>
+         <term file="ml.html" name="train_probabilistic_decision_function"          include="dlib/svm.h"/>
+         <term file="ml.html" name="probabilistic"                                  include="dlib/svm.h"/>
+         <term file="ml.html" name="cross_validate_trainer"                         include="dlib/svm.h"/>
+         <term file="ml.html" name="cross_validate_object_detection_trainer"        include="dlib/svm.h"/>
+         <term file="ml.html" name="cross_validate_sequence_labeler"                include="dlib/svm.h"/>
+         <term file="ml.html" name="cross_validate_sequence_segmenter"              include="dlib/svm.h"/>
+         <term file="ml.html" name="cross_validate_trainer_threaded"                include="dlib/svm_threaded.h"/>
+         <term file="ml.html" name="cross_validate_multiclass_trainer"              include="dlib/svm.h"/>
+         <term file="dlib/svm/cross_validate_multiclass_trainer_abstract.h.html" name="cross_validation_error"    include="dlib/svm.h"/>
+         <term file="ml.html" name="cross_validate_regression_trainer"              include="dlib/svm.h"/>
+         <term file="ml.html" name="test_binary_decision_function"                  include="dlib/svm.h"/>
+         <term file="ml.html" name="test_object_detection_function"                 include="dlib/svm.h"/>
+         <term file="ml.html" name="test_multiclass_decision_function"              include="dlib/svm.h"/>
+         <term file="ml.html" name="test_regression_function"                       include="dlib/svm.h"/>
+         <term file="ml.html" name="test_sequence_labeler"                          include="dlib/svm.h"/>
+         <term file="ml.html" name="test_sequence_segmenter"                        include="dlib/svm.h"/>
+         <term link="ml.html#svm_nu_trainer" name="support vector machine"          include="dlib/svm.h"/>
+         <term link="ml.html#rvm_trainer" name="relevance vector machine"           include="dlib/svm.h"/>
+         <term link="ml.html#krr_trainer" name="kernel ridge regression"            include="dlib/svm.h"/>
+         <term link="ml.html#rr_trainer" name="ridge regression"                    include="dlib/svm.h"/>
+         <term link="ml.html#svr_trainer" name="support vector regression"          include="dlib/svm.h"/>
+         <term link="ml.html#krr_trainer" name="regularized least squares"          include="dlib/svm.h"/>
+         <term link="ml.html#krr_trainer" name="least squares SVM"                  include="dlib/svm.h"/>
+         <term file="ml.html" name="krls"                                           include="dlib/svm.h"/>
+         <term file="ml.html" name="rls"                                            include="dlib/svm.h"/>
+         <term file="ml.html" name="kcentroid"                                      include="dlib/svm.h"/>
+         <term file="ml.html" name="linearly_independent_subset_finder"             include="dlib/svm.h"/>
+         <term file="ml.html" name="fill_lisf"                                      include="dlib/svm.h"/>
+         <term file="ml.html" name="sort_basis_vectors"                             include="dlib/svm.h"/>
+         <term file="ml.html" name="rank_unlabeled_training_samples"                include="dlib/svm.h"/>
+         <term file="ml.html" name="vector_normalizer"                              include="dlib/statistics.h"/>
+         <term file="ml.html" name="vector_normalizer_frobmetric"                   include="dlib/statistics.h"/>
+         <term file="ml.html" name="compute_lda_transform"                          include="dlib/statistics.h"/>
+         <term file="ml.html" name="frobmetric_training_sample"                     include="dlib/statistics.h"/>
+         <term file="ml.html" name="vector_normalizer_pca"                          include="dlib/statistics.h"/>
+         <term file="ml.html" name="discriminant_pca"                               include="dlib/statistics.h"/>
+         <term file="ml.html" name="sammon_projection"                              include="dlib/statistics.h"/>
+         <term file="ml.html" name="cca"                                            include="dlib/statistics.h"/>
+         <term file="dlib/statistics/dpca_abstract.h.html" name="discriminant_pca_error"  include="dlib/statistics.h"/>
+         <term file="ml.html" name="kkmeans"                                        include="dlib/clustering.h"/>
+         <term file="ml.html" name="find_clusters_using_kmeans"                     include="dlib/clustering.h"/>
+         <term file="ml.html" name="find_clusters_using_angular_kmeans"             include="dlib/clustering.h"/>
+         <term file="ml.html" name="nearest_center"                                 include="dlib/clustering.h"/>
+         <term file="ml.html" name="newman_cluster"                                 include="dlib/clustering.h"/>
+         <term file="ml.html" name="spectral_cluster"                               include="dlib/clustering.h"/>
+         <term file="ml.html" name="chinese_whispers"                               include="dlib/clustering.h"/>
+         <term file="ml.html" name="bottom_up_cluster"                               include="dlib/clustering.h"/>
+         <term file="ml.html" name="segment_number_line"                            include="dlib/clustering.h"/>
+         <term file="dlib/clustering/bottom_up_cluster_abstract.h.html" name="snl_range"  include="dlib/clustering.h"/>
+         <term file="ml.html" name="modularity"                                     include="dlib/clustering.h"/>
+         <term file="ml.html" name="pick_initial_centers"                           include="dlib/clustering.h"/>
+         <term file="ml.html" name="rank_features"                                  include="dlib/svm.h"/>
+         <term file="ml.html" name="find_gamma_with_big_centroid_gap"               include="dlib/svm.h"/>
+         <term file="ml.html" name="compute_mean_squared_distance"                  include="dlib/svm.h"/>
+         <term file="dlib/svm/feature_ranking_abstract.h.html" name="verbose_find_gamma_with_big_centroid_gap" include="dlib/svm.h"/>
+
+         <term file="ml.html" name="null_trainer"                    include="dlib/svm.h"/>
+         <term file="ml.html" name="null_trainer_type"               include="dlib/svm.h"/>
+         <term file="ml.html" name="roc_c1_trainer"                  include="dlib/svm.h"/>
+         <term file="ml.html" name="roc_c2_trainer"                  include="dlib/svm.h"/>
+         <term file="ml.html" name="roc_trainer_type"                include="dlib/svm.h"/>
+
+         <term file="ml.html" name="decision_function"               include="dlib/svm.h"/>
+         <term file="ml.html" name="projection_function"             include="dlib/svm.h"/>
+         <term file="ml.html" name="normalized_function"             include="dlib/svm.h"/>
+         <term file="ml.html" name="distance_function"               include="dlib/svm.h"/>
+         <term file="ml.html" name="probabilistic_decision_function" include="dlib/svm.h"/>
+         <term file="ml.html" name="probabilistic_function"          include="dlib/svm.h"/>
+         <term file="ml.html" name="linear_kernel"                   include="dlib/svm.h"/>
+         <term file="ml.html" name="histogram_intersection_kernel"   include="dlib/svm.h"/>
+         <term file="ml.html" name="offset_kernel"                   include="dlib/svm.h"/>
+         <term file="ml.html" name="polynomial_kernel"               include="dlib/svm.h"/>
+         <term file="ml.html" name="sigmoid_kernel"                  include="dlib/svm.h"/>
+         <term file="ml.html" name="radial_basis_kernel"             include="dlib/svm.h"/>
+         <term file="ml.html" name="auto_train_rbf_classifier"       include="dlib/svm.h"/>
+
+
+         <term link="dlib/svm/sparse_vector_abstract.h.html#sparse_vectors" name="unsorted sparse vectors"/>
+         <term link="dlib/svm/sparse_vector_abstract.h.html#sparse_vectors" name="sparse vectors"/>
+         <term file="ml.html" name="sparse_linear_kernel"                  include="dlib/svm.h"/>
+         <term file="ml.html" name="sparse_histogram_intersection_kernel"  include="dlib/svm.h"/>
+         <term file="ml.html" name="sparse_polynomial_kernel"              include="dlib/svm.h"/>
+         <term file="ml.html" name="sparse_sigmoid_kernel"                 include="dlib/svm.h"/>
+         <term file="ml.html" name="sparse_radial_basis_kernel"            include="dlib/svm.h"/>
+
+         <term link="dlib/svm/kernel_abstract.h.html#Kernel_Function_Objects" name="Kernel Function Objects"/>
+         <term file="dlib/svm/kernel_abstract.h.html" name="kernel_derivative" include="dlib/svm.h"/>
+
+         <term file="containers.html" name="unordered_pair"       include="dlib/unordered_pair.h"/>
+         <term file="containers.html" name="std_vector_c"         include="dlib/stl_checked.h"/>
+         <term file="containers.html" name="graph"                include="dlib/graph.h"/>
+         <term file="containers.html" name="directed_graph"       include="dlib/directed_graph.h"/>
+         <term file="containers.html" name="array"                include="dlib/array.h"/>
+         <term file="containers.html" name="binary_search_tree"   include="dlib/binary_search_tree.h"/>
+         <term file="containers.html" name="enumerable"           include="dlib/interfaces/enumerable.h"/>
+         <term file="containers.html" name="map_pair"             include="dlib/interfaces/map_pair.h"/>
+         <term file="containers.html" name="map"                  include="dlib/map.h"/>
+
+
+         <term file="dlib/matrix/matrix_abstract.h.html" name="matrix_colmajor"       include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_abstract.h.html" name="fmatrix_colmajor"      include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_abstract.h.html" name="csv"       include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_data_layout_abstract.h.html" name="row_major_layout"       include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_data_layout_abstract.h.html" name="column_major_layout"    include="dlib/matrix.h"/>
+
+         <term file="dlib/matrix/matrix_exp_abstract.h.html" name="matrix_exp"               include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_abstract.h.html" name="const_temp_matrix"            include="dlib/matrix.h"/>
+
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="sigmoid"       include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="reciprocal"    include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="reciprocal_max" include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="round"         include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="round_zeros"   include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="complex_matrix" include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="normalize"     include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="soft_max"      include="dlib/matrix.h"/>
+
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="abs"           include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="acos"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="asin"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="atan"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="ceil"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="conj"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="cos"           include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="cosh"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="cubed"         include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="exp"           include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="floor"         include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="imag"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="log10"         include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="log"           include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="norm"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="pow"           include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="real"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="sinh"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="sin"           include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="sqrt"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="tanh"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="tan"           include="dlib/matrix.h"/>
+
+
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="linspace"           include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="linpiece"           include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="logspace"           include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="cartesian_product"  include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="randm"              include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="gaussian_randm"     include="dlib/matrix.h"/>
+
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="diag"               include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="diag_exp"           include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="diagm"              include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="trans"              include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="flip"               include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="fliplr"             include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="flipud"             include="dlib/matrix.h"/>
+
+         <term file="dlib/matrix/matrix_conv_abstract.h.html" name="conv"                    include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_conv_abstract.h.html" name="conv_same"               include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_conv_abstract.h.html" name="conv_valid"              include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_conv_abstract.h.html" name="xcorr"                   include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_conv_abstract.h.html" name="xcorr_fft"               include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_conv_abstract.h.html" name="xcorr_same"              include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_conv_abstract.h.html" name="xcorr_valid"             include="dlib/matrix.h"/>
+
+         <term file="dlib/matrix/symmetric_matrix_cache_abstract.h.html" name="symmetric_matrix_cache" include="dlib/matrix.h"/>
+
+         <term name="dot">
+            <term link="dlib/matrix/matrix_utilities_abstract.h.html#dot" name="for matrix objects" include="dlib/matrix.h"/>
+            <term link="dlib/svm/sparse_vector_abstract.h.html#dot" name="for sparse vectors" include="dlib/sparse_vector.h"/>
+            <term link="dlib/cuda/tensor_abstract.h.html#dot" name="for tensors" include="dlib/cuda/tensor.h"/>
+         </term>
+
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="lowerm"             include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="upperm"             include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="make_symmetric"     include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="zeros_matrix"       include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="ones_matrix"        include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="uniform_matrix"     include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="identity_matrix"    include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="rotate"             include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="removerc"           include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="remove_row"         include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="remove_col"         include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="matrix_cast"        include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="set_all_elements"   include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="tmp"                include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="reshape_to_column_vector" include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="reshape"            include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="squared"       include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_math_functions_abstract.h.html" name="cubed"         include="dlib/matrix.h"/>
+
+         <term name="is_vector">
+            <term link="dlib/matrix/matrix_utilities_abstract.h.html#is_vector" name="for matrix objects"          include="dlib/matrix.h"/>
+            <term link="dlib/cuda/tensor_abstract.h.html#is_vector" name="for tensor objects"          include="dlib/cuda/tensor.h"/>
+         </term>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="is_row_vector"      include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="is_col_vector"      include="dlib/matrix.h"/>
+         <term name="is_finite">
+            <term link="dlib/matrix/matrix_utilities_abstract.h.html#is_finite" name="for matrix objects" include="dlib/matrix.h"/>
+            <term link="dlib/algs.h.html#is_finite" name="for scalar values" include="dlib/algs.h"/>
+         </term>
+         <term file="dlib/matrix/matrix_fft_abstract.h.html" name="fft"                      include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_fft_abstract.h.html" name="ifft"                     include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_fft_abstract.h.html" name="is_power_of_two"          include="dlib/matrix.h"/>
+
+
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="lu_decomposition"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="qr_decomposition"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="cholesky_decomposition"    include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="eigenvalue_decomposition"  include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="inv"                       include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="inv_lower_triangular"      include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="inv_upper_triangular"      include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="pinv"                      include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="real_eigenvalues"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="svd"                       include="dlib/matrix.h"/>
+         <term link="dlib/matrix/matrix_la_abstract.h.html#svd" name="singular value decomposition" include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="svd2"                      include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="svd3"                      include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="svd_fast"                  include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="orthogonalize"             include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="det"                       include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="trace"                     include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_la_abstract.h.html" name="chol"                      include="dlib/matrix.h"/>
+
+
+
+         <term file="dlib/matrix/matrix_subexp_abstract.h.html" name="rowm"                  include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_subexp_abstract.h.html" name="rowm_exp"              include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_subexp_abstract.h.html" name="colm"                  include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_subexp_abstract.h.html" name="colm_exp"              include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_subexp_abstract.h.html" name="subm"                  include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_subexp_abstract.h.html" name="subm_clipped"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_subexp_abstract.h.html" name="range"                 include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_subexp_abstract.h.html" name="set_rowm"              include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_subexp_abstract.h.html" name="set_colm"              include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_subexp_abstract.h.html" name="set_subm"              include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_subexp_abstract.h.html" name="set_ptrm"              include="dlib/matrix.h"/>
+
+
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="min_pointwise" include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="max_pointwise" include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="pointwise_multiply" include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="pointwise_pow" include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="join_rows"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="join_cols"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="equal"              include="dlib/matrix.h"/>
+
+
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="scale_columns"      include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="scale_rows"         include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="sort_columns"       include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="rsort_columns"      include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="tensor_product"     include="dlib/matrix.h"/>
+
+         <term name="length">
+            <term link="dlib/matrix/matrix_utilities_abstract.h.html#length" name="for matrix objects" include="dlib/matrix.h"/>
+            <term link="dlib/svm/sparse_vector_abstract.h.html#length" name="for sparse vectors" include="dlib/sparse_vector.h"/>
+         </term>
+
+         <term name="length_squared">
+            <term link="dlib/matrix/matrix_utilities_abstract.h.html#length_squared" name="for matrix objects" include="dlib/matrix.h"/>
+            <term link="dlib/svm/sparse_vector_abstract.h.html#length_squared" name="for sparse vectors" include="dlib/sparse_vector.h"/>
+         </term>
+
+         <term name="min">
+            <term link="dlib/matrix/matrix_utilities_abstract.h.html#min" name="for matrix objects" include="dlib/matrix.h"/>
+            <term link="dlib/svm/sparse_vector_abstract.h.html#min" name="for sparse vectors"   include="dlib/sparse_vector.h"/>
+         </term>
+         <term name="max">
+            <term link="dlib/matrix/matrix_utilities_abstract.h.html#max" name="for matrix objects" include="dlib/matrix.h"/>
+            <term link="dlib/svm/sparse_vector_abstract.h.html#max" name="for sparse vectors"   include="dlib/sparse_vector.h"/>
+         </term>
+
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="find_min_and_max"      include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="max_point"             include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="max_point_interpolated"             include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="min_point"             include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="index_of_max"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="index_of_min"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="sum"                   include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="is_row_major"          include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="sum_rows"              include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="sum_cols"              include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="prod"                  include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="mean"                  include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="variance"              include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="stddev"                include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="covariance"            include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="pixel_to_vector"       include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="vector_to_pixel"       include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="clamp"                 include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="lowerbound"            include="dlib/matrix.h"/>
+         <term file="dlib/matrix/matrix_utilities_abstract.h.html" name="upperbound"            include="dlib/matrix.h"/>
+
+
+         <term file="dlib/svm/sparse_vector_abstract.h.html" name="scale_by"           include="dlib/sparse_vector.h"/>
+         <term file="dlib/svm/sparse_vector_abstract.h.html" name="add"                include="dlib/sparse_vector.h"/>
+         <term file="dlib/svm/sparse_vector_abstract.h.html" name="subtract"           include="dlib/sparse_vector.h"/>
+         <term file="dlib/svm/sparse_vector_abstract.h.html" name="distance_squared"   include="dlib/sparse_vector.h"/>
+         <term file="dlib/svm/sparse_vector_abstract.h.html" name="distance"           include="dlib/sparse_vector.h"/>
+         <term file="dlib/svm/sparse_vector_abstract.h.html" name="has_unsigned_keys"  include="dlib/sparse_vector.h"/>
+
+         <term file="containers.html" name="remover"                 include="dlib/interfaces/remover.h"/>
+         <term file="containers.html" name="set"                     include="dlib/set.h"/>
+         <term file="containers.html" name="stack"                   include="dlib/stack.h"/>
+         <term file="containers.html" name="any"                     include="dlib/any.h"/>
+         <term file="containers.html" name="any_function"            include="dlib/any.h"/>
+         <term file="containers.html" name="any_trainer"             include="dlib/any.h"/>
+         <term file="containers.html" name="any_decision_function"   include="dlib/any.h"/>
+
+         <term file="metaprogramming.html" name="compile_time_integer_list"          include="dlib/metaprogramming.h"/>
+         <term file="metaprogramming.html" name="make_compile_time_integer_range"    include="dlib/metaprogramming.h"/>
+         <term file="metaprogramming.html" name="enable_if"          include="dlib/enable_if.h"/>
+         <term file="metaprogramming.html" name="disable_if"         include="dlib/enable_if.h"/>
+
+         <term file="metaprogramming.html" name="tmin"               include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="tmax"               include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="tabs"               include="dlib/algs.h"/>
+
+         <term file="metaprogramming.html" name="unsigned_type"      include="dlib/uintn.h"/>
+         <term file="metaprogramming.html" name="DLIB_ASSERT"        include="dlib/assert.h"/>
+         <term link="metaprogramming.html#DLIB_ASSERT" name="ENABLE_ASSERTS"/>
+         <term link="metaprogramming.html#DLIB_ASSERT" name="dlib_assert_breakpoint"/>
+         <term file="metaprogramming.html" name="ASSERT_ARE_NOT_SAME_TYPE"          include="dlib/assert.h"/>
+         <term file="metaprogramming.html" name="ASSERT_ARE_SAME_TYPE"              include="dlib/assert.h"/>
+         <term file="metaprogramming.html" name="DLIB_CASSERT"                      include="dlib/assert.h"/>
+         <term file="metaprogramming.html" name="COMPILE_TIME_ASSERT"               include="dlib/assert.h"/>
+         <term file="metaprogramming.html" name="DLIB_ASSERT_HAS_STANDARD_LAYOUT"   include="dlib/assert.h"/>
+         <term file="other.html" name="MATLAB"                       />
+         <term file="other.html" name="java"                       />
+         <term file="other.html" name="TIME_THIS"                       include="dlib/time_this.h"/>
+         <term link="other.html#timing code blocks" name="print"        include="dlib/timing.h"/>
+         <term file="other.html" name="timing code blocks"              include="dlib/timing.h"/>
+         <term link="other.html#timing code blocks" name="start"        include="dlib/timing.h"/>
+         <term link="other.html#timing code blocks" name="stop"         include="dlib/timing.h"/>
+         <term link="other.html#TIME_THIS" name="TIME_THIS_TO"          include="dlib/time_this.h"/>
+         <term file="metaprogramming.html" name="_dT"                   include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="is_pointer_type"       include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="is_const_type"         include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="is_reference_type"     include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="is_same_type"          include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="DLIB_MAKE_HAS_MEMBER_FUNCTION_TEST"          include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="is_float_type"         include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="is_same_object"        include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="is_convertible"        include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="is_complex"            include="dlib/matrix.h"/>
+         <term file="metaprogramming.html" name="is_function"           include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="wrap_function"         include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="is_signed_type"        include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="is_unsigned_type"      include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="noncopyable"           include="dlib/noncopyable.h"/>
+         <term link="metaprogramming.html#portability_macros" name="portability macros"/>
+         <term file="metaprogramming.html" name="static_switch"         include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="is_graph"              include="dlib/is_kind.h"/>
+         <term file="metaprogramming.html" name="is_array2d"            include="dlib/is_kind.h"/>
+         <term file="metaprogramming.html" name="is_array"              include="dlib/is_kind.h"/>
+         <term file="metaprogramming.html" name="is_rand"               include="dlib/is_kind.h"/>
+         <term file="metaprogramming.html" name="is_matrix"             include="dlib/is_kind.h"/>
+         <term file="metaprogramming.html" name="is_config_reader"      include="dlib/is_kind.h"/>
+         <term file="metaprogramming.html" name="is_std_vector"         include="dlib/is_kind.h"/>
+         <term file="metaprogramming.html" name="is_pair"               include="dlib/is_kind.h"/>
+         <term file="metaprogramming.html" name="is_directed_graph"     include="dlib/is_kind.h"/>
+         <term file="metaprogramming.html" name="is_built_in_scalar_type" include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="promote"               include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="basic_type"            include="dlib/algs.h"/>
+         <term file="metaprogramming.html" name="assign_zero_if_built_in_scalar_type" include="dlib/algs.h"/>
+
+
+         <term link="dlib/platform.h.html" name="DLIB_POSIX"     include="dlib/platform.h"/>
+         <term link="dlib/platform.h.html" name="MACOSX"    include="dlib/platform.h"/>
+         <term link="dlib/platform.h.html" name="HPUX"      include="dlib/platform.h"/>
+         <term link="dlib/platform.h.html" name="WIN32"     include="dlib/platform.h"/>
+
+         <term link="dlib/float_details.h.html" name="float_details"     include="dlib/float_details.h"/>
+         <term file="other.html" name="copy_functor"        include="dlib/algs.h"/>
+         <term file="other.html" name="deserialize"         include="dlib/serialize.h"/>
+         <term file="other.html" name="ramdump"             include="dlib/serialize.h"/>
+         <term file="other.html" name="check_serialized_version"             include="dlib/serialize.h"/>
+         <term file="other.html" name="error"               include="dlib/error.h"/>
+         <term file="other.html" name="memory_manager"      include="dlib/memory_manager.h"/>
+         <term file="other.html" name="default_memory_manager" include="dlib/algs.h"/>
+         <term file="other.html" name="memory_manager_global"  include="dlib/memory_manager_global.h"/>
+         <term file="other.html" name="serialize"           include="dlib/serialize.h"/>
+         <term file="other.html" name="uint8"               include="dlib/uintn.h"/>
+         <term file="other.html" name="uint16"              include="dlib/uintn.h"/>
+         <term file="other.html" name="uint32"              include="dlib/uintn.h"/>
+         <term file="other.html" name="uint64"              include="dlib/uintn.h"/>
+         <term file="other.html" name="int8"                include="dlib/uintn.h"/>
+         <term file="other.html" name="int16"               include="dlib/uintn.h"/>
+         <term file="other.html" name="int32"               include="dlib/uintn.h"/>
+         <term file="other.html" name="int64"               include="dlib/uintn.h"/>
+         <term file="other.html" name="zero_extend_cast"    include="dlib/uintn.h"/>
+
+         <term name="kernel">
+            <term link="intro.html#Notation" name="in notation overview"/>
+            <term link="intro.html#Creating Objects" name="regarding creating objects"/>
+         </term>
+
+         <term link="intro.html#Notation" name="extension"/>
+         <term link="intro.html#Notation" name="abstract"/>
+         <term link="intro.html#Notation" name="requires"/>
+         <term link="intro.html#Notation" name="ensures"/>
+         <term link="intro.html#Notation" name="throws"/>
+         <term link="intro.html#meaning_of_hash" name="# symbol in comments"/>
+         <term file="intro.html" name="CONVENTION"/>
+
+
+         <term link="intro.html#Creating Objects" name="debugging modes: enable/disable"/>
+
+
+         <term file="other.html" name="console_progress_indicator"  include="dlib/console_progress_indicator.h"/>
+
+         <term link="api.html#gui_core" name="gui"/>
+         <term file="api.html" name="gui_core"/>
+         <term file="api.html" name="gui_widgets"/>
+         <term file="api.html" name="misc_api"/>
+         <term file="api.html" name="dir_nav"/>
+         <term file="api.html" name="sockets"/>
+         <term file="api.html" name="threads"/>
+
+         <term file="api.html" name="auto_mutex"            include="dlib/threads.h"/>
+         <term file="api.html" name="auto_unlock"           include="dlib/threads.h"/>
+         <term file="api.html" name="auto_mutex_readonly"   include="dlib/threads.h"/>
+         <term file="api.html" name="auto_unlock_readonly"  include="dlib/threads.h"/>
+         <term link="api.html#create_new_thread%20extension" name="create_new_thread extension" include="dlib/threads.h"/> 
+         <term file="api.html" name="multithreaded_object"  include="dlib/threads.h"/>
+         <term file="api.html" name="rmutex"                include="dlib/threads.h"/>
+         <term file="api.html" name="read_write_mutex"      include="dlib/threads.h"/>
+         <term file="api.html" name="rsignaler"             include="dlib/threads.h"/>
+         <term file="api.html" name="thread_function"       include="dlib/threads.h"/>
+         <term file="api.html" name="thread_specific_data"  include="dlib/threads.h"/>
+         <term file="api.html" name="threaded_object"       include="dlib/threads.h"/>
+         <term file="api.html" name="thread_pool"           include="dlib/threads.h"/>
+         <term file="api.html" name="async"                 include="dlib/threads.h"/>
+         <term file="api.html" name="default_thread_pool"   include="dlib/threads.h"/>
+         <term link="api.html#default_thread_pool" name="DLIB_NUM_THREADS"  />
+         <term file="api.html" name="parallel_for"          include="dlib/threads.h"/>
+         <term link="api.html#parallel_for" name="parallel_for_blocked" include="dlib/threads.h"/>
+         <term link="api.html#parallel_for" name="parallel_for_verbose" include="dlib/threads.h"/>
+         <term link="api.html#thread_pool" name="futures"   include="dlib/threads.h"/>
+
+
+         <term file="compile.html" name="DLIB_ISO_CPP_ONLY"/>
+         <term file="compile.html" name="DLIB_NO_GUI_SUPPORT"/>
+         <term file="compile.html" name="NO_MAKEFILE"/>
+         <term file="compile.html" name="DLIB_THREAD_POOL_TIMEOUT"/>
+
+         <term file="dlib/threads/threads_kernel_abstract.h.html" name="get_thread_id"    include="dlib/threads.h"/>
+         <term file="dlib/threads/threads_kernel_abstract.h.html" name="is_dlib_thread"   include="dlib/threads.h"/>
+         <term file="dlib/threads/threads_kernel_abstract.h.html" name="register_thread_end_handler" include="dlib/threads.h"/>
+         <term file="dlib/threads/threads_kernel_abstract.h.html" name="unregister_thread_end_handler" include="dlib/threads.h"/>
+         <term file="dlib/threads/threads_kernel_abstract.h.html" name="create_new_thread" include="dlib/threads.h"/>
+         <term file="dlib/threads/threads_kernel_abstract.h.html" name="mutex"            include="dlib/threads.h"/>
+         <term file="dlib/threads/threads_kernel_abstract.h.html" name="signaler"         include="dlib/threads.h"/>
+
+         <term file="dlib/misc_api/misc_api_kernel_abstract.h.html" name="sleep"                   include="dlib/misc_api.h"/>
+         <term file="dlib/misc_api/misc_api_kernel_abstract.h.html" name="get_current_dir"         include="dlib/misc_api.h"/>
+         <term file="dlib/misc_api/misc_api_kernel_abstract.h.html" name="set_current_dir"         include="dlib/misc_api.h"/>
+         <term file="dlib/misc_api/misc_api_kernel_abstract.h.html" name="locally_change_current_dir" include="dlib/misc_api.h"/>
+         <term file="dlib/misc_api/misc_api_kernel_abstract.h.html" name="set_current_dir_error"   include="dlib/misc_api.h"/>
+         <term file="dlib/misc_api/misc_api_kernel_abstract.h.html" name="dir_create_error"        include="dlib/misc_api.h"/>
+         <term file="dlib/misc_api/misc_api_kernel_abstract.h.html" name="create_directory"        include="dlib/misc_api.h"/>
+         <term file="dlib/misc_api/misc_api_kernel_abstract.h.html" name="timestamper"             include="dlib/misc_api.h"/>
+         <term file="dlib/misc_api/misc_api_kernel_abstract.h.html" name="get_timestamp"           include="dlib/misc_api.h"/>
+
+
+         <term file="dlib/dir_nav/dir_nav_kernel_abstract.h.html" name="get_filesystem_roots"   include="dlib/dir_nav.h"/>
+         <term file="dlib/dir_nav/dir_nav_kernel_abstract.h.html" name="file"                   include="dlib/dir_nav.h"/>
+         <term file="dlib/dir_nav/dir_nav_kernel_abstract.h.html" name="file_not_found"         include="dlib/dir_nav.h"/>
+         <term file="dlib/dir_nav/dir_nav_kernel_abstract.h.html" name="directory"              include="dlib/dir_nav.h"/>
+         <term file="dlib/dir_nav/dir_nav_kernel_abstract.h.html" name="dir_not_found"          include="dlib/dir_nav.h"/>
+         <term file="dlib/dir_nav/dir_nav_kernel_abstract.h.html" name="listing_error"          include="dlib/dir_nav.h"/>
+         <term file="dlib/dir_nav/dir_nav_extensions_abstract.h.html" name="get_files_in_directory_tree"    include="dlib/dir_nav.h"/>
+         <term file="dlib/dir_nav/dir_nav_extensions_abstract.h.html" name="get_parent_directory"     include="dlib/dir_nav.h"/>
+         <term file="dlib/dir_nav/dir_nav_extensions_abstract.h.html" name="file_exists"        include="dlib/dir_nav.h"/>
+         <term file="dlib/dir_nav/dir_nav_extensions_abstract.h.html" name="select_oldest_file"        include="dlib/dir_nav.h"/>
+         <term file="dlib/dir_nav/dir_nav_extensions_abstract.h.html" name="select_newest_file"        include="dlib/dir_nav.h"/>
+         <term file="dlib/dir_nav/dir_nav_extensions_abstract.h.html" name="match_ending"       include="dlib/dir_nav.h"/>
+         <term file="dlib/dir_nav/dir_nav_extensions_abstract.h.html" name="match_endings"      include="dlib/dir_nav.h"/>
+         <term file="dlib/dir_nav/dir_nav_extensions_abstract.h.html" name="match_all"          include="dlib/dir_nav.h"/>
+
+
+         <term file="dlib/gui_core/gui_core_kernel_abstract.h.html" name="wait_until_closed"    include="dlib/gui_core.h"/>
+         <term file="dlib/gui_core/gui_core_kernel_abstract.h.html" name="put_on_clipboard"     include="dlib/gui_core.h"/>
+         <term file="dlib/gui_core/gui_core_kernel_abstract.h.html" name="get_from_clipboard"   include="dlib/gui_core.h"/>
+         <term file="dlib/gui_core/gui_core_kernel_abstract.h.html" name="canvas"               include="dlib/gui_core.h"/>
+         <term file="dlib/gui_core/gui_core_kernel_abstract.h.html" name="base_window"          include="dlib/gui_core.h"/>
+
+
+         <term file="dlib/gui_core/gui_core_kernel_abstract.h.html" name="trigger_user_event"   include="dlib/gui_core.h"/>
+         <term file="dlib/gui_core/gui_core_kernel_abstract.h.html" name="invalidate_rectangle" include="dlib/gui_core.h"/>
+         <term file="dlib/gui_core/gui_core_kernel_abstract.h.html" name="close_window"         include="dlib/gui_core.h"/>
+         <term file="dlib/gui_core/gui_core_kernel_abstract.h.html" name="is_closed"            include="dlib/gui_core.h"/>
+         <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#is_closed" name="set_title"  include="dlib/gui_core.h"/>
+
+         <term name="set_pos">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#set_pos" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#set_pos" name="in drawable object"        include="dlib/gui_widgets.h"/>
+         </term>
+
+         <term file="dlib/gui_core/gui_core_kernel_abstract.h.html" name="get_pos" include="dlib/gui_core.h"/>
+         <term file="dlib/gui_core/gui_core_kernel_abstract.h.html" name="get_size" include="dlib/gui_core.h"/>
+         <term file="dlib/gui_core/gui_core_kernel_abstract.h.html" name="get_display_size" include="dlib/gui_core.h"/>
+
+         <term file="dlib/gui_core/gui_core_kernel_abstract.h.html" name="on_window_close" include="dlib/gui_core.h"/>
+
+         <term name="on_user_event">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#on_user_event" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#on_user_event" name="in drawable object" include="dlib/gui_widgets.h"/>
+         </term>
+
+         <term name="on_window_resized">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#on_window_resized" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#on_window_resized" name="in drawable object" include="dlib/gui_widgets.h"/>
+         </term>
+
+         <term name="on_window_moved">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#on_window_moved" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#on_window_moved" name="in drawable object" include="dlib/gui_widgets.h"/>
+         </term>
+
+         <term name="on_mouse_down">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#on_mouse_down" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#on_mouse_down" name="in drawable object" include="dlib/gui_widgets.h"/>
+         </term>
+
+         <term name="on_mouse_up">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#on_mouse_up" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#on_mouse_up" name="in drawable object" include="dlib/gui_widgets.h"/>
+         </term>
+
+         <term name="on_mouse_move">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#on_mouse_move" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#on_mouse_move" name="in drawable object" include="dlib/gui_widgets.h"/>
+         </term>
+
+         <term name="on_mouse_leave">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#on_mouse_leave" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#on_mouse_leave" name="in drawable object" include="dlib/gui_widgets.h"/>
+         </term>
+
+         <term name="on_mouse_enter">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#on_mouse_enter" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#on_mouse_enter" name="in drawable object" include="dlib/gui_widgets.h"/>
+         </term>
+
+         <term name="on_focus_gained">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#on_focus_gained" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#on_focus_gained" name="in drawable object" include="dlib/gui_widgets.h"/>
+         </term>
+
+         <term name="on_focus_lost">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#on_focus_lost" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#on_focus_lost" name="in drawable object" include="dlib/gui_widgets.h"/>
+         </term>
+
+         <term name="on_wheel_up">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#on_wheel_up" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#on_wheel_up" name="in drawable object" include="dlib/gui_widgets.h"/>
+         </term>
+
+         <term name="on_wheel_down">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#on_wheel_down" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#on_wheel_down" name="in drawable object" include="dlib/gui_widgets.h"/>
+         </term>
+
+         <term name="on_keydown">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#on_keydown" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#on_keydown" name="in drawable object" include="dlib/gui_widgets.h"/>
+         </term>
+
+         <term name="on_string_put">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#on_string_put" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#on_string_put" name="in drawable object" include="dlib/gui_widgets.h"/>
+         </term>
+
+
+         <term file="dlib/gui_core/gui_core_kernel_abstract.h.html" name="paint" include="dlib/gui_core.h"/>
+
+
+
+
+
+         <term file="dlib/gui_widgets/drawable_abstract.h.html" name="set_background_color" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/drawable_abstract.h.html" name="z_order" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/drawable_abstract.h.html" name="set_z_order" include="dlib/gui_widgets.h"/>
+
+         <term name="get_rect">
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#get_rect" name="in drawable object" include="dlib/gui_widgets.h"/>
+            <term link="linear_algebra.html#get_rect" name="for general matrix like objects"          include="dlib/matrix.h"/>
+         </term>
+
+         <term file="dlib/gui_widgets/drawable_abstract.h.html" name="is_enabled" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/drawable_abstract.h.html" name="enable" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/drawable_abstract.h.html" name="disable" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/drawable_abstract.h.html" name="is_hidden" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/drawable_abstract.h.html" name="drawable_window" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/drawable_abstract.h.html" name="drawable" include="dlib/gui_widgets.h"/>
+
+         <term name="show">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#show" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#show" name="in drawable object" include="dlib/gui_widgets.h"/>
+         </term>
+         <term name="hide">
+            <term link="dlib/gui_core/gui_core_kernel_abstract.h.html#hide" name="in base_window object" include="dlib/gui_core.h"/>
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#hide" name="in drawable object" include="dlib/gui_widgets.h"/>
+         </term>
+
+
+         <term file="dlib/gui_widgets/drawable_abstract.h.html" name="parent_window" include="dlib/gui_widgets.h"/>
+
+         <term link="dlib/gui_widgets/drawable_abstract.h.html#drawable_protected_variables" name="rect" include="dlib/gui_widgets.h"/>
+         <term link="dlib/gui_widgets/drawable_abstract.h.html#drawable_protected_variables" name="m" include="dlib/gui_widgets.h"/>
+         <term link="dlib/gui_widgets/drawable_abstract.h.html#drawable_protected_variables" name="parent" include="dlib/gui_widgets.h"/>
+         <term link="dlib/gui_widgets/drawable_abstract.h.html#drawable_protected_variables" name="hidden" include="dlib/gui_widgets.h"/>
+         <term link="dlib/gui_widgets/drawable_abstract.h.html#drawable_protected_variables" name="enabled" include="dlib/gui_widgets.h"/>
+         <term link="dlib/gui_widgets/drawable_abstract.h.html#drawable_protected_variables" name="lastx" include="dlib/gui_widgets.h"/>
+         <term link="dlib/gui_widgets/drawable_abstract.h.html#drawable_protected_variables" name="lasty" include="dlib/gui_widgets.h"/>
+
+         <term file="dlib/gui_widgets/drawable_abstract.h.html" name="enable_events" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/drawable_abstract.h.html" name="disable_events" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/drawable_abstract.h.html" name="events_are_enabled" include="dlib/gui_widgets.h"/>
+
+         <term name="draw_line">
+            <term link="dlib/gui_widgets/canvas_drawing_abstract.h.html#draw_line" name="for the GUI canvas object" include="dlib/gui_widgets.h"/>
+            <term link="imaging.html#draw_line" name="for image/array2d objects"    include="dlib/image_transforms.h"/>
+         </term>
+
+
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="button_style" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="button_style_default" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="button_style_toolbar1" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="button_style_toolbar_icon1" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="button_style_arrow" include="dlib/gui_widgets.h"/>
+
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="list_box_style" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="list_box_style_default" include="dlib/gui_widgets.h"/>
+
+
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="text_field_style" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="text_field_style_default" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="text_box_style" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="text_box_style_default" include="dlib/gui_widgets.h"/>
+
+
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="toggle_button_style" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="toggle_button_style_default" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="toggle_button_style_check_box" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="toggle_button_style_radio_button" include="dlib/gui_widgets.h"/>
+
+
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="scrollable_region_style" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="scrollable_region_style_default" include="dlib/gui_widgets.h"/>
+
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="scroll_bar_style" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/style_abstract.h.html" name="scroll_bar_style_default" include="dlib/gui_widgets.h"/>
+
+         <term file="imaging.html" name="tile_images"    include="dlib/image_transforms.h"/>
+         <term name="draw_rectangle">
+            <term link="dlib/gui_widgets/canvas_drawing_abstract.h.html#draw_rectangle" name="for the GUI canvas object" include="dlib/gui_widgets.h"/>
+            <term link="imaging.html#draw_rectangle" name="for image/array2d objects"    include="dlib/image_transforms.h"/>
+         </term>
+
+         <term file="dlib/gui_widgets/canvas_drawing_abstract.h.html" name="draw_circle" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/canvas_drawing_abstract.h.html" name="draw_pixel" include="dlib/gui_widgets.h"/>
+         <term name="draw_solid_circle">
+            <term link="dlib/gui_widgets/canvas_drawing_abstract.h.html#draw_solid_circle" name="for the GUI canvas object" include="dlib/gui_widgets.h"/>
+            <term link="imaging.html#draw_solid_circle" name="for image/array2d objects"    include="dlib/image_transforms.h"/>
+         </term>
+
+         <term file="dlib/gui_widgets/canvas_drawing_abstract.h.html" name="draw_solid_convex_polygon" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/canvas_drawing_abstract.h.html" name="draw_button_down" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/canvas_drawing_abstract.h.html" name="draw_sunken_rectangle" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/canvas_drawing_abstract.h.html" name="draw_button_up" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/canvas_drawing_abstract.h.html" name="draw_checkered" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/canvas_drawing_abstract.h.html" name="draw_image" include="dlib/gui_widgets.h"/>
+         <term name="fill_rect">
+            <term link="dlib/gui_widgets/canvas_drawing_abstract.h.html#fill_rect" name="for GUI canvas objects" include="dlib/gui_widgets.h"/>
+            <term link="imaging.html#fill_rect" name="for image/array2d objects"    include="dlib/image_transforms.h"/>
+         </term>
+
+         <term file="dlib/gui_widgets/canvas_drawing_abstract.h.html" name="fill_rect_with_vertical_gradient" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/canvas_drawing_abstract.h.html" name="fill_gradient_rounded" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/canvas_drawing_abstract.h.html" name="draw_rounded_rectangle" include="dlib/gui_widgets.h"/>
+
+         <term file="dlib/gui_widgets/drawable_abstract.h.html" name="draw" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/drawable_abstract.h.html" name="set_main_font" include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/drawable_abstract.h.html" name="main_font" include="dlib/gui_widgets.h"/>
+
+         <term name="bottom">
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#bottom" name="in drawable object" include="dlib/gui_widgets.h"/>
+            <term link="dlib/geometry/rectangle_abstract.h.html#bottom" name="in rectangle object"  include="dlib/geometry.h"/>
+         </term>
+         <term name="top">
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#top" name="in drawable object" include="dlib/gui_widgets.h"/>
+            <term link="dlib/geometry/rectangle_abstract.h.html#top" name="in rectangle object" include="dlib/geometry.h"/>
+         </term>
+         <term name="left">
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#left" name="in drawable object" include="dlib/gui_widgets.h"/>
+            <term link="dlib/geometry/rectangle_abstract.h.html#left" name="in rectangle object" include="dlib/geometry.h"/>
+         </term>
+         <term name="right">
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#right" name="in drawable object" include="dlib/gui_widgets.h"/>
+            <term link="dlib/geometry/rectangle_abstract.h.html#right" name="in rectangle object" include="dlib/geometry.h"/>
+         </term>
+         <term name="width">
+            <term link="dlib/gui_widgets/drawable_abstract.h.html#width" name="in drawable object" include="dlib/gui_widgets.h"/>
+            <term link="dlib/geometry/rectangle_abstract.h.html#width" name="in rectangle object" include="dlib/geometry.h"/>
+         </term>
+
+
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="get_next_double_click"     include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="open_file_box"             include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="open_existing_file_box"    include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="save_file_box"             include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="message_box"               include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="message_box_blocking"      include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="label"                     include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="toggle_button"             include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="text_grid"                 include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="directed_graph_drawer"     include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="text_field"                include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="text_box"                  include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="check_box"                 include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="radio_button"              include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="tabbed_display"            include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="named_rectangle"           include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="mouse_tracker"             include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="list_box"                  include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="menu_bar"                  include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="image_display"             include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="image_window"              include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="perspective_display"       include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/widgets_abstract.h.html" name="perspective_window"        include="dlib/gui_widgets.h"/>
+         <term link="dlib/gui_widgets/widgets_abstract.h.html#overlay_line" name="overlay_line" include="dlib/gui_widgets.h"/>
+         <term link="dlib/gui_widgets/widgets_abstract.h.html#overlay_rect" name="overlay_rect" include="dlib/gui_widgets.h"/>
+
+         <term file="dlib/gui_widgets/fonts_abstract.h.html" name="letter"                      include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/fonts_abstract.h.html" name="font"                        include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/fonts_abstract.h.html" name="default_font"                include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/fonts_abstract.h.html" name="get_native_font"             include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/fonts_abstract.h.html" name="bdf_font"                    include="dlib/gui_widgets.h"/>
+
+
+         <term file="dlib/gui_widgets/base_widgets_abstract.h.html" name="button"               include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/base_widgets_abstract.h.html" name="draggable"            include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/base_widgets_abstract.h.html" name="button_action"        include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/base_widgets_abstract.h.html" name="zoomable_region"      include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/base_widgets_abstract.h.html" name="scrollable_region"    include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/base_widgets_abstract.h.html" name="mouse_over_event"     include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/base_widgets_abstract.h.html" name="tooltip"              include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/base_widgets_abstract.h.html" name="popup_menu_region"    include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/base_widgets_abstract.h.html" name="scroll_bar"           include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/base_widgets_abstract.h.html" name="widget_group"         include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/base_widgets_abstract.h.html" name="image_widget"         include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/base_widgets_abstract.h.html" name="popup_menu"           include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/base_widgets_abstract.h.html" name="menu_item"            include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/base_widgets_abstract.h.html" name="menu_item_text"       include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/base_widgets_abstract.h.html" name="menu_item_separator"  include="dlib/gui_widgets.h"/>
+         <term file="dlib/gui_widgets/base_widgets_abstract.h.html" name="menu_item_submenu"    include="dlib/gui_widgets.h"/>
+
+
+         <term file="dlib/sockets/sockets_kernel_abstract.h.html" name="get_local_hostname"     include="dlib/sockets.h"/>
+         <term file="dlib/sockets/sockets_kernel_abstract.h.html" name="hostname_to_ip"         include="dlib/sockets.h"/>
+         <term file="dlib/sockets/sockets_kernel_abstract.h.html" name="ip_to_hostname"         include="dlib/sockets.h"/>
+         <term file="dlib/sockets/sockets_kernel_abstract.h.html" name="create_listener"        include="dlib/sockets.h"/>
+         <term file="dlib/sockets/sockets_kernel_abstract.h.html" name="create_connection"      include="dlib/sockets.h"/>
+         <term file="dlib/sockets/sockets_kernel_abstract.h.html" name="connection"             include="dlib/sockets.h"/>
+         <term file="dlib/sockets/sockets_kernel_abstract.h.html" name="listener"               include="dlib/sockets.h"/>
+
+
+         <term file="dlib/sockets/sockets_extensions_abstract.h.html" name="network_address"    include="dlib/sockets.h"/>
+         <term file="dlib/sockets/sockets_extensions_abstract.h.html" name="connect"            include="dlib/sockets.h"/>
+         <term file="dlib/sockets/sockets_extensions_abstract.h.html" name="is_ip_address"      include="dlib/sockets.h"/>
+         <term file="dlib/sockets/sockets_extensions_abstract.h.html" name="close_gracefully"   include="dlib/sockets.h"/>
+
+
+
+
+
+         <term file="algorithms.html" name="max_scoring_element"     include="dlib/algs.h"/>
+         <term file="algorithms.html" name="min_scoring_element"     include="dlib/algs.h"/>
+
+         <term file="algorithms.html" name="bigint"                  include="dlib/bigint.h"/>
+         <term file="algorithms.html" name="crc32"                   include="dlib/crc32.h"/>
+         <term file="algorithms.html" name="murmur_hash3"            include="dlib/hash.h"/>
+         <term file="algorithms.html" name="murmur_hash3_128bit"     include="dlib/hash.h"/>
+         <term file="algorithms.html" name="hash"                    include="dlib/hash.h"/>
+         <term file="algorithms.html" name="count_bits"              include="dlib/hash.h"/>
+         <term file="algorithms.html" name="hamming_distance"        include="dlib/hash.h"/>
+         <term file="algorithms.html" name="gaussian_random_hash"    include="dlib/hash.h"/>
+         <term file="algorithms.html" name="uniform_random_hash"     include="dlib/hash.h"/>
+
+
+         <term file="algorithms.html" name="md5"                     include="dlib/md5.h"/>
+
+
+
+
+
+
+
+
+         <term file="compression.html" name="compress_stream"           include="dlib/compress_stream.h"/>
+         <term file="compression.html" name="conditioning_class"        include="dlib/conditioning_class.h"/>
+         <term file="compression.html" name="entropy_decoder"           include="dlib/entropy_decoder.h"/>
+         <term file="compression.html" name="entropy_decoder_model"     include="dlib/entropy_decoder_model.h"/>
+         <term file="compression.html" name="entropy_encoder"           include="dlib/entropy_encoder.h"/>
+         <term file="compression.html" name="entropy_encoder_model"     include="dlib/entropy_encoder_model.h"/>
+         <term file="compression.html" name="lz77_buffer"               include="dlib/lz77_buffer.h"/>
+         <term file="compression.html" name="lzp_buffer"                include="dlib/lzp_buffer.h"/>
+
+
+
+         <term file="dlib/ref.h.html" name="ref"                        include="dlib/ref.h"/>
+         <term file="dlib/ref.h.html" name="cref"                       include="dlib/ref.h"/>
+         <term file="containers.html" name="reference_wrapper"          include="dlib/ref.h"/>
+         <term file="containers.html" name="tuple"                      include="dlib/tuple.h"/>
+         <term file="dlib/type_safe_union/type_safe_union_kernel_abstract.h.html" 
+               name="bad_type_safe_union_cast"            include="dlib/type_safe_union.h"/>
+         <term file="containers.html" name="type_safe_union"            include="dlib/type_safe_union.h"/>
+
+         <term file="containers.html" name="array2d"                    include="dlib/array2d.h"/>
+
+
+         <term file="containers.html" name="hash_map"                   include="dlib/hash_map.h"/>
+         <term file="containers.html" name="hash_set"                   include="dlib/hash_set.h"/>
+         <term file="containers.html" name="hash_table"                 include="dlib/hash_table.h"/>
+
+
+         <term file="containers.html" name="queue"                      include="dlib/queue.h"/>
+         <term file="containers.html" name="reference_counter"          include="dlib/reference_counter.h"/>
+
+         <term file="containers.html" name="sequence"                   include="dlib/sequence.h"/>
+         <term file="containers.html" name="sliding_buffer"             include="dlib/sliding_buffer.h"/>
+         <term file="containers.html" name="circular_buffer"            include="dlib/sliding_buffer.h"/>
+         <term file="containers.html" name="static_map"                 include="dlib/static_map.h"/>
+         <term file="containers.html" name="static_set"                 include="dlib/static_set.h"/>
+
+
+
+         <term link="dlib/image_transforms/thresholding_abstract.h.html" name="on_pixel"     include="dlib/image_transforms.h"/>
+         <term link="dlib/image_transforms/thresholding_abstract.h.html" name="off_pixel"    include="dlib/image_transforms.h"/>
+    
+
+         <term file="dlib/image_transforms/colormaps_abstract.h.html" name="colormap_heat"              include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/colormaps_abstract.h.html" name="colormap_jet"               include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="heatmap"                    include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="jet"                        include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="randomly_color_image"       include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="assign_image"               include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="assign_image_scaled"        include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="assign_all_pixels"          include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="assign_border_pixels"       include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="assign_pixel"               include="dlib/pixel.h"/>
+         <term file="imaging.html" name="assign_pixel_intensity"     include="dlib/pixel.h"/>
+         <term file="imaging.html" name="get_pixel_intensity"        include="dlib/pixel.h"/>
+         <term file="imaging.html" name="hysteresis_threshold"       include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="sobel_edge_detector"        include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="find_dark_lines"            include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="find_bright_lines"          include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="image_gradients"            include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="suppress_non_maximum_edges" include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="normalize_image_gradients"  include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="remove_incoherent_edge_pixels"  include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="zero_border_pixels"         include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="binary_close"               include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="edge_orientation"           include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="binary_union"               include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="binary_complement"          include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="binary_difference"          include="dlib/image_transforms.h"/>
+
+         <term file="imaging.html" name="label_connected_blobs"               include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="label_connected_blobs_watershed"     include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="segment_image"                       include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="find_candidate_object_locations"     include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/segment_image_abstract.h.html" name="remove_duplicates"                   include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/label_connected_blobs_abstract.h.html" name="neighbors_24"                 include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/label_connected_blobs_abstract.h.html" name="neighbors_8"                 include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/label_connected_blobs_abstract.h.html" name="neighbors_4"                 include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/label_connected_blobs_abstract.h.html" name="connected_if_both_not_zero"  include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/label_connected_blobs_abstract.h.html" name="connected_if_equal"          include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/label_connected_blobs_abstract.h.html" name="zero_pixels_are_background"  include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/label_connected_blobs_abstract.h.html" name="nothing_is_background"       include="dlib/image_transforms.h"/>
+
+         <term file="imaging.html" name="binary_dilation"      include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="binary_erosion"       include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="binary_intersection"  include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="binary_open"          include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="equalize_histogram"   include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="get_histogram"        include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="hsi_pixel"            include="dlib/pixel.h"/>
+         <term file="imaging.html" name="lab_pixel"            include="dlib/pixel.h"/>
+         <term file="imaging.html" name="load_bmp"             include="dlib/image_io.h"/>
+         <term file="imaging.html" name="load_png"             include="dlib/image_io.h"/>
+         <term file="imaging.html" name="load_jpeg"            include="dlib/image_io.h"/>
+         <term file="imaging.html" name="load_dng"             include="dlib/image_io.h"/>
+         <term file="imaging.html" name="pixel_traits"         include="dlib/pixel.h"/>
+         <term file="imaging.html" name="rgb_pixel"            include="dlib/pixel.h"/>
+         <term file="imaging.html" name="bgr_pixel"            include="dlib/pixel.h"/>
+         <term file="imaging.html" name="cv_image"             include="dlib/opencv.h"/>
+         <term file="imaging.html" name="toMat"                include="dlib/opencv.h"/>
+         <term link="imaging.html#cv_image" name="OpenCV Image"/>
+         <term file="imaging.html" name="rgb_alpha_pixel"      include="dlib/pixel.h"/>
+         <term link="imaging.html#rgb_alpha_pixel" name="alpha"/>
+         <term file="imaging.html" name="save_bmp"             include="dlib/image_io.h"/>
+         <term file="imaging.html" name="save_png"             include="dlib/image_io.h"/>
+         <term file="imaging.html" name="save_jpeg"            include="dlib/image_io.h"/>
+         <term file="imaging.html" name="load_image"           include="dlib/image_io.h"/>
+         <term file="imaging.html" name="save_dng"             include="dlib/image_io.h"/>
+         <term file="dlib/image_transforms/spatial_filtering_abstract.h.html" name="create_gaussian_filter" include="dlib/image_transforms.h"/>
+         <term name="gaussian">
+            <term link="dlib/image_transforms/spatial_filtering_abstract.h.html#gaussian" name="1D Gaussian" include="dlib/image_transforms.h"/>
+            <term link="dlib/image_keypoint/surf_abstract.h.html#gaussian" name="2D Gaussian" include="dlib/image_keypoint.h"/>
+         </term>
+         <term file="imaging.html" name="gaussian_blur"              include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="spatially_filter_image"     include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="sum_filter"                 include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="sum_filter_assign"          include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="max_filter"                 include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="spatially_filter_image_separable"       include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="float_spatially_filter_image_separable"       include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="spatially_filter_image_separable_down"  include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="separable_3x3_filter_block_grayscale"   include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="separable_3x3_filter_block_rgb"         include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="pyramid_down"               include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="pyramid_disable"            include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="create_tiled_pyramid"            include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/image_pyramid_abstract.h.html" name="pyramid_rate"               include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/image_pyramid_abstract.h.html" name="find_pyramid_down_output_image_size"               include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/image_pyramid_abstract.h.html" name="image_to_tiled_pyramid"               include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/image_pyramid_abstract.h.html" name="tiled_pyramid_to_image"               include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="threshold_image"            include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="min_barrier_distance"       include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="partition_pixels"           include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="png_loader"                 include="dlib/image_io.h"/>
+         <term file="imaging.html" name="jpeg_loader"                include="dlib/image_io.h"/>
+
+         <term file="imaging.html" name="interpolate_nearest_neighbor" include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="interpolate_bilinear"    include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="interpolate_quadratic"   include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="transform_image"         include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="rotate_image"            include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="resize_image"            include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="extract_image_chips"     include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="extract_image_4points"   include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="random_cropper"          include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="sub_image"               include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/interpolation_abstract.h.html" name="sub_image_proxy"     include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/interpolation_abstract.h.html" name="extract_image_chip"     include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/interpolation_abstract.h.html" name="chip_details"           include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/interpolation_abstract.h.html" name="get_face_chip_details"  include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/interpolation_abstract.h.html" name="get_mapping_to_chip" include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/interpolation_abstract.h.html" name="map_det_to_chip" include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/interpolation_abstract.h.html" name="chip_dims"      include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="pyramid_up"              include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="add_image_left_right_flips" include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="add_image_rotations" include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="flip_image_dataset_left_right" include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="upsample_image_dataset" include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="rotate_image_dataset" include="dlib/image_transforms.h"/>
+
+         <term file="imaging.html" name="flip_image_left_right"   include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="flip_image_up_down"      include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/interpolation_abstract.h.html" name="black_background" include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/interpolation_abstract.h.html" name="white_background" include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/interpolation_abstract.h.html" name="no_background"    include="dlib/image_transforms.h"/>
+         
+         <term file="imaging.html" name="make_uniform_lbp_image"                 include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="extract_histogram_descriptors"          include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="extract_uniform_lbp_descriptors"        include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="extract_highdim_face_lbp_descriptors"   include="dlib/image_transforms.h"/>
+
+         <term file="imaging.html" name="integral_image"          include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="integral_image_generic"  include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="disturb_colors"          include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="random_color_transform"  include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="hough_transform"         include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="skeleton"                include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="encode_8_pixel_neighbors"                include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="find_line_endpoints"                include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="hessian_pyramid"         include="dlib/image_keypoint.h"/>
+         <term file="imaging.html" name="compute_dominant_angle"  include="dlib/image_keypoint.h"/>
+         <term file="imaging.html" name="draw_surf_points"        include="dlib/image_keypoint/draw_surf_points.h"/>
+         <term file="imaging.html" name="compute_surf_descriptor" include="dlib/image_keypoint.h"/>
+         <term file="imaging.html" name="extract_fhog_features"   include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="draw_fhog"               include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/fhog_abstract.h.html"  name="fhog_to_image" include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/fhog_abstract.h.html"  name="image_to_fhog" include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="hog_image"               include="dlib/image_keypoint.h"/>
+         <term file="imaging.html" name="fine_hog_image"          include="dlib/image_keypoint.h"/>
+         <term file="imaging.html" name="poly_image"              include="dlib/image_keypoint.h"/>
+         <term file="imaging.html" name="hashed_feature_image"    include="dlib/image_keypoint.h"/>
+         <term file="imaging.html" name="binned_vector_feature_image"     include="dlib/image_keypoint.h"/>
+         <term file="imaging.html" name="nearest_neighbor_feature_image"  include="dlib/image_keypoint.h"/>
+         <term file="imaging.html" name="haar_x"                  include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="haar_y"                  include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="get_interest_points"     include="dlib/image_keypoint.h"/>
+         <term file="imaging.html" name="get_surf_points"         include="dlib/image_keypoint.h"/>
+         <term file="imaging.html" name="interest_point"          include="dlib/image_keypoint.h"/>
+         <term file="imaging.html" name="surf_point"              include="dlib/image_keypoint.h"/>
+
+         <term link="dlib/image_processing/generic_image.h.html" name="Generic image interface"/>
+         <term link="dlib/image_processing/generic_image.h.html" name="num_rows"          include="dlib/image_processing.h"/>
+         <term link="dlib/image_processing/generic_image.h.html" name="num_columns"       include="dlib/image_processing.h"/>
+         <term link="dlib/image_processing/generic_image.h.html" name="set_image_size"    include="dlib/image_processing.h"/>
+         <term link="dlib/image_processing/generic_image.h.html" name="image_size"        include="dlib/image_processing.h"/>
+         <term link="dlib/image_processing/generic_image.h.html" name="image_data"        include="dlib/image_processing.h"/>
+         <term link="dlib/image_processing/generic_image.h.html" name="width_step"        include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/generic_image.h.html" name="image_traits"      include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/generic_image.h.html" name="image_view"        include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/generic_image.h.html" name="const_image_view"  include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/generic_image.h.html" name="make_image_view"   include="dlib/image_processing.h"/>
+
+         <term file="dlib/image_processing/box_overlap_testing_abstract.h.html" name="overlaps_any_box"        include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/box_overlap_testing_abstract.h.html" name="box_intersection_over_union"        include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/box_overlap_testing_abstract.h.html" name="box_percent_covered"        include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="test_box_overlap"        include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="remove_unobtainable_rectangles"        include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="get_frontal_face_detector"         include="dlib/image_processing/frontal_face_detector.h"/>
+         <term file="imaging.html" name="object_detector"         include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="correlation_tracker"         include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/object_detector_abstract.h.html" name="rect_detection"        include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/object_detector_abstract.h.html" name="full_detection"        include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="full_object_detection"   include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="mmod_rect"   include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/full_object_detection_abstract.h.html" name="all_parts_in_rect" include="dlib/image_processing.h"/>
+
+         <term file="imaging.html" name="scan_image_movable_parts" include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="find_points_above_thresh" include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="find_peaks" include="dlib/image_processing.h"/>
+
+         <term file="dlib/image_processing/scan_fhog_pyramid_abstract.h.html" name="default_fhog_feature_extractor" include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/scan_fhog_pyramid_abstract.h.html" name="num_separable_filters" include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/scan_fhog_pyramid_abstract.h.html" name="threshold_filter_singular_values" include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="evaluate_detectors"                     include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="scan_fhog_pyramid"                      include="dlib/image_processing.h"/>
+
+         <term file="imaging.html" name="find_dark_keypoints"                    include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="find_bright_keypoints"                  include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="scan_image"                             include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="scan_image_pyramid"                     include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="scan_image_boxes"                       include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/scan_image_boxes_abstract.h.html" name="default_box_generator" include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="scan_image_custom"                      include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="compute_box_dimensions"                 include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="create_single_box_detection_template"   include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="create_overlapped_2x2_detection_template" include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="create_grid_detection_template"         include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="determine_object_boxes"                 include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="setup_grid_detection_templates"         include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="setup_grid_detection_templates_verbose" include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="setup_hashed_features"                  include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/scan_image_abstract.h.html" name="all_images_same_size"                       include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/scan_image_abstract.h.html" name="sum_of_rects_in_images"                     include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/scan_image_abstract.h.html" name="sum_of_rects_in_images_movable_parts"       include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/box_overlap_testing_abstract.h.html" name="find_tight_overlap_tester"         include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/setup_hashed_features_abstract.h.html" name="image_hash_construction_failure" include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/setup_hashed_features_abstract.h.html" name="use_uniform_feature_weights"     include="dlib/image_processing.h"/>
+         <term file="dlib/image_processing/setup_hashed_features_abstract.h.html" name="use_relative_feature_weights"    include="dlib/image_processing.h"/>
+
+
+
+         <term link="metaprogramming.html#DLIB_STACK_TRACE" name="DLIB_ENABLE_STACK_TRACE"/>
+         <term file="metaprogramming.html" name="DLIB_STACK_TRACE"         include="dlib/assert.h"/>
+         <term link="metaprogramming.html#DLIB_STACK_TRACE" name="Stack Trace"/>
+         <term file="metaprogramming.html" name="DLIB_STACK_TRACE_NAMED"   include="dlib/assert.h"/>
+         <term file="metaprogramming.html" name="get_stack_trace"          include="dlib/assert.h"/>
+
+
+
+
+
+
+
+
+         <term file="other.html" name="std_allocator"  include="dlib/std_allocator.h"/>
+         <term link="other.html#std_allocator" name="allocator"/>
+
+         <term file="other.html" name="bit_stream"       include="dlib/bit_stream.h"/>
+         <term file="other.html" name="byte_orderer"     include="dlib/byte_orderer.h"/>
+
+         <term file="dlib/byte_orderer/byte_orderer_kernel_abstract.h.html" name="host_is_big_endian"    include="dlib/byte_orderer.h"/>
+         <term file="dlib/byte_orderer/byte_orderer_kernel_abstract.h.html" name="host_is_little_endian" include="dlib/byte_orderer.h"/>
+         <term file="dlib/byte_orderer/byte_orderer_kernel_abstract.h.html" name="host_to_network"       include="dlib/byte_orderer.h"/>
+         <term file="dlib/byte_orderer/byte_orderer_kernel_abstract.h.html" name="network_to_host"       include="dlib/byte_orderer.h"/>
+         <term file="dlib/byte_orderer/byte_orderer_kernel_abstract.h.html" name="host_to_big"           include="dlib/byte_orderer.h"/>
+         <term file="dlib/byte_orderer/byte_orderer_kernel_abstract.h.html" name="big_to_host"           include="dlib/byte_orderer.h"/>
+         <term file="dlib/byte_orderer/byte_orderer_kernel_abstract.h.html" name="host_to_little"        include="dlib/byte_orderer.h"/>
+         <term file="dlib/byte_orderer/byte_orderer_kernel_abstract.h.html" name="little_to_host"        include="dlib/byte_orderer.h"/>
+
+
+         <term link="other.html#dlib_testing_suite" name="testing"/>
+         <term link="other.html#dlib_testing_suite" name="unit testing"/>
+         <term file="other.html" name="logger"                       include="dlib/logger.h"/>
+         <term file="other.html" name="vectorstream"                 include="dlib/vectorstream.h"/>
+         <term file="other.html" name="unserialize"                  include="dlib/vectorstream.h"/>
+         <term file="other.html" name="member_function_pointer"      include="dlib/member_function_pointer.h"/>
+         <term file="other.html" name="make_mfp"                     include="dlib/member_function_pointer.h"/>
+         <term file="other.html" name="bound_function_pointer"       include="dlib/bound_function_pointer.h"/>
+         <term file="other.html" name="memory_manager_stateless"     include="dlib/memory_manager_stateless.h"/>
+         <term file="other.html" name="pipe"                         include="dlib/pipe.h"/>
+         <term file="other.html" name="sync_extension"               include="dlib/sync_extension.h"/>
+         <term file="other.html" name="timeout"                      include="dlib/timeout.h"/>
+         <term file="other.html" name="timer"                        include="dlib/timer.h"/>
+
+
+         <term file="network.html" name="linker"                     include="dlib/linker.h"/>
+         <term file="network.html" name="server"                     include="dlib/server.h"/>
+         <term file="network.html" name="server_iostream"            include="dlib/server.h"/>
+         <term file="network.html" name="server_http"                include="dlib/server.h"/>
+         <term link="network.html#server_http" name="HTTP server"/>
+         <term file="network.html" name="sockstreambuf"              include="dlib/sockstreambuf.h"/>
+         <term file="network.html" name="iosockstream"               include="dlib/iosockstream.h"/>
+         <term file="network.html" name="bridge"                     include="dlib/bridge.h"/>
+         <term file="dlib/bridge/bridge_abstract.h.html" name="connect_to_ip_and_port" include="dlib/bridge.h"/>
+         <term file="dlib/bridge/bridge_abstract.h.html" name="connect_to"       include="dlib/bridge.h"/>
+         <term file="dlib/bridge/bridge_abstract.h.html" name="listen_on_port"   include="dlib/bridge.h"/>
+         <term file="dlib/bridge/bridge_abstract.h.html" name="transmit"         include="dlib/bridge.h"/>
+         <term file="dlib/bridge/bridge_abstract.h.html" name="receive"          include="dlib/bridge.h"/>
+         <term file="dlib/bridge/bridge_abstract.h.html" name="bridge_status"    include="dlib/bridge.h"/>
+         <term file="network.html" name="bsp_context"                include="dlib/bsp.h"/>
+         <term file="network.html" name="bsp_listen"                 include="dlib/bsp.h"/>
+         <term file="network.html" name="bsp_listen_dynamic_port"    include="dlib/bsp.h"/>
+         <term file="network.html" name="bsp_connect"                include="dlib/bsp.h"/>
+
+
+
+         <term file="parsing.html" name="basic_utf8_ifstream"        include="dlib/unicode.h"/>
+         <term link="parsing.html#utf8_wifstream" name="basic_utf8_ifstream" include="dlib/unicode.h"/>
+         <term link="parsing.html#utf8_uifstream" name="basic_utf8_ifstream" include="dlib/unicode.h"/>
+         <term file="parsing.html" name="base64"                     include="dlib/base64.h"/>
+         <term file="parsing.html" name="cmd_line_parser"            include="dlib/cmd_line_parser.h"/>
+         <term link="parsing.html#cmd_line_parser" name="command_line_parser" include="dlib/cmd_line_parser.h"/>
+         <term link="parsing.html#cmd_line_parser" name="wcommand_line_parser" include="dlib/cmd_line_parser.h"/>
+         <term file="parsing.html" name="get_option"                 include="dlib/cmd_line_parser.h"/>
+         <term link="dlib/cmd_line_parser/get_option_abstract.h.html#option_parse_error" name="option_parse_error" include="dlib/cmd_line_parser.h"/>
+         <term file="dlib/interfaces/cmd_line_parser_option.h.html" name="cmd_line_parser_option" include="dlib/cmd_line_parser.h"/>
+         <term link="parsing.html#cmd_line_parser" name="command line parsing"/>
+         <term file="parsing.html" name="config_reader"              include="dlib/config_reader.h"/>
+         <term file="parsing.html" name="config_reader_thread_safe"  include="dlib/config_reader.h"/>
+         <term link="parsing.html#config_reader" name="config file parser"/>
+         <term file="parsing.html" name="cpp_pretty_printer"         include="dlib/cpp_pretty_printer.h"/>
+         <term file="parsing.html" name="cpp_tokenizer"              include="dlib/cpp_tokenizer.h"/>
+         <term file="parsing.html" name="narrow"                     include="dlib/string.h"/>
+         <term file="parsing.html" name="string_cast"                include="dlib/string.h"/>
+         <term file="parsing.html" name="string_assign"              include="dlib/string.h"/>
+         <term link="parsing.html#string_assign" name="sa"           include="dlib/string.h"/>
+         <term file="parsing.html" name="tokenizer"                  include="dlib/tokenizer.h"/>
+         <term file="parsing.html" name="wrap_string"                include="dlib/string.h"/>
+         <term file="parsing.html" name="xml_parser"                 include="dlib/xml_parser.h"/>
+         <term file="dlib/xml_parser/xml_parser_kernel_interfaces.h.html" name="document_handler"  include="dlib/xml_parser.h"/>
+         <term file="dlib/xml_parser/xml_parser_kernel_interfaces.h.html" name="error_handler"     include="dlib/xml_parser.h"/>
+         <term file="dlib/xml_parser/xml_parser_kernel_interfaces.h.html" name="attribute_list"    include="dlib/xml_parser.h"/>
+         <term link="parsing.html#xml_parser" name="parse_xml"       include="dlib/xml_parser.h"/>
+         <term file="parsing.html" name="cast_to_string"             include="dlib/string.h"/>
+         <term file="parsing.html" name="pad_int_with_zeros"         include="dlib/string.h"/>
+         <term file="parsing.html" name="toupper"                    include="dlib/string.h"/>
+         <term file="parsing.html" name="tolower"                    include="dlib/string.h"/>
+         <term file="parsing.html" name="trim"                       include="dlib/string.h"/>
+         <term file="parsing.html" name="ltrim"                      include="dlib/string.h"/>
+         <term file="parsing.html" name="rtrim"                      include="dlib/string.h"/>
+         <term file="parsing.html" name="pad"                        include="dlib/string.h"/>
+         <term file="parsing.html" name="lpad"                       include="dlib/string.h"/>
+         <term file="parsing.html" name="rpad"                       include="dlib/string.h"/>
+         <term file="parsing.html" name="left_substr"                include="dlib/string.h"/>
+         <term file="parsing.html" name="right_substr"               include="dlib/string.h"/>
+         <term file="parsing.html" name="split"                      include="dlib/string.h"/>
+         <term file="parsing.html" name="split_on_first"             include="dlib/string.h"/>
+         <term file="parsing.html" name="split_on_last"              include="dlib/string.h"/>
+         <term file="parsing.html" name="unichar"                    include="dlib/unicode.h"/>
+         <term file="parsing.html" name="ustring"                    include="dlib/unicode.h"/>
+         <term file="parsing.html" name="convert_utf8_to_utf32"      include="dlib/unicode.h"/>
+         <term file="parsing.html" name="is_combining_char"          include="dlib/unicode.h"/>
+         <term file="parsing.html" name="strings_equal_ignore_case"  include="dlib/string.h"/>
+         <term file="dlib/unicode/unicode_abstract.h.html" name="invalid_utf8_error" include="dlib/unicode.h"/>
+
+
+
+
+         <term file="dlib/logger/logger_config_file.h.html" name="configure_loggers_from_file"           include="dlib/logger.h"/>
+         <term file="dlib/logger/logger_kernel_abstract.h.html" name="log_level"                         include="dlib/logger.h"/>
+         <term file="dlib/logger/logger_kernel_abstract.h.html" name="LALL"                              include="dlib/logger.h"/>
+         <term file="dlib/logger/logger_kernel_abstract.h.html" name="LNONE"                             include="dlib/logger.h"/>
+         <term file="dlib/logger/logger_kernel_abstract.h.html" name="LTRACE"                            include="dlib/logger.h"/>
+         <term file="dlib/logger/logger_kernel_abstract.h.html" name="LDEBUG"                            include="dlib/logger.h"/>
+         <term file="dlib/logger/logger_kernel_abstract.h.html" name="LINFO"                             include="dlib/logger.h"/>
+         <term file="dlib/logger/logger_kernel_abstract.h.html" name="LWARN"                             include="dlib/logger.h"/>
+         <term file="dlib/logger/logger_kernel_abstract.h.html" name="LERROR"                            include="dlib/logger.h"/>
+         <term file="dlib/logger/logger_kernel_abstract.h.html" name="LFATAL"                            include="dlib/logger.h"/>
+         <term file="dlib/logger/logger_kernel_abstract.h.html" name="set_all_logging_output_streams"    include="dlib/logger.h"/>
+         <term file="dlib/logger/logger_kernel_abstract.h.html" name="set_all_logging_output_hooks"      include="dlib/logger.h"/>
+         <term file="dlib/logger/logger_kernel_abstract.h.html" name="set_all_logging_levels"            include="dlib/logger.h"/>
+         <term file="dlib/logger/logger_kernel_abstract.h.html" name="set_all_logging_headers"           include="dlib/logger.h"/>
+         <term file="dlib/logger/logger_kernel_abstract.h.html" name="print_default_logger_header"       include="dlib/logger.h"/>
+         <term file="dlib/logger/extra_logger_headers.h.html" name="print_datetime_logger_header"        include="dlib/logger.h"/>
+
+
+
+
+
+
+         <term file="algorithms.html" name="quantum_register"     include="dlib/quantum_computing.h"/>
+         <term file="algorithms.html" name="gate"                 include="dlib/quantum_computing.h"/>
+
+         <term file="dlib/quantum_computing/quantum_computing_abstract.h.html" name="gate_exp"  include="dlib/quantum_computing.h"/>
+         <term file="dlib/quantum_computing/quantum_computing_abstract.h.html" name="composite_gate" include="dlib/quantum_computing.h"/>
+         <term file="dlib/quantum_computing/quantum_computing_abstract.h.html" name="x"         include="dlib/quantum_computing.h"/>
+         <term file="dlib/quantum_computing/quantum_computing_abstract.h.html" name="y"         include="dlib/quantum_computing.h"/>
+         <term file="dlib/quantum_computing/quantum_computing_abstract.h.html" name="z"         include="dlib/quantum_computing.h"/>
+         <term file="dlib/quantum_computing/quantum_computing_abstract.h.html" name="noop"      include="dlib/quantum_computing.h"/>
+         <term file="dlib/quantum_computing/quantum_computing_abstract.h.html" name="cnot"      include="dlib/quantum_computing.h"/>
+         <term file="dlib/quantum_computing/quantum_computing_abstract.h.html" name="toffoli"   include="dlib/quantum_computing.h"/>
+
+
+         <term link="dlib/algs.h.html#general_return_codes" name="TIMEOUT"       include="dlib/algs.h"/>
+         <term link="dlib/algs.h.html#general_return_codes" name="WOULDBLOCK"    include="dlib/algs.h"/>
+         <term link="dlib/algs.h.html#general_return_codes" name="OTHER_ERROR"   include="dlib/algs.h"/>
+         <term link="dlib/algs.h.html#general_return_codes" name="SHUTDOWN"      include="dlib/algs.h"/>
+         <term link="dlib/algs.h.html#general_return_codes" name="PORTINUSE"     include="dlib/algs.h"/>
+
+         <term link="dlib/general_hash/general_hash.h.html" name="general_hash"  include="dlib/general_hash/general_hash.h"/>
+
+
+         <term file="other.html" name="database"                                       include="dlib/sqlite.h"/>
+         <term file="other.html" name="statement"                                      include="dlib/sqlite.h"/>
+         <term file="other.html" name="transaction"                                    include="dlib/sqlite.h"/>
+         <term link="other.html#database" name="SQLite"/>
+         <term file="dlib/sqlite/sqlite_tools_abstract.h.html" name="query_object"     include="dlib/sqlite.h"/>
+         <term file="dlib/sqlite/sqlite_tools_abstract.h.html" name="query_text"       include="dlib/sqlite.h"/>
+         <term file="dlib/sqlite/sqlite_tools_abstract.h.html" name="query_double"     include="dlib/sqlite.h"/>
+         <term file="dlib/sqlite/sqlite_tools_abstract.h.html" name="query_int"        include="dlib/sqlite.h"/>
+         <term file="dlib/sqlite/sqlite_tools_abstract.h.html" name="query_int64"      include="dlib/sqlite.h"/>
+         <term file="dlib/sqlite/sqlite_tools_abstract.h.html" name="query_blob"       include="dlib/sqlite.h"/>
+         <term file="dlib/sqlite/sqlite_abstract.h.html" name="sqlite_error"           include="dlib/sqlite.h"/>
+      </term_list>
+   
+   </body>
+
+   <!-- ************************************************************************* -->
+
+</doc>
+

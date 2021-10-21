@@ -1,0 +1,1542 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="stylesheet.xsl"?>
+
+<doc>
+   <title>Linear Algebra</title>
+
+   <!-- ************************************************************************* -->
+
+   <body>
+         <p>
+            This page documents the core linear algebra tools included in dlib.
+            In particular, the three most important objects in this part of the library are the
+            <a href="#matrix">matrix</a>, <a href="#vector">vector</a>, and 
+            <a href="#rectangle">rectangle</a>.  All the other tools on this page
+            are functions for manipulating these three objects.  A good example and introduction 
+            can be found in
+            the <a href="matrix_ex.cpp.html">matrix example program</a>.
+         </p>
+
+         <p>
+            Most of the linear algebra tools deal with dense matrices.  However, there is also
+            a limited amount of support for working with sparse matrices and vectors.
+            In particular, the dlib tools represent sparse vectors using the containers 
+            in the C++ STL.  For details, see the notes at the top of 
+            <a href="dlib/svm/sparse_vector_abstract.h.html#sparse_vectors">dlib/svm/sparse_vector_abstract.h</a>.
+         </p>
+         <p>
+            Finally, note that all the dense matrix tools can be obtained by #including <tt>&lt;dlib/matrix.h&gt;</tt>
+            while the sparse vector tools can be obtained by #including <tt>&lt;dlib/sparse_vector.h&gt;</tt>.  The 
+            geometry tools can be used by #including <tt>&lt;dlib/geometry.h&gt;</tt>.
+         </p>
+   
+   </body>
+
+   <!-- ************************************************************************* -->
+
+   <menu width="150">
+    <top>
+
+      <section>
+         <name>Dense Matrix Tools</name>
+         <item>matrix</item>
+         <item nolink="true">
+            <name>Basic Math Operators</name>
+            <sub>
+               <item>
+                  <name>exp</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#exp</link>
+               </item>
+               <item>
+                  <name>log10</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#log10</link>
+               </item>
+               <item>
+                  <name>log</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#log</link>
+               </item>
+               <item>
+                  <name>sqrt</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#sqrt</link>
+               </item>
+               <item>
+                  <name>pow</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#pow</link>
+               </item>
+               <item>
+                  <name>squared</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#squared</link>
+               </item>
+               <item>
+                  <name>cubed</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#cubed</link>
+               </item>
+               <item>
+                  <name>sigmoid</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#sigmoid</link>
+               </item>
+               <item>
+                  <name>abs</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#abs</link>
+               </item>
+               <item>
+                  <name>reciprocal</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#reciprocal</link>
+               </item>
+               <item>
+                  <name>reciprocal_max</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#reciprocal_max</link>
+               </item>
+               <item>
+                  <name>normalize</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#normalize</link>
+               </item>
+               <item>
+                  <name>round</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#round</link>
+               </item>
+               <item>
+                  <name>ceil</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#ceil</link>
+               </item>
+               <item>
+                  <name>floor</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#floor</link>
+               </item>
+               <item>
+                  <name>round_zeros</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#round_zeros</link>
+               </item>
+               <item>
+                  <name>conj</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#conj</link>
+               </item>
+               <item>
+                  <name>norm</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#norm</link>
+               </item>
+               <item>
+                  <name>imag</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#imag</link>
+               </item>
+               <item>
+                  <name>real</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#real</link>
+               </item>
+               <item>
+                  <name>complex_matrix</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#complex_matrix</link>
+               </item>
+               <item>
+                  <name>sin</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#sin</link>
+               </item>
+               <item>
+                  <name>cos</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#cos</link>
+               </item>
+               <item>
+                  <name>tan</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#tan</link>
+               </item>
+               <item>
+                  <name>asin</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#asin</link>
+               </item>
+               <item>
+                  <name>acos</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#acos</link>
+               </item>
+               <item>
+                  <name>atan</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#atan</link>
+               </item>
+               <item>
+                  <name>sinh</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#sinh</link>
+               </item>
+               <item>
+                  <name>cosh</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#cosh</link>
+               </item>
+               <item>
+                  <name>tanh</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#tanh</link>
+               </item>
+               <item>
+                  <name>soft_max</name>
+                  <link>dlib/matrix/matrix_math_functions_abstract.h.html#soft_max</link>
+               </item>
+            </sub>
+         </item>
+         <item nolink="true">
+            <name>Linear Algebra</name>
+            <sub>
+               <item>
+                  <name>inv</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#inv</link>
+               </item>
+               <item>
+                  <name>pinv</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#pinv</link>
+               </item>
+               <item>
+                  <name>svd</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#svd</link>
+               </item>
+               <item>
+                  <name>svd2</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#svd2</link>
+               </item>
+               <item>
+                  <name>svd3</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#svd3</link>
+               </item>
+               <item>
+                  <name>svd_fast</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#svd_fast</link>
+               </item>
+               <item>
+                  <name>orthogonalize</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#orthogonalize</link>
+               </item>
+               <item>
+                  <name>det</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#det</link>
+               </item>
+               <item>
+                  <name>trace</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#trace</link>
+               </item>
+               <item>
+                  <name>dot</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#dot</link>
+               </item>
+               <item>
+                  <name>length</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#length</link>
+               </item>
+               <item>
+                  <name>length_squared</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#length_squared</link>
+               </item>
+               <item>
+                  <name>trans</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#trans</link>
+               </item>
+               <item>
+                  <name>diag</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#diag</link>
+               </item>
+               <item>
+                  <name>diagm</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#diagm</link>
+               </item>
+               <item>
+                  <name>lowerm</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#lowerm</link>
+               </item>
+               <item>
+                  <name>upperm</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#upperm</link>
+               </item>
+               <item>
+                  <name>chol</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#chol</link>
+               </item>
+               <item>
+                  <name>inv_lower_triangular</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#inv_lower_triangular</link>
+               </item>
+               <item>
+                  <name>inv_upper_triangular</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#inv_upper_triangular</link>
+               </item>
+               <item>
+                  <name>lu_decomposition</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#lu_decomposition</link>
+               </item>
+               <item>
+                  <name>qr_decomposition</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#qr_decomposition</link>
+               </item>
+               <item>
+                  <name>cholesky_decomposition</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#cholesky_decomposition</link>
+               </item>
+               <item>
+                  <name>eigenvalue_decomposition</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#eigenvalue_decomposition</link>
+               </item>
+               <item>
+                  <name>real_eigenvalues</name>
+                  <link>dlib/matrix/matrix_la_abstract.h.html#real_eigenvalues</link>
+               </item>
+            </sub>
+         </item>
+         <item nolink="true">
+            <name>Conversions</name>
+            <sub>
+               <item>mat</item>
+               <item>
+                  <name>matrix_cast</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#matrix_cast</link>
+               </item>
+               <item>
+                  <name>pixel_to_vector</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#pixel_to_vector</link>
+               </item>
+               <item>
+                  <name>vector_to_pixel</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#vector_to_pixel</link>
+               </item>
+            </sub>
+         </item>
+         <item nolink="true">
+            <name>Sub Matrix Expressions</name>
+            <sub>
+               <item>
+                  <name>range</name>
+                  <link>dlib/matrix/matrix_subexp_abstract.h.html#range</link>
+               </item>
+               <item>
+                  <name>subm</name>
+                  <link>dlib/matrix/matrix_subexp_abstract.h.html#subm</link>
+               </item>
+               <item>
+                  <name>subm_clipped</name>
+                  <link>dlib/matrix/matrix_subexp_abstract.h.html#subm_clipped</link>
+               </item>
+               <item>
+                  <name>rowm</name>
+                  <link>dlib/matrix/matrix_subexp_abstract.h.html#rowm</link>
+               </item>
+               <item>
+                  <name>colm</name>
+                  <link>dlib/matrix/matrix_subexp_abstract.h.html#colm</link>
+               </item>
+               <item>
+                  <name>set_ptrm</name>
+                  <link>dlib/matrix/matrix_subexp_abstract.h.html#set_ptrm</link>
+               </item>
+               <item>
+                  <name>set_subm</name>
+                  <link>dlib/matrix/matrix_subexp_abstract.h.html#set_subm</link>
+               </item>
+               <item>
+                  <name>set_colm</name>
+                  <link>dlib/matrix/matrix_subexp_abstract.h.html#set_colm</link>
+               </item>
+               <item>
+                  <name>set_rowm</name>
+                  <link>dlib/matrix/matrix_subexp_abstract.h.html#set_rowm</link>
+               </item>
+            </sub>
+         </item>
+         <item nolink="true">
+            <name>Statistics</name>
+            <sub>
+               <item>
+                  <name>sum</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#sum</link>
+               </item>
+               <item>
+                  <name>sum_rows</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#sum_rows</link>
+               </item>
+               <item>
+                  <name>sum_cols</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#sum_cols</link>
+               </item>
+               <item>
+                  <name>prod</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#prod</link>
+               </item>
+               <item>
+                  <name>mean</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#mean</link>
+               </item>
+               <item>
+                  <name>max</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#max</link>
+               </item>
+               <item>
+                  <name>min</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#min</link>
+               </item>
+               <item>
+                  <name>find_min_and_max</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#find_min_and_max</link>
+               </item>
+               <item>
+                  <name>max_point</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#max_point</link>
+               </item>
+               <item>
+                  <name>max_point_interpolated</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#max_point_interpolated</link>
+               </item>
+               <item>
+                  <name>min_point</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#min_point</link>
+               </item>
+               <item>
+                  <name>index_of_min</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#index_of_min</link>
+               </item>
+               <item>
+                  <name>index_of_max</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#index_of_max</link>
+               </item>
+               <item>
+                  <name>variance</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#variance</link>
+               </item>
+               <item>
+                  <name>stddev</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#stddev</link>
+               </item>
+               <item>
+                  <name>covariance</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#covariance</link>
+               </item>
+               <item>
+                  <name>randm</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#randm</link>
+               </item>
+               <item>
+                  <name>gaussian_randm</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#gaussian_randm</link>
+               </item>
+            </sub>
+         </item>
+         <item nolink="true">
+            <name>Other Utilities</name>
+            <sub>
+               <item>
+                  <name>csv</name>
+                  <link>dlib/matrix/matrix_abstract.h.html#csv</link>
+               </item>
+               <item>
+                  <name>fft</name>
+                  <link>dlib/matrix/matrix_fft_abstract.h.html#fft</link>
+               </item>
+               <item>
+                  <name>ifft</name>
+                  <link>dlib/matrix/matrix_fft_abstract.h.html#ifft</link>
+               </item>
+               <item>
+                  <name>is_col_vector</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#is_col_vector</link>
+               </item>
+               <item>
+                  <name>is_row_vector</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#is_row_vector</link>
+               </item>
+               <item>
+                  <name>is_vector</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#is_vector</link>
+               </item>
+               <item>
+                  <name>is_finite</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#is_finite</link>
+               </item>
+               <item>
+                  <name>const_temp_matrix</name>
+                  <link>dlib/matrix/matrix_abstract.h.html#const_temp_matrix</link>
+               </item>
+               <item>
+                  <name>symmetric_matrix_cache</name>
+                  <link>dlib/matrix/symmetric_matrix_cache_abstract.h.html</link>
+               </item>
+               <item>
+                  <name>conv</name>
+                  <link>dlib/matrix/matrix_conv_abstract.h.html#conv</link>
+               </item>
+               <item>
+                  <name>conv_same</name>
+                  <link>dlib/matrix/matrix_conv_abstract.h.html#conv_same</link>
+               </item>
+               <item>
+                  <name>conv_valid</name>
+                  <link>dlib/matrix/matrix_conv_abstract.h.html#conv_valid</link>
+               </item>
+               <item>
+                  <name>xcorr_fft</name>
+                  <link>dlib/matrix/matrix_conv_abstract.h.html#xcorr_fft</link>
+               </item>
+               <item>
+                  <name>xcorr</name>
+                  <link>dlib/matrix/matrix_conv_abstract.h.html#xcorr</link>
+               </item>
+               <item>
+                  <name>xcorr_same</name>
+                  <link>dlib/matrix/matrix_conv_abstract.h.html#xcorr_same</link>
+               </item>
+               <item>
+                  <name>xcorr_valid</name>
+                  <link>dlib/matrix/matrix_conv_abstract.h.html#xcorr_valid</link>
+               </item>
+               <item>
+                  <name>flip</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#flip</link>
+               </item>
+               <item>
+                  <name>flipud</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#flipud</link>
+               </item>
+               <item>
+                  <name>fliplr</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#fliplr</link>
+               </item>
+               <item>
+                  <name>make_symmetric</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#make_symmetric</link>
+               </item>
+               <item>
+                  <name>ones_matrix</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#ones_matrix</link>
+               </item>
+               <item>
+                  <name>zeros_matrix</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#zeros_matrix</link>
+               </item>
+               <item>
+                  <name>uniform_matrix</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#uniform_matrix</link>
+               </item>
+               <item>
+                  <name>identity_matrix</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#identity_matrix</link>
+               </item>
+               <item>
+                  <name>rotate</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#rotate</link>
+               </item>
+               <item>
+                  <name>reshape_to_column_vector</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#reshape_to_column_vector</link>
+               </item>
+               <item>
+                  <name>reshape</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#reshape</link>
+               </item>
+               <item>
+                  <name>removerc</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#removerc</link>
+               </item>
+               <item>
+                  <name>remove_row</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#remove_row</link>
+               </item>
+               <item>
+                  <name>remove_col</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#remove_col</link>
+               </item>
+               <item>
+                  <name>set_all_elements</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#set_all_elements</link>
+               </item>
+               <item>
+                  <name>hash</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#hash</link>
+               </item>
+               <item>
+                  <name>tmp</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#tmp</link>
+               </item>
+               <item>
+                  <name>equal</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#equal</link>
+               </item>
+               <item>
+                  <name>pointwise_multiply</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#pointwise_multiply</link>
+               </item>
+               <item>
+                  <name>pointwise_pow</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#pointwise_pow</link>
+               </item>
+               <item>
+                  <name>join_rows</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#join_rows</link>
+               </item>
+               <item>
+                  <name>join_cols</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#join_cols</link>
+               </item>
+               <item>
+                  <name>tensor_product</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#tensor_product</link>
+               </item>
+               <item>
+                  <name>scale_columns</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#scale_columns</link>
+               </item>
+               <item>
+                  <name>scale_rows</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#scale_rows</link>
+               </item>
+               <item>
+                  <name>sort_columns</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#sort_columns</link>
+               </item>
+               <item>
+                  <name>rsort_columns</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#rsort_columns</link>
+               </item>
+
+               <item>
+                  <name>clamp</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#clamp</link>
+               </item>
+               <item>
+                  <name>lowerbound</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#lowerbound</link>
+               </item>
+               <item>
+                  <name>upperbound</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#upperbound</link>
+               </item>
+               <item>
+                  <name>linspace</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#linspace</link>
+               </item>
+               <item>
+                  <name>linpiece</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#linpiece</link>
+               </item>
+               <item>
+                  <name>logspace</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#logspace</link>
+               </item>
+               <item>
+                  <name>cartesian_product</name>
+                  <link>dlib/matrix/matrix_utilities_abstract.h.html#cartesian_product</link>
+               </item>
+            </sub>
+         </item>
+      </section>
+
+      <section>
+         <name>2D/3D Geometry</name>
+         <item>border_enumerator</item> 
+         <item>rectangle</item> 
+         <item>drectangle</item> 
+         <item>vector</item> 
+         <item>point</item> 
+         <item>dpoint</item> 
+         <item>rotate_point</item> 
+         <item>rotate_around_x</item> 
+         <item>rotate_around_y</item> 
+         <item>rotate_around_z</item> 
+         <item>point_rotator</item> 
+         <item>point_transform</item> 
+         <item>camera_transform</item> 
+         <item>point_transform_affine</item> 
+         <item>rectangle_transform</item> 
+         <item>point_transform_affine3d</item> 
+         <item>find_affine_transform</item> 
+         <item>find_similarity_transform</item> 
+         <item>point_transform_projective</item> 
+         <item>find_projective_transform</item> 
+         <item>rotation_matrix</item> 
+         <item>get_rect</item> 
+         <item>centered_rect</item> 
+         <item>
+            <name>centered_rects</name>
+            <link>dlib/geometry/rectangle_abstract.h.html#centered_rects</link>
+         </item> 
+         <item>set_aspect_ratio</item> 
+         <item>set_rect_area</item> 
+         <item>center</item> 
+         <item>dcenter</item> 
+         <item>shrink_rect</item> 
+         <item>grow_rect</item> 
+         <item>translate_rect</item> 
+         <item>translate_point</item> 
+         <item>resize_rect</item> 
+         <item>resize_rect_width</item> 
+         <item>resize_rect_height</item> 
+         <item>move_rect</item> 
+         <item>nearest_point</item> 
+         <item>nearest_rect</item> 
+         <item>distance_to_rect_edge</item> 
+         <item>clip_line_to_rectangle</item> 
+         <item>distance_to_line</item> 
+
+         <item>line</item> 
+         <item>signed_distance_to_line</item> 
+         <item>reverse</item> 
+         <item>intersect</item> 
+         <item>count_points_on_side_of_line</item> 
+         <item>count_points_between_lines</item> 
+         <item>angle_between_lines</item> 
+         <item>is_convex_quadrilateral</item> 
+         <item>find_convex_quadrilateral</item> 
+         <item>polygon_area</item> 
+      </section>
+
+
+      <section>
+         <name>Sparse Vector Tools</name>
+         <item>sparse_to_dense</item> 
+
+         <item>
+            <name>dot</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#dot</link>
+         </item> 
+         <item>
+            <name>distance_squared</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#distance_squared</link>
+         </item> 
+         <item>
+            <name>distance</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#distance</link>
+         </item> 
+         <item>
+            <name>assign</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#assign</link>
+         </item> 
+         <item>
+            <name>length_squared</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#length_squared</link>
+         </item> 
+         <item>
+            <name>length</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#length</link>
+         </item> 
+         <item>
+            <name>scale_by</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#scale_by</link>
+         </item> 
+         <item>
+            <name>add</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#add</link>
+         </item> 
+         <item>
+            <name>subtract</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#subtract</link>
+         </item> 
+         <item>
+            <name>max_index_plus_one</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#max_index_plus_one</link>
+         </item> 
+         <item>
+            <name>add_to</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#add_to</link>
+         </item> 
+         <item>
+            <name>subtract_from</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#subtract_from</link>
+         </item> 
+         <item>
+            <name>min</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#min</link>
+         </item> 
+         <item>
+            <name>max</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#max</link>
+         </item> 
+         <item>
+            <name>make_sparse_vector</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#make_sparse_vector</link>
+         </item> 
+         <item>
+            <name>make_sparse_vector_inplace</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#make_sparse_vector_inplace</link>
+         </item> 
+         <item>
+            <name>sparse_matrix_vector_multiply</name>
+            <link>dlib/svm/sparse_vector_abstract.h.html#sparse_matrix_vector_multiply</link>
+         </item> 
+      </section>
+
+    </top>
+   </menu>
+
+   <!-- ************************************************************************* -->
+   <!-- ************************************************************************* -->
+   <!-- ************************************************************************* -->
+
+   <components>
+   
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>line</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/line_abstract.h</spec_file>
+         <description>
+            This object represents a line in the 2D plane.  The line is defined by two
+            <a href="#dpoint">points</a> running through it.  This object also includes a
+            unit normal vector that is perpendicular to the line.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>signed_distance_to_line</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/line_abstract.h</spec_file>
+         <description>
+            This function returns how far a point is from a <a href="#line">line</a>.
+            This is a signed distance.  The sign indicates which side of the line the point
+            is on and the magnitude is the distance.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>reverse</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/line_abstract.h</spec_file>
+         <description>
+            This function returns a <a href="#line">line</a> object that represents the
+            same line but with the endpoints and normal vector flipped.  
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>intersect</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/line_abstract.h</spec_file>
+         <description>
+            This routine finds the point at the intersection of two <a href="#line">lines</a>.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>count_points_on_side_of_line</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/line_abstract.h</spec_file>
+         <description>
+            This routine takes a <a href="#line">line</a> and an array of points and counts how many
+            points are on one side of the line.  Which side of the line is of interest is
+            selected by the user.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>count_points_between_lines</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/line_abstract.h</spec_file>
+         <description>
+            This routine takes a pair of <a href="#line">lines</a> and an array of points
+            and counts how many points are between the lines. 
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>angle_between_lines</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/line_abstract.h</spec_file>
+         <description>
+            This routine returns the angle, in degrees, between two <a
+            href="#line">lines</a>.  This is a number in the range [0 90].
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>is_convex_quadrilateral</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/vector_abstract.h</spec_file>
+         <description>
+            This routine tests if 4 points define a convex quadrilateral.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>find_convex_quadrilateral</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/line_abstract.h</spec_file>
+         <description>
+            This routine takes 4 <a href="#line">lines</a> as input and determines if their
+            intersections form a convex quadrilateral.  If so it returns the 4 corners of
+            this quadrilateral.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+
+      <component>
+         <name>sparse_to_dense</name>
+         <file>dlib/sparse_vector.h</file>
+         <spec_file link="true">dlib/svm/sparse_vector_abstract.h</spec_file>
+         <description>
+            This is a set of simple functions that take  
+            <a href="dlib/svm/sparse_vector_abstract.h.html#sparse_vectors">sparse vectors</a> 
+            and converts them into equivalent dense vectors.  
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>mat</name>
+         <file>dlib/matrix.h</file>
+         <spec_file link="true">dlib/matrix/matrix_mat_abstract.h</spec_file>
+         <description>
+            This is a set of simple functions that take objects like std::vector or
+            <a href="containers.html#array2d">array2d</a> and convert them into 
+            <a href="#matrix">matrix</a> objects.  Note that the conversion is 
+            done using template expressions so there is no runtime cost associated
+            with calling mat().
+         </description>
+      </component>
+      
+
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>matrix</name>
+         <file>dlib/matrix.h</file>
+         <spec_file link="true">dlib/matrix/matrix_abstract.h</spec_file>
+         <description>
+           This is a 2D matrix object that enables you to write code that deals with
+           matrices using a simple syntax similar to what can be written in MATLAB.  It is implemented using 
+           the <a href="matrix_expressions_ex.cpp.html">expression templates</a> technique which allows it to eliminate the 
+           temporary matrix objects that would normally be returned from expressions 
+           such as M = A+B+C+D;  Normally each invocation of the + operator would 
+           construct and return a temporary matrix object but using this technique 
+           we can avoid creating all these temporary objects and receive a large speed boost.
+           <p>
+           This object is also capable of using BLAS and LAPACK libraries such as ATLAS or the Intel
+           MKL when available.   To enable BLAS support all you have to do is #define 
+           DLIB_USE_BLAS and then make sure you link your application with your 
+           BLAS library.  Similarly, to enable LAPACK support just #define DLIB_USE_LAPACK and 
+           link to your LAPACK library.  Finally, the use of BLAS and LAPACK is transparent to 
+           the user, that is, the dlib matrix object uses BLAS and LAPACK internally to optimize 
+           various operations while still allowing the user to use a simple MATLAB like syntax.  
+           </p>
+           <p>
+           Note that the cmake files that come with dlib will automatically link with ATLAS or the Intel
+           MKL if they are installed.  So using cmake makes this easy, but by no means are you required 
+           to use cmake or the dlib cmake files. 
+           </p>
+           <p>
+              It is also worth noting that all the preconditions of every function 
+              related to the matrix object are checked by <a href="metaprogramming.html#DLIB_ASSERT">DLIB_ASSERT</a>
+              statements and thus can be enabled by #defining ENABLE_ASSERTS or DEBUG.  Doing
+              this will cause your program to run slower but should catch any usage errors. 
+           </p>
+         </description>
+         
+         <examples>
+            <example>matrix_ex.cpp.html</example>
+            <example>matrix_expressions_ex.cpp.html</example>
+         </examples>
+
+         <extensions>
+            <extension>
+               <name>matrix_utilities</name>
+               <spec_file>dlib/matrix/matrix_utilities_abstract.h</spec_file>
+               <description>
+                  This extension contains miscellaneous utility functions
+                  for manipulating matrix objects.  
+               </description>
+            </extension>
+
+            <extension>
+               <name>matrix_la</name>
+               <spec_file>dlib/matrix/matrix_la_abstract.h</spec_file>
+               <description>
+                  This extension contains linear algebra functions to calculate 
+                  QR, LU, Cholesky, eigenvalue, and singular value decompositions.  It also
+                  contains a few other miscellaneous functions that solve systems of 
+                  equations or calculate values derived from the above decompositions.
+               </description>
+            </extension>
+
+            <extension>
+               <name>matrix_math_functions</name>
+               <spec_file>dlib/matrix/matrix_math_functions_abstract.h</spec_file>
+               <description>This extension contains mathematical functions that operate on each
+                  element of a matrix independently.  
+               </description>
+            </extension>
+
+            <extension>
+               <name>matrix_sub_expressions</name>
+               <spec_file>dlib/matrix/matrix_subexp_abstract.h</spec_file>
+               <description>
+                  This extension contains a number of functions for dealing with sub-matrices.  
+               </description>
+            </extension>
+         </extensions>              
+                                    
+      </component>
+      
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>border_enumerator</name>
+         <file>dlib/geometry.h</file>
+         <spec_file>dlib/geometry/border_enumerator_abstract.h</spec_file>
+         <description>
+            This object is an <a href="containers.html#enumerable">enumerator</a> 
+            over the border <a href="#point">points</a> of a 
+            <a href="#rectangle">rectangle</a>.
+         </description>
+      </component>
+            
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>nearest_point</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            This function takes a <a href="#rectangle">rectangle</a> and a 
+            <a href="#point">point</a> and returns the point in the given 
+            rectangle that is nearest to the given point.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>nearest_rect</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            This function takes a std::vector&lt;<a href="#rectangle">rectangle</a>&gt; and a 
+            <a href="#point">point</a> and identifies the rectangle that is nearest to the point.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>distance_to_rect_edge</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            This function takes a <a href="#rectangle">rectangle</a> and a 
+            <a href="#point">point</a> and returns the Manhattan distance between
+            the rectangle's edge and the point.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>distance_to_line</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/line_abstract.h</spec_file>
+         <description>        
+            This function takes a line and a <a href="#point">point</a>
+            and returns the distance from the line to the point.  
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>clip_line_to_rectangle</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            This function takes a <a href="#rectangle">rectangle</a> and a line segment and
+            returns the part of the line segment that is entirely contained within the
+            rectangle.
+         </description>
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>move_rect</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            This function takes a <a href="#rectangle">rectangle</a> and moves
+            it so that it's upper left corner occupies the given location.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>resize_rect_height</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            This function takes a <a href="#rectangle">rectangle</a> and 
+            returns a new rectangle with the given height but otherwise with the 
+            same edge points as the original rectangle. 
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>resize_rect_width</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            This function takes a <a href="#rectangle">rectangle</a> and 
+            returns a new rectangle with the given width but otherwise with the 
+            same edge points as the original rectangle. 
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>resize_rect</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            This function takes a <a href="#rectangle">rectangle</a> and 
+            returns a new rectangle with the given size but with the same upper
+            left corner as the original rectangle.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>translate_rect</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            This function takes a <a href="#rectangle">rectangle</a> and moves
+            it by a given number of units along the x and y axis relative to
+            where it was before the move.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>center</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            Returns the center point of a <a href="#rectangle">rectangle</a>.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>dcenter</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            Returns the center point of a <a href="#rectangle">rectangle</a>.  This
+            is a version of <a href="#center">center()</a> which returns a double version 
+            of the point rather than one which uses integers to represent the 
+            result.  Therefore, it is slightly more accurate.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>centered_rect</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            There are various overloads of this function but the basic idea is
+            that it returns a <a href="#rectangle">rectangle</a> with a given 
+            width and height and centered about a given point.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>set_aspect_ratio</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            This function reshapes a <a href="#rectangle">rectangle</a> so that
+            it has a user specified aspect ratio.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>set_rect_area</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            This function reshapes a <a href="#rectangle">rectangle</a> so that
+            it has a user specified area.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>shrink_rect</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            This function takes a <a href="#rectangle">rectangle</a> object, 
+            shrinks its borders by a given amount, and returns the result.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>grow_rect</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            This function takes a <a href="#rectangle">rectangle</a> object, 
+            grows its borders by a given amount, and returns the result.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>rotate_point</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/point_transforms_abstract.h</spec_file>
+         <description>        
+            This is a function that rotates a 2D <a href="#vector">vector</a> or 
+            <a href="#point">point</a> object about a given point.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>point_rotator</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/point_transforms_abstract.h</spec_file>
+         <description>        
+            This is an object that rotates a 2D <a href="#vector">vector</a> or 
+            <a href="#point">point</a> object about the origin.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>point_transform</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/point_transforms_abstract.h</spec_file>
+         <description>        
+            This is an object that rotates a 2D <a href="#vector">vector</a> or 
+            <a href="#point">point</a> object about the origin and then adds a 
+            displacement vector.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>point_transform_affine</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/point_transforms_abstract.h</spec_file>
+         <description>        
+            This is an object that applies a 2D affine transformation to a <a href="#vector">vector</a> or 
+            <a href="#point">point</a>.  Note that you can use <a href="#find_affine_transform">find_affine_transform</a>
+            to easily create affine transforms from sets of point correspondences.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>rectangle_transform</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/point_transforms_abstract.h</spec_file>
+         <description>        
+            This is an object that applies a <a href="#point_transform_affine">2D affine transformation</a> 
+            to a <a href="#rectangle">rectangle</a> or <a href="#drectangle">drectangle</a>.  
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>camera_transform</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/point_transforms_abstract.h</spec_file>
+         <description>        
+            This object maps 3D <a href="#vector">points</a> into the image plane of a camera.  Therefore,
+            you can use it to compute 2D representations of 3D data from the point of
+            view of some camera in 3D space.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>point_transform_affine3d</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/point_transforms_abstract.h</spec_file>
+         <description>        
+            This is an object that applies a 3D affine transformation to a <a href="#vector">vector</a>.  
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>find_affine_transform</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/point_transforms_abstract.h</spec_file>
+         <description>        
+            This is a routine that takes in two sets of points and finds the
+            best <a href="#point_transform_affine">affine transformation</a>
+            that maps between them.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>find_similarity_transform</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/point_transforms_abstract.h</spec_file>
+         <description>        
+            This is a routine that takes in two sets of points and finds the
+            best <a href="#point_transform_affine">affine transformation</a>
+            that maps between them.  However, it considers only rotations, translations,
+            and uniform scale changes in finding the mapping.  Therefore, it finds
+            a similarity transformation rather than a general affine transform.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>point_transform_projective</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/point_transforms_abstract.h</spec_file>
+         <description>        
+            This is an object that applies a projective transformation to a <a href="#vector">vector</a> or 
+            <a href="#point">point</a>.  Note that you can use <a href="#find_projective_transform">find_projective_transform</a>
+            to easily create projective transforms from sets of point correspondences.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>find_projective_transform</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/point_transforms_abstract.h</spec_file>
+         <description>        
+            This is a routine that takes in two sets of points and finds the
+            best <a href="#point_transform_projective">projective transformation</a>
+            that maps between them.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>polygon_area</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/vector_abstract.h</spec_file>
+         <description>        
+            When given a set of points defining the vertices of a polygon this routine
+            returns the area of the polygon.
+         </description>
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>rotation_matrix</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/point_transforms_abstract.h</spec_file>
+         <description>        
+            This is a method for creating 2D rotation matrices.
+         </description>
+                                 
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>rotate_around_x</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/point_transforms_abstract.h</spec_file>
+         <description>        
+            This is a method for creating a <a href="#point_transform_affine3d">point_transform_affine3d</a>
+            that rotates points around the x-axis.
+         </description>
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>rotate_around_y</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/point_transforms_abstract.h</spec_file>
+         <description>        
+            This is a method for creating a <a href="#point_transform_affine3d">point_transform_affine3d</a>
+            that rotates points around the y-axis.
+         </description>
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>rotate_around_z</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/point_transforms_abstract.h</spec_file>
+         <description>        
+            This is a method for creating a <a href="#point_transform_affine3d">point_transform_affine3d</a>
+            that rotates points around the z-axis.
+         </description>
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>translate_point</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/point_transforms_abstract.h</spec_file>
+         <description>        
+            This is a method for creating a <a href="#point_transform_affine3d">point_transform_affine3d</a>
+            that just translates points. 
+         </description>
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>get_rect</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>        
+            This is a simple template function that returns a rectangle 
+            representing the size of a 2D container (e.g. <a href="containers.html#matrix">matrix</a> or
+            <a href="containers.html#array2d">array2d</a>). 
+         </description>
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>drectangle</name>
+         <file>dlib/geometry.h</file>
+         <spec_file>dlib/geometry/drectangle_abstract.h</spec_file>
+         <description>
+            This object represents a rectangular region inside a Cartesian 
+            coordinate system.  It is very similar to the <a href="#rectangle">rectangle</a>
+            except that it uses double variables instead of longs to represent the location of the rectangle.
+            Therefore, it can position rectangles with sub-pixel accuracy.
+         </description>
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>rectangle</name>
+         <file>dlib/geometry.h</file>
+         <spec_file>dlib/geometry/rectangle_abstract.h</spec_file>
+         <description>
+            This object represents a rectangular region inside a Cartesian 
+            coordinate system.  It allows you to easily represent and manipulate
+            rectangles.
+         </description>
+      </component>
+            
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>vector</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/vector_abstract.h</spec_file>
+         <description>
+            This object represents a two or three dimensional vector.  
+
+            <p>If you
+            want to work with general N-dimensional column vectors then you
+            should the <a href="#matrix">matrix</a> object.  In particular, you
+            should usually use a matrix with this type:
+            <tt>dlib::matrix&lt;double,0,1&gt;</tt>.</p>
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>point</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/vector_abstract.h</spec_file>
+         <description>
+               This object represents a point inside a Cartesian coordinate system.
+               Note that a point is simply a typedef for a <a href="#vector">vector</a>
+               that is 2D and uses longs to represent coordinate values.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+      
+      <component>
+         <name>dpoint</name>
+         <file>dlib/geometry.h</file>
+         <spec_file link="true">dlib/geometry/vector_abstract.h</spec_file>
+         <description>
+               This object represents a point inside a Cartesian coordinate system.
+               Note that a dpoint is simply a typedef for a <a href="#vector">vector</a>
+               that is 2D and uses doubles to represent coordinate values.
+         </description>
+      </component>
+      
+   <!-- ************************************************************************* -->
+      
+      
+   </components>
+
+   <!-- ************************************************************************* -->
+
+
+</doc>
+

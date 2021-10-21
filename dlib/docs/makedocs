@@ -1,0 +1,279 @@
+#!/bin/bash
+. bash_helper_functions
+
+report_failure ()
+{
+    echo "  **** failed to complete **** "
+    exit 1
+}
+
+htmlify_python_file ()
+{
+    pygmentize -f html -O full,style=vs $1 > $1.html
+}
+
+
+add_links_between_example_programs()
+{
+    EXT=$3
+    # Get the list of example program filenames
+    pushd $1 > /dev/null
+    FILES=`ls *.$EXT`
+    popd > /dev/null
+
+    # Now run sed on all the htmlified example programs to add the links between them.
+    for f in $FILES
+    do
+        #escape the . in the filename
+        escaped_name=`echo $f | sed -e 's/\./\\\./g'`
+        pushd $1 > /dev/null
+        # get a list of all the html example files that contain the name
+        matching_html_files=`grep -e "\b$escaped_name\b" -l *.$EXT | sed -e "s/\.$EXT\b/.$EXT.html/g"`
+        popd > /dev/null
+
+        # now actually run sed to add the links
+        pushd $2 > /dev/null
+        if [ -n "$matching_html_files" ]
+        then
+            sed -i -e "s/\b$escaped_name\b/<a href=\"$escaped_name.html\">$escaped_name<\/a>/g" $matching_html_files
+        fi
+        popd > /dev/null
+    done
+
+}
+
+htmlify_cmake ()
+{
+    echo "<html><head><title>" > $1.html;
+    echo $1 >> $1.html;
+    echo "</title></head><body bgcolor='white'><pre>" >> $1.html;
+
+    #  line 1: make comments green
+    #  line 2: add links into the add_subdirectory directives
+    #  line 3: make literal quotes red
+    #  line 4: make the directives show up blue
+    #  line 5: make variable names show up purple
+    sed -e "s/^\([ ]*#.*\)/<font color='#009900'>\1<\/font>/" \
+        -e "s/add_subdirectory\([ ]*\)(\([ ]*\)\([^ ]*\)\([ ]*\)\([^ )]*\)/add_subdirectory\1(\2\3\4<a href='\3\/CMakeLists.txt.html'>\5<\/a>/"  \
+        -e "s/\"\([^\"]*\)\"/\"<font color='#CC0000'>\1<\/font>\"/g"  \
+        -e "s/^\([ ]*[^( ]*[ ]*\)(/<font color='blue'>\1<\/font>(/" \
+        -e "s/{\([^}]*\)}/\{<font color='#BB00BB'>\1<\/font>}/g"  \
+        $1 >> $1.html;
+
+    echo "</pre></body></html>" >> $1.html;
+}
+
+htmlify_python()
+{
+    FILES=`\ls $1/*.py`
+    for i in $FILES
+    do
+        htmlify_python_file ${i}
+        rm ${i}
+    done
+}
+
+
+makedocs ()
+{
+
+    REVNUM_FILE=.logger_revnum
+
+
+
+    LOGGER_REVNUM=`cat $REVNUM_FILE`
+
+    XSLT_OPTIONS="--nodtdattr   --nonet   --novalid"
+    DATE_TODAY=`date --date= "+%b %d, %Y"`;
+
+
+    if [ "$1" = "makerel" ] 
+        then
+        RELEASE=${MAJOR_NUM}.${MINOR_NUM} 
+    else
+        RELEASE=${MAJOR_NUM}.${MINOR_NUM}.${PATCH_NUM}
+    fi;
+
+    # get XML versions of the change logs
+    echo Getting the git change logs for $LOGGER_REVNUM..HEAD 
+    git_logs_as_xml $LOGGER_REVNUM..HEAD docs/git-logs.xml || report_failure
+
+    # grab a clean copy of the repository 
+    rm -rf docs/cache
+    rm -rf docs/web
+    rm -rf docs/chm/docs
+    cd ..
+    mkdir -p docs/docs/cache
+    git archive HEAD | tar -xC docs/docs/cache
+    cd docs
+    rm -rf docs/cache/docs
+
+    CHANGESET_ID=`git log -1 --pretty=format:%H`
+    echo "#ifndef DLIB_REVISION_H"           > docs/cache/dlib/revision.h
+    echo "// Version: " $RELEASE            >> docs/cache/dlib/revision.h
+    echo "// Date:    " `date`              >> docs/cache/dlib/revision.h
+    echo "// Git Changeset ID: " $CHANGESET_ID >> docs/cache/dlib/revision.h
+    echo "#define DLIB_MAJOR_VERSION " $MAJOR_NUM >> docs/cache/dlib/revision.h
+    echo "#define DLIB_MINOR_VERSION " $MINOR_NUM >> docs/cache/dlib/revision.h
+    echo "#define DLIB_PATCH_VERSION " $PATCH_NUM >> docs/cache/dlib/revision.h
+    echo "#endif"                           >> docs/cache/dlib/revision.h
+
+
+    rm -rf docs/web
+    rm -rf docs/chm/docs
+    mkdir docs/web
+    mkdir docs/chm/docs
+
+    echo Creating HTML version of the source
+    htmlify --title "dlib C++ Library - " -i docs/cache -o htmltemp.$$
+    add_links_between_example_programs docs/cache/examples htmltemp.$$/examples cpp
+
+    echo Copying files around...
+    cp -r htmltemp.$$/dlib docs/web
+    cp -r htmltemp.$$/dlib docs/chm/docs
+    cp -r htmltemp.$$/examples/* docs/web
+    cp -r htmltemp.$$/examples/* docs/chm/docs
+    rm -rf htmltemp.$$
+
+    # create python docs unless you say ./makedocs fast
+    if [ "$1" != "fast" ] 
+    then
+        cd ..
+        python setup.py build || report_failure
+        python setup.py build_sphinx -c docs/docs/python --build-dir docs/sphinx.$$ || report_failure
+        # sphinx will read in the _dlib_pybind11 module and use that to name everything.  But that's
+        # not what we want, so we rename that to dlib everywhere.  You would think sphinx would be
+        # able to deal with the dlib/__init__.py file and this wouldn't be necessary, but that
+        # doesn't seem to be the case.
+        find docs/sphinx.$$ -type f | xargs sed -i -e "s/_dlib_pybind11/dlib/g"
+        cd docs
+        cp -r sphinx.$$/html docs/web/python
+        mv  sphinx.$$/html docs/chm/docs/python
+        rm -rf sphinx.$$
+    fi;
+
+
+    cp docs/cache/dlib/test/makefile docs/web/dlib/test
+    cp docs/cache/dlib/test/makefile docs/chm/docs/dlib/test
+
+    cp docs/cache/dlib/test/CMakeLists.txt docs/web/dlib/test
+    cp docs/cache/dlib/test/CMakeLists.txt docs/chm/docs/dlib/test
+    cp docs/cache/dlib/CMakeLists.txt docs/web/dlib
+    cp docs/cache/dlib/CMakeLists.txt docs/chm/docs/dlib
+    mkdir docs/web/examples || report_failure
+    cp docs/cache/examples/CMakeLists.txt docs/web/examples
+    mkdir docs/chm/docs/examples || report_failure 
+    cp docs/cache/examples/CMakeLists.txt docs/chm/docs/examples
+    cp docs/cache/python_examples/*.py docs/chm/docs/
+    cp docs/cache/python_examples/*.py docs/web/
+
+    htmlify_python docs/chm/docs/
+    htmlify_python docs/web/
+    add_links_between_example_programs docs/cache/python_examples docs/chm/docs py
+    add_links_between_example_programs docs/cache/python_examples docs/web py
+
+    cp docs/*.gif docs/web
+    cp docs/*.gif docs/chm/docs
+    cp docs/ml_guide.svg docs/web
+    cp docs/ml_guide.svg docs/chm/docs
+    cp -r docs/guipics docs/web
+    cp -r docs/guipics docs/chm/docs
+    cp -r docs/images docs/web
+    cp -r docs/images docs/chm/docs
+    cp docs/*.html docs/web
+    cp docs/*.html docs/chm/docs
+    cp docs/*.css docs/web
+    cp docs/*.css docs/chm/docs
+    cp docs/*.js docs/web
+    cp docs/*.js docs/chm/docs
+    cp docs/*.png docs/web
+    cp docs/*.pdf docs/web
+    cp docs/*.jpg docs/web
+    cp docs/*.webm docs/web
+    cp docs/*.ico docs/web
+    cp docs/*.png docs/chm/docs
+    cp docs/*.pdf docs/chm/docs
+    cp docs/*.jpg docs/chm/docs
+    cp docs/*.webm docs/chm/docs
+    cp docs/*.ico docs/chm/docs
+
+    cd docs/chm/docs || report_failure 
+    htmlify_cmake dlib/CMakeLists.txt;
+    htmlify_cmake examples/CMakeLists.txt;
+    htmlify_cmake dlib/test/CMakeLists.txt;
+    cd ../../.. || report_failure
+    cd docs/web || report_failure
+    htmlify_cmake dlib/CMakeLists.txt;
+    htmlify_cmake examples/CMakeLists.txt;
+    htmlify_cmake dlib/test/CMakeLists.txt;
+    cd ../.. || report_failure
+
+    find docs/web docs/chm -name "CMakeLists.txt" | xargs rm
+
+
+
+    # generate the HTML docs
+    echo Generate HTML docs from XML and XSLT style sheet
+    FILES=`\ls docs/*.xml | grep -v main_menu.xml`
+    for i in $FILES
+    do
+
+        # The last modified date for these files should always be the release date (regardless of when the actual xml files were modified). 
+        if [ "${i}" = "docs/release_notes.xml" -o ${i} = "docs/old_release_notes.xml" \
+             -o ${i} = "docs/change_log.xml" -o ${i} = "docs/index.xml" ] 
+        then
+            DATE=$DATE_TODAY
+        else
+            get_last_modified_date ${i}
+            DATE=$RESULT
+        fi;
+
+        #make web version
+        cat docs/stylesheet.xsl | sed -e 's/"is_chm">[^<]*/"is_chm">false/' -e "s/_CURRENT_RELEASE_/$RELEASE/" -e "s/_LAST_MODIFIED_DATE_/$DATE/" \
+            > docs/stylesheet.$$.xsl
+        OUT_FILE=$(echo ${i} | sed -e "s/\.xml/\.html/" | sed -e "s/docs\//docs\/web\//")
+        xsltproc $XSLT_OPTIONS -o $OUT_FILE docs/stylesheet.$$.xsl ${i}
+
+        #make chm version
+        cat docs/stylesheet.xsl | sed -e 's/"is_chm">[^<]*/"is_chm">true/' -e "s/_CURRENT_RELEASE_/$RELEASE/" -e "s/_LAST_MODIFIED_DATE_/$DATE/" \
+            > docs/stylesheet.$$.xsl
+        OUT_FILE=$(echo ${i} | sed -e "s/\.xml/\.html/" | sed -e "s/docs\//docs\/chm\/docs\//")
+        xsltproc $XSLT_OPTIONS -o $OUT_FILE docs/stylesheet.$$.xsl ${i}
+
+        rm docs/stylesheet.$$.xsl
+    done
+
+# Delete doc type header stuff
+#    FILES=`find docs/chm docs/web -iname "*.html" -type f`
+#    for i in $FILES
+#    do
+#        sed -e '/<!DOCTYPE/d' ${i} > temp.$$;
+#        mv temp.$$ ${i};
+#    done
+
+
+    echo Generating sitemap
+    cd docs/web || report_failure
+    find . -name "*.html" |  awk '{ print "http://dlib.net" substr($1,2)}' > sitemap.txt
+
+    # make the main index have a 301 redirect.  Use php to do this
+    echo '<?php if ($_SERVER["SERVER_NAME"] != "dlib.net") { header("Location: http://dlib.net/", true, 301); exit; } ?>' > index.php
+    cat index.html >> index.php
+    rm index.html
+
+    cd ../..
+}
+
+
+./testenv || report_failure
+
+
+
+
+# build all the html documentation
+makedocs $1
+
+# now make the table of contents for the chm file
+echo Generating the table of contents for the chm file
+xsltproc -o docs/chm/Table\ of\ Contents.hhc docs/chm/htmlhelp_stylesheet.xsl docs/chm/toc.xml
+
