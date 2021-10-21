@@ -25,6 +25,11 @@ def setup(args, cfg):
     else:
         cfg.is_train = True
 
+    if args.profiler_options:
+        cfg.profiler_options = args.profiler_options
+    else:
+        cfg.profiler_options = None
+
     cfg.timestamp = time.strftime('-%Y-%m-%d-%H-%M', time.localtime())
     cfg.output_dir = os.path.join(
         cfg.output_dir,

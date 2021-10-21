@@ -27,7 +27,7 @@ from ..models.builder import build_model
 from ..utils.visual import tensor2img, save_image
 from ..utils.filesystem import makedirs, save, load
 from ..utils.timer import TimeAverager
-
+from ..utils.profiler import add_profiler_step
 
 class IterLoader:
     def __init__(self, dataloader):
@@ -147,6 +147,7 @@ class Trainer:
         self.time_count = {}
         self.best_metric = {}
         self.model.set_total_iter(self.total_iters)
+        self.profiler_options = cfg.profiler_options
 
     def distributed_data_parallel(self):
         paddle.distributed.init_parallel_env()
@@ -177,6 +178,8 @@ class Trainer:
         while self.current_iter < (self.total_iters + 1):
             self.current_epoch = iter_loader.epoch
             self.inner_iter = self.current_iter % self.iters_per_epoch
+
+            add_profiler_step(self.profiler_options)
 
             start_time = step_start_time = time.time()
             data = next(iter_loader)
