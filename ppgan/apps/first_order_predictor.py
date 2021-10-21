@@ -399,4 +399,3 @@ class FirstOrderPredictor(BasePredictor):
             return 0.0
         else:
             return 1.0 * w * h / (sa + sb - w * h)
-## python -u applications/tools/first-order-demo.py       --driving_video /home/anastasia/paddleGan/PaddleGAN/data/mayiyahei3.mp4      --source_image /home/anastasia/paddleGan/PaddleGAN/data/selfie2.JPEG      --ratio 0.4      --relative --adapt_scale      --image_size 256      --multi_person

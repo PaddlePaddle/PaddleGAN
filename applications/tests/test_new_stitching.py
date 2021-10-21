@@ -6,20 +6,20 @@ args = {
     "weight_path": None,
     "relative": True,
     "adapt_scale": True,
-    "find_best_frame": True,
+    "find_best_frame": False,
     "best_frame": None,
     "ratio": 0.4,
-    "face_detector": "sfd",
-    "multi_person": False,
-    "image_size": 512,
+    "face_detector": "blazeface",
+    "multi_person": True,
+    "image_size": 256,
     "batch_size": 1,
     "face_enhancement": True,
     "mobile_net": False
 }
 resources = {
     "source_image": "/home/anastasia/paddleGan/PaddleGAN/data/selfie2.JPEG",
-    "driving_video": "/home/anastasia/paddleGan/PaddleGAN/data/mayiyahei.MP4"
+    "driving_video": "/home/anastasia/paddleGan/PaddleGAN/data/mayiyahei1.mp4"
 }
 if __name__ == '__main__':
     predictor = FirstOrderPredictor(**args)
-    predictor.run(args.source_image, args.driving_video)
+    predictor.run(resources["source_image"], resources["driving_video"])

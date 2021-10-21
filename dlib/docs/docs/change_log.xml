@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<?xml-stylesheet type="text/xsl" href="stylesheet.xsl"?>
-
-<doc>
-   <title>Change Log</title>
-   <body from_file="git-logs.xml"/>
-</doc>
