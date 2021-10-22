@@ -23,7 +23,8 @@ import imageio
 import numpy as np
 from tqdm import tqdm
 from scipy.spatial import ConvexHull
-
+import sys
+sys.path.insert(0, '/home/anastasia/paddleGan/PaddleGAN/')
 import paddle
 from ppgan.utils.download import get_path_from_url
 from ppgan.utils.animate import normalize_kp
@@ -31,6 +32,7 @@ from ppgan.modules.keypoint_detector import KPDetector
 from ppgan.models.generators.occlusion_aware import OcclusionAwareGenerator
 from ppgan.faceutils import face_detection
 from ppgan.faceutils.mask.face_parser import FaceParser
+from ppgan.faceutils.face_detection.detection_utils import largest_results, union_results
 import dlib
 import skimage
 
@@ -59,7 +61,8 @@ class FirstOrderPredictor(BasePredictor):
                  image_size=256,
                  face_enhancement=False,
                  batch_size=1,
-                 mobile_net=False):
+                 mobile_net=False, 
+                 detection_func="Union"):
         if config is not None and isinstance(config, str):
             with open(config) as f:
                 self.cfg = yaml.load(f, Loader=yaml.SafeLoader)
@@ -128,6 +131,10 @@ class FirstOrderPredictor(BasePredictor):
         if face_enhancement:
             from ppgan.faceutils.face_enhancement import FaceEnhancement
             self.faceenhancer = FaceEnhancement(batch_size=batch_size)
+        if detection_func == "Union":
+            self.detection_func = union_results
+        elif detection_func == "Largest":
+            self.detection_func = largest_results
 
     def read_img(self, path):
         img = imageio.imread(path)
@@ -138,7 +145,8 @@ class FirstOrderPredictor(BasePredictor):
             img = img[:, :, :3]
         return img
 
-    def run(self, source_image, driving_video):
+    def run(self, source_image, driving_video, filename):
+        self.filename = filename
         def get_prediction(face_image):
             if self.find_best_frame or self.best_frame is not None:
                 i = self.best_frame if self.best_frame is not None else self.find_best_frame_func(
@@ -356,43 +364,80 @@ class FirstOrderPredictor(BasePredictor):
 
         frame = [image]
         predictions = detector.get_detections_for_image(np.array(frame))
-        person_num = len(predictions)
-        if person_num == 0:
-            return np.array([])
-        results = []
-        face_boxs = []
-        h, w, _ = image.shape
-        for rect in predictions:
-            bh = rect[3] - rect[1]
-            bw = rect[2] - rect[0]
-            cy = rect[1] + int(bh / 2)
-            cx = rect[0] + int(bw / 2)
-            margin = max(bh, bw)
-            y1 = max(0, cy - margin)
-            x1 = max(0, cx - int(0.8 * margin))
-            y2 = min(h, cy + margin)
-            x2 = min(w, cx + int(0.8 * margin))
-            area = (y2 - y1) * (x2 - x1)
-            results.append([x1, y1, x2, y2, area])
-        # if a person has more than one bbox, keep the largest one
-        # maybe greedy will be better?
-        sorted(results, key=lambda area: area[4], reverse=True)
-        results_box = [results[0]]
-        for i in range(1, person_num):
-            num = len(results_box)
-            add_person = True
-            for j in range(num):
-                pre_person = results_box[j]
-                iou = self.IOU(pre_person[0], pre_person[1], pre_person[2],
-                               pre_person[3], pre_person[4], results[i][0],
-                               results[i][1], results[i][2], results[i][3],
-                               results[i][4])
-                if iou > 0.5:
-                    add_person = False
-                    break
-            if add_person:
-                results_box.append(results[i])
-        boxes = np.array(results_box)
+        result = self.detection_func(image, predictions)
+        # person_num = len(predictions)
+        # if person_num == 0:
+        #     return np.array([])
+        # results = []
+        # face_boxs = []
+        # h, w, _ = image.shape
+        # for rect in predictions:
+        #     bh = rect[3] - rect[1]
+        #     bw = rect[2] - rect[0]
+        #     area = bh * bw
+        #     face_boxs.append([*rect, area])
+
+        # for rect in predictions:
+        #     bh = rect[3] - rect[1]
+        #     bw = rect[2] - rect[0]
+        #     cy = rect[1] + int(bh / 2)
+        #     cx = rect[0] + int(bw / 2)
+        #     margin = max(bh, bw)
+        #     y1 = max(0, cy - margin)
+        #     x1 = max(0, cx - int(0.8 * margin))
+        #     y2 = min(h, cy + margin)
+        #     x2 = min(w, cx + int(0.8 * margin))
+        #     area = (y2 - y1) * (x2 - x1)
+        #     results.append([x1, y1, x2, y2, area])
+        # # if a person has more than one bbox, keep the largest one
+        # # maybe greedy will be better?
+        # sorted(results, key=lambda area: area[4], reverse=True)
+        # print(results)
+        # results_box = [results[0]]
+        # for i in range(1, person_num):
+        #     num = len(results_box)
+        #     add_person = True
+        #     for j in range(num):
+        #         pre_person = results_box[j]
+        #         iou = self.IOU(pre_person[0], pre_person[1], pre_person[2],
+        #                        pre_person[3], pre_person[4], results[i][0],
+        #                        results[i][1], results[i][2], results[i][3],
+        #                        results[i][4])
+        #         print(iou)
+        #         if iou > 0.1:
+        #             add_person = False
+        #             break
+        #     if add_person:
+        #         results_box.append(results[i])
+
+        # viz_image = image.copy()
+        # for rect in results_box:
+        #     cv2.rectangle(viz_image, (rect[0], rect[1]), (rect[2], rect[3]), (255, 255, 0), 3)
+        # cv2.imshow("The largest area", cv2.resize(viz_image, (700, 700)))
+        # cv2.waitKey()
+
+        # clusters = self.cluster_ious(face_boxs)
+        # result_boxes = self.union_clusters(face_boxs, clusters)
+        # viz_image = image.copy()
+        # result = []
+        # for rect in result_boxes:
+        #     bh = rect[3] - rect[1]
+        #     bw = rect[2] - rect[0]
+        #     cy = rect[1] + int(bh / 2)
+        #     cx = rect[0] + int(bw / 2)
+        #     #margin = max(bh, bw)
+        #     y1 = max(0, cy - int(bh * 0.8))
+        #     x1 = max(0, cx - int(0.7 * bw))
+        #     y2 = min(h, cy + int(0.8 * bh))
+        #     x2 = min(w, cx + int(0.7 * bw))
+        #     area = (y2 - y1) * (x2 - x1)
+        #     result.append([x1, y1, x2, y2, area])
+        # for rect in result:
+        #     cv2.rectangle(viz_image, (rect[0], rect[1]), (rect[2], rect[3]), (255, 255, 0), 3)
+        # cv2.imshow("the union", cv2.resize(viz_image, (700, 700)))
+        # cv2.waitKey()
+        # print(len(result_boxes))
+        boxes = np.array(result)
         return boxes
 
     def IOU(self, ax1, ay1, ax2, ay2, sa, bx1, by1, bx2, by2, sb):
