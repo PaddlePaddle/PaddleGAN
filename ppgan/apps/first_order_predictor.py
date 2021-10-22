@@ -30,6 +30,7 @@ from ppgan.utils.animate import normalize_kp
 from ppgan.modules.keypoint_detector import KPDetector
 from ppgan.models.generators.occlusion_aware import OcclusionAwareGenerator
 from ppgan.faceutils import face_detection
+from ppgan.faceutils.mask.face_parser import FaceParser
 import dlib
 import skimage
 
@@ -202,19 +203,25 @@ class FirstOrderPredictor(BasePredictor):
                 break
         out_frame = []
 
-        predictor = dlib.shape_predictor('/PaddleGAN/ppgan/apps/shape_predictor_68_face_landmarks.dat')
+        # predictor = dlib.shape_predictor('/PaddleGAN/ppgan/apps/shape_predictor_68_face_landmarks.dat')
+        face_parcer = FaceParser()
 
         for i in range(len(driving_video)):
             frame = source_image.copy()
-            gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+            # gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
             for result in results:
                 x1, y1, x2, y2, _ = result['rec']
-                sp = predictor(gray,  dlib.rectangle(x1, y1, x2, y2))
-                landmarks = np.array([[p.x, p.y] for p in sp.parts()])
+                # sp = predictor(gray,  dlib.rectangle(x1, y1, x2, y2))
+                # landmarks = np.array([[p.x, p.y] for p in sp.parts()])
 
-                vertices = ConvexHull(landmarks).vertices
-                Y, X = skimage.draw.polygon(landmarks[vertices, 1], landmarks[vertices, 0])
+                # vertices = ConvexHull(landmarks).vertices
+                # Y, X = skimage.draw.polygon(landmarks[vertices, 1], landmarks[vertices, 0])
 
+                box = cv2.resize(frame[y1:y2, x1:x2], (512, 512))
+                box_mask = face_parcer.parse(box.astype(np.float32))
+                box_mask = np.array(box_mask).astype('uint8')
+                box_mask = cv2.resize(box_mask, (x2 - x1, y2 - y1))
+                box_mask[box_mask != 0] = 1
 
                 h = y2 - y1
                 w = x2 - x1
@@ -224,12 +231,12 @@ class FirstOrderPredictor(BasePredictor):
                     frame[y1:y2, x1:x2] = out
                     break
                 else:
-
                     patch = np.zeros(frame.shape).astype('uint8')
                     patch[y1:y2, x1:x2] = out
                     mask = np.zeros(frame.shape[:2]).astype('uint8')
-                    mask[Y, X] = 1
-                    mask = (mask & np.any(patch != [0, 0, 0], axis=-1)).astype('uint8')
+                    mask[y1:y2, x1:x2] = box_mask
+                    # mask[Y, X] = 1
+                    # mask = (mask & np.any(patch != [0, 0, 0], axis=-1)).astype('uint8')
 
                     # cv2.drawContours(mask, convex_hull, -1, (255,255,255), -1)
                     # cv2.imshow("",cv2.resize(mask, (500, 300)))
