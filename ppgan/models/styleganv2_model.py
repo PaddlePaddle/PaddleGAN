@@ -258,7 +258,7 @@ class StyleGAN2Model(BaseModel):
 
         l_g_total += l_g
         if current_iter % self.gen_iters == 0:
-            path_batch_size = max(1, batch // self.path_batch_shrink)
+            path_batch_size = max(1, int(batch // self.path_batch_shrink))
             noise = self.mixing_noise(path_batch_size, self.mixing_prob)
             fake_img, latents = self.nets['gen'](noise, return_latents=True)
             l_g_path, path_lengths, self.mean_path_length = g_path_regularize(
@@ -293,4 +293,3 @@ class StyleGAN2Model(BaseModel):
                 for metric in metrics.values():
                     metric.update(fake_img, self.real_img)
         self.nets['gen_ema'].train()
-
