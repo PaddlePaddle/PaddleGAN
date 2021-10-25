@@ -68,10 +68,10 @@ def union_results(image, predictions):
         bw = rect[2] - rect[0]
         cy = rect[1] + int(bh / 2)
         cx = rect[0] + int(bw / 2)
-        y1 = max(0, cy - int(bh * 0.8))
-        x1 = max(0, cx - int(0.7 * bw))
-        y2 = min(h, cy + int(0.8 * bh))
-        x2 = min(w, cx + int(0.7 * bw))
+        y1 = max(0, cy - int(bh * 0.9))
+        x1 = max(0, cx - int(0.8 * bw))
+        y2 = min(h, cy + int(0.9 * bh))
+        x2 = min(w, cx + int(0.8 * bw))
         area = (y2 - y1) * (x2 - x1)
         result.append([x1, y1, x2, y2, area])
     return result
@@ -112,3 +112,5 @@ def largest_results(image, predictions):
     return results_box
     
 
+def upscale(detections):
+    ...
