@@ -194,7 +194,7 @@ class BiSeNet(paddle.nn.Layer):
         feat_out16 = self.conv_out16(feat_cp8)
         feat_out32 = self.conv_out32(feat_cp16)
 
-        feat_out = F.interpolate(feat_out, size=(H, W))
-        feat_out16 = F.interpolate(feat_out16, size=(H, W))
-        feat_out32 = F.interpolate(feat_out32, size=(H, W))
+        feat_out = F.interpolate(feat_out, size=(H, W), mode='bilinear', align_corners=True)
+        feat_out16 = F.interpolate(feat_out16, size=(H, W), mode='bilinear', align_corners=True)
+        feat_out32 = F.interpolate(feat_out32, size=(H, W), mode='bilinear', align_corners=True)
         return feat_out, feat_out16, feat_out32
