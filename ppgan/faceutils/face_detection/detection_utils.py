@@ -55,47 +55,22 @@ def union_results(image, predictions):
     if person_num == 0:
         return np.array([])
     for rect in predictions:
-            bh = rect[3] - rect[1]
-            bw = rect[2] - rect[0]
-            area = bh * bw
-            faces_boxes.append([*rect, area])
+        area = (rect[3] - rect[1]) * (rect[2] - rect[0])
+        faces_boxes.append([*rect, area])
     clusters = cluster_ious(faces_boxes)
     result_boxes = union_clusters(faces_boxes, clusters)
     h, w, _ = image.shape
-    result = []
-    for rect in result_boxes:
-        bh = rect[3] - rect[1]
-        bw = rect[2] - rect[0]
-        cy = rect[1] + int(bh / 2)
-        cx = rect[0] + int(bw / 2)
-        y1 = max(0, cy - int(bh * 0.9))
-        x1 = max(0, cx - int(0.8 * bw))
-        y2 = min(h, cy + int(0.9 * bh))
-        x2 = min(w, cx + int(0.8 * bw))
-        area = (y2 - y1) * (x2 - x1)
-        result.append([x1, y1, x2, y2, area])
-    return result
+    possible_ratios = find_upscale_ratios(result_boxes, (h, w))
+    return upscale_detections(result_boxes, possible_ratios, (h, w))
 
 def largest_results(image, predictions):
     h, w, _ = image.shape
-    results = []
     person_num = len(predictions)
     if person_num == 0:
         return np.array([])
-    for rect in predictions:
-            bh = rect[3] - rect[1]
-            bw = rect[2] - rect[0]
-            cy = rect[1] + int(bh / 2)
-            cx = rect[0] + int(bw / 2)
-            margin = max(bh, bw)
-            y1 = max(0, cy - margin)
-            x1 = max(0, cx - int(0.8 * margin))
-            y2 = min(h, cy + margin)
-            x2 = min(w, cx + int(0.8 * margin))
-            area = (y2 - y1) * (x2 - x1)
-            results.append([x1, y1, x2, y2, area])
+    ratios = [1.0, 0.8, 1.0, 0.8]
+    results = upscale_detections(predictions, ratios, (h, w))
     sorted(results, key=lambda area: area[4], reverse=True)
-    print(results)
     results_box = [results[0]]
     for i in range(1, person_num):
         num = len(results_box)
@@ -110,7 +85,40 @@ def largest_results(image, predictions):
         if add_person:
             results_box.append(results[i]) 
     return results_box
-    
 
-def upscale(detections):
-    ...
+
+
+def count_ious(main_sample, samples):
+    return list(map(lambda sample: IOU(main_sample, sample), samples))
+        
+def upscale_detection(detection, ratios, shape):
+    h, w = shape
+    ratio_y1, ratio_x1, ratio_y2, ratio_x2 = ratios[0], ratios[1], ratios[2], ratios[3]
+    bh, bw = detection[3] - detection[1], detection[2] - detection[0]
+    cy, cx = detection[1] + int(bh / 2), detection[0] + int(bw / 2)
+    y1, x1 = max(0, cy - int(bh * ratio_y1)), max(0, cx - int(bw * ratio_x1))
+    y2, x2 = min(h, cy + int(bh * ratio_y2)), min(w, cx + int(bw * ratio_x2))
+    area = (y2 - y1) * (x2 - x1)
+    return [x1, y1, x2, y2, area]
+
+def find_upscale_ratios(detections, shape):
+    h, w = shape 
+    max_ratios = (0.9, 0.85, 1.1, 0.85)
+    possible_ratios = []
+    for i, rect in enumerate(detections):
+        ratio_x1, ratio_y1, ratio_x2, ratio_y2 = max_ratios[0], max_ratios[1], max_ratios[2], max_ratios[3]
+        while True:
+            upscaled_det = upscale_detection(rect, [ratio_x1, ratio_y1, ratio_x2, ratio_y2], shape)
+            ious = count_ious(upscaled_det, [detections[j] for j in range(len(detections)) if i != j])
+            if np.all(np.array(ious) < 0.1):
+                break
+            ratio_x1, ratio_y1 = ratio_x1 - 0.05, ratio_y1 - 0.05 
+            ratio_x2, ratio_y2 = ratio_x2 - 0.05, ratio_y2 - 0.05
+        possible_ratios.append([ratio_y1, ratio_x1, ratio_y2, ratio_x2])
+    return possible_ratios
+    
+def upscale_detections(detections, upscale_ratios, shape):
+    upscaled_detections = []
+    for det, ratios in zip(detections, upscale_ratios): 
+        upscaled_detections.append(upscale_detection(det, ratios, shape))
+    return upscaled_detections

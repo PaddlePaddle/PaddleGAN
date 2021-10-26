@@ -211,20 +211,14 @@ class FirstOrderPredictor(BasePredictor):
                 break
         out_frame = []
 
-        # predictor = dlib.shape_predictor('/PaddleGAN/ppgan/apps/shape_predictor_68_face_landmarks.dat')
         face_parcer = FaceParser()
 
         for i in range(len(driving_video)):
             frame = source_image.copy()
-            # gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+            
             for result in results:
                 x1, y1, x2, y2, _ = result['rec']
-                # sp = predictor(gray,  dlib.rectangle(x1, y1, x2, y2))
-                # landmarks = np.array([[p.x, p.y] for p in sp.parts()])
-
-                # vertices = ConvexHull(landmarks).vertices
-                # Y, X = skimage.draw.polygon(landmarks[vertices, 1], landmarks[vertices, 0])
-
+            
                 box = cv2.resize(frame[y1:y2, x1:x2], (512, 512))
                 box_mask = face_parcer.parse(box.astype(np.float32))
                 box_mask = np.array(box_mask).astype('uint8')
@@ -243,18 +237,7 @@ class FirstOrderPredictor(BasePredictor):
                     patch[y1:y2, x1:x2] = out
                     mask = np.zeros(frame.shape[:2]).astype('uint8')
                     mask[y1:y2, x1:x2] = box_mask
-                    # mask[Y, X] = 1
-                    # mask = (mask & np.any(patch != [0, 0, 0], axis=-1)).astype('uint8')
-
-                    # cv2.drawContours(mask, convex_hull, -1, (255,255,255), -1)
-                    # cv2.imshow("",cv2.resize(mask, (500, 300)))
-                    # cv2.waitKey()
-
-                    #cv2.polylines(mask, [np.array(convex_hull).astype('uint8')], (255, 255, 255), -1)
-                    # cx = int((x1 + x2) / 2)
-                    # cy = int((y1 + y2) / 2)
-                    # cv2.circle(mask, (cx, cy), math.ceil(h * self.ratio),
-                    #            (255, 255, 255), -1, 8, 0)
+              
                     frame = cv2.copyTo(patch, mask, frame)
 
             out_frame.append(frame)
@@ -365,84 +348,11 @@ class FirstOrderPredictor(BasePredictor):
         frame = [image]
         predictions = detector.get_detections_for_image(np.array(frame))
         result = self.detection_func(image, predictions)
-        # person_num = len(predictions)
-        # if person_num == 0:
-        #     return np.array([])
-        # results = []
-        # face_boxs = []
-        # h, w, _ = image.shape
-        # for rect in predictions:
-        #     bh = rect[3] - rect[1]
-        #     bw = rect[2] - rect[0]
-        #     area = bh * bw
-        #     face_boxs.append([*rect, area])
-
-        # for rect in predictions:
-        #     bh = rect[3] - rect[1]
-        #     bw = rect[2] - rect[0]
-        #     cy = rect[1] + int(bh / 2)
-        #     cx = rect[0] + int(bw / 2)
-        #     margin = max(bh, bw)
-        #     y1 = max(0, cy - margin)
-        #     x1 = max(0, cx - int(0.8 * margin))
-        #     y2 = min(h, cy + margin)
-        #     x2 = min(w, cx + int(0.8 * margin))
-        #     area = (y2 - y1) * (x2 - x1)
-        #     results.append([x1, y1, x2, y2, area])
-        # # if a person has more than one bbox, keep the largest one
-        # # maybe greedy will be better?
-        # sorted(results, key=lambda area: area[4], reverse=True)
-        # print(results)
-        # results_box = [results[0]]
-        # for i in range(1, person_num):
-        #     num = len(results_box)
-        #     add_person = True
-        #     for j in range(num):
-        #         pre_person = results_box[j]
-        #         iou = self.IOU(pre_person[0], pre_person[1], pre_person[2],
-        #                        pre_person[3], pre_person[4], results[i][0],
-        #                        results[i][1], results[i][2], results[i][3],
-        #                        results[i][4])
-        #         print(iou)
-        #         if iou > 0.1:
-        #             add_person = False
-        #             break
-        #     if add_person:
-        #         results_box.append(results[i])
-
-        # viz_image = image.copy()
-        # for rect in results_box:
-        #     cv2.rectangle(viz_image, (rect[0], rect[1]), (rect[2], rect[3]), (255, 255, 0), 3)
-        # cv2.imshow("The largest area", cv2.resize(viz_image, (700, 700)))
-        # cv2.waitKey()
-
-        # clusters = self.cluster_ious(face_boxs)
-        # result_boxes = self.union_clusters(face_boxs, clusters)
-        # viz_image = image.copy()
-        # result = []
-        # for rect in result_boxes:
-        #     bh = rect[3] - rect[1]
-        #     bw = rect[2] - rect[0]
-        #     cy = rect[1] + int(bh / 2)
-        #     cx = rect[0] + int(bw / 2)
-        #     #margin = max(bh, bw)
-        #     y1 = max(0, cy - int(bh * 0.8))
-        #     x1 = max(0, cx - int(0.7 * bw))
-        #     y2 = min(h, cy + int(0.8 * bh))
-        #     x2 = min(w, cx + int(0.7 * bw))
-        #     area = (y2 - y1) * (x2 - x1)
-        #     result.append([x1, y1, x2, y2, area])
-        # for rect in result:
-        #     cv2.rectangle(viz_image, (rect[0], rect[1]), (rect[2], rect[3]), (255, 255, 0), 3)
-        # cv2.imshow("the union", cv2.resize(viz_image, (700, 700)))
-        # cv2.waitKey()
-        # print(len(result_boxes))
+       
         boxes = np.array(result)
         return boxes
 
     def IOU(self, ax1, ay1, ax2, ay2, sa, bx1, by1, bx2, by2, sb):
-        # sa = abs((ax2 - ax1) * (ay2 - ay1))
-        # sb = abs((bx2 - bx1) * (by2 - by1))
         x1, y1 = max(ax1, bx1), max(ay1, by1)
         x2, y2 = min(ax2, bx2), min(ay2, by2)
         w = x2 - x1
