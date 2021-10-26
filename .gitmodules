@@ -1,0 +1,3 @@
+[submodule "GFPGAN"]
+	path = GFPGAN
+	url = https://github.com/TencentARC/GFPGAN.git

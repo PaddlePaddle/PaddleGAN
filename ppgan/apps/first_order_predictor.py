@@ -33,6 +33,8 @@ from ppgan.models.generators.occlusion_aware import OcclusionAwareGenerator
 from ppgan.faceutils import face_detection
 from ppgan.faceutils.mask.face_parser import FaceParser
 from ppgan.faceutils.face_detection.detection_utils import largest_results, union_results
+sys.path.insert(0, '/home/user/paddle/PaddleGAN/GFPGAN/')
+from gfpgan import GFPGANer
 import dlib
 import skimage
 
@@ -60,6 +62,7 @@ class FirstOrderPredictor(BasePredictor):
                  multi_person=False,
                  image_size=256,
                  face_enhancement=False,
+                 gfpgan_model_path=None, 
                  batch_size=1,
                  mobile_net=False, 
                  detection_func="Union"):
@@ -129,8 +132,13 @@ class FirstOrderPredictor(BasePredictor):
         self.face_enhancement = face_enhancement
         self.batch_size = batch_size
         if face_enhancement:
-            from ppgan.faceutils.face_enhancement import FaceEnhancement
-            self.faceenhancer = FaceEnhancement(batch_size=batch_size)
+            #from ppgan.faceutils.face_enhancement import FaceEnhancement
+            # self.faceenhancer = FaceEnhancement(batch_size=batch_size)
+            self.faceenhancer =  GFPGANer(model_path=gfpgan_model_path, 
+                                         upscale = 2, 
+                                         arch = 'clean',
+                                         channel_multiplier = 2,
+                                         bg_upsampler = None)
         if detection_func == "Union":
             self.detection_func = union_results
         elif detection_func == "Largest":
@@ -146,6 +154,7 @@ class FirstOrderPredictor(BasePredictor):
         return img
 
     def run(self, source_image, driving_video, filename):
+        
         self.filename = filename
         def get_prediction(face_image):
             if self.find_best_frame or self.best_frame is not None:
@@ -182,6 +191,7 @@ class FirstOrderPredictor(BasePredictor):
             return predictions
 
         source_image = self.read_img(source_image)
+        viz_image = source_image.copy()
         reader = imageio.get_reader(driving_video)
         fps = reader.get_meta_data()['fps']
         driving_video = []
@@ -200,7 +210,7 @@ class FirstOrderPredictor(BasePredictor):
 
         bboxes = self.extract_bbox(source_image.copy())
         print(str(len(bboxes)) + " persons have been detected")
-
+        bboxes = sorted(bboxes, key=(lambda x: x[4]))
         # for multi person
         for rec in bboxes:
             face_image = source_image.copy()[rec[1]:rec[3], rec[0]:rec[2]]
@@ -212,6 +222,11 @@ class FirstOrderPredictor(BasePredictor):
         out_frame = []
 
         face_parcer = FaceParser()
+        for result in results:
+            x1, y1, x2, y2, _ = result['rec']
+            cv2.rectangle(viz_image, (x1, y1), (x2, y2), (255,255,0), 3)
+        cv2.imshow("", cv2.resize(viz_image, (512, 512)))
+        cv2.waitKey()    
 
         for i in range(len(driving_video)):
             frame = source_image.copy()
@@ -241,6 +256,8 @@ class FirstOrderPredictor(BasePredictor):
                     frame = cv2.copyTo(patch, mask, frame)
 
             out_frame.append(frame)
+
+
         imageio.mimsave(os.path.join(self.output, self.filename),
                         [frame for frame in out_frame],
                         fps=fps)
@@ -305,9 +322,9 @@ class FirstOrderPredictor(BasePredictor):
 
                 out = generator(source[0:frame_num], kp_source=kp_source_img, kp_driving=kp_norm)
                 img = np.transpose(out['prediction'].numpy(), [0, 2, 3, 1]) * 255.0
-
                 if self.face_enhancement:
-                    img = self.faceenhancer.enhance_from_batch(img)
+                    _, _, img = self.faceenhancer.enhance(img[0])
+                    # img = self.faceenhancer.enhance_from_batch(img)
 
                 predictions.append(img)
                 begin_idx += frame_num
