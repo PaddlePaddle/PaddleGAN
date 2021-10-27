@@ -87,10 +87,11 @@ class FaceAlignment:
 
     def get_detections_for_image(self, images):
         images = images[..., ::-1]
-        detected_faces = self.face_detector.detect_from_batch(images.copy())
+        print(images.shape)
+        detected_faces = self.face_detector.detect_from_image(images.copy())
         results = []
 
-        for i, d in enumerate(detected_faces[0]):
+        for i, d in enumerate(detected_faces):
             if len(d) == 0:
                 results.append(None)
                 continue

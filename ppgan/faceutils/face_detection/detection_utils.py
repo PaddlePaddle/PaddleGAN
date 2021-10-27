@@ -34,7 +34,7 @@ def cluster_ious(bboxes):
             cluster = []
             if i not in indices:
                 for j in range(len(row)):
-                    if row[j] > 0.1:
+                    if row[j] > 0.08:
                         cluster.append(j)
                         indices.add(j)
                 clusters.append(cluster)
@@ -62,14 +62,24 @@ def union_results(image, predictions):
     viz_image = image.copy()
     for res in result_boxes:
         cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
-    cv2.imshow("", viz_image)
-    cv2.waitKey(1000)
+    cv2.imwrite("./result_boxes.jpg", viz_image)
     h, w, _ = image.shape
     # possible_ratios = find_upscale_ratios(result_boxes, (h, w))
 
-    detections = upscale_detections(result_boxes, (1.0, 0.85, 1.0, 0.85), (0, 0, h, w))
-    max_coords = find_intersections(result_boxes, (h, w))
+    detections = upscale_detections(result_boxes, (1.0, 0.85, 1.0, 0.85), (0, 0, w, h))
+    viz_image = image.copy()
+    for res in detections:
+        print(res)
+        cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
+    cv2.imwrite("./detections.jpg", viz_image)
+    max_coords = find_intersections(detections, (h, w))
+
     results = rescale_detections(detections, max_coords)
+    viz_image = image.copy()
+    for res in results:
+        print(res)
+        cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
+    cv2.imwrite("./resutls.jpg", viz_image)
     return results
 
 def largest_results(image, predictions):
@@ -105,8 +115,8 @@ def upscale_detection(detection, ratios, max_coords):
     min_x1, min_y1, max_x2, max_y2 = max_coords
     bh, bw = detection[3] - detection[1], detection[2] - detection[0]
     cy, cx = detection[1] + int(bh / 2), detection[0] + int(bw / 2)
-    y1, x1 = max(min_y1 + 10, cy - int(bh * ratio_y1)), max(min_x1 + 10, cx - int(bw * ratio_x1))
-    y2, x2 = min(max_y2 - 10, cy + int(bh * ratio_y2)), min(max_x2 - 10, cx + int(bw * ratio_x2))
+    y1, x1 = max(min_y1, cy - int(bh * ratio_y1)), max(min_x1, cx - int(bw * ratio_x1))
+    y2, x2 = min(max_y2, cy + int(bh * ratio_y2)), min(max_x2, cx + int(bw * ratio_x2))
     area = (y2 - y1) * (x2 - x1)
     return [x1, y1, x2, y2, area]
 
@@ -129,7 +139,7 @@ def upscale_detection(detection, ratios, max_coords):
     
 def upscale_detections(detections, upscale_ratios, coords):
     upscaled_detections = []
-    for det in zip(detections): 
+    for det in detections: 
         upscaled_detections.append(upscale_detection(det, upscale_ratios, coords))
     return upscaled_detections
 
@@ -147,14 +157,17 @@ def find_intersections(detections, shape):
         ious = np.array(count_ious(det,  detections))
         indices_x1 = (x2s < x2) & (ious > 0.0)
         indices_x2 = (x1s > x1) & (ious > 0.0)
-        indices_y1 = (y2s > y2) & (ious > 0.0)
-        indices_y2 = (y1s < y1) & (ious > 0.0)
+        # indices_y1 = (y2s < y2) & (ious > 0.0)
+        # indices_y2 = (y1s > y1) & (ious > 0.0)
 
-        max_x1 = max_x1 if len(indices_x1) > 0 else np.max(x2s[indices_x1])
-        max_y1 = max_y1 if len(indices_y1) > 0 else np.min(y2s[indices_y1])
-        min_x2 = min_x2 if len(indices_x2) > 0 else np.min(x1s[indices_x2])
-        min_y2 = min_y2 if len(indices_y2) > 0 else np.max(y1s[indices_y2])
-        coords.append([max_x1, max_y1, min_x2, min_y2])
+        max_x1 = np.max(x2s[indices_x1]) if len(x2s[indices_x1]) > 0 else max_x1 
+        # max_y1 = np.max(y2s[indices_y1]) if len(y2s[indices_y1]) > 0 else max_y1
+        min_x2 = np.min(x1s[indices_x2]) if len(x1s[indices_x2]) > 0 else min_x2
+        # min_y2 = np.min(y1s[indices_y2]) if len(y1s[indices_y2]) > 0 else min_y2 
+        coords.append([max_x1 - abs(max_x1 - x1) // 2, 
+                    max_y1, 
+                    min_x2 + abs(min_x2 - x2) // 2, 
+                    min_y2])
     return coords
 
 def rescale_detections(detections, coords):
@@ -162,10 +175,10 @@ def rescale_detections(detections, coords):
     for i in range(len(detections)):
         x1, y1, x2, y2, _ = detections[i]
         max_x1, max_y1, min_x2, min_y2 = coords[i]
-        x1 = np.max(x1, max_x1)
-        y1 = np.min(y1, max_y1)
-        x2 = np.min(x2, min_x2)
-        y2 = np.max(y2, min_y2)
+        x1 = max(x1, max_x1)
+        y1 = max(y1, max_y1)
+        x2 = min(x2, min_x2)
+        y2 = min(y2, min_y2)
         rescaled_detections.append([x1, y1, x2, y2, (x2 - x1) * (y2 - y1)])
     return rescaled_detections
 
