@@ -21,7 +21,7 @@ import yaml
 import pickle
 import imageio
 import numpy as np
-from tqdm import tqdm
+from tqdm import tqdm, trange
 from scipy.spatial import ConvexHull
 import sys
 sys.path.insert(0, '/home/anastasia/paddleGan/PaddleGAN/')
@@ -233,7 +233,7 @@ class FirstOrderPredictor(BasePredictor):
         face_parcer = FaceParser()
           
 
-        for i in range(len(driving_video)):
+        for i in trange(len(driving_video)):
             frame = source_image.copy()
             
             for result in results:
@@ -242,6 +242,8 @@ class FirstOrderPredictor(BasePredictor):
                 box = cv2.resize(frame[y1:y2, x1:x2], (512, 512))
                 box_mask = face_parcer.parse(box.astype(np.float32))
                 box_mask = np.array(box_mask).astype('uint8')
+                # cv2.imshow("", box_mask)
+                # cv2.waitKey()
                 box_mask = cv2.resize(box_mask, (x2 - x1, y2 - y1))
                 box_mask[box_mask != 0] = 1
 
@@ -367,8 +369,8 @@ class FirstOrderPredictor(BasePredictor):
             flip_input=False,
             face_detector=self.face_detector)
 
-        frame = [image]
-        predictions = detector.get_detections_for_image(np.array(frame))
+        # frame = [image]
+        predictions = detector.get_detections_for_image(np.array(image))
         result = self.detection_func(image, predictions)
        
         boxes = np.array(result)
