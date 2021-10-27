@@ -59,16 +59,18 @@ def union_results(image, predictions):
         faces_boxes.append([*rect, area])
     clusters = cluster_ious(faces_boxes)
     result_boxes = union_clusters(faces_boxes, clusters)
-    # viz_image = image.copy()
-    # for res in result_boxes:
-    #     cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
-    # cv2.imshow("", viz_image)
-    # cv2.waitKey(1000)
+    viz_image = image.copy()
+    for res in result_boxes:
+        cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
+    cv2.imshow("", viz_image)
+    cv2.waitKey(1000)
     h, w, _ = image.shape
     # possible_ratios = find_upscale_ratios(result_boxes, (h, w))
+
+    detections = upscale_detections(result_boxes, (1.0, 0.85, 1.0, 0.85), (0, 0, h, w))
     max_coords = find_intersections(result_boxes, (h, w))
-    detections = upscale_detections(result_boxes, (1.0, 0.85, 1.0, 0.85), max_coords)
-    return detections
+    results = rescale_detections(detections, max_coords)
+    return results
 
 def largest_results(image, predictions):
     h, w, _ = image.shape
@@ -108,26 +110,26 @@ def upscale_detection(detection, ratios, max_coords):
     area = (y2 - y1) * (x2 - x1)
     return [x1, y1, x2, y2, area]
 
-def find_upscale_ratios(detections, shape):
-    h, w = shape 
-    max_ratios = (0.9, 0.85, 1.1, 0.85)
-    possible_ratios = []
-    for i, rect in enumerate(detections):
-        ratio_x1, ratio_y1, ratio_x2, ratio_y2 = max_ratios[0], max_ratios[1], max_ratios[2], max_ratios[3]
-        while True:
-            upscaled_det = upscale_detection(rect, [ratio_x1, ratio_y1, ratio_x2, ratio_y2], shape)
-            ious = count_ious(upscaled_det, [detections[j] for j in range(len(detections)) if i != j])
-            if np.all(np.array(ious) < 0.01):
-                break
-            ratio_x1, ratio_y1 = ratio_x1 - 0.05, ratio_y1 - 0.05 
-            ratio_x2, ratio_y2 = ratio_x2 - 0.05, ratio_y2 - 0.05
-        possible_ratios.append([ratio_y1, ratio_x1, ratio_y2, ratio_x2])
-    print(possible_ratios)
-    return possible_ratios
+# def find_upscale_ratios(detections, shape):
+#     h, w = shape 
+#     max_ratios = (0.9, 0.85, 1.1, 0.85)
+#     possible_ratios = []
+#     for i, rect in enumerate(detections):
+#         ratio_x1, ratio_y1, ratio_x2, ratio_y2 = max_ratios[0], max_ratios[1], max_ratios[2], max_ratios[3]
+#         while True:
+#             upscaled_det = upscale_detection(rect, [ratio_x1, ratio_y1, ratio_x2, ratio_y2], shape)
+#             ious = count_ious(upscaled_det, [detections[j] for j in range(len(detections)) if i != j])
+#             if np.all(np.array(ious) < 0.01):
+#                 break
+#             ratio_x1, ratio_y1 = ratio_x1 - 0.05, ratio_y1 - 0.05 
+#             ratio_x2, ratio_y2 = ratio_x2 - 0.05, ratio_y2 - 0.05
+#         possible_ratios.append([ratio_y1, ratio_x1, ratio_y2, ratio_x2])
+#     print(possible_ratios)
+#     return possible_ratios
     
-def upscale_detections(detections, upscale_ratios, max_coords):
+def upscale_detections(detections, upscale_ratios, coords):
     upscaled_detections = []
-    for det, coords in zip(detections, max_coords): 
+    for det in zip(detections): 
         upscaled_detections.append(upscale_detection(det, upscale_ratios, coords))
     return upscaled_detections
 
@@ -154,3 +156,16 @@ def find_intersections(detections, shape):
         min_y2 = min_y2 if len(indices_y2) > 0 else np.max(y1s[indices_y2])
         coords.append([max_x1, max_y1, min_x2, min_y2])
     return coords
+
+def rescale_detections(detections, coords):
+    rescaled_detections = []
+    for i in range(len(detections)):
+        x1, y1, x2, y2, _ = detections[i]
+        max_x1, max_y1, min_x2, min_y2 = coords[i]
+        x1 = np.max(x1, max_x1)
+        y1 = np.min(y1, max_y1)
+        x2 = np.min(x2, min_x2)
+        y2 = np.max(y2, min_y2)
+        rescaled_detections.append([x1, y1, x2, y2, (x2 - x1) * (y2 - y1)])
+    return rescaled_detections
+
