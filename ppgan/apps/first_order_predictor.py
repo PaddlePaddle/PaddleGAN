@@ -156,6 +156,15 @@ class FirstOrderPredictor(BasePredictor):
     def run(self, source_image, driving_video, filename):
         
         self.filename = filename
+        h, w, _ = source_image.shape
+        if h >= 1024 or w >= 1024:
+            if h > w:
+                r = 1024.0 / h
+                dim = (int(r * w), 1024)
+            else:
+                r = 1024.0 / w
+                dim = (1024, int(r*h))
+        source_image = cv2.resize(source_image, dim)
         def get_prediction(face_image):
             if self.find_best_frame or self.best_frame is not None:
                 i = self.best_frame if self.best_frame is not None else self.find_best_frame_func(
@@ -222,11 +231,7 @@ class FirstOrderPredictor(BasePredictor):
         out_frame = []
 
         face_parcer = FaceParser()
-        for result in results:
-            x1, y1, x2, y2, _ = result['rec']
-            cv2.rectangle(viz_image, (x1, y1), (x2, y2), (255,255,0), 3)
-        cv2.imshow("", cv2.resize(viz_image, (512, 512)))
-        cv2.waitKey()    
+          
 
         for i in range(len(driving_video)):
             frame = source_image.copy()
@@ -325,7 +330,7 @@ class FirstOrderPredictor(BasePredictor):
                 if self.face_enhancement:
                     _, _, img = self.faceenhancer.enhance(img[0])
                     # img = self.faceenhancer.enhance_from_batch(img)
-
+                print(img.shape)
                 predictions.append(img)
                 begin_idx += frame_num
         return np.concatenate(predictions)
