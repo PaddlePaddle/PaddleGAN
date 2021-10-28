@@ -26,10 +26,20 @@ BasicVSR模型因竞品torch模型只能测4卡，故这里也测4卡。
 - **CUDA 版本**: `10.2`
 - **cuDnn 版本**: `7`
 
-## 测试步骤
+## 在PaddleGAN目录下，启动测试脚本的方法如下：
+```script
+ImageName="registry.baidubce.com/paddlepaddle/paddle:2.1.2-gpu-cuda10.2-cudnn7"
+docker pull ${ImageName}
 
-```bash
-bash benchmark/run_all.sh  
+run_cmd="set -xe;
+        cd /workspace ;
+        bash -x benchmark/run_all.sh"
+
+nvidia-docker run --name test_paddlegan -i  \
+    --net=host \
+    --shm-size=1g \
+    -v $PWD:/workspace \
+    ${ImageName}  /bin/bash -c "${run_cmd}"
 ```
 
 ## 输出
