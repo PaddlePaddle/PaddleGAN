@@ -66,21 +66,33 @@ def union_results(image, predictions):
     h, w, _ = image.shape
     # possible_ratios = find_upscale_ratios(result_boxes, (h, w))
 
-    detections = upscale_detections(result_boxes, (1.0, 0.85, 1.0, 0.85), (0, 0, w, h))
+    detections = upscale_detections(result_boxes, (0.85, 0.8, 0.85, 0.8), (0, 0, w, h))
     viz_image = image.copy()
     for res in detections:
-        print(res)
         cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
     cv2.imwrite("./detections.jpg", viz_image)
-    max_coords = find_intersections(detections, (h, w))
+    # viz_image = image.copy()
+    # for i, det in enumerate(detections):
+    #     for j, det_ in enumerate(detections):
+    #         if i == j: continue
+    #         if IOU(det, det_) > 0:
+    #             line = slice_box(det, det_)
+    #             print(line)
+    #             cv2.line(viz_image, (int(line[0][0]), int(line[0][1])), 
+    #                                 (int(line[1][0]), int(line[1][0])), 
+    #                                 (255, 255, 0), 3)
+    
+    # cv2.imwrite("./lines.jpg", viz_image)
+    # max_coords = find_intersections(detections, (h, w))
 
-    results = rescale_detections(detections, max_coords)
-    viz_image = image.copy()
-    for res in results:
-        print(res)
-        cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
-    cv2.imwrite("./resutls.jpg", viz_image)
-    return results
+    # results = rescale_detections(detections, max_coords)
+    # viz_image = image.copy()
+    # for res in results:
+    #     print(res)
+    #     cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
+    # cv2.imwrite("./resutls.jpg", viz_image)
+    # return results
+    return detections
 
 def largest_results(image, predictions):
     h, w, _ = image.shape
@@ -97,7 +109,6 @@ def largest_results(image, predictions):
         for j in range(num):
             pre_person = results_box[j]
             iou = IOU(pre_person, results[i])
-            print(iou)
             if iou > 0.1:
                 add_person = False
                 break

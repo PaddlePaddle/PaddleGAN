@@ -33,8 +33,8 @@ from ppgan.models.generators.occlusion_aware import OcclusionAwareGenerator
 from ppgan.faceutils import face_detection
 from ppgan.faceutils.mask.face_parser import FaceParser
 from ppgan.faceutils.face_detection.detection_utils import largest_results, union_results
-sys.path.insert(0, '/home/user/paddle/PaddleGAN/GFPGAN/')
-from gfpgan import GFPGANer
+# sys.path.insert(0, '/home/user/paddle/PaddleGAN/GFPGAN/')
+# from gfpgan import GFPGANer
 import dlib
 import skimage
 
@@ -132,13 +132,13 @@ class FirstOrderPredictor(BasePredictor):
         self.face_enhancement = face_enhancement
         self.batch_size = batch_size
         if face_enhancement:
-            #from ppgan.faceutils.face_enhancement import FaceEnhancement
-            # self.faceenhancer = FaceEnhancement(batch_size=batch_size)
-            self.faceenhancer =  GFPGANer(model_path=gfpgan_model_path, 
-                                         upscale = 2, 
-                                         arch = 'clean',
-                                         channel_multiplier = 2,
-                                         bg_upsampler = None)
+            from ppgan.faceutils.face_enhancement import FaceEnhancement
+            self.faceenhancer = FaceEnhancement(batch_size=batch_size)
+            # self.faceenhancer =  GFPGANer(model_path=gfpgan_model_path, 
+            #                              upscale = 2, 
+            #                              arch = 'clean',
+            #                              channel_multiplier = 2,
+            #                              bg_upsampler = None)
         if detection_func == "Union":
             self.detection_func = union_results
         elif detection_func == "Largest":
@@ -156,15 +156,7 @@ class FirstOrderPredictor(BasePredictor):
     def run(self, source_image, driving_video, filename):
         
         self.filename = filename
-        h, w, _ = source_image.shape
-        if h >= 1024 or w >= 1024:
-            if h > w:
-                r = 1024.0 / h
-                dim = (int(r * w), 1024)
-            else:
-                r = 1024.0 / w
-                dim = (1024, int(r*h))
-        source_image = cv2.resize(source_image, dim)
+        
         def get_prediction(face_image):
             if self.find_best_frame or self.best_frame is not None:
                 i = self.best_frame if self.best_frame is not None else self.find_best_frame_func(
@@ -200,6 +192,15 @@ class FirstOrderPredictor(BasePredictor):
             return predictions
 
         source_image = self.read_img(source_image)
+        h, w, _ = source_image.shape
+        if h >= 1024 or w >= 1024:
+            if h > w:
+                r = 1024.0 / h
+                dim = (int(r * w), 1024)
+            else:
+                r = 1024.0 / w
+                dim = (1024, int(r*h))
+        source_image = cv2.resize(source_image, dim)
         viz_image = source_image.copy()
         reader = imageio.get_reader(driving_video)
         fps = reader.get_meta_data()['fps']
@@ -221,7 +222,8 @@ class FirstOrderPredictor(BasePredictor):
         print(str(len(bboxes)) + " persons have been detected")
         bboxes = sorted(bboxes, key=(lambda x: x[4]))
         # for multi person
-        for rec in bboxes:
+        # 
+        for rec in bboxes[2:4]:
             face_image = source_image.copy()[rec[1]:rec[3], rec[0]:rec[2]]
             face_image = cv2.resize(face_image, (self.image_size, self.image_size)) / 255.0
             predictions = get_prediction(face_image)
@@ -231,22 +233,52 @@ class FirstOrderPredictor(BasePredictor):
         out_frame = []
 
         face_parcer = FaceParser()
-          
-
-        for i in trange(len(driving_video)):
+        box_masks = []
+        k = 0
+        if len(results) != 9:
             frame = source_image.copy()
             
-            for result in results:
-                x1, y1, x2, y2, _ = result['rec']
-            
+            for i in range(len(results)):
+                x1, y1, x2, y2, _ = results[i]['rec']
+                print("initial_coords", x1, y1, x2, y2)
+               
                 box = cv2.resize(frame[y1:y2, x1:x2], (512, 512))
                 box_mask = face_parcer.parse(box.astype(np.float32))
                 box_mask = np.array(box_mask).astype('uint8')
-                # cv2.imshow("", box_mask)
-                # cv2.waitKey()
+                
                 box_mask = cv2.resize(box_mask, (x2 - x1, y2 - y1))
                 box_mask[box_mask != 0] = 1
-
+                # box_masks.append(box_mask)
+                viz_mask = box_mask.copy()
+                viz_mask[viz_mask != 0] = 255
+                
+                cv2.imwrite("./GFPGAN1/%d.jpg" % k, viz_mask)
+                k += 1
+                contours, _= cv2.findContours(viz_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+                c = max(contours, key = cv2.contourArea)
+                x,y,w,h = cv2.boundingRect(c)
+                x1 = x + x1
+                y1 = y + y1
+                x2, y2 = x1+w, y1+h
+                results[i]["new_rec"] = [x1, y1, x2, y2]
+                box_masks.append(box_mask[y:y+h, x:x+w])
+        # k = 0
+        for i in trange(len(driving_video)):
+            frame = source_image.copy()
+            
+            for j, result in enumerate(results):
+                x1, y1, x2, y2, _ = result['rec']
+                x1_, y1_, x2_, y2_ = result["new_rec"]
+                # box = cv2.resize(frame[y1:y2, x1:x2], (512, 512))
+                # box_mask = face_parcer.parse(box.astype(np.float32))
+                # box_mask = np.array(box_mask).astype('uint8')
+                
+                # box_mask = cv2.resize(box_mask, (x2 - x1, y2 - y1))
+                # box_mask[box_mask != 0] = 1
+                # viz_mask = box_mask.copy()
+                # viz_mask[viz_mask != 0] = 255
+                # cv2.imwrite("./GFPGAN1/%d.jpg" % k, viz_mask)
+                # k += 1
                 h = y2 - y1
                 w = x2 - x1
                 out = result['predict'][i]
@@ -256,12 +288,13 @@ class FirstOrderPredictor(BasePredictor):
                     break
                 else:
                     patch = np.zeros(frame.shape).astype('uint8')
-                    patch[y1:y2, x1:x2] = out
+                    patch[y1_:y2_, x1_:x2_] = out[y1_ - y1: y2_ -y1, x1_ -x1: x2_ - x1]
                     mask = np.zeros(frame.shape[:2]).astype('uint8')
-                    mask[y1:y2, x1:x2] = box_mask
-              
+                    mask[y1_:y2_, x1_:x2_] = box_masks[j]
                     frame = cv2.copyTo(patch, mask, frame)
-
+            for result in results:
+                x1, y1, x2, y2 = result["new_rec"]
+                cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), thickness=2)
             out_frame.append(frame)
 
 
@@ -330,9 +363,9 @@ class FirstOrderPredictor(BasePredictor):
                 out = generator(source[0:frame_num], kp_source=kp_source_img, kp_driving=kp_norm)
                 img = np.transpose(out['prediction'].numpy(), [0, 2, 3, 1]) * 255.0
                 if self.face_enhancement:
-                    _, _, img = self.faceenhancer.enhance(img[0])
-                    # img = self.faceenhancer.enhance_from_batch(img)
-                print(img.shape)
+                #     _, _, img = self.faceenhancer.enhance(img[0])
+                    img = self.faceenhancer.enhance_from_batch(img)
+                # print(img.shape)
                 predictions.append(img)
                 begin_idx += frame_num
         return np.concatenate(predictions)
