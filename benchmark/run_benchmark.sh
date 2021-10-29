@@ -18,7 +18,13 @@ function _set_params(){
     arr=(${device})
     num_gpu_devices=${#arr[*]}
     log_file=${run_log_path}/${model_name}_${run_mode}_bs${batch_size}_${fp_item}_${num_gpu_devices}
+    res_log_file=${run_log_path}/${model_name}_${run_mode}_bs${batch_size}_${fp_item}_${num_gpu_devices}_speed
 }
+
+function _analysis_log(){
+    python benchmark/analysis_log.py ${model_name} ${log_file} ${res_log_file}
+}
+
 function _train(){
     echo "Train on ${num_gpu_devices} GPUs"
     echo "current CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES, gpus=$num_gpu_devices, batch_size=$batch_size"
@@ -49,6 +55,9 @@ function _train(){
         rm ${log_file}
         cp mylog/workerlog.0 ${log_file}
     fi
+
+    _analysis_log
+    
 }
 
 _set_params $@
