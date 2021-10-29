@@ -34,7 +34,7 @@ from ppgan.faceutils import face_detection
 from ppgan.faceutils.mask.face_parser import FaceParser
 from ppgan.faceutils.face_detection.detection_utils import largest_results, union_results
 # sys.path.insert(0, '/home/user/paddle/PaddleGAN/GFPGAN/')
-# from gfpgan import GFPGANer
+from gfpgan import GFPGANer
 import dlib
 import skimage
 
@@ -131,6 +131,19 @@ class FirstOrderPredictor(BasePredictor):
         self.multi_person = multi_person
         self.face_enhancement = face_enhancement
         self.batch_size = batch_size
+        from realesrgan import RealESRGANer
+        bg_upsampler = RealESRGANer(
+                scale=2,
+                model_path='https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.1/RealESRGAN_x2plus.pth',
+                tile=400,
+                tile_pad=10,
+                pre_pad=0,
+                half=True) 
+        self.gfpganer = GFPGANer(model_path=gfpgan_model_path, 
+                                         upscale = 2, 
+                                         arch = 'clean',
+                                         channel_multiplier = 2,
+                                         bg_upsampler =bg_upsampler)
         if face_enhancement:
             from ppgan.faceutils.face_enhancement import FaceEnhancement
             self.faceenhancer = FaceEnhancement(batch_size=batch_size)
@@ -200,7 +213,8 @@ class FirstOrderPredictor(BasePredictor):
             else:
                 r = 1024.0 / w
                 dim = (1024, int(r*h))
-        source_image = cv2.resize(source_image, dim)
+            source_image = cv2.resize(source_image, dim)
+        _, _, img = self.gfpganer.enhance(source_image)
         viz_image = source_image.copy()
         reader = imageio.get_reader(driving_video)
         fps = reader.get_meta_data()['fps']
@@ -223,7 +237,7 @@ class FirstOrderPredictor(BasePredictor):
         bboxes = sorted(bboxes, key=(lambda x: x[4]))
         # for multi person
         # 
-        for rec in bboxes[2:4]:
+        for rec in bboxes:
             face_image = source_image.copy()[rec[1]:rec[3], rec[0]:rec[2]]
             face_image = cv2.resize(face_image, (self.image_size, self.image_size)) / 255.0
             predictions = get_prediction(face_image)
@@ -235,12 +249,11 @@ class FirstOrderPredictor(BasePredictor):
         face_parcer = FaceParser()
         box_masks = []
         k = 0
-        if len(results) != 9:
+        if len(results) != 1:
             frame = source_image.copy()
             
             for i in range(len(results)):
                 x1, y1, x2, y2, _ = results[i]['rec']
-                print("initial_coords", x1, y1, x2, y2)
                
                 box = cv2.resize(frame[y1:y2, x1:x2], (512, 512))
                 box_mask = face_parcer.parse(box.astype(np.float32))
@@ -268,7 +281,7 @@ class FirstOrderPredictor(BasePredictor):
             
             for j, result in enumerate(results):
                 x1, y1, x2, y2, _ = result['rec']
-                x1_, y1_, x2_, y2_ = result["new_rec"]
+                
                 # box = cv2.resize(frame[y1:y2, x1:x2], (512, 512))
                 # box_mask = face_parcer.parse(box.astype(np.float32))
                 # box_mask = np.array(box_mask).astype('uint8')
@@ -287,16 +300,69 @@ class FirstOrderPredictor(BasePredictor):
                     frame[y1:y2, x1:x2] = out
                     break
                 else:
+                    x1_, y1_, x2_, y2_ = result["new_rec"]
                     patch = np.zeros(frame.shape).astype('uint8')
                     patch[y1_:y2_, x1_:x2_] = out[y1_ - y1: y2_ -y1, x1_ -x1: x2_ - x1]
                     mask = np.zeros(frame.shape[:2]).astype('uint8')
                     mask[y1_:y2_, x1_:x2_] = box_masks[j]
                     frame = cv2.copyTo(patch, mask, frame)
-            for result in results:
-                x1, y1, x2, y2 = result["new_rec"]
-                cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), thickness=2)
-            out_frame.append(frame)
 
+                for result in results:
+                    x1, y1, x2, y2 = result["new_rec"]
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), thickness=2)
+
+            # for j, result in enumerate(results):
+            #     x1, y1, x2, y2, _ = result['rec']
+            #     if len(results) == 1:
+            #         frame[y1:y2, x1:x2] = out
+            #         break
+            #     else:
+            #         box = cv2.resize(frame[y1:y2, x1:x2], (512, 512))
+            #         box_mask = face_parcer.parse(box.astype(np.float32))
+            #         box_mask = np.array(box_mask).astype('uint8')
+                    
+            #         box_mask = cv2.resize(box_mask, (x2 - x1, y2 - y1))
+            #         box_mask[box_mask != 0] = 1
+            #         # box_masks.append(box_mask)
+            #         viz_mask = box_mask.copy()
+            #         viz_mask[viz_mask != 0] = 255
+                    
+            #         cv2.imwrite("./GFPGAN1/%d.jpg" % k, viz_mask)
+            #         k += 1
+            #         contours, _= cv2.findContours(viz_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+            #         c = max(contours, key = cv2.contourArea)
+            #         x,y,w,h = cv2.boundingRect(c)
+            #         x1_ = x + x1
+            #         y1_ = y + y1
+            #         x2_, y2_ = x1_+w, y1_+h
+            #         #results[i]["new_rec"] = [x1_, y1_, x2_, y2_]
+            #         box_mask = box_mask[y:y+h, x:x+w]
+            #         # box = cv2.resize(frame[y1:y2, x1:x2], (512, 512))
+            #         # box_mask = face_parcer.parse(box.astype(np.float32))
+            #         # box_mask = np.array(box_mask).astype('uint8')
+                    
+            #         # box_mask = cv2.resize(box_mask, (x2 - x1, y2 - y1))
+            #         # box_mask[box_mask != 0] = 1
+            #         # viz_mask = box_mask.copy()
+            #         # viz_mask[viz_mask != 0] = 255
+            #         # cv2.imwrite("./GFPGAN1/%d.jpg" % k, viz_mask)
+            #         # k += 1
+            #         h = y2 - y1
+            #         w = x2 - x1
+            #         out = result['predict'][i]
+            #         out = cv2.resize(out.astype(np.uint8), (x2 - x1, y2 - y1))
+            #         #x1_, y1_, x2_, y2_ = result["new_rec"]
+            #         patch = np.zeros(frame.shape).astype('uint8')
+            #         patch[y1_:y2_, x1_:x2_] = out[y1_ - y1: y2_ -y1, x1_ -x1: x2_ - x1]
+            #         mask = np.zeros(frame.shape[:2]).astype('uint8')
+            #         mask[y1_:y2_, x1_:x2_] = box_mask
+            #         frame = cv2.copyTo(patch, mask, frame)
+            # if len(results) > 1:
+            #     for result in results:
+            #         x1, y1, x2, y2 = result["new_rec"]
+            #         cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), thickness=2)
+            
+            out_frame.append(frame)
 
         imageio.mimsave(os.path.join(self.output, self.filename),
                         [frame for frame in out_frame],

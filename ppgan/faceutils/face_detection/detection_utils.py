@@ -15,6 +15,64 @@ def IOU(sample_a, sample_b):
 
         return iou
 
+def slice_point(detection_A, detection_B):
+    if IOU(detection_A, detection_B) > 0.08:
+        left_a, top_a, right_a, bottom_a, _ = detection_A
+        left_b, top_b, right_b, bottom_b, _ = detection_B
+        if left_a < right_b < right_a and top_a < bottom_b < bottom_a and top_b < top_a:
+            return  (right_b + left_a) // 2, (bottom_b + top_a) // 2, "top_left"
+        if left_a < right_b < right_a and top_a < top_b < bottom_a and bottom_b > bottom_a:
+            return (right_b + left_a) // 2, (bottom_a + top_b) // 2, "bottom_left"
+        if left_a < left_b < right_a and top_a < bottom_b < bottom_a and top_b < top_a:
+            return (right_a + left_b) // 2, (bottom_a + top_b) // 2, "top_right"
+        if left_a < left_b < right_a and top_a < top_b < bottom_a and bottom_b > bottom_a:
+            return (right_a + left_b) // 2, (top_b + bottom_a) // 2, "bottom_right"  
+        if left_a < right_b < right_a:
+            return (right_b + left_a) // 2, None, "left"
+        if left_a < left_b < right_a:
+            return (right_a + left_b) // 2, None, "right"
+        if left_a < left_b < right_a:
+            return  None, (bottom_a + top_b) // 2, "bottom"
+        if left_a <  left_b< right_a:
+            return None, (bottom_b + top_a) // 2, "top"
+    return None
+
+def slice_detections(detections, shape):
+    coords = []
+    h, w = shape
+    for i, det in enumerate(detections):
+        x1_, x2_, y1_, y2_ = [], [], [], [] 
+        x1, x2, y1, y2 = 0, w, 0, h 
+        for j, det_ in enumerate(detections):
+            if i == j: continue
+            point = slice_point(det, det_)
+            if point is not None:
+                if point[2] == "top_left":
+                    x1_.append(point[0])
+                    y1_.append(point[1])
+                elif point[2] == "top_right":
+                    x2_.append(point[0])
+                    y1_.append(point[1])
+                elif point[2] == "bottom_left":
+                    x1_.append(point[0])
+                    y2_.append(point[1])
+                elif point[2] == "bottom_right":
+                    x2_.append(point[0])
+                    y2_.append(point[1])
+                elif point[2] == "top":
+                    y1_.append(point[1])
+                elif point[2] == "bottom":
+                    y2_.append(point[1])
+                elif point[2] == "right":
+                    x2_.append(point[0])
+                elif point[2] == "left":
+                    x1_.append(point[0])
+        x1 = np.max(x1_) if len(x1_) > 0 else x1
+        y1 = np.max(y1_) if len(y1_) > 0 else y1
+        x2 = np.min(x2_) if len(x2_) > 0 else x2
+        y2 = np.min(y2_) if len(y2_) > 0 else y2
+        coords.append([x1, y1, x2, y2])
+    return coords
 
 def Union(samples):
     x1 = min(samples[:, 0])
@@ -66,11 +124,11 @@ def union_results(image, predictions):
     h, w, _ = image.shape
     # possible_ratios = find_upscale_ratios(result_boxes, (h, w))
 
-    detections = upscale_detections(result_boxes, (0.85, 0.8, 0.85, 0.8), (0, 0, w, h))
-    viz_image = image.copy()
-    for res in detections:
-        cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
-    cv2.imwrite("./detections.jpg", viz_image)
+    # detections = upscale_detections(result_boxes, (0.85, 0.8, 0.85, 0.8), (0, 0, w, h))
+    # viz_image = image.copy()
+    # for res in detections:
+    #     cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
+    # cv2.imwrite("./detections.jpg", viz_image)
     # viz_image = image.copy()
     # for i, det in enumerate(detections):
     #     for j, det_ in enumerate(detections):
@@ -92,7 +150,24 @@ def union_results(image, predictions):
     #     cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
     # cv2.imwrite("./resutls.jpg", viz_image)
     # return results
+    max_coords = slice_detections(result_boxes, (h, w))
+
+    results = rescale_detections(result_boxes, max_coords)
+    viz_image = image.copy()
+    for res in results:
+        print(res)
+        cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
+    cv2.imwrite("./resutls.jpg", viz_image)
+
+    detections = upscale_detections(results, (0.85, 0.65, 0.85, 0.65), (0, 0, w, h))
+    viz_image = image.copy()
+    for res in detections:
+        cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
+    cv2.imwrite("./detections.jpg", viz_image)
+    
+    # return results
     return detections
+    # return detections
 
 def largest_results(image, predictions):
     h, w, _ = image.shape
