@@ -37,6 +37,7 @@ from ppgan.faceutils.face_detection.detection_utils import largest_results, unio
 from gfpgan import GFPGANer
 import dlib
 import skimage
+import moviepy.editor as mp
 
 from .base_predictor import BasePredictor
 
@@ -169,7 +170,8 @@ class FirstOrderPredictor(BasePredictor):
     def run(self, source_image, driving_video, filename):
         
         self.filename = filename
-        
+        videoclip_1 = mp.VideoFileClip(driving_video)
+        audio = videoclip_1.audio
         def get_prediction(face_image):
             if self.find_best_frame or self.best_frame is not None:
                 i = self.best_frame if self.best_frame is not None else self.find_best_frame_func(
@@ -214,7 +216,8 @@ class FirstOrderPredictor(BasePredictor):
                 r = 1024.0 / w
                 dim = (1024, int(r*h))
             source_image = cv2.resize(source_image, dim)
-        _, _, img = self.gfpganer.enhance(source_image)
+        _, _, source_image = self.gfpganer.enhance(cv2.cvtColor(source_image, cv2.COLOR_RGB2BGR))
+        source_image = cv2.cvtColor(source_image, cv2.COLOR_BGR2RGB)
         viz_image = source_image.copy()
         reader = imageio.get_reader(driving_video)
         fps = reader.get_meta_data()['fps']
@@ -363,10 +366,19 @@ class FirstOrderPredictor(BasePredictor):
             #         cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), thickness=2)
             
             out_frame.append(frame)
+        if audio is None:
+            imageio.mimsave(os.path.join(self.output, self.filename),
+                            [frame for frame in out_frame],
+                            fps=fps)
+        else:
+            temp = 'tmp.mp4'
+            imageio.mimsave(temp,
+                            [frame for frame in out_frame],
+                            fps=fps)
+            videoclip_2 = mp.VideoFileClip(temp)
+            videoclip_2.set_audio(audio).write_videofile(os.path.join(self.output, self.filename),
+                                                         audio_codec="aac")
 
-        imageio.mimsave(os.path.join(self.output, self.filename),
-                        [frame for frame in out_frame],
-                        fps=fps)
 
     def load_checkpoints(self, config, checkpoint_path):
 
