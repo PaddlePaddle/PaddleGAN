@@ -1,7 +1,9 @@
 from sklearn.metrics import pairwise_distances
 import numpy as np
 import cv2
-
+import shapely
+from shapely.geometry import Polygon, LineString
+import geopandas as gpd
 
 def IOU(sample_a, sample_b):
         ax1, ay1, ax2, ay2, area_a = sample_a
@@ -14,6 +16,16 @@ def IOU(sample_a, sample_b):
         iou = interArea / float(area_a + area_b - interArea)
 
         return iou
+
+def union_area(sample_a, sample_b):
+    ax1, ay1, ax2, ay2, area_a = sample_a
+    bx1, by1, bx2, by2, area_b = sample_b
+    xA = max(ax1, bx1)
+    yA = max(ay1, by1)
+    xB = min(ax2, bx2)
+    yB = min(ay2, by2)
+    interArea = max(0, xB - xA + 1) * max(0, yB - yA + 1)
+    return float(area_a + area_b - interArea)
 
 def slice_point(detection_A, detection_B):
     if IOU(detection_A, detection_B) > 0.08:
@@ -84,7 +96,7 @@ def Union(samples):
 
 
 
-def cluster_ious(bboxes):
+def cluster_ious(bboxes, image_area):
         dist_matrix = pairwise_distances(bboxes, bboxes, metric=IOU)
         indices = set()
         clusters = []
@@ -92,9 +104,12 @@ def cluster_ious(bboxes):
             cluster = []
             if i not in indices:
                 for j in range(len(row)):
-                    if row[j] > 0.08:
-                        cluster.append(j)
-                        indices.add(j)
+                    if row[j] > 0:
+                        union = union_area(bboxes[i], bboxes[j])
+                        print(0.5 * (union/image_area))
+                        if row[j] > 0.5 * (union/image_area):
+                            cluster.append(j)
+                            indices.add(j)
                 clusters.append(cluster)
         return clusters
 
@@ -109,124 +124,53 @@ def union_clusters(bboxes, clusters):
 
 def union_results(image, predictions):
     faces_boxes = []
-    person_num = len(predictions)
-    if person_num == 0:
+    h, w, _ = image.shape
+    if len(predictions) == 0:
         return np.array([])
     for rect in predictions:
         area = (rect[3] - rect[1]) * (rect[2] - rect[0])
         faces_boxes.append([*rect, area])
-    clusters = cluster_ious(faces_boxes)
+    clusters = cluster_ious(faces_boxes, h * w)
     result_boxes = union_clusters(faces_boxes, clusters)
     viz_image = image.copy()
     for res in result_boxes:
         cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
     cv2.imwrite("./result_boxes.jpg", viz_image)
-    h, w, _ = image.shape
-    # possible_ratios = find_upscale_ratios(result_boxes, (h, w))
 
-    # detections = upscale_detections(result_boxes, (0.85, 0.8, 0.85, 0.8), (0, 0, w, h))
-    # viz_image = image.copy()
-    # for res in detections:
-    #     cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
-    # cv2.imwrite("./detections.jpg", viz_image)
-    # viz_image = image.copy()
-    # for i, det in enumerate(detections):
-    #     for j, det_ in enumerate(detections):
-    #         if i == j: continue
-    #         if IOU(det, det_) > 0:
-    #             line = slice_box(det, det_)
-    #             print(line)
-    #             cv2.line(viz_image, (int(line[0][0]), int(line[0][1])), 
-    #                                 (int(line[1][0]), int(line[1][0])), 
-    #                                 (255, 255, 0), 3)
-    
-    # cv2.imwrite("./lines.jpg", viz_image)
-    # max_coords = find_intersections(detections, (h, w))
-
-    # results = rescale_detections(detections, max_coords)
-    # viz_image = image.copy()
-    # for res in results:
-    #     print(res)
-    #     cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
-    # cv2.imwrite("./resutls.jpg", viz_image)
-    # return results
-    max_coords = slice_detections(result_boxes, (h, w))
-
-    results = rescale_detections(result_boxes, max_coords)
-    viz_image = image.copy()
-    for res in results:
-        print(res)
+    upscaled_detections = upscale_detections(result_boxes, [0.85, 0.75, 0.85, 0.75], [0,0,h,w], h*w)
+    for res in result_boxes:
         cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
-    cv2.imwrite("./resutls.jpg", viz_image)
+    cv2.imwrite("./upscaled_boxes.jpg", viz_image)
 
-    detections = upscale_detections(results, (0.85, 0.65, 0.85, 0.65), (0, 0, w, h))
-    viz_image = image.copy()
-    for res in detections:
-        cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
-    cv2.imwrite("./detections.jpg", viz_image)
-    
-    # return results
-    return detections
-    # return detections
+    gdf = gpd.GeoDataFrame({'geometry': [box2polygon(b) for b in upscaled_detections]})
+    res_df = slice_all(gdf)
+    coords = polygons2coords(res_df['geometry'])
+    return upscaled_detections, coords
 
-def largest_results(image, predictions):
-    h, w, _ = image.shape
-    person_num = len(predictions)
-    if person_num == 0:
-        return np.array([])
-    ratios = [1.0, 0.8, 1.0, 0.8]
-    results = upscale_detections(predictions, ratios, (h, w))
-    sorted(results, key=lambda area: area[4], reverse=True)
-    results_box = [results[0]]
-    for i in range(1, person_num):
-        num = len(results_box)
-        add_person = True
-        for j in range(num):
-            pre_person = results_box[j]
-            iou = IOU(pre_person, results[i])
-            if iou > 0.1:
-                add_person = False
-                break
-        if add_person:
-            results_box.append(results[i]) 
-    return results_box
+
+
 
 
 
 def count_ious(main_sample, samples):
     return list(map(lambda sample: IOU(main_sample, sample), samples))
         
-def upscale_detection(detection, ratios, max_coords):
+def upscale_detection(detection, ratios, max_coords, image_area):
     ratio_y1, ratio_x1, ratio_y2, ratio_x2 = ratios
     min_x1, min_y1, max_x2, max_y2 = max_coords
     bh, bw = detection[3] - detection[1], detection[2] - detection[0]
     cy, cx = detection[1] + int(bh / 2), detection[0] + int(bw / 2)
-    y1, x1 = max(min_y1, cy - int(bh * ratio_y1)), max(min_x1, cx - int(bw * ratio_x1))
-    y2, x2 = min(max_y2, cy + int(bh * ratio_y2)), min(max_x2, cx + int(bw * ratio_x2))
+    extra_ratio = detection[4] / image_area
+    y1, x1 = max(min_y1, cy - int(bh * (ratio_y1 + extra_ratio))), max(min_x1, cx - int(bw * (ratio_x1+ extra_ratio)))
+    y2, x2 = min(max_y2, cy + int(bh * (ratio_y2 + extra_ratio))), min(max_x2, cx + int(bw * (ratio_x2+extra_ratio)))
     area = (y2 - y1) * (x2 - x1)
     return [x1, y1, x2, y2, area]
 
-# def find_upscale_ratios(detections, shape):
-#     h, w = shape 
-#     max_ratios = (0.9, 0.85, 1.1, 0.85)
-#     possible_ratios = []
-#     for i, rect in enumerate(detections):
-#         ratio_x1, ratio_y1, ratio_x2, ratio_y2 = max_ratios[0], max_ratios[1], max_ratios[2], max_ratios[3]
-#         while True:
-#             upscaled_det = upscale_detection(rect, [ratio_x1, ratio_y1, ratio_x2, ratio_y2], shape)
-#             ious = count_ious(upscaled_det, [detections[j] for j in range(len(detections)) if i != j])
-#             if np.all(np.array(ious) < 0.01):
-#                 break
-#             ratio_x1, ratio_y1 = ratio_x1 - 0.05, ratio_y1 - 0.05 
-#             ratio_x2, ratio_y2 = ratio_x2 - 0.05, ratio_y2 - 0.05
-#         possible_ratios.append([ratio_y1, ratio_x1, ratio_y2, ratio_x2])
-#     print(possible_ratios)
-#     return possible_ratios
-    
-def upscale_detections(detections, upscale_ratios, coords):
+
+def upscale_detections(detections, upscale_ratios, coords, image_area):
     upscaled_detections = []
     for det in detections: 
-        upscaled_detections.append(upscale_detection(det, upscale_ratios, coords))
+        upscaled_detections.append(upscale_detection(det, upscale_ratios, coords, image_area))
     return upscaled_detections
 
 def find_intersections(detections, shape): 
@@ -268,3 +212,85 @@ def rescale_detections(detections, coords):
         rescaled_detections.append([x1, y1, x2, y2, (x2 - x1) * (y2 - y1)])
     return rescaled_detections
 
+def largest_results(image, predictions):
+    h, w,  = image.shape
+    person_num = len(predictions)
+    if person_num == 0:
+        return np.array([])
+    ratios = [1.0, 0.8, 1.0, 0.8]
+    results = upscale_detections(predictions, ratios, (h, w))
+    sorted(results, key=lambda area: area[4], reverse=True)
+    results_box = [results[0]]
+    for i in range(1, person_num):
+        num = len(results_box)
+        add_person = True
+        for j in range(num):
+            pre_person = results_box[j]
+            iou = IOU(pre_person, results[i])
+            if iou > 0.1:
+                add_person = False
+                break
+        if add_person:
+            results_box.append(results[i]) 
+    return results_box
+
+
+
+
+def slice_box(box_A:Polygon, box_B:Polygon, margin=-10, line_mult=10):
+    "Returns box_A sliced according to the distance to box_B."
+    vec_AB = np.array([box_B.centroid.x - box_A.centroid.x, box_B.centroid.y - box_A.centroid.y])
+    vec_ABp = np.array([-(box_B.centroid.y - box_A.centroid.y), box_B.centroid.x - box_A.centroid.x])
+    vec_AB_norm = np.linalg.norm(vec_AB)
+    split_point = box_A.centroid + vec_AB/2 - (vec_AB/vec_AB_norm)*margin
+    line = LineString([split_point-line_mult*vec_ABp, split_point+line_mult*vec_ABp])
+    split_box = shapely.ops.split(box_A, line)
+    if len(split_box) == 1: return split_box, None, line
+    is_center = [s.contains(box_A.centroid) for s in split_box]
+    if sum(is_center) == 0:
+        return split_box[0], None, line
+    where_is_center = np.argwhere(is_center).reshape(-1)[0]
+    where_not_center = np.argwhere(~np.array(is_center)).reshape(-1)[0]
+    split_box_center = split_box[where_is_center]
+    split_box_out = split_box[where_not_center]
+    return split_box_center, split_box_out, line
+
+def box2polygon(bbox):
+    x1, y1, x2, y2, _ = bbox
+    return Polygon([(x1, y1), (x2, y1), (x2, y2), (x1, y2)])
+
+def intersection_list(polylist):
+    r = polylist[0]
+    for p in polylist:
+        r = r.intersection(p)
+    return r
+    
+def slice_one(gdf, index):
+    inter = gdf.loc[gdf.intersects(gdf.iloc[index].geometry)]
+    if len(inter) == 1: return inter.geometry.values[0]
+    box_A = inter.loc[index].values[0]
+    inter = inter.drop(index, axis=0)
+    polys = []
+    for i in range(len(inter)):
+        box_B = inter.iloc[i].values[0]
+        polyA, *_ = slice_box(box_A, box_B)
+        polys.append(polyA)
+    return intersection_list(polys)
+
+def slice_all(gdf):
+    polys = []
+    for i in range(len(gdf)):
+        polys.append(slice_one(gdf, i))
+    return gpd.GeoDataFrame({'geometry': polys})
+
+def polygons2coords(polygons):
+    return [
+        list(map(lambda sample: [int(sample[0]), int(sample[1])], polygon.exterior.coords[:-1]))
+        for polygon in polygons
+    ]
+
+def polygon2mask(polygon, shape):
+    mask = np.zeros(shape, dtype="int32")
+    print(np.array([polygon], dtype=np.int32))
+    cv2.fillPoly(mask, np.array([polygon], dtype=np.int32), 255)
+    return mask.astype('uint8')

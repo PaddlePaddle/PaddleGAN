@@ -32,7 +32,7 @@ from ppgan.modules.keypoint_detector import KPDetector
 from ppgan.models.generators.occlusion_aware import OcclusionAwareGenerator
 from ppgan.faceutils import face_detection
 from ppgan.faceutils.mask.face_parser import FaceParser
-from ppgan.faceutils.face_detection.detection_utils import largest_results, union_results
+from ppgan.faceutils.face_detection.detection_utils import largest_results, union_results, polygon2mask
 # sys.path.insert(0, '/home/user/paddle/PaddleGAN/GFPGAN/')
 from gfpgan import GFPGANer
 import dlib
@@ -235,7 +235,7 @@ class FirstOrderPredictor(BasePredictor):
         ]
         results = []
 
-        bboxes = self.extract_bbox(source_image.copy())
+        bboxes, coords = self.extract_bbox(source_image.copy())
         print(str(len(bboxes)) + " persons have been detected")
         bboxes = sorted(bboxes, key=(lambda x: x[4]))
         # for multi person
@@ -251,15 +251,23 @@ class FirstOrderPredictor(BasePredictor):
 
         face_parcer = FaceParser()
         box_masks = []
-        k = 0
+        # k = 0
         if len(results) != 1:
             frame = source_image.copy()
             
             for i in range(len(results)):
                 x1, y1, x2, y2, _ = results[i]['rec']
+                polygon_mask = polygon2mask(coords[i], frame.shape[:2])
+                cv2.imshow("polygon_mask", polygon_mask)
+                cv2.waitKey(10000)
+                # box = frame[y1:y2, x1:x2]
+                polygon_box = cv2.bitwise_and(frame, frame, mask = polygon_mask)
+                cv2.imshow("", polygon_box)
+                cv2.waitKey(10000)
+                polygon_box = cv2.resize(polygon_box[y1:y2, x1:x2], (512, 512))
                
-                box = cv2.resize(frame[y1:y2, x1:x2], (512, 512))
-                box_mask = face_parcer.parse(box.astype(np.float32))
+
+                box_mask = face_parcer.parse(polygon_box.astype(np.float32))
                 box_mask = np.array(box_mask).astype('uint8')
                 
                 box_mask = cv2.resize(box_mask, (x2 - x1, y2 - y1))
@@ -268,8 +276,8 @@ class FirstOrderPredictor(BasePredictor):
                 viz_mask = box_mask.copy()
                 viz_mask[viz_mask != 0] = 255
                 
-                cv2.imwrite("./GFPGAN1/%d.jpg" % k, viz_mask)
-                k += 1
+                # cv2.imwrite("./GFPGAN1/%d.jpg" % k, viz_mask)
+                # k += 1
                 contours, _= cv2.findContours(viz_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
                 c = max(contours, key = cv2.contourArea)
                 x,y,w,h = cv2.boundingRect(c)
@@ -378,6 +386,7 @@ class FirstOrderPredictor(BasePredictor):
             videoclip_2 = mp.VideoFileClip(temp)
             videoclip_2.set_audio(audio).write_videofile(os.path.join(self.output, self.filename),
                                                          audio_codec="aac")
+            os.remove(temp)
 
 
     def load_checkpoints(self, config, checkpoint_path):
@@ -482,10 +491,9 @@ class FirstOrderPredictor(BasePredictor):
 
         # frame = [image]
         predictions = detector.get_detections_for_image(np.array(image))
-        result = self.detection_func(image, predictions)
-       
-        boxes = np.array(result)
-        return boxes
+        result, coords = self.detection_func(image, predictions)
+        return np.array(result), np.array(coords)
+        
 
     def IOU(self, ax1, ay1, ax2, ay2, sa, bx1, by1, bx2, by2, sb):
         x1, y1 = max(ax1, bx1), max(ay1, by1)

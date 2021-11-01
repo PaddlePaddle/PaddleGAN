@@ -1,5 +1,8 @@
 import cv2 
 import numpy as np
+import shapely
+from shapely.geometry import Polygon, LineString
+import geopandas as gpd
 
 def IOU(sample_a, sample_b):
         ax1, ay1, ax2, ay2, area_a = sample_a
@@ -13,73 +16,78 @@ def IOU(sample_a, sample_b):
 
         return iou
 
-def slice_point(detection_A, detection_B):
-    if IOU(detection_A, detection_B):
-        left_a, top_a, right_a, bottom_a, _ = detection_A
-        left_b, top_b, right_b, bottom_b, _ = detection_B
-        if left_a < right_b < right_a and top_a < bottom_b < bottom_a and top_b < top_a:
-            return  (right_b + left_a) // 2, (bottom_b + top_a) // 2, "top_left"
-        if left_a < right_b < right_a and top_a < top_b < bottom_a and bottom_b > bottom_a:
-            return (right_b + left_a) // 2, (bottom_a + top_b) // 2, "bottom_left"
-        if left_a < left_b < right_a and top_a < bottom_b < bottom_a and top_b < top_a:
-            return (right_a + left_b) // 2, (bottom_a + top_b) // 2, "top_right"
-        if left_a < left_b < right_a and top_a < top_b < bottom_a and bottom_b > bottom_a:
-            return (right_a + left_b) // 2, (top_b + bottom_a) // 2, "bottom_right"  
-        if left_a < right_b < right_a:
-            return (right_b + left_a) // 2, None, "left"
-        if left_a < left_b < right_a:
-            return (right_a + left_b) // 2, None, "right"
-        if left_a < left_b < right_a:
-            return  None, (bottom_a + top_b) // 2, "bottom"
-        if left_a <  left_b< right_a:
-            return None, (bottom_b + top_a) // 2, "top"
-    return None
+def slice_box(box_A:Polygon, box_B:Polygon, line_mult=10):
+    "Returns box_A sliced according to the distance to box_B."
+    vec_AB = np.array([box_B.centroid.x - box_A.centroid.x, box_B.centroid.y - box_A.centroid.y])
+    vec_ABp = np.array([-(box_B.centroid.y - box_A.centroid.y), box_B.centroid.x - box_A.centroid.x])
+    vec_AB_norm = np.linalg.norm(vec_AB)
+    split_point = box_A.centroid + vec_AB/2 - (vec_AB/vec_AB_norm)
+    line = LineString([split_point-line_mult*vec_ABp, split_point+line_mult*vec_ABp])
+    split_box = shapely.ops.split(box_A, line)
+    if len(split_box) == 1: return split_box, None, line
+    is_center = [s.contains(box_A.centroid) for s in split_box]
+    if sum(is_center) == 0:
+        return split_box[0], None, line
+    where_is_center = np.argwhere(is_center).reshape(-1)[0]
+    where_not_center = np.argwhere(~np.array(is_center)).reshape(-1)[0]
+    split_box_center = split_box[where_is_center]
+    split_box_out = split_box[where_not_center]
+    return split_box_center, split_box_out, line
 
-def slice_detections(detections, shape):
-    coords = []
-    h, w = shape
-    for i, det in enumerate(detections):
-        print("detection")
-        x1_, x2_, y1_, y2_ = [], [], [], [] 
-        x1, x2, y1, y2 = 0, w, 0, h 
-        for j, det_ in enumerate(detections):
-            if i == j: continue
-            print("detections", det, det_)
-            point = slice_point(det, det_)
-            print("point", point)
-            if point is not None:
-                if point[2] == "top_left":
-                    x1_.append(point[0])
-                    y1_.append(point[1])
-                elif point[2] == "top_right":
-                    x2_.append(point[0])
-                    y1_.append(point[1])
-                elif point[2] == "bottom_left":
-                    x1_.append(point[0])
-                    y2_.append(point[1])
-                elif point[2] == "bottom_right":
-                    x2_.append(point[0])
-                    y2_.append(point[1])
-                elif point[2] == "top":
-                    y1_.append(point[1])
-                elif point[2] == "bottom":
-                    y2_.append(point[1])
-                elif point[2] == "right":
-                    x2_.append(point[0])
-                elif point[2] == "left":
-                    x1_.append(point[0])
-        print(x1_, y1_, x2_, y2_)
-        x1 = np.max(x1_) if len(x1_) > 0 else x1
-        y1 = np.max(y1_) if len(y1_) > 0 else y1
-        x2 = np.min(x2_) if len(x2_) > 0 else x2
-        y2 = np.min(y2_) if len(y2_) > 0 else y2
-        coords.append([x1, y1, x2, y2])
-    return coords
+def box2polygon(bbox):
+    x1, y1, x2, y2, _ = bbox
+    return Polygon([(x1, y1), (x2, y1), (x2, y2), (x1, y2)])
 
-        
+def intersection_list(polylist):
+    r = polylist[0]
+    for p in polylist:
+        r = r.intersection(p)
+    return r
+    
+def slice_one(gdf, index):
+    inter = gdf.loc[gdf.intersects(gdf.iloc[index].geometry)]
+    if len(inter) == 1: return inter.geometry.values[0]
+    box_A = inter.loc[index].values[0]
+    inter = inter.drop(index, axis=0)
+    polys = []
+    for i in range(len(inter)):
+        box_B = inter.iloc[i].values[0]
+        polyA, *_ = slice_box(box_A, box_B)
+        polys.append(polyA)
+    return intersection_list(polys)
+
+def slice_all(gdf):
+    polys = []
+    for i in range(len(gdf)):
+        polys.append(slice_one(gdf, i))
+    return gpd.GeoDataFrame({'geometry': polys})
+
+def polygons2coords(polygons):
+    return [
+        list(map(lambda sample: (int(sample[0]), int(sample[1])), polygon.exterior.coords[:-1]))
+        for polygon in polygons
+    ]
+
+def polygon2mask(polygon, detection):
+    w, h = detection[2] - detection[0], detection[3] - detection[1]
+    mask = np.zeros((h, w), dtype="int32")
+    cv2.fillPoly(mask, [polygon], 1)
+    return mask.astype('uint8')
+
 if __name__ == '__main__':
-    det1 = [1, 4, 9, 12, 64]
-    det2 = [5, 7, 15, 15, 80]
-    det3 = [3, 14, 12, 22, 110]
-    det4 = [9, 16, 18, 21, 45]
-    print(slice_detections([det1, det2, det3, det4], (100, 100)))
+    det1 = [10, 40, 90, 120, 6400]
+    det2 = [50, 70, 150, 150, 8000]
+    det3 = [30, 140, 120, 220, 1100]
+    det4 = [90, 160, 180, 210, 4500]
+    dets = [det1, det2, det3, det4]
+    canvas = np.ones((300, 300, 3)) * 255
+    gdf = gpd.GeoDataFrame({'geometry': [box2polygon(b) for b in dets]})
+    print(gdf.head())
+    res_df = slice_all(gdf)
+    print(polygons2coords(res_df['geometry']))
+    for det in dets:
+        canvas = cv2.rectangle(canvas, (det[0], det[1]), (det[2], det[3]), (0,0,0), thickness=2)
+    cv2.imshow("", canvas)
+    cv2.waitKey(10000)
+
+    
