@@ -1,0 +1,92 @@
+total_iters: 300000
+output_dir: output_dir
+find_unused_parameters: True
+checkpoints_dir: checkpoints
+use_dataset: True
+# tensor range for function tensor2img
+min_max:
+  (0., 1.)
+
+model:
+  name: BasicVSRModel
+  fix_iter: 5000
+  lr_mult: 0.125
+  generator:
+    name: IconVSR
+    mid_channels: 64
+    num_blocks: 30
+  pixel_criterion:
+    name: CharbonnierLoss
+    reduction: mean
+
+dataset:
+  train:
+    name: RepeatDataset
+    times: 1000
+    num_workers: 4  # 6
+    batch_size: 2  # 4*2
+    dataset:
+      name: SRREDSMultipleGTDataset
+      mode: train
+      lq_folder: data/REDS/train_sharp_bicubic/X4
+      gt_folder: data/REDS/train_sharp/X4
+      crop_size: 256
+      interval_list: [1]
+      random_reverse: False
+      number_frames: 15
+      use_flip: True
+      use_rot: True
+      scale: 4
+      val_partition: REDS4
+
+  test:
+    name: SRREDSMultipleGTDataset
+    mode: test
+    lq_folder: data/REDS/REDS4_test_sharp_bicubic/X4
+    gt_folder: data/REDS/REDS4_test_sharp/X4
+    interval_list: [1]
+    random_reverse: False
+    number_frames: 100
+    use_flip: False
+    use_rot: False
+    scale: 4
+    val_partition: REDS4
+    num_workers: 0
+    batch_size: 1
+
+lr_scheduler:
+  name: CosineAnnealingRestartLR
+  learning_rate: !!float 2e-4
+  periods: [300000]
+  restart_weights: [1]
+  eta_min: !!float 1e-7
+
+optimizer:
+  name: Adam
+  # add parameters of net_name to optim
+  # name should in self.nets
+  net_names:
+    - generator
+  beta1: 0.9
+  beta2: 0.99
+
+validate:
+  interval: 5000
+  save_img: false
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      name: PSNR
+      crop_border: 0
+      test_y_channel: False
+    ssim:
+      name: SSIM
+      crop_border: 0
+      test_y_channel: False
+
+log_config:
+  interval: 100
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 5000

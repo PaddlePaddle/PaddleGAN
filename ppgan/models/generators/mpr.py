@@ -12,9 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import numpy as np
+
 import paddle
-from paddle import nn
+import paddle.nn as nn
 import paddle.nn.functional as F
+
+from ...modules.init import kaiming_normal_, constant_
 
 from .builder import GENERATORS
 
@@ -42,15 +46,12 @@ class CALayer(nn.Layer):
                       channel // reduction,
                       1,
                       padding=0,
-                      bias_attr=bias_attr),
-            nn.ReLU(),
-            # nn.ReLU(inplace=True), torch
+                      bias_attr=bias_attr), nn.ReLU(),
             nn.Conv2D(channel // reduction,
                       channel,
                       1,
                       padding=0,
-                      bias_attr=bias_attr),
-            nn.Sigmoid())
+                      bias_attr=bias_attr), nn.Sigmoid())
 
     def forward(self, x):
         y = self.avg_pool(x)

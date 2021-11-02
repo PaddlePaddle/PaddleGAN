@@ -27,7 +27,7 @@ from ..models.builder import build_model
 from ..utils.visual import tensor2img, save_image
 from ..utils.filesystem import makedirs, save, load
 from ..utils.timer import TimeAverager
-
+from ..utils.profiler import add_profiler_step
 
 class IterLoader:
     def __init__(self, dataloader):
@@ -147,6 +147,7 @@ class Trainer:
         self.time_count = {}
         self.best_metric = {}
         self.model.set_total_iter(self.total_iters)
+        self.profiler_options = cfg.profiler_options
 
     def distributed_data_parallel(self):
         paddle.distributed.init_parallel_env()
@@ -178,6 +179,8 @@ class Trainer:
             self.current_epoch = iter_loader.epoch
             self.inner_iter = self.current_iter % self.iters_per_epoch
 
+            add_profiler_step(self.profiler_options)
+
             start_time = step_start_time = time.time()
             data = next(iter_loader)
             reader_cost_averager.record(time.time() - step_start_time)
@@ -186,9 +189,9 @@ class Trainer:
             self.model.setup_input(data)
             self.model.train_iter(self.optimizers)
 
-            batch_cost_averager.record(time.time() - step_start_time,
-                                       num_samples=self.cfg.get(
-                                           'batch_size', 1))
+            batch_cost_averager.record(
+                time.time() - step_start_time,
+                num_samples=self.cfg['dataset']['train'].get('batch_size', 1))
 
             step_start_time = time.time()
 
@@ -233,7 +236,8 @@ class Trainer:
         for i in range(self.max_eval_steps):
             if self.max_eval_steps < self.log_interval or i % self.log_interval == 0:
                 self.logger.info('Test iter: [%d/%d]' %
-                                 (i * self.world_size, self.max_eval_steps * self.world_size))
+                                 (i * self.world_size,
+                                  self.max_eval_steps * self.world_size))
 
             data = next(iter_loader)
             self.model.setup_input(data)
@@ -267,7 +271,6 @@ class Trainer:
                             visual_results=visual_results,
                             step=self.batch_id,
                             is_save_image=True)
-
 
         if self.metrics:
             for metric_name, metric in self.metrics.items():

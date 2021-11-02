@@ -32,8 +32,8 @@ python -u tools/styleganv2mixing.py \
 **参数说明:**
 - latent1: 第一个风格向量的路径。可来自于Pixel2Style2Pixel生成的`dst.npy`或StyleGANv2 Fitting模块生成的`dst.fitting.npy`
 - latent2: 第二个风格向量的路径。来源同第一个风格向量
-- weights: 两个风格向量在不同的层次按不同比例进行混合。对于1024的分辨率，有18个层次，512的分辨率，有16个层次，以此类推。
-  越前面，越影响混合图像的整体。越后面，越影响混合图像的细节。
+- weights: 两个风格向量在不同的层次按不同比例进行混合。对于1024的分辨率，有18个层次，512的分辨率，有16个层次，以此类推。越前面，越影响混合图像的整体。越后面，越影响混合图像的细节。
+           在下图中我们展示了不同权重的融合结果，可供参考。
 - output_path: 生成图片存放的文件夹
 - weight_path: 预训练模型路径
 - model_type: PaddleGAN内置模型类型，若输入PaddleGAN已存在的模型类型，`weight_path`将失效。当前建议使用: `ffhq-config-f`
@@ -61,6 +61,24 @@ python -u tools/styleganv2mixing.py \
 
 <div align="center">
     <img src="../../imgs/stylegan2mixing-sample.png" width="256"/>
+</div>
+
+## 不同权重拟合结果展示
+第一个风格向量对应的图像:
+
+<div align="center">
+    <img src="https://user-images.githubusercontent.com/50691816/130604304-292e2de4-5dc3-4613-a355-ff6163f9390f.png" width="300"/>
+</div>
+
+第二个风格向量对应的图像:
+
+<div align="center">
+    <img src="https://user-images.githubusercontent.com/50691816/130604334-3550d429-742a-4b12-a445-e54c867dbd24.png" width="256"/>
+</div>
+
+不同权重的混合结果:
+<div align="center">
+    <img src="https://user-images.githubusercontent.com/50691816/130603897-05f76968-bfdd-4bca-a00c-417a6e1d70af.png" height="256"/>
 </div>
 
 # 参考文献

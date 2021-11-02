@@ -19,6 +19,7 @@ import paddle.nn as nn
 from paddle.vision.ops import DeformConv2D
 
 from ...modules.init import kaiming_normal_, constant_, constant_init
+
 from .builder import GENERATORS
 
 
@@ -376,8 +377,7 @@ class DCNPack(nn.Layer):
                                 stride=stride,
                                 padding=padding,
                                 dilation=dilation,
-                                deformable_groups=self.deformable_groups,
-                                groups=1)
+                                deformable_groups=self.deformable_groups)
         self.sigmoid = nn.Sigmoid()
         # init conv offset
         constant_init(self.conv_offset_mask, 0., 0.)

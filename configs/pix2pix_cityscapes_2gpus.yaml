@@ -58,7 +58,7 @@ dataset:
             keys: [image, image]
   test:
     name: PairedDataset
-    dataroot: data/cityscapes/test
+    dataroot: data/cityscapes/val
     num_workers: 4
     batch_size: 1
     preprocess:
@@ -109,11 +109,9 @@ snapshot_config:
   interval: 5
 
 validate:
-  interval: 500
+  interval: 29750
   save_img: false
   metrics:
     fid: # metric name, can be arbitrary
         name: FID
         batch_size: 8
-
-

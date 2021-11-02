@@ -30,6 +30,9 @@ from .generator_starganv2 import StarGANv2Generator, StarGANv2Style, StarGANv2Ma
 from .edvr import EDVRNet
 from .generator_firstorder import FirstOrderGenerator
 from .generater_lapstyle import DecoderNet, Encoder, RevisionNet
-from .basicvsr import BasicVSRNet, BasicVSRPlusPlus
+from .basicvsr import BasicVSRNet
 from .mpr import MPRNet
+from .iconvsr import IconVSR
 from .gpen import GPEN
+from .pan import PAN
+from .basicvsr_plus_plus import BasicVSRPlusPlus

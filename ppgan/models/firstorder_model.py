@@ -29,6 +29,7 @@ import numpy as np
 from paddle.utils import try_import
 import paddle.nn.functional as F
 import cv2
+import os
 
 
 def init_weight(net):
@@ -86,7 +87,7 @@ class FirstOrderModel(BaseModel):
             "gen_lr": self.gen_lr,
             "dis_lr": self.dis_lr
         }
-    
+
     def setup_net_parallel(self):
         if isinstance(self.nets['Gen_Full'], paddle.DataParallel):
             self.nets['kp_detector'] = self.nets[
@@ -153,7 +154,6 @@ class FirstOrderModel(BaseModel):
         self.optimizers['optimizer_KP'].clear_grad()
         self.optimizers['optimizer_Gen'].clear_grad()
         self.backward_G()
-        outs = {}
         self.optimizers['optimizer_KP'].step()
         self.optimizers['optimizer_Gen'].step()
 
@@ -185,6 +185,202 @@ class FirstOrderModel(BaseModel):
         print("Reconstruction loss: %s" % np.mean(loss_list))
         self.nets['kp_detector'].train()
         self.nets['generator'].train()
+
+    class InferGenerator(paddle.nn.Layer):
+        def set_generator(self, generator):
+            self.generator = generator
+
+        def forward(self, source, kp_source, kp_driving, kp_driving_initial):
+            kp_norm = {k: v for k, v in kp_driving.items()}
+
+            kp_value_diff = (kp_driving['value'] - kp_driving_initial['value'])
+            kp_norm['value'] = kp_value_diff + kp_source['value']
+
+            jacobian_diff = paddle.matmul(
+                kp_driving['jacobian'],
+                paddle.inverse(kp_driving_initial['jacobian']))
+            kp_norm['jacobian'] = paddle.matmul(jacobian_diff,
+                                                kp_source['jacobian'])
+            out = self.generator(source,
+                                 kp_source=kp_source,
+                                 kp_driving=kp_norm)
+            return out['prediction']
+
+    def export_model(self, export_model=None, output_dir=None, inputs_size=[]):
+
+        source = paddle.rand(shape=inputs_size[0], dtype='float32')
+        driving = paddle.rand(shape=inputs_size[1], dtype='float32')
+        value = paddle.rand(shape=inputs_size[2], dtype='float32')
+        j = paddle.rand(shape=inputs_size[3], dtype='float32')
+        value2 = paddle.rand(shape=inputs_size[2], dtype='float32')
+        j2 = paddle.rand(shape=inputs_size[3], dtype='float32')
+        driving1 = {'value': value, 'jacobian': j}
+        driving2 = {'value': value2, 'jacobian': j2}
+        driving3 = {'value': value, 'jacobian': j}
+
+        outpath = os.path.join(output_dir, "fom_dy2st")
+        if not os.path.exists(outpath):
+            os.makedirs(outpath)
+        paddle.jit.save(self.nets['Gen_Full'].kp_extractor,
+                        os.path.join(outpath, "kp_detector"),
+                        input_spec=[source])
+        infer_generator = self.InferGenerator()
+        infer_generator.set_generator(self.nets['Gen_Full'].generator)
+        paddle.jit.save(infer_generator,
+                        os.path.join(outpath, "generator"),
+                        input_spec=[source, driving1, driving2, driving3])
+
+
+@MODELS.register()
+class FirstOrderModelMobile(FirstOrderModel):
+    """ This class implements the FirstOrderMotionMobile model, modified according to the FirstOrderMotion paper:
+    https://proceedings.neurips.cc/paper/2019/file/31c0b36aef265d9221af80872ceb62f9-Paper.pdf.
+    """
+    def __init__(self,
+                 common_params,
+                 train_params,
+                 generator_ori,
+                 generator,
+                 mode,
+                 kp_weight_path=None,
+                 gen_weight_path=None,
+                 discriminator=None):
+        super(FirstOrderModel, self).__init__()
+        modes = ["kp_detector", "generator", "both"]
+        assert mode in modes
+        # def local var
+        self.input_data = None
+        self.generated = None
+        self.losses_generator = None
+        self.train_params = train_params
+
+        # fix origin fom model for distill
+        generator_ori_cfg = generator_ori
+        generator_ori_cfg.update({'common_params': common_params})
+        generator_ori_cfg.update({'train_params': train_params})
+        generator_ori_cfg.update(
+            {'dis_scales': discriminator.discriminator_cfg.scales})
+        self.Gen_Full_ori = build_generator(generator_ori_cfg)
+        discriminator_cfg = discriminator
+        discriminator_cfg.update({'common_params': common_params})
+        discriminator_cfg.update({'train_params': train_params})
+        self.nets['Dis'] = build_discriminator(discriminator_cfg)
+
+        # define networks
+        generator_cfg = generator
+        generator_cfg.update({'common_params': common_params})
+        generator_cfg.update({'train_params': train_params})
+        generator_cfg.update(
+            {'dis_scales': discriminator.discriminator_cfg.scales})
+        if (mode == "kp_detector"):
+            print("just train kp_detector, fix generator")
+            generator_cfg.update(
+                {'generator_cfg': generator_ori_cfg['generator_cfg']})
+        elif mode == "generator":
+            print("just train generator, fix kp_detector")
+            generator_cfg.update(
+                {'kp_detector_cfg': generator_ori_cfg['kp_detector_cfg']})
+        elif mode == "both":
+            print("train both kp_detector and generator")
+        self.mode = mode
+        self.nets['Gen_Full'] = build_generator(generator_cfg)
+        self.kp_weight_path = kp_weight_path
+        self.gen_weight_path = gen_weight_path
+        self.visualizer = Visualizer()
+
+    def setup_net_parallel(self):
+        if isinstance(self.nets['Gen_Full'], paddle.DataParallel):
+            self.nets['kp_detector'] = self.nets[
+                'Gen_Full']._layers.kp_extractor
+            self.nets['generator'] = self.nets['Gen_Full']._layers.generator
+            self.nets['generator'] = self.nets['Gen_Full']._layers.generator
+            self.nets['discriminator'] = self.nets['Dis']._layers.discriminator
+        else:
+            self.nets['kp_detector'] = self.nets['Gen_Full'].kp_extractor
+            self.nets['generator'] = self.nets['Gen_Full'].generator
+            self.nets['discriminator'] = self.nets['Dis'].discriminator
+        self.kp_detector_ori = self.Gen_Full_ori.kp_extractor
+
+        from ppgan.utils.download import get_path_from_url
+        vox_cpk_weight_url = 'https://paddlegan.bj.bcebos.com/applications/first_order_model/vox-cpk.pdparams'
+        weight_path = get_path_from_url(vox_cpk_weight_url)
+        checkpoint = paddle.load(weight_path)
+        if (self.mode == "kp_detector"):
+            self.nets['generator'].set_state_dict(checkpoint['generator'])
+            for param in self.nets['generator'].parameters():
+                param.stop_gradient = True
+        elif self.mode == "generator":
+            self.nets['kp_detector'].set_state_dict(checkpoint['kp_detector'])
+            for param in self.nets['kp_detector'].parameters():
+                param.stop_gradient = True
+
+        self.kp_detector_ori.set_state_dict(checkpoint['kp_detector'])
+        for param in self.kp_detector_ori.parameters():
+            param.stop_gradient = True
+
+    def setup_optimizers(self, lr_cfg, optimizer):
+        self.setup_net_parallel()
+        # init params
+        init_weight(self.nets['discriminator'])
+        self.optimizers['optimizer_Dis'] = build_optimizer(
+            optimizer,
+            self.dis_lr,
+            parameters=self.nets['discriminator'].parameters())
+
+        if (self.mode == "kp_detector"):
+            init_weight(self.nets['kp_detector'])
+            self.optimizers['optimizer_KP'] = build_optimizer(
+                optimizer,
+                self.kp_lr,
+                parameters=self.nets['kp_detector'].parameters())
+        elif self.mode == "generator":
+            init_weight(self.nets['generator'])
+            self.optimizers['optimizer_Gen'] = build_optimizer(
+                optimizer,
+                self.gen_lr,
+                parameters=self.nets['generator'].parameters())
+        elif self.mode == "both":
+            super(FirstOrderModelMobile,
+                  self).setup_optimizers(lr_cfg, optimizer)
+            checkpoint = paddle.load(self.kp_weight_path)
+            self.nets['kp_detector'].set_state_dict(checkpoint['kp_detector'])
+            checkpoint = paddle.load(self.gen_weight_path)
+            self.nets['generator'].set_state_dict(checkpoint['generator'])
+
+        # define loss functions
+        self.losses = {}
+
+    def forward(self):
+        """Run forward pass; called by both functions <optimize_parameters> and <test>."""
+        if (self.mode == "kp_detector_distill"):
+            self.losses_generator, self.generated = \
+                self.nets['Gen_Full'](self.input_data.copy(), self.nets['discriminator'], self.kp_detector_ori)
+        else:
+            self.losses_generator, self.generated = \
+                self.nets['Gen_Full'](self.input_data.copy(), self.nets['discriminator'])
+
+    def train_iter(self, optimizers=None):
+        if (self.mode == "both"):
+            super(FirstOrderModelMobile, self).train_iter(optimizers=optimizers)
+            return
+        self.forward()
+        # update G
+        self.set_requires_grad(self.nets['discriminator'], False)
+        if (self.mode == "kp_detector"):
+            self.optimizers['optimizer_KP'].clear_grad()
+            self.backward_G()
+            self.optimizers['optimizer_KP'].step()
+        if (self.mode == "generator"):
+            self.optimizers['optimizer_Gen'].clear_grad()
+            self.backward_G()
+            self.optimizers['optimizer_Gen'].step()
+
+        # update D
+        if self.train_params['loss_weights']['generator_gan'] != 0:
+            self.set_requires_grad(self.nets['discriminator'], True)
+            self.optimizers['optimizer_Dis'].clear_grad()
+            self.backward_D()
+            self.optimizers['optimizer_Dis'].step()
 
 
 class Visualizer:

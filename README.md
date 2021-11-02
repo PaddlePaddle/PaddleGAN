@@ -13,25 +13,89 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 [![License](https://img.shields.io/badge/license-Apache%202-red.svg)](LICENSE)![python version](https://img.shields.io/badge/python-3.6+-orange.svg)
 
+## 🎪 Hot Activities
 
-## Recent Contributors
-[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/0)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/0)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/1)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/1)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/2)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/2)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/3)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/3)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/4)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/4)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/5)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/5)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/6)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/6)[![](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/images/7)](https://sourcerer.io/fame/LaraStuStu/paddlepaddle/paddlegan/links/7)
+- 🔥 **2021.7.9-2021.9** 🔥
 
-## Quick Start
+  **💙 AI Creation Camp 💙**
 
-* Please refer to the [installation document](./docs/en_US/install.md) to make sure you have installed PaddlePaddle and PaddleGAN correctly.
+  **You can implement any abilities in PaddleGAN with Wechaty to create your own chat robot 🤖 !**
 
-* Get started through ppgan.app interface:
+  **A plenty of gifts 🎁 waiting for you!**
 
-   ```python
-   from ppgan.apps import RealSRPredictor
-   sr = RealSRPredictor()
-   sr.run("docs/imgs/monarch.png")
-   ```
-* More applications, please refer to [ppgan.apps apis](./docs/en_US/apis/apps.md)
-* More tutorials:
-  - [Data preparation](./docs/en_US/data_prepare.md)
-  - [Training/Evaluating/Testing basic usage](./docs/en_US/get_started.md)
+  **💰First Prize: 30,000RMB**
+
+  **🎮 Second Prize: PS5**
+
+  **🕶 Third Prize: VR Glass**
+
+  **🏵 Most Popular Prize: 3D Printer**
+
+  **Still hezitating? Click here and sign up!**  **https://aistudio.baidu.com/aistudio/competition/detail/98**
+
+- 2021.4.15~4.22
+
+  GAN 7 Days Course Camp: Baidu Senior Research Developers help you learn the basic and advanced GAN knowledge in 7 days!
+
+  **Courses videos and related materials: https://aistudio.baidu.com/aistudio/course/introduce/16651**
+
+## 🚀 Recent Updates
+
+- 👩‍🚀**A Space Odyssey ：[LapStyle](./docs/zh_CN/tutorials/lap_style.md) image translation take you travel around the universe**👨‍🚀
+
+  - **[Online Toturials](https://aistudio.baidu.com/aistudio/projectdetail/2343740?contributionType=1)**
+
+    <div align='center'>
+      <img src='https://user-images.githubusercontent.com/48054808/133392621-9a552c46-841b-4fe4-bb24-7b0cbf86616c.gif' width='250'/>
+      <img src='https://user-images.githubusercontent.com/48054808/133392630-c5329c4c-bc10-406e-a853-812a2b1f0fa6.gif' width='250'/>
+      <img src='https://user-images.githubusercontent.com/48054808/133392652-f4811b1e-0676-4402-808b-a4c96c611368.gif' width='250'/>
+    </div>
+
+- 🧙‍♂️**Latest Creative Project：create magic/dynamic profile for your student ID in Hogwarts** 🧙‍♀️
+
+  - **[Online Toturials](https://aistudio.baidu.com/aistudio/projectdetail/2288888?channelType=0&channel=0)**
+
+    <div align='center'>
+      <img src='https://ai-studio-static-online.cdn.bcebos.com/da1c51844ac048aa8d4fa3151be95215eee75d8bb488409d92ec17285b227c2c' width='250'/>
+    </div>
+  
+- **💞Add Face Morphing function💞: you can perfectly merge any two faces and make the new face get any facial expressions!**
+
+  - Tutorials: https://aistudio.baidu.com/aistudio/projectdetail/2254031
+
+    <div align='center'>
+      <img src='https://user-images.githubusercontent.com/48054808/128299870-66a73bb3-57a4-4985-aadc-8ddeab048145.gif' width='300'/>
+    </div>
+
+- **Publish a new version of First Oder Motion model by having two impressive features:**
+  - High resolution 512x512 
+  - Face Enhancement
+  - Tutorials: https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/tutorials/motion_driving.md 
+  
+- **New image translation ability--transfer photo into oil painting style:**
+
+  - Complete tutorials for deployment: https://github.com/wzmsltw/PaintTransformer
+
+    <div align='center'>
+      <img src='https://user-images.githubusercontent.com/48054808/129904830-8b87e310-ea51-4aff-b29b-88920ee82447.png' width='700'/>
+    </div>
+
+## Document Tutorial
+
+#### **Installation**
+
+* Environment dependence: 
+   - PaddlePaddle >= 2.1.0
+   - Python >= 3.6
+   - CUDA >= 10.1
+* [Full installation tutorial](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/install.md)
+
+#### **Starter Tutorial**
+
+- [Quick start](./docs/en_US/get_started.md)
+- [Data Preparation](./docs/en_US/data_prepare.md)
+- [Instruction of APIs](./docs/en_US/apis/apps.md)
+- [Instruction of Config Files](./docs/en_US/config_doc.md)
 
 ## Model Tutorial
 
@@ -67,6 +131,11 @@ You can run those projects in the [AI Studio](https://aistudio.baidu.com/aistudi
 
 ## Examples
 
+### Face Morphing 
+
+<div align='center'>
+  <img src='https://user-images.githubusercontent.com/48054808/129020371-75de20d1-705b-44b1-8254-e09710124244.gif'width='700' />
+</div>
 
 ### Image Translation
 

@@ -17,6 +17,7 @@ import paddle.nn as nn
 
 from .builder import MODELS
 from .sr_model import BaseSRModel
+from .generators.iconvsr import EDVRFeatureExtractor
 from .generators.basicvsr import ResidualBlockNoBN, PixelShufflePack, SPyNet
 from ..modules.init import reset_parameters
 from ..utils.visual import tensor2img
@@ -58,7 +59,7 @@ class BasicVSRModel(BaseSRModel):
                 print('Train BasicVSR with fixed spynet for', self.fix_iter,
                       'iters.')
                 for name, param in self.nets['generator'].named_parameters():
-                    if 'spynet' in name:
+                    if 'spynet' in name or 'edvr' in name:
                         param.trainable = False
             elif self.current_iter >= self.fix_iter + 1 and self.flag:
                 print('Train all the parameters.')
@@ -83,16 +84,20 @@ class BasicVSRModel(BaseSRModel):
         self.current_iter += 1
 
     def test_iter(self, metrics=None):
+        self.gt = self.gt.cpu()
         self.nets['generator'].eval()
         with paddle.no_grad():
-            self.output = self.nets['generator'](self.lq)
-            self.visual_items['output'] = self.output[:, 0, :, :, :]
+            output = self.nets['generator'](self.lq)
+            self.visual_items['output'] = output[:, 0, :, :, :].cpu()
         self.nets['generator'].train()
 
         out_img = []
         gt_img = []
-        for out_tensor, gt_tensor in zip(self.output[0], self.gt[0]):
-            # print(out_tensor.shape, gt_tensor.shape)
+
+        _, t, _, _, _ = self.gt.shape
+        for i in range(t):
+            out_tensor = output[0, i]
+            gt_tensor = self.gt[0, i]
             out_img.append(tensor2img(out_tensor, (0., 1.)))
             gt_img.append(tensor2img(gt_tensor, (0., 1.)))
 
@@ -109,5 +114,6 @@ def init_basicvsr_weight(net):
             reset_parameters(m)
             continue
 
-        if (not isinstance(m, (ResidualBlockNoBN, PixelShufflePack, SPyNet))):
+        if (not isinstance(m, (ResidualBlockNoBN, PixelShufflePack, SPyNet,
+                               EDVRFeatureExtractor))):
             init_basicvsr_weight(m)

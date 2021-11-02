@@ -68,7 +68,7 @@ class FirstOrderGenerator(nn.Layer):
         if sum(self.loss_weights['perceptual']) != 0:
             self.vgg = VGG19()
 
-    def forward(self, x, discriminator):
+    def forward(self, x, discriminator, kp_extractor_ori=None):
         kp_source = self.kp_extractor(x['source'])
         kp_driving = self.kp_extractor(x['driving'])
         generated = self.generator(x['source'],
@@ -151,6 +151,19 @@ class FirstOrderGenerator(nn.Layer):
                 value = paddle.abs(eye - value).mean()
                 loss_values['equivariance_jacobian'] = self.loss_weights[
                     'equivariance_jacobian'] * value
+
+        if kp_extractor_ori is not None:
+            recon_loss = paddle.nn.loss.L1Loss()
+
+            kp_distillation_loss_source = recon_loss(
+                kp_extractor_ori(x['source'])['value'],
+                self.kp_extractor(x['source'])['value'])
+            kp_distillation_loss_driving = recon_loss(
+                kp_extractor_ori(x['driving'])['value'],
+                self.kp_extractor(x['driving'])['value'])
+            loss_values[
+                "kp_distillation_loss"] = kp_distillation_loss_source + kp_distillation_loss_driving
+
         return loss_values, generated
 
 
