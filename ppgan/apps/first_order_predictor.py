@@ -281,27 +281,24 @@ class FirstOrderPredictor(BasePredictor):
         start = time.time()
         for i in trange(len(driving_video)):
             frame = source_image.copy()
+            patch = np.zeros(frame.shape).astype('uint8')
+            mask = np.zeros(frame.shape[:2]).astype('uint8')
             for j, result  in enumerate(results):
                 x1, y1, x2, y2, _ = result['rec']
 
-                h = y2 - y1
-                w = x2 - x1
                 out = result['predict'][i]
-                out = cv2.resize(out.astype(np.uint8), (w, h))
+                out = cv2.resize(out.astype(np.uint8), (x2-x1, y2-y1))
         
                 if len(results) == 1:
                     frame[y1:y2, x1:x2] = out
                     break
                 else:
-                    patch = np.zeros(frame.shape).astype('uint8')
-                    patch[y1:y2, x1:x2] = out
-                    mask = np.zeros(frame.shape[:2]).astype('uint8')
+                    #patch = np.zeros(frame.shape).astype('uint8')
+                    patch[y1:y2, x1:x2] = out * np.dstack([(box_masks[j] > 0)]*3)
+                    #mask = np.zeros(frame.shape[:2]).astype('uint8')
                     mask[y1:y2, x1:x2] = box_masks[j]
-                    frame = cv2.copyTo(patch, mask, frame)
-
-                # for result in results:
-                #     x1, y1, x2, y2 = result["new_rec"]
-                #     cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), thickness=2)
+            frame = cv2.copyTo(patch, mask, frame)
+          
 
             out_frame.append(frame)
         print("video stitching", time.time() - start)
@@ -426,14 +423,13 @@ class FirstOrderPredictor(BasePredictor):
             frame = source_image.copy()         
             for i in range(len(results)):
                 x1, y1, x2, y2, _ = results[i]['rec']
-                polygon_mask = polygon2mask(coords[i], frame.shape[:2])
-                polygon_box = cv2.bitwise_and(frame, frame, mask = polygon_mask)
-                polygon_box = cv2.resize(polygon_box[y1:y2, x1:x2], (512, 512))
-                box_mask = face_parcer.parse(polygon_box.astype(np.float32))
+                polygon_mask = polygon2mask(coords[i], frame.shape[:2])[y1:y2, x1:x2]
+                frame_box = cv2.resize(frame[y1:y2, x1:x2], (512, 512)) 
+                box_mask = face_parcer.parse(frame_box.astype(np.float32))
                 box_mask = np.array(box_mask).astype('uint8')        
                 box_mask = cv2.resize(box_mask,  (x2 - x1, y2 - y1))
                 box_mask[box_mask != 0] = 1
-                box_masks.append(box_mask)
+                box_masks.append(cv2.bitwise_and(box_mask, polygon_mask))
         return box_masks
 
     def preprocessing_video(self, raw_driving_video):
@@ -469,13 +465,3 @@ class FirstOrderPredictor(BasePredictor):
             raw_driving_video[i] = align_face(raw_driving_video[i], eyes[0], eyes[1])
         self.preprocessing_video(raw_driving_video)
             
-
-    def IOU(self, ax1, ay1, ax2, ay2, sa, bx1, by1, bx2, by2, sb):
-        x1, y1 = max(ax1, bx1), max(ay1, by1)
-        x2, y2 = min(ax2, bx2), min(ay2, by2)
-        w = x2 - x1
-        h = y2 - y1
-        if w < 0 or h < 0:
-            return 0.0
-        else:
-            return 1.0 * w * h / (sa + sb - w * h)
