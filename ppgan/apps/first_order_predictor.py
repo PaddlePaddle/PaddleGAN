@@ -20,6 +20,7 @@ import math
 import yaml
 import pickle
 import imageio
+import time
 import numpy as np
 from tqdm import tqdm, trange
 from scipy.spatial import ConvexHull
@@ -33,6 +34,7 @@ from ppgan.models.generators.occlusion_aware import OcclusionAwareGenerator
 from ppgan.faceutils import face_detection
 from ppgan.faceutils.mask.face_parser import FaceParser
 from ppgan.faceutils.face_detection.detection_utils import union_results, polygon2mask
+from ppgan.faceutils.face_alignment.align_face import get_eyes, align_face, crop
 import face_alignment
 # sys.path.insert(0, '/home/user/paddle/PaddleGAN/GFPGAN/')
 from gfpgan import GFPGANer
@@ -61,7 +63,8 @@ class FirstOrderPredictor(BasePredictor):
                  gfpgan_model_path=None, 
                  batch_size=1,
                  mobile_net=False, 
-                 preprocessing=True):
+                 preprocessing=True,
+                 face_align=False):
         if config is not None and isinstance(config, str):
             with open(config) as f:
                 self.cfg = yaml.load(f, Loader=yaml.SafeLoader)
@@ -122,8 +125,10 @@ class FirstOrderPredictor(BasePredictor):
         self.best_frame = best_frame
         self.ratio = ratio
         self.face_detector = face_detector
+        start = time.time()
         self.generator, self.kp_detector = self.load_checkpoints(
             self.cfg, self.weight_path)
+        print("model loading" , time.time() - start)
         self.multi_person = multi_person
         self.face_enhancement = face_enhancement
         self.batch_size = batch_size
@@ -150,6 +155,7 @@ class FirstOrderPredictor(BasePredictor):
             #                              bg_upsampler = None)
         self.detection_func = union_results
         self.preprocessing = preprocessing
+        self.face_alignment = face_align
      
 
     def read_img(self, path):
@@ -242,14 +248,18 @@ class FirstOrderPredictor(BasePredictor):
     
         driving_video = []
         if self.preprocessing:
-            self.preprocessing_video(raw_driving_video)
-     
+            if self.face_alignment:
+                self.face_alignment_preprocessing(raw_driving_video)
+            else:
+                self.preprocessing_video(raw_driving_video)
+
         driving_video = [
             cv2.resize(frame, (self.image_size, self.image_size)) / 255.0 for frame in raw_driving_video
         ]
         results = []
-
+        start = time.time()
         bboxes, coords = self.extract_bbox(source_image.copy())
+        print("extract bboxes", time.time() - start)
         print(str(len(bboxes)) + " persons have been detected")
         areas = [x[4] for x in bboxes]
         indices = np.argsort(areas)
@@ -265,26 +275,25 @@ class FirstOrderPredictor(BasePredictor):
             if len(bboxes) == 1 or not self.multi_person:
                 break
         out_frame = []
-
+        start = time.time()
         box_masks = self.extract_masks(results, coords, source_image)
-
+        print("masks extraction: ", time.time()-start)
+        start = time.time()
         for i in trange(len(driving_video)):
             frame = source_image.copy()
-            for j  in range(len(results)):
-                x1, y1, x2, y2, _ = results[j]['rec']
+            for j, result  in enumerate(results):
+                x1, y1, x2, y2, _ = result['rec']
 
                 h = y2 - y1
                 w = x2 - x1
-                out = results[j]['predict'][i]
+                out = result['predict'][i]
                 out = cv2.resize(out.astype(np.uint8), (w, h))
         
                 if len(results) == 1:
                     frame[y1:y2, x1:x2] = out
                     break
                 else:
-                    #x1_, y1_, x2_, y2_ = result["new_rec"]
                     patch = np.zeros(frame.shape).astype('uint8')
-                    #patch[y1_:y2_, x1_:x2_] = out[y1_ - y1: y2_ -y1, x1_ -x1: x2_ - x1]
                     patch[y1:y2, x1:x2] = out
                     mask = np.zeros(frame.shape[:2]).astype('uint8')
                     mask[y1:y2, x1:x2] = box_masks[j]
@@ -295,8 +304,10 @@ class FirstOrderPredictor(BasePredictor):
                 #     cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), thickness=2)
 
             out_frame.append(frame)
+        print("video stitching", time.time() - start)
+        start = time.time()
         self.write_with_audio(audio, out_frame, fps)
-       
+        print("video writing", time.time() - start)
 
 
     def load_checkpoints(self, config, checkpoint_path):
@@ -397,9 +408,6 @@ class FirstOrderPredictor(BasePredictor):
                 frame_num = i
         return frame_num
 
-    def extract_source_bbox(self, sourc):
-        ...
-
     def extract_bbox(self, image):
         detector = face_detection.FaceAlignment(
             face_detection.LandmarksType._2D,
@@ -432,6 +440,7 @@ class FirstOrderPredictor(BasePredictor):
         detector = face_detection.FaceAlignment(face_detection.LandmarksType._2D,
             flip_input=False,
             face_detector=self.face_detector)
+     
         all_bboxes = []
         for frame in raw_driving_video:
             bboxes = detector.get_detections_for_image(np.array(frame))[0]
@@ -441,9 +450,24 @@ class FirstOrderPredictor(BasePredictor):
         bh = max(all_bboxes[:, 2])
         bw = max(all_bboxes[:, 3])
   
-        for det in all_bboxes:
-            det = [det[0] - bw * 0.8, det[1] - bh * 0.9, det[0] + bw * 0.8, det[1] + bh * 0.9]
-
+        for i  in trange(len(all_bboxes)):
+            all_bboxes[i] = [max(0, int(all_bboxes[i][0] - bw * 0.8)), 
+                            max(0, int(all_bboxes[i][1] - bh * 0.9)), 
+                            int(all_bboxes[i][0] + bw * 0.8), 
+                            int(all_bboxes[i][1] + bh * 0.9)]
+        for i in trange(len(all_bboxes)):
+            raw_driving_video[i] = raw_driving_video[i][all_bboxes[i][1]:all_bboxes[i][3], all_bboxes[i][0]:all_bboxes[i][2]]
+       
+          
+    def face_alignment_preprocessing(self, raw_driving_video):
+        self.preprocessing_video(raw_driving_video)
+        fa_predictor = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, 
+        flip_input=False, 
+        face_detector='sfd')
+        for i in trange(len(raw_driving_video)):
+            eyes = get_eyes(fa_predictor, raw_driving_video[i])
+            raw_driving_video[i] = align_face(raw_driving_video[i], eyes[0], eyes[1])
+        self.preprocessing_video(raw_driving_video)
             
 
     def IOU(self, ax1, ay1, ax2, ay2, sa, bx1, by1, bx2, by2, sb):

@@ -4,6 +4,7 @@ import cv2
 import shapely
 from shapely.geometry import Polygon, LineString
 import geopandas as gpd
+from functools import partial
 
 def IOU(sample_a, sample_b):
         ax1, ay1, ax2, ay2, area_a = sample_a
@@ -16,6 +17,18 @@ def IOU(sample_a, sample_b):
         iou = interArea / float(area_a + area_b - interArea)
 
         return iou
+def iou_thresholded(sample_a, sample_b, image_area=1):
+    ax1, ay1, ax2, ay2, area_a = sample_a
+    bx1, by1, bx2, by2, area_b = sample_b
+    xA = max(ax1, bx1)
+    yA = max(ay1, by1)
+    xB = min(ax2, bx2)
+    yB = min(ay2, by2)
+    interArea = max(0, xB - xA + 1) * max(0, yB - yA + 1)
+    unionArea = float(area_a + area_b - interArea)
+    iou = interArea / unionArea
+
+    return iou > max(0.2, unionArea/image_area)
 
 def union_area(sample_a, sample_b):
     ax1, ay1, ax2, ay2, area_a = sample_a
@@ -51,11 +64,19 @@ def cluster_ious(bboxes, image_area):
                 clusters.append(cluster)
         return clusters
 
+def cluster_ious1(bboxes, image_area):
+        dist_matrix = pairwise_distances(bboxes, bboxes, metric=partial(iou_thresholded, image_area=image_area))
+        clusters = set()
+        indices = np.arange(len(dist_matrix[0]))
+        for row in dist_matrix:
+            clusters.add(tuple(indices[row == 1]))   
+        return clusters
+
 def union_clusters(bboxes, clusters):
         bboxes_ = np.array(bboxes)
         result_boxes = []
         for cluster in clusters:
-            cluster_samples = bboxes_[cluster]
+            cluster_samples = bboxes_[list(cluster)]
             union_sample = Union(cluster_samples)
             result_boxes.append(union_sample)
         return result_boxes 
@@ -68,19 +89,10 @@ def union_results(image, predictions):
     for rect in predictions:
         area = (rect[3] - rect[1]) * (rect[2] - rect[0])
         faces_boxes.append([*rect, area])
-    clusters = cluster_ious(faces_boxes, h * w)
+    clusters = cluster_ious1(faces_boxes, h * w)
     result_boxes = union_clusters(faces_boxes, clusters)
-    viz_image = image.copy()
-    for res in result_boxes:
-        cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
-    cv2.imwrite("./result_boxes.jpg", viz_image)
-    viz_image = image.copy()
     upscaled_detections = upscale_detections(result_boxes, (0, 0, w, h))
-    for res in upscaled_detections:
-        cv2.rectangle(viz_image, (res[0], res[1]), (res[2], res[3]), (255, 255, 0), 3)
-    cv2.imwrite("./upscaled_boxes.jpg", viz_image)
     bounds, coords = escape_intersections(upscaled_detections, w, h)
-
     return bounds, coords
 
 
