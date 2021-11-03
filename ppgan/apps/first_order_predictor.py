@@ -24,8 +24,12 @@ import time
 import numpy as np
 from tqdm import tqdm, trange
 from scipy.spatial import ConvexHull
+
 import sys
-sys.path.insert(0, '/home/anastasia/paddleGan/PaddleGAN/')
+cur_path = os.path.abspath(os.path.dirname(__file__))
+root_path = os.path.split(cur_path)[0]
+sys.path.insert(0, os.path.dirname(root_path))
+
 import paddle
 from ppgan.utils.download import get_path_from_url
 from ppgan.utils.animate import normalize_kp
@@ -279,10 +283,13 @@ class FirstOrderPredictor(BasePredictor):
         box_masks = self.extract_masks(results, coords, source_image)
         print("masks extraction: ", time.time()-start)
         start = time.time()
+
+        patch = np.zeros(source_image.shape).astype('uint8')
+        mask = np.zeros(source_image.shape[:2]).astype('uint8')
         for i in trange(len(driving_video)):
             frame = source_image.copy()
-            patch = np.zeros(frame.shape).astype('uint8')
-            mask = np.zeros(frame.shape[:2]).astype('uint8')
+            # patch = np.zeros(frame.shape).astype('uint8')
+            # mask = np.zeros(frame.shape[:2]).astype('uint8')
             for j, result  in enumerate(results):
                 x1, y1, x2, y2, _ = result['rec']
 
@@ -298,9 +305,10 @@ class FirstOrderPredictor(BasePredictor):
                     #mask = np.zeros(frame.shape[:2]).astype('uint8')
                     mask[y1:y2, x1:x2] = box_masks[j]
             frame = cv2.copyTo(patch, mask, frame)
-          
-
             out_frame.append(frame)
+            patch[:, :, :] = 0
+            mask[:, :] = 0          
+
         print("video stitching", time.time() - start)
         start = time.time()
         self.write_with_audio(audio, out_frame, fps)
