@@ -87,7 +87,6 @@ class FaceAlignment:
 
     def get_detections_for_image(self, images):
         images = images[..., ::-1]
-        print(images.shape)
         detected_faces = self.face_detector.detect_from_image(images.copy())
         results = []
 

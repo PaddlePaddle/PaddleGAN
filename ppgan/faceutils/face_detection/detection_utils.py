@@ -108,6 +108,7 @@ def escape_intersections(detections, w, h):
     gdf = gpd.GeoDataFrame({'geometry': [box2polygon(b) for b in detections]})
     res_df = slice_all(gdf)
     coords = polygons2coords(res_df['geometry'])
+    # print(cv2.fitEllipse(np.array([coords[0]], dtype=np.int32)))
     bounds = [coords2bounds(coord, w, h) for coord in coords]
     return bounds, coords
 
@@ -176,25 +177,3 @@ def polygon2mask(polygon, shape):
     cv2.fillPoly(mask, np.array([polygon], dtype=np.int32), 255)
     return mask.astype('uint8')
 
-
-def largest_results(image, predictions):
-    h, w,  = image.shape
-    person_num = len(predictions)
-    if person_num == 0:
-        return np.array([])
-    ratios = [1.0, 0.8, 1.0, 0.8]
-    results = upscale_detections(predictions, ratios, (h, w))
-    sorted(results, key=lambda area: area[4], reverse=True)
-    results_box = [results[0]]
-    for i in range(1, person_num):
-        num = len(results_box)
-        add_person = True
-        for j in range(num):
-            pre_person = results_box[j]
-            iou = IOU(pre_person, results[i])
-            if iou > 0.1:
-                add_person = False
-                break
-        if add_person:
-            results_box.append(results[i]) 
-    return results_box
