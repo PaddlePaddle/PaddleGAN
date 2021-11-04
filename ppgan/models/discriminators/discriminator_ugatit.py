@@ -1,3 +1,5 @@
+# code was based on https://github.com/znxlwm/UGATIT-pytorch
+
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F

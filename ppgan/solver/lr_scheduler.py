@@ -45,6 +45,7 @@ class LinearDecay(LambdaDecay):
         super().__init__(learning_rate, lambda_rule)
 
 
+# code was based on mmcv
 def get_position_from_periods(iteration, cumulative_period):
     """Get the position from a period list.
 
@@ -66,6 +67,7 @@ def get_position_from_periods(iteration, cumulative_period):
             return i
 
 
+# code was based on mmcv
 @LRSCHEDULERS.register()
 class CosineAnnealingRestartLR(LRScheduler):
     """ Cosine annealing with restarts learning rate scheme.
