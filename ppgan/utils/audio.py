@@ -1,3 +1,7 @@
+# code was heavily based on https://github.com/Rudrabha/Wav2Lip
+# Users should be careful about adopting these functions in any commercial matters.
+# https://github.com/Rudrabha/Wav2Lip#license-and-citation
+
 import numpy as np
 from scipy import signal
 from scipy.io import wavfile
