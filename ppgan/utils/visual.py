@@ -45,18 +45,23 @@ def make_grid(tensor, nrow=8, normalize=False, range=None, scale_each=False):
     if isinstance(tensor, list):
         tensor = paddle.stack(tensor, 0)
 
-    if tensor.dim() == 2:  # single image H x W
+    # single image H x W
+    if tensor.dim() == 2:
         tensor = tensor.unsqueeze(0)
-    if tensor.dim() == 3:  # single image
-        if tensor.shape[0] == 1:  # if single-channel, convert to 3-channel
+    # single image
+    if tensor.dim() == 3:
+        # if single-channel, convert to 3-channel
+        if tensor.shape[0] == 1:
             tensor = paddle.concat([tensor, tensor, tensor], 0)
         tensor = tensor.unsqueeze(0)
 
-    if tensor.dim() == 4 and tensor.shape[1] == 1:  # single-channel images
+    # single-channel images
+    if tensor.dim() == 4 and tensor.shape[1] == 1:
         tensor = paddle.concat([tensor, tensor, tensor], 1)
 
     if normalize is True:
-        tensor = tensor.astype(tensor.dtype)  # avoid modifying tensor in-place
+        # avoid modifying tensor in-place
+        tensor = tensor.astype(tensor.dtype)
         if range is not None:
             assert isinstance(range, tuple), \
                 "range has to be a tuple (min, max) if specified. min and max are numbers"
@@ -72,7 +77,8 @@ def make_grid(tensor, nrow=8, normalize=False, range=None, scale_each=False):
                 norm_ip(t, float(t.min()), float(t.max()))
 
         if scale_each is True:
-            for t in tensor:  # loop over mini-batch dimension
+            # loop over mini-batch dimension
+            for t in tensor:
                 norm_range(t, range)
         else:
             norm_range(tensor, range)
@@ -103,27 +109,31 @@ def tensor2img(input_image, min_max=(-1., 1.), image_num=1, imtype=np.uint8):
     """"Converts a Tensor array into a numpy image array.
 
     Parameters:
-        input_image (tensor) --  the input image tensor array
-        image_num (int)      --  the convert iamge numbers
-        imtype (type)        --  the desired type of the converted numpy array
+        input_image (tensor): the input image tensor array
+        image_num (int): the convert iamge numbers
+        imtype (type): the desired type of the converted numpy array
     """
     def processing(img, transpose=True):
         """"processing one numpy image.
 
         Parameters:
-            im (tensor) --  the input image numpy array
+            im (tensor): the input image numpy array
         """
-        if img.shape[0] == 1:  # grayscale to RGB
+        # grayscale to RGB
+        if img.shape[0] == 1:
             img = np.tile(img, (3, 1, 1))
         img = img.clip(min_max[0], min_max[1])
         img = (img - min_max[0]) / (min_max[1] - min_max[0])
         if imtype == np.uint8:
-            img = img * 255.0  # scaling
-        img = np.transpose(img, (1, 2, 0)) if transpose else img  # tranpose
+            # scaling
+            img = img * 255.0
+        # tranpose
+        img = np.transpose(img, (1, 2, 0)) if transpose else img
         return img
 
     if not isinstance(input_image, np.ndarray):
-        image_numpy = input_image.numpy()  # convert it into a numpy array
+        # convert it into a numpy array
+        image_numpy = input_image.numpy()
         ndim = image_numpy.ndim
         if ndim == 4:
             image_numpy = image_numpy[0:image_num]
@@ -144,7 +154,8 @@ def tensor2img(input_image, min_max=(-1., 1.), image_num=1, imtype=np.uint8):
             image_numpy = np.stack(
                 [processing(im, transpose=False) for im in image_numpy])
 
-    else:  # if it is a numpy array, do nothing
+    else:
+        # if it is a numpy array, do nothing
         image_numpy = input_image
     image_numpy = image_numpy.round()
     return image_numpy.astype(imtype)

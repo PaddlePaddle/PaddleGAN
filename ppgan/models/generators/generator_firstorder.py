@@ -13,6 +13,8 @@
 # limitations under the License.
 
 # code was heavily based on https://github.com/AliaksandrSiarohin/first-order-model
+# Users should be careful about adopting these functions in any commercial matters.
+# https://github.com/AliaksandrSiarohin/first-order-model/blob/master/LICENSE.md
 
 import numpy as np
 import paddle

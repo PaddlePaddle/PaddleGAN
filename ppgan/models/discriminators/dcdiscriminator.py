@@ -14,7 +14,7 @@
 
 # code was heavily based on https://github.com/aidotse/Team-Haste
 # MIT License
-# Copyright (c) 2020 Ankit Gupta
+# Copyright (c) 2020 AI Sweden
 
 import paddle
 import functools
