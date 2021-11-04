@@ -45,48 +45,26 @@ class LinearDecay(LambdaDecay):
         super().__init__(learning_rate, lambda_rule)
 
 
-# code was based on mmcv
-def get_position_from_periods(iteration, cumulative_period):
-    """Get the position from a period list.
-
-    It will return the index of the right-closest number in the period list.
-    For example, the cumulative_period = [100, 200, 300, 400],
-    if iteration == 50, return 0;
-    if iteration == 210, return 2;
-    if iteration == 300, return 2.
-
-    Args:
-        iteration (int): Current iteration.
-        cumulative_period (list[int]): Cumulative period list.
-
-    Returns:
-        int: The position of the right-closest number in the period list.
-    """
-    for i, period in enumerate(cumulative_period):
-        if iteration <= period:
-            return i
-
-
-# code was based on mmcv
 @LRSCHEDULERS.register()
 class CosineAnnealingRestartLR(LRScheduler):
     """ Cosine annealing with restarts learning rate scheme.
 
-    An example of config:
-    periods = [10, 10, 10, 10]
-    restart_weights = [1, 0.5, 0.5, 0.5]
-    eta_min=1e-7
+    An example config from configs/edvr_l_blur_wo_tsa.yaml:
+    learning_rate: !!float 4e-4
+    periods: [150000, 150000, 150000, 150000]
+    restart_weights: [1, 1, 1, 1]
+    eta_min: !!float 1e-7
 
-    It has four cycles, each has 10 iterations. At 10th, 20th, 30th, the
-    scheduler will restart with the weights in restart_weights.
+    It has four cycles, each has 150000 iterations. At 150000th, 300000th,
+    450000th, the scheduler will restart with the weights in restart_weights.
 
     Args:
-        learning_rate (float|paddle.nn.optimizer): PaddlePaddle optimizer.
+        learning_rate (float): Base learning rate.
         periods (list): Period for each cosine anneling cycle.
         restart_weights (list): Restart weights at each restart iteration.
             Default: [1].
-        eta_min (float): The mimimum lr. Default: 0.
-        last_epoch (int): Used in _LRScheduler. Default: -1.
+        eta_min (float): The mimimum learning rate of the cosine anneling cycle. Default: 0.
+        last_epoch (int): Used in paddle.nn._LRScheduler. Default: -1.
     """
     def __init__(self,
                  learning_rate,
@@ -106,10 +84,14 @@ class CosineAnnealingRestartLR(LRScheduler):
                                                        last_epoch)
 
     def get_lr(self):
-        idx = get_position_from_periods(self.last_epoch, self.cumulative_period)
-        current_weight = self.restart_weights[idx]
-        nearest_restart = 0 if idx == 0 else self.cumulative_period[idx - 1]
-        current_period = self.periods[idx]
+        for i, period in enumerate(self.cumulative_period):
+            if self.last_epoch <= period:
+                index = i
+                break
+
+        current_weight = self.restart_weights[index]
+        nearest_restart = 0 if index == 0 else self.cumulative_period[index - 1]
+        current_period = self.periods[index]
 
         lr = self.eta_min + current_weight * 0.5 * (
             self.base_lr - self.eta_min) * (1 + math.cos(math.pi * (
