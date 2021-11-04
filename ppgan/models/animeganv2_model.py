@@ -27,6 +27,8 @@ from ..utils.filesystem import load
 
 @MODELS.register()
 class AnimeGANV2Model(BaseModel):
+    """ This class implements the AnimeGANV2 model.
+    """
     def __init__(self,
                  generator,
                  discriminator=None,
@@ -40,8 +42,10 @@ class AnimeGANV2Model(BaseModel):
                  tv_weight=1.):
         """Initialize the AnimeGANV2 class.
 
-        Parameters:
-            opt (config dict)-- stores all the experiment flags; needs to be a subclass of Dict
+        Args:
+            generator (dict): config of generator.
+            discriminator (dict): config of discriminator.
+            gan_criterion (dict): config of gan criterion.
         """
         super(AnimeGANV2Model, self).__init__()
         self.g_adv_weight = g_adv_weight
@@ -54,7 +58,7 @@ class AnimeGANV2Model(BaseModel):
         self.nets['netG'] = build_generator(generator)
         init_weights(self.nets['netG'])
 
-        # define a discriminator; conditional GANs need to take both input and output images; Therefore, #channels for D is input_nc + output_nc
+        # define a discriminator
         if self.is_train:
             self.nets['netD'] = build_discriminator(discriminator)
             init_weights(self.nets['netD'])
@@ -87,14 +91,14 @@ class AnimeGANV2Model(BaseModel):
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
-        self.fake = self.nets['netG'](self.real)  # G(A)
+        self.fake = self.nets['netG'](self.real)
 
         # put items to visual dict
         self.visual_items['real'] = self.real
         self.visual_items['fake'] = self.fake
 
     def test(self):
-        self.fake = self.nets['netG'](self.real)  # G(A)
+        self.fake = self.nets['netG'](self.real)
 
         # put items to visual dict
         self.visual_items['real'] = self.real
