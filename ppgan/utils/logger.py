@@ -61,10 +61,9 @@ def setup_logger(output=None, name="ppgan"):
         if local_rank > 0:
             filename = filename + ".rank{}".format(local_rank)
 
-        # PathManager.mkdirs(os.path.dirname(filename))
+        # make dir if path not exist
         os.makedirs(os.path.dirname(filename), exist_ok=True)
 
-        # fh = logging.StreamHandler(_cached_log_stream(filename)
         fh = logging.FileHandler(filename, mode='a')
         fh.setLevel(logging.DEBUG)
         fh.setFormatter(plain_formatter)

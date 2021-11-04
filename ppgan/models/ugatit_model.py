@@ -48,8 +48,18 @@ class UGATITModel(BaseModel):
                  cam_weight=1000.0):
         """Initialize the CycleGAN class.
 
-        Parameters:
-            opt (config)-- stores all the experiment flags; needs to be a subclass of Dict
+        Args:
+            generator (dict): config of generator.
+            discriminator_g (dict): config of discriminator_g.
+            discriminator_l (dict): config of discriminator_l.
+            l1_criterion (dict): config of l1_criterion.
+            mse_criterion (dict): config of mse_criterion.
+            bce_criterion (dict): config of bce_criterion.
+            direction (str): direction of dataset, default: 'a2b'.
+            adv_weight (float): adversial loss weight, default: 1.0.
+            cycle_weight (float): cycle loss weight, default: 10.0.
+            identity_weight (float): identity loss weight, default: 10.0.
+            cam_weight (float): cam loss weight, default: 1000.0.
         """
         super(UGATITModel, self).__init__()
         self.adv_weight = adv_weight
