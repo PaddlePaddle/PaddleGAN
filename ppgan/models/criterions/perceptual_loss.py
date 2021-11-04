@@ -1,3 +1,4 @@
+# Copyright (c) MMEditing Authors.
 import paddle
 import paddle.nn as nn
 import paddle.vision.models.vgg as vgg
