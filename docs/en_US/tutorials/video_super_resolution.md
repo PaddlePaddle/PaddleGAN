@@ -3,7 +3,7 @@
 
 ## 1.1 Principle
 
-  Video super-resolution originates from image super-resolution, which aims to recover high-resolution (HR) images from one or more low resolution (LR) images. The difference between them is that the video is composed of multiple frames, so the video super-resolution usually uses the information between frames to repair. Here we provide the video super-resolution model [EDVR](https://arxiv.org/pdf/1905.02716.pdf).
+  Video super-resolution originates from image super-resolution, which aims to recover high-resolution (HR) images from one or more low resolution (LR) images. The difference between them is that the video is composed of multiple frames, so the video super-resolution usually uses the information between frames to repair. Here we provide the video super-resolution model [EDVR](https://arxiv.org/pdf/1905.02716.pdf).[BasicVSR](https://arxiv.org/pdf/2012.02181.pdf),[IconVSR](https://arxiv.org/pdf/2012.02181.pdf),[BasicVSR++](https://arxiv.org/pdf/2104.13371v1.pdf).
 
   [EDVR](https://arxiv.org/pdf/1905.02716.pdf) wins the champions and outperforms the second place by a large margin in all four tracks in the NTIRE19 video restoration and enhancement challenges. The main difficulties of video super-resolution from two aspects: (1) how to align multiple frames given large motions, and (2) how to effectively fuse different frames with diverse motion and blur. First, to handle large motions, EDVR devise a Pyramid, Cascading and Deformable (PCD) alignment module, in which frame alignment is done at the feature level using deformable convolutions in a coarse-to-fine manner. Second, EDVR propose a Temporal and Spatial Attention (TSA) fusion module, in which attention is applied both temporally and spatially, so as to emphasize important features for subsequent restoration.
 
@@ -79,6 +79,7 @@ The metrics are PSNR / SSIM.
 | EDVR_L_w_tsa_deblur  | 35.1473 / 0.9526 |
 | BasicVSR_x4  | 31.4325 / 0.8913 |
 | IconVSR_x4  | 31.6882 / 0.8950 |
+| BasicVSR++_x4  | 32.4018 / 0.9071 |
 
 
 ## 1.4 Model Download
@@ -92,6 +93,7 @@ The metrics are PSNR / SSIM.
 | EDVR_L_w_tsa_deblur  | REDS | [EDVR_L_w_tsa_deblur](https://paddlegan.bj.bcebos.com/models/EDVR_L_w_tsa_deblur.pdparams)
 | BasicVSR_x4  | REDS | [BasicVSR_x4](https://paddlegan.bj.bcebos.com/models/BasicVSR_reds_x4.pdparams)
 | IconVSR_x4  | REDS | [IconVSR_x4](https://paddlegan.bj.bcebos.com/models/IconVSR_reds_x4.pdparams)
+| BasicVSR++_x4  | REDS | [BasicVSR++_x4](https://paddlegan.bj.bcebos.com/models/BasicVSR%2B%2B_reds_x4.pdparams)
 
 
 
@@ -120,3 +122,14 @@ The metrics are PSNR / SSIM.
     year = {2021}
     }
 ```
+
+- 3. [BasicVSR++: Improving Video Super-Resolution with Enhanced Propagation and Alignment](https://arxiv.org/pdf/2104.13371v1.pdf)
+
+  ```
+  @article{chan2021basicvsr++,
+    author = {Chan, Kelvin C.K. and Zhou, Shangchen and Xu, Xiangyu and Loy, Chen Change},
+    title = {BasicVSR++: Improving Video Super-Resolution with Enhanced Propagation and Alignment},
+    booktitle = {arXiv preprint arXiv:2104.13371},
+    year = {2021}
+    }
+  ```
