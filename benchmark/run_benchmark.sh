@@ -12,6 +12,7 @@ function _set_params(){
     config=${7:-"config"}
     log_interval=${8:-"1"}
     run_log_path=${TRAIN_LOG_DIR:-$(pwd)}  # TRAIN_LOG_DIR 后续QA设置该参数
+    need_profile=${9:-"off"}
 
 #   以下不用修改
     device=${CUDA_VISIBLE_DEVICES//,/ }
@@ -19,6 +20,7 @@ function _set_params(){
     num_gpu_devices=${#arr[*]}
     log_file=${run_log_path}/${model_name}_${run_mode}_bs${batch_size}_${fp_item}_${num_gpu_devices}
     res_log_file=${run_log_path}/${model_name}_${run_mode}_bs${batch_size}_${fp_item}_${num_gpu_devices}_speed
+    log_profile=${run_log_path}/${model_name}_model.profile
 }
 
 function _analysis_log(){
@@ -29,7 +31,14 @@ function _train(){
     echo "Train on ${num_gpu_devices} GPUs"
     echo "current CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES, gpus=$num_gpu_devices, batch_size=$batch_size"
 
-    train_cmd="--config-file=${config}
+    profiler_cmd=""
+    profiler_options="batch_range=[10,20];profile_path=${log_profile}"
+    if [ $need_profile = "on" ]; then
+        profiler_cmd="--profiler_options=${profiler_options}"
+    fi
+
+    train_cmd="${profiler_cmd} 
+               --config-file=${config}
                -o dataset.train.batch_size=${batch_size}
                log_config.interval=${log_interval}
                ${mode}=${max_iter} "

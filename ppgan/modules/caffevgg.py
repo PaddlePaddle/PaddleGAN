@@ -2,6 +2,7 @@ import paddle
 import paddle.nn as nn
 import numpy as np
 from ppgan.utils.download import get_path_from_url
+
 model_urls = {
     'caffevgg19': ('https://paddlegan.bj.bcebos.com/models/vgg19_no_fc.npy',
                    '8ea1ef2374f8684b6cea9f300849be81')
@@ -29,10 +30,13 @@ class CaffeVGG19(nn.Layer):
         self.mean = mean.unsqueeze(0).unsqueeze(-1).unsqueeze(-1)
 
     def _process(self, x):
-        rgb = (x * 0.5 + 0.5) * 255  # value to 255
+        # value to 255
+        rgb = (x * 0.5 + 0.5) * 255
+        # rgb to bgr
         bgr = paddle.stack((rgb[:, 2, :, :], rgb[:, 1, :, :], rgb[:, 0, :, :]),
-                           1)  # rgb to bgr
-        return bgr - self.mean  # vgg norm
+                           1)
+        # vgg norm
+        return bgr - self.mean
 
     def _forward_impl(self, x):
         x = self._process(x)

@@ -18,9 +18,9 @@ class Wav2Lip(nn.Layer):
 
         self.face_encoder_blocks = nn.LayerList([
             nn.Sequential(ConvBNRelu(6, 16, kernel_size=7, stride=1,
-                                     padding=3)),  # 96,96
+                                     padding=3)),
             nn.Sequential(
-                ConvBNRelu(16, 32, kernel_size=3, stride=2, padding=1),  # 48,48
+                ConvBNRelu(16, 32, kernel_size=3, stride=2, padding=1),
                 ConvBNRelu(32,
                            32,
                            kernel_size=3,
@@ -34,7 +34,7 @@ class Wav2Lip(nn.Layer):
                            padding=1,
                            residual=True)),
             nn.Sequential(
-                ConvBNRelu(32, 64, kernel_size=3, stride=2, padding=1),  # 24,24
+                ConvBNRelu(32, 64, kernel_size=3, stride=2, padding=1),
                 ConvBNRelu(64,
                            64,
                            kernel_size=3,
@@ -54,8 +54,7 @@ class Wav2Lip(nn.Layer):
                            padding=1,
                            residual=True)),
             nn.Sequential(
-                ConvBNRelu(64, 128, kernel_size=3, stride=2,
-                           padding=1),  # 12,12
+                ConvBNRelu(64, 128, kernel_size=3, stride=2, padding=1),
                 ConvBNRelu(128,
                            128,
                            kernel_size=3,
@@ -69,7 +68,7 @@ class Wav2Lip(nn.Layer):
                            padding=1,
                            residual=True)),
             nn.Sequential(
-                ConvBNRelu(128, 256, kernel_size=3, stride=2, padding=1),  # 6,6
+                ConvBNRelu(128, 256, kernel_size=3, stride=2, padding=1),
                 ConvBNRelu(256,
                            256,
                            kernel_size=3,
@@ -83,7 +82,7 @@ class Wav2Lip(nn.Layer):
                            padding=1,
                            residual=True)),
             nn.Sequential(
-                ConvBNRelu(256, 512, kernel_size=3, stride=2, padding=1),  # 3,3
+                ConvBNRelu(256, 512, kernel_size=3, stride=2, padding=1),
                 ConvBNRelu(512,
                            512,
                            kernel_size=3,
@@ -92,8 +91,7 @@ class Wav2Lip(nn.Layer):
                            residual=True),
             ),
             nn.Sequential(
-                ConvBNRelu(512, 512, kernel_size=3, stride=1,
-                           padding=0),  # 1, 1
+                ConvBNRelu(512, 512, kernel_size=3, stride=1, padding=0),
                 ConvBNRelu(512, 512, kernel_size=1, stride=1, padding=0)),
         ])
 
@@ -156,7 +154,7 @@ class Wav2Lip(nn.Layer):
                                     512,
                                     kernel_size=3,
                                     stride=1,
-                                    padding=0),  # 3,3
+                                    padding=0),
                 ConvBNRelu(512,
                            512,
                            kernel_size=3,
@@ -183,7 +181,7 @@ class Wav2Lip(nn.Layer):
                            stride=1,
                            padding=1,
                            residual=True),
-            ),  # 6, 6
+            ),
             nn.Sequential(
                 Conv2dTransposeRelu(768,
                                     384,
@@ -203,7 +201,7 @@ class Wav2Lip(nn.Layer):
                            stride=1,
                            padding=1,
                            residual=True),
-            ),  # 12, 12
+            ),
             nn.Sequential(
                 Conv2dTransposeRelu(512,
                                     256,
@@ -223,7 +221,7 @@ class Wav2Lip(nn.Layer):
                            stride=1,
                            padding=1,
                            residual=True),
-            ),  # 24, 24
+            ),
             nn.Sequential(
                 Conv2dTransposeRelu(320,
                                     128,
@@ -243,7 +241,7 @@ class Wav2Lip(nn.Layer):
                            stride=1,
                            padding=1,
                            residual=True),
-            ),  # 48, 48
+            ),
             nn.Sequential(
                 Conv2dTransposeRelu(160,
                                     64,
@@ -264,14 +262,13 @@ class Wav2Lip(nn.Layer):
                            padding=1,
                            residual=True),
             ),
-        ])  # 96,96
+        ])
 
         self.output_block = nn.Sequential(
             ConvBNRelu(80, 32, kernel_size=3, stride=1, padding=1),
             nn.Conv2D(32, 3, kernel_size=1, stride=1, padding=0), nn.Sigmoid())
 
     def forward(self, audio_sequences, face_sequences):
-        # audio_sequences = (B, T, 1, 80, 16)
         B = audio_sequences.shape[0]
 
         input_dim_size = len(face_sequences.shape)
@@ -285,7 +282,7 @@ class Wav2Lip(nn.Layer):
             ],
                                            axis=0)
 
-        audio_embedding = self.audio_encoder(audio_sequences)  # B, 512, 1, 1
+        audio_embedding = self.audio_encoder(audio_sequences)
 
         feats = []
         x = face_sequences
@@ -308,8 +305,8 @@ class Wav2Lip(nn.Layer):
         x = self.output_block(x)
 
         if input_dim_size > 4:
-            x = paddle.split(x, int(x.shape[0] / B), axis=0)  # [(B, C, H, W)]
-            outputs = paddle.stack(x, axis=2)  # (B, C, T, H, W)
+            x = paddle.split(x, int(x.shape[0] / B), axis=0)
+            outputs = paddle.stack(x, axis=2)
 
         else:
             outputs = x

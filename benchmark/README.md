@@ -42,6 +42,13 @@ nvidia-docker run --name test_paddlegan -i  \
     ${ImageName}  /bin/bash -c "${run_cmd}"
 ```
 
+如果需要打开profile选项，可以直接替换`run_cmd`为：
+```
+run_cmd="set -xe;
+        cd /workspace ;
+        bash -x benchmark/run_all.sh on"
+```
+
 ## 输出
 
 执行完成后，在PaddleGAN目录会产出模型训练性能数据的文件，比如`esrgan_mp_bs32_fp32_8`等文件。

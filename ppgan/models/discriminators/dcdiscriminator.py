@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# code was heavily based on https://github.com/aidotse/Team-Haste
+# MIT License
+# Copyright (c) 2020 AI Sweden
+
 import paddle
 import functools
 import numpy as np
@@ -31,15 +35,14 @@ class DCDiscriminator(nn.Layer):
         """Construct a DCGAN discriminator
 
         Parameters:
-            input_nc (int)  -- the number of channels in input images
-            ndf (int)       -- the number of filters in the last conv layer
-            norm_type (str)      -- normalization layer type
+            input_nc (int): the number of channels in input images
+            ndf (int): the number of filters in the last conv layer
+            norm_type (str): normalization layer type
         """
         super(DCDiscriminator, self).__init__()
         norm_layer = build_norm_layer(norm_type)
-        if type(
-                norm_layer
-        ) == functools.partial:  # no need to use bias as BatchNorm2d has affine parameters
+        if type(norm_layer) == functools.partial:
+            # no need to use bias as BatchNorm2d has affine parameters
             use_bias = norm_layer.func == nn.BatchNorm2D
         else:
             use_bias = norm_layer == nn.BatchNorm2D
@@ -48,29 +51,30 @@ class DCDiscriminator(nn.Layer):
         padw = 1
 
         sequence = [
-                nn.Conv2D(input_nc,
-                          ndf,
-                          kernel_size=kw,
-                          stride=2,
-                          padding=padw,
-                          bias_attr=use_bias),
-                nn.LeakyReLU(0.2)
-            ]
+            nn.Conv2D(input_nc,
+                      ndf,
+                      kernel_size=kw,
+                      stride=2,
+                      padding=padw,
+                      bias_attr=use_bias),
+            nn.LeakyReLU(0.2)
+        ]
 
         nf_mult = 1
         nf_mult_prev = 1
         n_downsampling = 4
 
-        for n in range(1, n_downsampling):  # gradually increase the number of filters
+        # gradually increase the number of filters
+        for n in range(1, n_downsampling):
             nf_mult_prev = nf_mult
             nf_mult = min(2**n, 8)
             if norm_type == 'batch':
                 sequence += [
                     nn.Conv2D(ndf * nf_mult_prev,
-                                  ndf * nf_mult,
-                                  kernel_size=kw,
-                                  stride=2,
-                                  padding=padw),
+                              ndf * nf_mult,
+                              kernel_size=kw,
+                              stride=2,
+                              padding=padw),
                     BatchNorm2D(ndf * nf_mult),
                     nn.LeakyReLU(0.2)
                 ]
@@ -88,13 +92,14 @@ class DCDiscriminator(nn.Layer):
 
         nf_mult_prev = nf_mult
 
+        # output 1 channel prediction map
         sequence += [
-                nn.Conv2D(ndf * nf_mult_prev,
-                          1,
-                          kernel_size=kw,
-                          stride=1,
-                          padding=0)
-            ]  # output 1 channel prediction map
+            nn.Conv2D(ndf * nf_mult_prev,
+                      1,
+                      kernel_size=kw,
+                      stride=1,
+                      padding=0)
+        ]
 
         self.model = nn.Sequential(*sequence)
 

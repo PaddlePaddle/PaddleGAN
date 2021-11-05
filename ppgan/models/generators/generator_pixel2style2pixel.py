@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# code was heavily based on https://github.com/eladrich/pixel2style2pixel
+# MIT License
+# Copyright (c) 2020 Elad Richardson, Yuval Alaluf
+
 import math
 import numpy as np
 import paddle
@@ -41,7 +45,8 @@ class Bottleneck(namedtuple('Block', ['in_channel', 'depth', 'stride'])):
 
 
 def get_block(in_channel, depth, num_units, stride=2):
-    return [Bottleneck(in_channel, depth, stride)] + [Bottleneck(depth, depth, 1) for i in range(num_units - 1)]
+    return [Bottleneck(in_channel, depth, stride)
+            ] + [Bottleneck(depth, depth, 1) for i in range(num_units - 1)]
 
 
 def get_blocks(num_layers):
@@ -67,7 +72,9 @@ def get_blocks(num_layers):
             get_block(in_channel=256, depth=512, num_units=3)
         ]
     else:
-        raise ValueError("Invalid number of layers: {}. Must be one of [50, 100, 152]".format(num_layers))
+        raise ValueError(
+            "Invalid number of layers: {}. Must be one of [50, 100, 152]".
+            format(num_layers))
     return blocks
 
 
@@ -75,9 +82,17 @@ class SEModule(nn.Layer):
     def __init__(self, channels, reduction):
         super(SEModule, self).__init__()
         self.avg_pool = nn.AdaptiveAvgPool2D(1)
-        self.fc1 = nn.Conv2D(channels, channels // reduction, kernel_size=1, padding=0, bias_attr=False)
+        self.fc1 = nn.Conv2D(channels,
+                             channels // reduction,
+                             kernel_size=1,
+                             padding=0,
+                             bias_attr=False)
         self.relu = nn.ReLU()
-        self.fc2 = nn.Conv2D(channels // reduction, channels, kernel_size=1, padding=0, bias_attr=False)
+        self.fc2 = nn.Conv2D(channels // reduction,
+                             channels,
+                             kernel_size=1,
+                             padding=0,
+                             bias_attr=False)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
@@ -98,13 +113,13 @@ class BottleneckIR(nn.Layer):
         else:
             self.shortcut_layer = nn.Sequential(
                 nn.Conv2D(in_channel, depth, (1, 1), stride, bias_attr=False),
-                nn.BatchNorm2D(depth)
-            )
+                nn.BatchNorm2D(depth))
         self.res_layer = nn.Sequential(
             nn.BatchNorm2D(in_channel),
-            nn.Conv2D(in_channel, depth, (3, 3), (1, 1), 1, bias_attr=False), nn.PReLU(depth),
-            nn.Conv2D(depth, depth, (3, 3), stride, 1, bias_attr=False), nn.BatchNorm2D(depth)
-        )
+            nn.Conv2D(in_channel, depth, (3, 3), (1, 1), 1, bias_attr=False),
+            nn.PReLU(depth),
+            nn.Conv2D(depth, depth, (3, 3), stride, 1, bias_attr=False),
+            nn.BatchNorm2D(depth))
 
     def forward(self, x):
         shortcut = self.shortcut_layer(x)
@@ -120,16 +135,13 @@ class BottleneckIRSE(nn.Layer):
         else:
             self.shortcut_layer = nn.Sequential(
                 nn.Conv2D(in_channel, depth, (1, 1), stride, bias_attr=False),
-                nn.BatchNorm2D(depth)
-            )
+                nn.BatchNorm2D(depth))
         self.res_layer = nn.Sequential(
             nn.BatchNorm2D(in_channel),
             nn.Conv2D(in_channel, depth, (3, 3), (1, 1), 1, bias_attr=False),
             nn.PReLU(depth),
             nn.Conv2D(depth, depth, (3, 3), stride, 1, bias_attr=False),
-            nn.BatchNorm2D(depth),
-            SEModule(depth, 16)
-        )
+            nn.BatchNorm2D(depth), SEModule(depth, 16))
 
     def forward(self, x):
         shortcut = self.shortcut_layer(x)
@@ -144,8 +156,10 @@ class GradualStyleBlock(nn.Layer):
         self.spatial = spatial
         num_pools = int(np.log2(spatial))
         modules = []
-        modules += [nn.Conv2D(in_c, out_c, kernel_size=3, stride=2, padding=1),
-                    nn.LeakyReLU()]
+        modules += [
+            nn.Conv2D(in_c, out_c, kernel_size=3, stride=2, padding=1),
+            nn.LeakyReLU()
+        ]
         for i in range(num_pools - 1):
             modules += [
                 nn.Conv2D(out_c, out_c, kernel_size=3, stride=2, padding=1),
@@ -164,22 +178,23 @@ class GradualStyleBlock(nn.Layer):
 class GradualStyleEncoder(nn.Layer):
     def __init__(self, num_layers, mode='ir', opts=None):
         super(GradualStyleEncoder, self).__init__()
-        assert num_layers in [50, 100, 152], 'num_layers should be 50,100, or 152'
+        assert num_layers in [50, 100,
+                              152], 'num_layers should be 50,100, or 152'
         assert mode in ['ir', 'ir_se'], 'mode should be ir or ir_se'
         blocks = get_blocks(num_layers)
         if mode == 'ir':
             unit_module = BottleneckIR
         elif mode == 'ir_se':
             unit_module = BottleneckIRSE
-        self.input_layer = nn.Sequential(nn.Conv2D(opts.input_nc, 64, (3, 3), 1, 1, bias_attr=False),
-                                         nn.BatchNorm2D(64),
-                                         nn.PReLU(64))
+        self.input_layer = nn.Sequential(
+            nn.Conv2D(opts.input_nc, 64, (3, 3), 1, 1, bias_attr=False),
+            nn.BatchNorm2D(64), nn.PReLU(64))
         modules = []
         for block in blocks:
             for bottleneck in block:
-                modules.append(unit_module(bottleneck.in_channel,
-                                           bottleneck.depth,
-                                           bottleneck.stride))
+                modules.append(
+                    unit_module(bottleneck.in_channel, bottleneck.depth,
+                                bottleneck.stride))
         self.body = nn.Sequential(*modules)
 
         self.styles = nn.LayerList()
@@ -214,7 +229,8 @@ class GradualStyleEncoder(nn.Layer):
         So we choose bilinear upsample which supports arbitrary output sizes.
         '''
         _, _, H, W = y.shape
-        return F.interpolate(x, size=(H, W), mode='bilinear', align_corners=True) + y
+        return F.interpolate(
+            x, size=(H, W), mode='bilinear', align_corners=True) + y
 
     def forward(self, x):
         x = self.input_layer(x)
@@ -249,24 +265,25 @@ class BackboneEncoderUsingLastLayerIntoW(nn.Layer):
     def __init__(self, num_layers, mode='ir', opts=None):
         super(BackboneEncoderUsingLastLayerIntoW, self).__init__()
         print('Using BackboneEncoderUsingLastLayerIntoW')
-        assert num_layers in [50, 100, 152], 'num_layers should be 50,100, or 152'
+        assert num_layers in [50, 100,
+                              152], 'num_layers should be 50,100, or 152'
         assert mode in ['ir', 'ir_se'], 'mode should be ir or ir_se'
         blocks = get_blocks(num_layers)
         if mode == 'ir':
             unit_module = BottleneckIR
         elif mode == 'ir_se':
             unit_module = BottleneckIRSE
-        self.input_layer = nn.Sequential(nn.Conv2D(opts.input_nc, 64, (3, 3), 1, 1, bias_attr=False),
-                                         nn.BatchNorm2D(64),
-                                         nn.PReLU(64))
+        self.input_layer = nn.Sequential(
+            nn.Conv2D(opts.input_nc, 64, (3, 3), 1, 1, bias_attr=False),
+            nn.BatchNorm2D(64), nn.PReLU(64))
         self.output_pool = nn.AdaptiveAvgPool2D((1, 1))
         self.linear = EqualLinear(512, 512, lr_mul=1)
         modules = []
         for block in blocks:
             for bottleneck in block:
-                modules.append(unit_module(bottleneck.in_channel,
-                                           bottleneck.depth,
-                                           bottleneck.stride))
+                modules.append(
+                    unit_module(bottleneck.in_channel, bottleneck.depth,
+                                bottleneck.stride))
         self.body = nn.Sequential(*modules)
 
     def forward(self, x):
@@ -282,16 +299,17 @@ class BackboneEncoderUsingLastLayerIntoWPlus(nn.Layer):
     def __init__(self, num_layers, mode='ir', opts=None):
         super(BackboneEncoderUsingLastLayerIntoWPlus, self).__init__()
         print('Using BackboneEncoderUsingLastLayerIntoWPlus')
-        assert num_layers in [50, 100, 152], 'num_layers should be 50,100, or 152'
+        assert num_layers in [50, 100,
+                              152], 'num_layers should be 50,100, or 152'
         assert mode in ['ir', 'ir_se'], 'mode should be ir or ir_se'
         blocks = get_blocks(num_layers)
         if mode == 'ir':
             unit_module = BottleneckIR
         elif mode == 'ir_se':
             unit_module = BottleneckIRSE
-        self.input_layer = nn.Sequential(nn.Conv2D(opts.input_nc, 64, (3, 3), 1, 1, bias_attr=False),
-                                         nn.BatchNorm2D(64),
-                                         nn.PReLU(64))
+        self.input_layer = nn.Sequential(
+            nn.Conv2D(opts.input_nc, 64, (3, 3), 1, 1, bias_attr=False),
+            nn.BatchNorm2D(64), nn.PReLU(64))
         self.output_layer_2 = nn.Sequential(nn.BatchNorm2D(512),
                                             nn.AdaptiveAvgPool2D((7, 7)),
                                             Flatten(),
@@ -300,9 +318,9 @@ class BackboneEncoderUsingLastLayerIntoWPlus(nn.Layer):
         modules = []
         for block in blocks:
             for bottleneck in block:
-                modules.append(unit_module(bottleneck.in_channel,
-                                           bottleneck.depth,
-                                           bottleneck.stride))
+                modules.append(
+                    unit_module(bottleneck.in_channel, bottleneck.depth,
+                                bottleneck.stride))
         self.body = nn.Sequential(*modules)
 
     def forward(self, x):
@@ -321,15 +339,19 @@ class Pixel2Style2Pixel(nn.Layer):
         self.set_opts(opts)
         # Define architecture
         self.encoder = self.set_encoder()
-        self.decoder = StyleGANv2Generator(opts.size, opts.style_dim, opts.n_mlp, opts.channel_multiplier)
+        self.decoder = StyleGANv2Generator(opts.size, opts.style_dim,
+                                           opts.n_mlp, opts.channel_multiplier)
         self.face_pool = nn.AdaptiveAvgPool2D((256, 256))
         self.style_dim = self.decoder.style_dim
         self.n_latent = self.decoder.n_latent
         if self.opts.start_from_latent_avg:
             if self.opts.learn_in_w:
-                self.register_buffer('latent_avg', paddle.zeros([1, self.style_dim]))
+                self.register_buffer('latent_avg',
+                                     paddle.zeros([1, self.style_dim]))
             else:
-                self.register_buffer('latent_avg', paddle.zeros([1, self.n_latent, self.style_dim]))
+                self.register_buffer(
+                    'latent_avg',
+                    paddle.zeros([1, self.n_latent, self.style_dim]))
 
     def set_encoder(self):
         if self.opts.encoder_type == 'GradualStyleEncoder':
@@ -337,13 +359,22 @@ class Pixel2Style2Pixel(nn.Layer):
         elif self.opts.encoder_type == 'BackboneEncoderUsingLastLayerIntoW':
             encoder = BackboneEncoderUsingLastLayerIntoW(50, 'ir_se', self.opts)
         elif self.opts.encoder_type == 'BackboneEncoderUsingLastLayerIntoWPlus':
-            encoder = BackboneEncoderUsingLastLayerIntoWPlus(50, 'ir_se', self.opts)
+            encoder = BackboneEncoderUsingLastLayerIntoWPlus(
+                50, 'ir_se', self.opts)
         else:
-            raise Exception('{} is not a valid encoders'.format(self.opts.encoder_type))
+            raise Exception('{} is not a valid encoders'.format(
+                self.opts.encoder_type))
         return encoder
 
-    def forward(self, x, resize=True, latent_mask=None, input_code=False, randomize_noise=True,
-                inject_latent=None, return_latents=False, alpha=None):
+    def forward(self,
+                x,
+                resize=True,
+                latent_mask=None,
+                input_code=False,
+                randomize_noise=True,
+                inject_latent=None,
+                return_latents=False,
+                alpha=None):
         if input_code:
             codes = x
         else:
@@ -355,12 +386,12 @@ class Pixel2Style2Pixel(nn.Layer):
                 else:
                     codes = codes + self.latent_avg.tile([codes.shape[0], 1, 1])
 
-
         if latent_mask is not None:
             for i in latent_mask:
                 if inject_latent is not None:
                     if alpha is not None:
-                        codes[:, i] = alpha * inject_latent[:, i] + (1 - alpha) * codes[:, i]
+                        codes[:, i] = alpha * inject_latent[:, i] + (
+                            1 - alpha) * codes[:, i]
                     else:
                         codes[:, i] = inject_latent[:, i]
                 else:
