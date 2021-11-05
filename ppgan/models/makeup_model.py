@@ -11,6 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# code was heavily based on https://github.com/wtjiang98/PSGAN
+# MIT License 
+# Copyright (c) 2020 Wentao Jiang
+
 import os
 import numpy as np
 
