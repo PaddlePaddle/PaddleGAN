@@ -53,6 +53,7 @@ function parse_yaml {
 }
 eval $(parse_yaml "benchmark/benchmark.yaml")
 
+profile=${1:-"off"}
 
 for model_mode in ${model_mode_list[@]}; do
       eval fp_item_list='$'"${model_mode}_fp_item"
@@ -82,15 +83,15 @@ for model_mode in ${model_mode_list[@]}; do
             do
             echo "index is speed, 1gpus, begin, ${model_name}"
             run_mode=sp
-            CUDA_VISIBLE_DEVICES=0 benchmark/run_benchmark.sh ${run_mode} ${bs_item} ${fp_item} ${mode} ${max_iter} ${model_mode} ${config} ${log_interval}   #  (5min)
+            CUDA_VISIBLE_DEVICES=0 benchmark/run_benchmark.sh ${run_mode} ${bs_item} ${fp_item} ${mode} ${max_iter} ${model_mode} ${config} ${log_interval} ${profile}  #  (5min)
             sleep 60
             echo "index is speed, 8gpus, run_mode is multi_process, begin, ${model_name}"
             run_mode=mp
             basicvsr_name=basicvsr
             if [ ${model_mode} = ${basicvsr_name} ]; then
-                CUDA_VISIBLE_DEVICES=0,1,2,3 bash benchmark/run_benchmark.sh ${run_mode} ${bs_item} ${fp_item} ${mode} ${max_iter} ${model_mode} ${config} ${log_interval}
+                CUDA_VISIBLE_DEVICES=0,1,2,3 bash benchmark/run_benchmark.sh ${run_mode} ${bs_item} ${fp_item} ${mode} ${max_iter} ${model_mode} ${config} ${log_interval} ${profile}
             else
-                CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 bash benchmark/run_benchmark.sh ${run_mode} ${bs_item} ${fp_item} ${mode} ${max_iter} ${model_mode} ${config} ${log_interval}
+                CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 bash benchmark/run_benchmark.sh ${run_mode} ${bs_item} ${fp_item} ${mode} ${max_iter} ${model_mode} ${config} ${log_interval} ${profile}
             fi
             sleep 60
             done
