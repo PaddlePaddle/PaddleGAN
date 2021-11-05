@@ -1,3 +1,6 @@
+# code was heavily based on https://github.com/clovaai/stargan-v2
+# Users should be careful about adopting these functions in any commercial matters.
+# https://github.com/clovaai/stargan-v2#license
 
 import paddle
 from .base_dataset import BaseDataset
@@ -14,8 +17,11 @@ from paddle.io import Dataset, WeightedRandomSampler
 
 
 def listdir(dname):
-    fnames = list(chain(*[list(Path(dname).rglob('*.' + ext))
-                          for ext in ['png', 'jpg', 'jpeg', 'JPG']]))
+    fnames = list(
+        chain(*[
+            list(Path(dname).rglob('*.' + ext))
+            for ext in ['png', 'jpg', 'jpeg', 'JPG']
+        ]))
     return fnames
 
 
@@ -97,7 +103,6 @@ class ReferenceDataset(Dataset):
         return len(self.targets)
 
 
-
 @DATASETS.register()
 class StarGANv2Dataset(BaseDataset):
     """
@@ -120,15 +125,16 @@ class StarGANv2Dataset(BaseDataset):
         else:
             files = os.listdir(self.dataroot)
             if 'src' in files and 'ref' in files:
-                self.src_loader = ImageFolder(os.path.join(self.dataroot, 'src'))
-                self.ref_loader = ImageFolder(os.path.join(self.dataroot, 'ref'))
+                self.src_loader = ImageFolder(os.path.join(
+                    self.dataroot, 'src'))
+                self.ref_loader = ImageFolder(os.path.join(
+                    self.dataroot, 'ref'))
             else:
                 self.src_loader = ImageFolder(self.dataroot)
                 self.ref_loader = ImageFolder(self.dataroot)
             self.counts = min(test_count, len(self.src_loader))
             self.counts = min(self.counts, len(self.ref_loader))
 
-        
     def _fetch_inputs(self):
         try:
             x, y = next(self.iter_src)
@@ -136,7 +142,7 @@ class StarGANv2Dataset(BaseDataset):
             self.iter_src = iter(self.src_loader)
             x, y = next(self.iter_src)
         return x, y
-    
+
     def _fetch_refs(self):
         try:
             x, x2, y = next(self.iter_ref)
@@ -165,7 +171,7 @@ class StarGANv2Dataset(BaseDataset):
                 'ref_path': x_ref,
                 'ref_cls': y_ref,
             }
-        
+
         if hasattr(self, 'preprocess') and self.preprocess:
             datas = self.preprocess(datas)
 
@@ -173,6 +179,6 @@ class StarGANv2Dataset(BaseDataset):
 
     def __len__(self):
         return self.counts
-    
+
     def prepare_data_infos(self, dataroot):
         pass

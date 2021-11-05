@@ -1,8 +1,6 @@
-"""
-StarGAN v2
-Copyright (c) 2020-present NAVER Corp.
-
-"""
+# code was heavily based on https://github.com/clovaai/stargan-v2
+# Users should be careful about adopting these functions in any commercial matters.
+# https://github.com/clovaai/stargan-v2#license
 
 from collections import namedtuple
 from copy import deepcopy
@@ -25,9 +23,16 @@ class HourGlass(nn.Layer):
         self.num_modules = num_modules
         self.depth = depth
         self.features = num_features
-        self.coordconv = CoordConvTh(64, 64, True, True, 256, first_one,
+        self.coordconv = CoordConvTh(64,
+                                     64,
+                                     True,
+                                     True,
+                                     256,
+                                     first_one,
                                      out_channels=256,
-                                     kernel_size=1, stride=1, padding=0)
+                                     kernel_size=1,
+                                     stride=1,
+                                     padding=0)
         self._generate_network(self.depth)
 
     def _generate_network(self, level):
@@ -68,14 +73,19 @@ class AddCoordsTh(nn.Layer):
         self.with_boundary = with_boundary
 
         with paddle.no_grad():
-            x_coords = paddle.arange(height).unsqueeze(1).expand((height, width)).astype('float32')
-            y_coords = paddle.arange(width).unsqueeze(0).expand((height, width)).astype('float32')
+            x_coords = paddle.arange(height).unsqueeze(1).expand(
+                (height, width)).astype('float32')
+            y_coords = paddle.arange(width).unsqueeze(0).expand(
+                (height, width)).astype('float32')
             x_coords = (x_coords / (height - 1)) * 2 - 1
             y_coords = (y_coords / (width - 1)) * 2 - 1
-            coords = paddle.stack([x_coords, y_coords], axis=0)  # (2, height, width)
+            coords = paddle.stack([x_coords, y_coords],
+                                  axis=0)  # (2, height, width)
 
             if self.with_r:
-                rr = paddle.sqrt(paddle.pow(x_coords, 2) + paddle.pow(y_coords, 2))  # (height, width)
+                rr = paddle.sqrt(
+                    paddle.pow(x_coords, 2) +
+                    paddle.pow(y_coords, 2))  # (height, width)
                 rr = (rr / paddle.max(rr)).unsqueeze(0)
                 coords = paddle.concat([coords, rr], axis=0)
 
@@ -92,9 +102,12 @@ class AddCoordsTh(nn.Layer):
         if self.with_boundary and heatmap is not None:
             boundary_channel = paddle.clip(heatmap[:, -1:, :, :], 0.0, 1.0)
             zero_tensor = paddle.zeros_like(self.x_coords)
-            xx_boundary_channel = paddle.where(boundary_channel > 0.05, self.x_coords, zero_tensor)
-            yy_boundary_channel = paddle.where(boundary_channel > 0.05, self.y_coords, zero_tensor)
-            coords = paddle.concat([coords, xx_boundary_channel, yy_boundary_channel], axis=1)
+            xx_boundary_channel = paddle.where(boundary_channel > 0.05,
+                                               self.x_coords, zero_tensor)
+            yy_boundary_channel = paddle.where(boundary_channel > 0.05,
+                                               self.y_coords, zero_tensor)
+            coords = paddle.concat(
+                [coords, xx_boundary_channel, yy_boundary_channel], axis=1)
 
         x_and_coords = paddle.concat([x, coords], axis=1)
         return x_and_coords
@@ -102,8 +115,15 @@ class AddCoordsTh(nn.Layer):
 
 class CoordConvTh(nn.Layer):
     """CoordConv layer as in the paper."""
-    def __init__(self, height, width, with_r, with_boundary,
-                 in_channels, first_one=False, *args, **kwargs):
+    def __init__(self,
+                 height,
+                 width,
+                 with_r,
+                 with_boundary,
+                 in_channels,
+                 first_one=False,
+                 *args,
+                 **kwargs):
         super(CoordConvTh, self).__init__()
         self.addcoords = AddCoordsTh(height, width, with_r, with_boundary)
         in_channels += 2
@@ -124,7 +144,12 @@ class ConvBlock(nn.Layer):
     def __init__(self, in_planes, out_planes):
         super(ConvBlock, self).__init__()
         self.bn1 = nn.BatchNorm2D(in_planes)
-        conv3x3 = partial(nn.Conv2D, kernel_size=3, stride=1, padding=1, bias_attr=False, dilation=1)
+        conv3x3 = partial(nn.Conv2D,
+                          kernel_size=3,
+                          stride=1,
+                          padding=1,
+                          bias_attr=False,
+                          dilation=1)
         self.conv1 = conv3x3(in_planes, int(out_planes / 2))
         self.bn2 = nn.BatchNorm2D(int(out_planes / 2))
         self.conv2 = conv3x3(int(out_planes / 2), int(out_planes / 4))
@@ -133,9 +158,9 @@ class ConvBlock(nn.Layer):
 
         self.downsample = None
         if in_planes != out_planes:
-            self.downsample = nn.Sequential(nn.BatchNorm2D(in_planes),
-                                            nn.ReLU(True),
-                                            nn.Conv2D(in_planes, out_planes, 1, 1, bias_attr=False))
+            self.downsample = nn.Sequential(
+                nn.BatchNorm2D(in_planes), nn.ReLU(True),
+                nn.Conv2D(in_planes, out_planes, 1, 1, bias_attr=False))
 
     def forward(self, x):
         residual = x
@@ -168,7 +193,7 @@ def normalize(x, eps=1e-6):
     """Apply min-max normalization."""
     # x = x.contiguous()
     N, C, H, W = x.shape
-    x_ = paddle.reshape(x, (N*C, -1))
+    x_ = paddle.reshape(x, (N * C, -1))
     max_val = paddle.max(x_, axis=1, keepdim=True)[0]
     min_val = paddle.min(x_, axis=1, keepdim=True)[0]
     x_ = (x_ - min_val) / (max_val - min_val + eps)
@@ -193,14 +218,14 @@ def shift(x, N):
     N = abs(N)
     _, _, H, W = x.shape
     head = np.arange(N)
-    tail = np.arange(H-N)
+    tail = np.arange(H - N)
 
     if up:
-        head = np.arange(H-N)+N
+        head = np.arange(H - N) + N
         tail = np.arange(N)
     else:
-        head = np.arange(N) + (H-N)
-        tail = np.arange(H-N)
+        head = np.arange(N) + (H - N)
+        tail = np.arange(H - N)
 
     # permutation indices
     perm = np.concatenate([head, tail])
@@ -231,29 +256,31 @@ def preprocess(x):
 
     sw = H // 256
     operations = Munch(chin=OPPAIR(0, 3),
-                       eyebrows=OPPAIR(-7*sw, 2),
-                       nostrils=OPPAIR(8*sw, 4),
-                       lipupper=OPPAIR(-8*sw, 4),
-                       liplower=OPPAIR(8*sw, 4),
-                       lipinner=OPPAIR(-2*sw, 3))
+                       eyebrows=OPPAIR(-7 * sw, 2),
+                       nostrils=OPPAIR(8 * sw, 4),
+                       lipupper=OPPAIR(-8 * sw, 4),
+                       liplower=OPPAIR(8 * sw, 4),
+                       lipinner=OPPAIR(-2 * sw, 3))
 
     for part, ops in operations.items():
         start, end = index_map[part]
         x[:, start:end] = resize(shift(x[:, start:end], ops.shift), ops.resize)
 
-    zero_out = paddle.concat([paddle.arange(0, index_map.chin.start),
-                          paddle.arange(index_map.chin.end, 33),
-                          paddle.to_tensor([index_map.eyebrowsedges.start,
-                                            index_map.eyebrowsedges.end,
-                                            index_map.lipedges.start,
-                                            index_map.lipedges.end])])
+    zero_out = paddle.concat([
+        paddle.arange(0, index_map.chin.start),
+        paddle.arange(index_map.chin.end, 33),
+        paddle.to_tensor([
+            index_map.eyebrowsedges.start, index_map.eyebrowsedges.end,
+            index_map.lipedges.start, index_map.lipedges.end
+        ])
+    ])
     x = x.numpy()
     zero_out = zero_out.numpy()
     x[:, zero_out] = 0
     x = paddle.to_tensor(x)
 
     start, end = index_map.nose
-    x[:, start+1:end] = shift(x[:, start+1:end], 4*sw)
+    x[:, start + 1:end] = shift(x[:, start + 1:end], 4 * sw)
     x[:, start:end] = resize(x[:, start:end], 1)
 
     start, end = index_map.eyes
@@ -264,8 +291,10 @@ def preprocess(x):
     # Second-level mask
     x2 = deepcopy(x)
     x2[:, index_map.chin.start:index_map.chin.end] = 0  # start:end was 0:33
-    x2[:, index_map.lipedges.start:index_map.lipinner.end] = 0  # start:end was 76:96
-    x2[:, index_map.eyebrows.start:index_map.eyebrows.end] = 0  # start:end was 33:51
+    x2[:, index_map.lipedges.start:index_map.lipinner.
+       end] = 0  # start:end was 76:96
+    x2[:, index_map.eyebrows.start:index_map.eyebrows.
+       end] = 0  # start:end was 33:51
 
     x = paddle.sum(x, axis=1, keepdim=True)  # (N, 1, H, W)
     x2 = paddle.sum(x2, axis=1, keepdim=True)  # mask without faceline and mouth

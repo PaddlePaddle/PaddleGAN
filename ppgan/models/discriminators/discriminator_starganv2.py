@@ -1,3 +1,6 @@
+# code was heavily based on https://github.com/clovaai/stargan-v2
+# Users should be careful about adopting these functions in any commercial matters.
+# https://github.com/clovaai/stargan-v2#license
 
 import paddle.nn as nn
 import paddle
@@ -18,7 +21,7 @@ class StarGANv2Discriminator(nn.Layer):
 
         repeat_num = int(np.log2(img_size)) - 2
         for _ in range(repeat_num):
-            dim_out = min(dim_in*2, max_conv_dim)
+            dim_out = min(dim_in * 2, max_conv_dim)
             blocks += [ResBlk(dim_in, dim_out, downsample=True)]
             dim_in = dim_out
 
