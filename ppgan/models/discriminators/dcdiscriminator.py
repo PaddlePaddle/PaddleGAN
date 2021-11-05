@@ -35,7 +35,7 @@ class DCDiscriminator(nn.Layer):
         """Construct a DCGAN discriminator
 
         Parameters:
-            input_nc (int): Othe number of channels in input images
+            input_nc (int): the number of channels in input images
             ndf (int): the number of filters in the last conv layer
             norm_type (str): normalization layer type
         """
