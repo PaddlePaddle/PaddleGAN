@@ -77,6 +77,8 @@ class Registry(object):
         return ret
 
 
+# code was based on mmcv
+# Copyright (c) Copyright (c) OpenMMLab.
 def build_from_config(cfg, registry, default_args=None):
     """Build a class from config dict.
 

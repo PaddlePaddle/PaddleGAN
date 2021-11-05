@@ -19,7 +19,6 @@ __all__ = ['get_config']
 
 class AttrDict(dict):
     def __getattr__(self, key):
-        # return self[key]
         try:
             return self[key]
         except KeyError:

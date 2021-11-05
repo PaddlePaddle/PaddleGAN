@@ -8,7 +8,7 @@ StyleGAN V2 的任务是使用风格向量进行image generation，而Mixing模�
 
 ### 混合
 
-用户使用如下命令中进行拟合：
+用户使用如下命令中进行混合：
 
 ```
 cd applications/
@@ -43,7 +43,7 @@ python -u tools/styleganv2mixing.py \
 - channel_multiplier: 模型参数，通道乘积，影响模型大小和生成图片质量
 - cpu: 是否使用cpu推理，若不使用，请在命令中去除
 
-## 拟合结果展示
+## 混合结果展示
 
 第一个风格向量对应的图像:
 

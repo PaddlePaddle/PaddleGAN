@@ -204,7 +204,7 @@ class Trainer:
                 reader_cost_averager.reset()
                 batch_cost_averager.reset()
 
-            if self.current_iter % self.visual_interval == 0:
+            if self.current_iter % self.visual_interval == 0 and self.local_rank == 0:
                 self.visual('visual_train')
 
             self.learning_rate_scheduler_step()
