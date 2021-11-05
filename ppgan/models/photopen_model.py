@@ -67,8 +67,6 @@ class PhotoPenModel(BaseModel):
         self.img_paths = input['img_path']
 
     def forward(self):
-        pass
-        """Run forward pass; called by both functions <optimize_parameters> and <test>."""
         self.one_hot = data_onehot_pro(self.ins, self.opt)
         self.img_f = self.nets['net_gen'](self.one_hot)
         self.visual_items['img_f'] = self.img_f
@@ -130,8 +128,6 @@ class PhotoPenModel(BaseModel):
         
         
     def train_iter(self, optimizers=None):
-        pass
-        """Calculate losses, gradients, and update network weights"""
         self.forward()
         self.optimizers['optimG'].clear_grad()
         self.backward_G()

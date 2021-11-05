@@ -11,7 +11,7 @@ python applications/tools/photopen.py --semantic_label_path test/sem.png  --weig
 python -u tools/main.py --config-file configs/photopen.yaml
 
 # 继续训练
-python -u tools/main.py --config-file configs/photopen.yaml --resume output_dir\photopen-2021-09-30-15-59\iter_3_checkpoint.pdparams
+python -u tools/main.py --config-file configs/photopen.yaml --resume output_dir/photopen-2021-09-30-15-59/iter_3_checkpoint.pdparams
 
 #训练，覆盖参数
 python -u tools/main.py --config-file configs/photopen.yaml --o model.generator.ngf=1 model.discriminator.ndf=1
