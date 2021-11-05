@@ -19,6 +19,8 @@
 #### 备注
 BasicVSR模型因竞品torch模型只能测4卡，故这里也测4卡。
 
+因REDS数据集较大，避免每次下载时间较长，需要在Docker建立好后，将REDS数据集放到/workspace/data/目录一下。
+
 ### Docker 镜像
 
 - **镜像版本**: `registry.baidubce.com/paddlepaddle/paddle:2.1.2-gpu-cuda10.2-cudnn7`
