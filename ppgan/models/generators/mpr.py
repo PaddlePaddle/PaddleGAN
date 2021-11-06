@@ -1,16 +1,6 @@
-#   Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# code was based on https://github.com/swz30/MPRNet
+# Users should be careful about adopting these functions in any commercial matters.
+# https://github.com/swz30/MPRNet/blob/main/LICENSE.md
 
 import numpy as np
 
@@ -23,7 +13,6 @@ from ...modules.init import kaiming_normal_, constant_
 from .builder import GENERATORS
 
 
-##########################################################################
 def conv(in_channels, out_channels, kernel_size, bias_attr=False, stride=1):
     return nn.Conv2D(in_channels,
                      out_channels,
@@ -33,7 +22,6 @@ def conv(in_channels, out_channels, kernel_size, bias_attr=False, stride=1):
                      stride=stride)
 
 
-##########################################################################
 ## Channel Attention Layer
 class CALayer(nn.Layer):
     def __init__(self, channel, reduction=16, bias_attr=False):
@@ -59,7 +47,6 @@ class CALayer(nn.Layer):
         return x * y
 
 
-##########################################################################
 ## Channel Attention Block (CAB)
 class CAB(nn.Layer):
     def __init__(self, n_feat, kernel_size, reduction, bias_attr, act):
@@ -81,7 +68,6 @@ class CAB(nn.Layer):
         return res
 
 
-##########################################################################
 ##---------- Resizing Modules ----------
 class DownSample(nn.Layer):
     def __init__(self, in_channels, s_factor):
@@ -274,7 +260,6 @@ class Decoder(nn.Layer):
         return [dec1, dec2, dec3]
 
 
-##########################################################################
 ## Original Resolution Block (ORB)
 class ORB(nn.Layer):
     def __init__(self, n_feat, kernel_size, reduction, act, bias_attr, num_cab):
@@ -293,7 +278,6 @@ class ORB(nn.Layer):
         return res
 
 
-##########################################################################
 class ORSNet(nn.Layer):
     def __init__(self, n_feat, scale_orsnetfeats, kernel_size, reduction, act,
                  bias_attr, scale_unetfeats, num_cab):
@@ -358,8 +342,7 @@ class ORSNet(nn.Layer):
         return x
 
 
-##########################################################################
-## Supervised Attention Module
+# Supervised Attention Module
 class SAM(nn.Layer):
     def __init__(self, n_feat, kernel_size, bias_attr):
         super(SAM, self).__init__()

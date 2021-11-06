@@ -91,16 +91,14 @@ class UpsampleConcat(nn.Layer):
 class SourceReferenceAttention(nn.Layer):
     """
     Source-Reference Attention Layer
+
+
+    Args:
+        in_planes_s (int): Number of input source feature vector channels.
+        in_planes_r (int): Number of input reference feature vector channels.
+
     """
     def __init__(self, in_planes_s, in_planes_r):
-        """
-        Parameters
-        ----------
-            in_planes_s: int
-                Number of input source feature vector channels.
-            in_planes_r: int
-                Number of input reference feature vector channels.
-        """
         super(SourceReferenceAttention, self).__init__()
         self.query_conv = nn.Conv3D(in_channels=in_planes_s,
                                     out_channels=in_planes_s // 8,
