@@ -218,12 +218,6 @@ class FirstOrderPredictor(BasePredictor):
             pass
         reader.close()
 
-        # if self.preprocessing:
-        #     # if self.face_alignment:
-        #     #     self.face_alignment_preprocessing(raw_driving_video)
-        #     # else:
-        #     self.preprocessing_video(raw_driving_video)
-
         driving_video = [
             cv2.resize(frame, (self.image_size, self.image_size)) / 255.0 for frame in raw_driving_video
         ]
