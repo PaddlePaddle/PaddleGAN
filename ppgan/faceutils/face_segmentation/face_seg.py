@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+# import sys
+# sys.path.insert(0, '/home/anastasia/paddleGan/PaddleGAN/')
 
 import os.path as osp
 import cv2
@@ -18,8 +20,8 @@ import numpy as np
 import paddle
 from paddle.utils.download import get_path_from_url
 
-from .fcn import FCN
-from .hrnet import HRNet_W18
+from ppgan.faceutils.face_segmentation.fcn import FCN
+from ppgan.faceutils.face_segmentation.hrnet import HRNet_W18
 
 
 BISENET_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/faceseg_FCN-HRNetW18.pdparams'
@@ -58,3 +60,11 @@ class FaceSeg:
         output = cv2.resize(output, (shape[1], shape[0]))
         image_output = np.clip((output * 255), 0, 255).astype(np.uint8)
         return image_output
+
+
+# if __name__ == '__main__':
+#     image = cv2.cvtColor(cv2.imread("/home/anastasia/paddleGan/PaddleGAN/data/selfie2_girl.jpeg"), cv2.COLOR_BGR2RGB)
+#     model = FaceSeg()
+#     mask = model(image)
+#     cv2.imshow("", cv2.resize(mask, (512,512)))
+#     cv2.waitKey(10000)

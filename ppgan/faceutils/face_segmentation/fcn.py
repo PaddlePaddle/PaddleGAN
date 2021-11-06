@@ -43,7 +43,7 @@ class FCN(nn.Layer):
                  backbone,
                  backbone_indices=(-1, ),
                  channels=None,
-                 align_corners=False,
+                 align_corners=True,
                  pretrained=None):
         super(FCN, self).__init__()
 
