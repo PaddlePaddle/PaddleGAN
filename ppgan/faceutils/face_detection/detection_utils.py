@@ -189,3 +189,14 @@ def polygon2mask(polygon, shape):
     cv2.fillPoly(mask, np.array([polygon], dtype=np.int32), 255)
     return mask.astype('uint8')
 
+def polygon2ellipse(polygon):
+    if len(polygon) < 5:
+            polygon.append([(polygon[0][0] + polygon[1][0])//2, 
+                            (polygon[0][1] + polygon[1][1])//2])
+    return cv2.fitEllipse(np.array(polygon).astype("int"))
+
+def polygon2ellipsemask(polygon, shape):
+    mask = np.zeros(shape, dtype="uint8")
+    ellipse = polygon2ellipse(polygon)
+    return cv2.ellipse(mask, ellipse, color=255, thickness=-1)
+

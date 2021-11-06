@@ -15,15 +15,12 @@
 import os
 import sys
 import cv2
-import math
 
 import yaml
-import pickle
 import imageio
 import time
 import numpy as np
 from tqdm import tqdm, trange
-from scipy.spatial import ConvexHull
 
 import sys
 cur_path = os.path.abspath(os.path.dirname(__file__))
@@ -37,16 +34,11 @@ from ppgan.modules.keypoint_detector import KPDetector
 from ppgan.models.generators.occlusion_aware import OcclusionAwareGenerator
 from ppgan.faceutils import face_detection
 from ppgan.faceutils.mask.face_parser import FaceParser
-from ppgan.faceutils.face_detection.detection_utils import union_results, polygon2mask
-from ppgan.faceutils.face_alignment.align_face import get_eyes, align_face, crop
-import face_alignment
-# sys.path.insert(0, '/home/user/paddle/PaddleGAN/GFPGAN/')
+from ppgan.faceutils.face_detection.detection_utils import union_results, polygon2mask, polygon2ellipsemask
 from gfpgan import GFPGANer
-import dlib
-import skimage
 import moviepy.editor as mp
 
-from .base_predictor import BasePredictor
+from ppgan.apps.base_predictor import BasePredictor
 
 
 class FirstOrderPredictor(BasePredictor):
@@ -203,31 +195,7 @@ class FirstOrderPredictor(BasePredictor):
         videoclip_1 = mp.VideoFileClip(driving_video)
         audio = videoclip_1.audio
         def get_prediction(face_image):
-            if self.find_best_frame or self.best_frame is not None:
-                i = self.best_frame if self.best_frame is not None else self.find_best_frame_func(
-                    source_image, driving_video)
-
-                print("Best frame: " + str(i))
-                driving_forward = driving_video[i:]
-                driving_backward = driving_video[:(i + 1)][::-1]
-                predictions_forward = self.make_animation(
-                    face_image,
-                    driving_forward,
-                    self.generator,
-                    self.kp_detector,
-                    relative=self.relative,
-                    adapt_movement_scale=self.adapt_scale)
-                predictions_backward = self.make_animation(
-                    face_image,
-                    driving_backward,
-                    self.generator,
-                    self.kp_detector,
-                    relative=self.relative,
-                    adapt_movement_scale=self.adapt_scale)
-                predictions = predictions_backward[::-1] + predictions_forward[
-                                                           1:]
-            else:
-                predictions = self.make_animation(
+            predictions = self.make_animation(
                     face_image,
                     driving_video,
                     self.generator,
@@ -249,13 +217,12 @@ class FirstOrderPredictor(BasePredictor):
             print("Read driving video error!")
             pass
         reader.close()
-    
-        driving_video = []
-        if self.preprocessing:
-            if self.face_alignment:
-                self.face_alignment_preprocessing(raw_driving_video)
-            else:
-                self.preprocessing_video(raw_driving_video)
+
+        # if self.preprocessing:
+        #     # if self.face_alignment:
+        #     #     self.face_alignment_preprocessing(raw_driving_video)
+        #     # else:
+        #     self.preprocessing_video(raw_driving_video)
 
         driving_video = [
             cv2.resize(frame, (self.image_size, self.image_size)) / 255.0 for frame in raw_driving_video
@@ -304,7 +271,8 @@ class FirstOrderPredictor(BasePredictor):
                     patch[y1:y2, x1:x2] = out * np.dstack([(box_masks[j] > 0)]*3)
                     #mask = np.zeros(frame.shape[:2]).astype('uint8')
                     mask[y1:y2, x1:x2] = box_masks[j]
-            frame = cv2.copyTo(patch, mask, frame)
+                frame = cv2.copyTo(patch, mask, frame)
+             
             out_frame.append(frame)
             patch[:, :, :] = 0
             mask[:, :] = 0          
@@ -387,32 +355,6 @@ class FirstOrderPredictor(BasePredictor):
                 begin_idx += frame_num
         return np.concatenate(predictions)
 
-    def find_best_frame_func(self, source, driving):
-
-
-        def normalize_kp(kp):
-            kp = kp - kp.mean(axis=0, keepdims=True)
-            area = ConvexHull(kp[:, :2]).volume
-            area = np.sqrt(area)
-            kp[:, :2] = kp[:, :2] / area
-            return kp
-
-        fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D,
-                                          flip_input=True)
-
-        kp_source = fa.get_landmarks(255 * source)[0]
-        kp_source = normalize_kp(kp_source)
-        norm = float('inf')
-        frame_num = 0
-        for i, image in tqdm(enumerate(driving)):
-            kp_driving = fa.get_landmarks(255 * image)[0]
-            kp_driving = normalize_kp(kp_driving)
-            new_norm = (np.abs(kp_source - kp_driving) ** 2).sum()
-            if new_norm < norm:
-                norm = new_norm
-                frame_num = i
-        return frame_num
-
     def extract_bbox(self, image):
         detector = face_detection.FaceAlignment(
             face_detection.LandmarksType._2D,
@@ -428,48 +370,29 @@ class FirstOrderPredictor(BasePredictor):
         face_parcer = FaceParser()
         box_masks = []
         if len(results) != 1:
-            frame = source_image.copy()         
-            for i in range(len(results)):
+            frame = source_image.copy()     
+            for i in tqdm(range(0, len(results), 2)):
                 x1, y1, x2, y2, _ = results[i]['rec']
-                polygon_mask = polygon2mask(coords[i], frame.shape[:2])[y1:y2, x1:x2]
-                frame_box = cv2.resize(frame[y1:y2, x1:x2], (512, 512)) 
-                box_mask = face_parcer.parse(frame_box.astype(np.float32))
-                box_mask = np.array(box_mask).astype('uint8')        
-                box_mask = cv2.resize(box_mask,  (x2 - x1, y2 - y1))
+                x11, y11, x21, y21, _ = results[i+1]['rec']
+                width, height = max(x2-x1, x21-x11), max(y2-y1, y21-y11)
+                mask_image = cv2.hconcat([cv2.resize(frame[y1:y2, x1:x2], (width, height)),
+                                         cv2.resize(frame[y11:y21, x11:x21], (width, height))])
+                h, w = mask_image.shape[:2]
+                box_mask = face_parcer.parse(cv2.resize(mask_image, (512, 512)).astype(np.float32))
+                box_mask = cv2.resize(np.array(box_mask).astype('uint8'), (w, h))        
                 box_mask[box_mask != 0] = 1
-                box_masks.append(cv2.bitwise_and(box_mask, polygon_mask))
+                # box_masks.append(cv2.bitwise_and(cv2.resize(box_mask[:, :w//2], (x2-x1, y2-y1)), 
+                #                                polygon2mask(coords[i], frame.shape[:2])[y1:y2, x1:x2]))
+                # box_masks.append(cv2.bitwise_and(cv2.resize(box_mask[:, w//2:], (x21-x11, y21-y11)), 
+                #                                polygon2mask(coords[i+1], frame.shape[:2])[y11:y21, x11:x21]))
+        
+                # box_masks.append(cv2.bitwise_and(cv2.resize(box_mask[:, :w//2], (x2-x1, y2-y1)), 
+                #                               polygon2ellipsemask(coords[i], frame.shape[:2])[y1:y2, x1:x2]))
+                # box_masks.append(cv2.bitwise_and(cv2.resize(box_mask[:, w//2:], (x21-x11, y21-y11)), 
+                #                                polygon2ellipsemask(coords[i+1], frame.shape[:2])[y11:y21, x11:x21]))
+                box_masks.append(polygon2ellipsemask(coords[i], frame.shape[:2])[y1:y2, x1:x2])
+                box_masks.append(polygon2ellipsemask(coords[i+1], frame.shape[:2])[y11:y21, x11:x21])
+                
         return box_masks
 
-    def preprocessing_video(self, raw_driving_video):
-        detector = face_detection.FaceAlignment(face_detection.LandmarksType._2D,
-            flip_input=False,
-            face_detector=self.face_detector)
-     
-        all_bboxes = []
-        for frame in raw_driving_video:
-            bboxes = detector.get_detections_for_image(np.array(frame))[0]
-            bboxes = [(bboxes[2] + bboxes[0])//2, (bboxes[3]+bboxes[1])//2, bboxes[2] - bboxes[0], bboxes[3] - bboxes[1]]
-            all_bboxes.append(bboxes)
-        all_bboxes = np.array(all_bboxes)
-        bh = max(all_bboxes[:, 2])
-        bw = max(all_bboxes[:, 3])
-  
-        for i  in trange(len(all_bboxes)):
-            all_bboxes[i] = [max(0, int(all_bboxes[i][0] - bw * 0.8)), 
-                            max(0, int(all_bboxes[i][1] - bh * 0.9)), 
-                            int(all_bboxes[i][0] + bw * 0.8), 
-                            int(all_bboxes[i][1] + bh * 0.9)]
-        for i in trange(len(all_bboxes)):
-            raw_driving_video[i] = raw_driving_video[i][all_bboxes[i][1]:all_bboxes[i][3], all_bboxes[i][0]:all_bboxes[i][2]]
-       
-          
-    def face_alignment_preprocessing(self, raw_driving_video):
-        self.preprocessing_video(raw_driving_video)
-        fa_predictor = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, 
-        flip_input=False, 
-        face_detector='sfd')
-        for i in trange(len(raw_driving_video)):
-            eyes = get_eyes(fa_predictor, raw_driving_video[i])
-            raw_driving_video[i] = align_face(raw_driving_video[i], eyes[0], eyes[1])
-        self.preprocessing_video(raw_driving_video)
             
