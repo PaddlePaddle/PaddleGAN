@@ -81,3 +81,37 @@ class PhotoPenDataset(Dataset):
     
     def name(self):
         return 'PhotoPenDataset'
+
+@DATASETS.register()
+class PhotoPenDataset_test(Dataset):
+    def __init__(self, content_root, load_size, crop_size):
+        super(PhotoPenDataset_test, self).__init__()
+        inst_dir = os.path.join(content_root, 'test_inst')
+        _, _, inst_list = next(os.walk(inst_dir))
+        self.inst_list = np.sort(inst_list)
+        self.content_root = content_root
+        self.load_size = load_size
+        self.crop_size = crop_size
+
+    def __getitem__(self, idx):
+        ins = Image.open(os.path.join(self.content_root, 'test_inst', self.inst_list[idx]))
+
+        w, h = ins.size
+        resize_w, resize_h = 0, 0
+        if w < h:
+            resize_w, resize_h = self.load_size, int(h * self.load_size / w)
+        else:
+            resize_w, resize_h = int(w * self.load_size / h), self.load_size
+        left = random.randint(0, resize_w - self.crop_size)
+        top = random.randint(0, resize_h - self.crop_size)
+        flip = False
+        
+        ins = data_transform(ins, resize_w, resize_h, load_size=self.load_size, 
+            pos=[left, top, left + self.crop_size, top + self.crop_size], flip=flip, is_image=False)
+        return {'ins': ins, 'img_path': self.inst_list[idx]}
+
+    def __len__(self):
+        return len(self.inst_list)
+    
+    def name(self):
+        return 'PhotoPenDataset'

@@ -42,6 +42,13 @@ dataset:
     crop_size: 256
     num_workers: 0
     batch_size: 1
+  test:
+    name: PhotoPenDataset_test
+    content_root: test/coco_stuff
+    load_size: 286
+    crop_size: 256
+    num_workers: 0
+    batch_size: 1
 
 lr_scheduler: # abundoned
   name: LinearDecay

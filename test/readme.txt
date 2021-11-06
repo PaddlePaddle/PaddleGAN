@@ -13,5 +13,8 @@ python -u tools/main.py --config-file configs/photopen.yaml
 # 继续训练
 python -u tools/main.py --config-file configs/photopen.yaml --resume output_dir/photopen-2021-09-30-15-59/iter_3_checkpoint.pdparams
 
-#训练，覆盖参数
+# 训练，覆盖参数
 python -u tools/main.py --config-file configs/photopen.yaml --o model.generator.ngf=1 model.discriminator.ndf=1
+
+# 测试
+python -u tools/main.py --config-file configs/photopen.yaml --evaluate-only --load output_dir/photopen-2021-11-06-20-59/iter_1_checkpoint.pdparams

@@ -62,7 +62,8 @@ class PhotoPenModel(BaseModel):
         self.net_vgg = build_criterion(criterion)
     
     def setup_input(self, input):
-        self.img = paddle.to_tensor(input['img'])
+        if 'img' in input.keys():
+            self.img = paddle.to_tensor(input['img'])
         self.ins = paddle.to_tensor(input['ins'])
         self.img_paths = input['img_path']
 
@@ -137,7 +138,13 @@ class PhotoPenModel(BaseModel):
         self.optimizers['optimD'].clear_grad()
         self.backward_D()
         self.optimizers['optimD'].step()
-        
+ 
+    def test_iter(self, metrics=None):
+        self.eval()
+        with paddle.no_grad():
+            self.forward()
+        self.train()
+
     def setup_optimizers(self, lr, cfg):
         for opt_name, opt_cfg in cfg.items():
             if opt_name == 'lr':
