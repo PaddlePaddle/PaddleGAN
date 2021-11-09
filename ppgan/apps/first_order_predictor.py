@@ -135,12 +135,15 @@ class FirstOrderPredictor(BasePredictor):
         #         tile=400,
         #         tile_pad=10,
         #         pre_pad=0,
-        #         half=True) 
-        self.gfpganer = GFPGANer(model_path=gfpgan_model_path, 
-                                         upscale = 2, 
-                                         arch = 'clean',
-                                         channel_multiplier = 2,
-                                         bg_upsampler = None)
+        #         half=True)
+        if gfpgan_model_path: 
+            self.gfpganer = GFPGANer(model_path=gfpgan_model_path, 
+                                            upscale = 2, 
+                                            arch = 'clean',
+                                            channel_multiplier = 2,
+                                            bg_upsampler = None)
+        else:
+            self.gfpganer = None
         if face_enhancement:
             from ppgan.faceutils.face_enhancement import FaceEnhancement
             self.faceenhancer = FaceEnhancement(batch_size=batch_size)
@@ -205,8 +208,9 @@ class FirstOrderPredictor(BasePredictor):
             return predictions
 
         source_image = self.read_img(source_image)
-        _, _, source_image = self.gfpganer.enhance(cv2.cvtColor(source_image, cv2.COLOR_RGB2BGR))
-        source_image = cv2.cvtColor(source_image, cv2.COLOR_BGR2RGB)
+        if self.gfpganer:
+            _, _, source_image = self.gfpganer.enhance(cv2.cvtColor(source_image, cv2.COLOR_RGB2BGR))
+            source_image = cv2.cvtColor(source_image, cv2.COLOR_BGR2RGB)
 
         reader = imageio.get_reader(driving_video)
         fps = reader.get_meta_data()['fps']
