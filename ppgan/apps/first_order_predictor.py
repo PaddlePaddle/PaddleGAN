@@ -122,13 +122,14 @@ class FirstOrderPredictor(BasePredictor):
         self.best_frame = best_frame
         self.ratio = ratio
         self.face_detector = face_detector
-        start = time.time()
-        self.generator, self.kp_detector = self.load_checkpoints(
-            self.cfg, self.weight_path)
-        print("model loading" , time.time() - start)
         self.multi_person = multi_person
         self.face_enhancement = face_enhancement
         self.batch_size = batch_size
+        start = time.time()
+        self.generator, self.kp_detector = self.load_checkpoints(
+            self.cfg, self.weight_path)
+      
+        
         # from realesrgan import RealESRGANer
         # bg_upsampler = RealESRGANer(
         #         scale=2,
@@ -145,6 +146,7 @@ class FirstOrderPredictor(BasePredictor):
                                             bg_upsampler = None)
         else:
             self.gfpganer = None
+        print("model loading" , time.time() - start)
         if face_enhancement:
             from ppgan.faceutils.face_enhancement import FaceEnhancement
             self.faceenhancer = FaceEnhancement(batch_size=batch_size)
