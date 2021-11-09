@@ -184,10 +184,10 @@ def polygon2ellipsemask(polygon, shape):
     mask = np.zeros(shape, dtype="uint8")
     (x, y), (MA, ma), angle = polygon2ellipse(polygon)
     if x is None or y is None or MA is None or ma is None: 
-        x, y, MA, ma = int(x), int(y), int(MA/2.5), int(ma/2)
-        return cv2.ellipse(mask, (x, y), 
+        return polygon2mask(polygon, shape)
+    x, y, MA, ma = int(x), int(y), int(MA/2.5), int(ma/2)
+    return cv2.ellipse(mask, (x, y), 
                             (MA, ma), 
                             angle, 0, 360, color=255, thickness=-1)
-    else:
-        polygon2mask(polygon, shape)
+    
 
