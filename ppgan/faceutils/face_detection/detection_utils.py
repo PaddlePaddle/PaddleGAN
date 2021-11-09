@@ -49,22 +49,6 @@ def Union(samples):
     return [x1, y1, x2, y2, area]
 
 def cluster_ious(bboxes, image_area):
-        dist_matrix = pairwise_distances(bboxes, bboxes, metric=IOU)
-        indices = set()
-        clusters = []
-        for i, row in enumerate(dist_matrix):
-            cluster = []
-            if i not in indices:
-                for j in range(len(row)):
-                    if row[j] > 0:
-                        union = union_area(bboxes[i], bboxes[j])
-                        if row[j] > max(0.2, union/image_area):
-                            cluster.append(j)
-                            indices.add(j)
-                clusters.append(cluster)
-        return clusters
-
-def cluster_ious1(bboxes, image_area):
         dist_matrix = pairwise_distances(bboxes, bboxes, metric=partial(iou_thresholded, image_area=image_area))
         clusters = set()
         indices = np.arange(len(dist_matrix[0]))
@@ -89,7 +73,7 @@ def union_results(image, predictions):
     for rect in predictions:
         area = (rect[3] - rect[1]) * (rect[2] - rect[0])
         faces_boxes.append([*rect, area])
-    clusters = cluster_ious1(faces_boxes, h * w)
+    clusters = cluster_ious(faces_boxes, h * w)
     result_boxes = union_clusters(faces_boxes, clusters)
     upscaled_detections = upscale_detections(result_boxes, (0, 0, w, h))
     bounds, coords = escape_intersections(upscaled_detections, w, h)
@@ -124,7 +108,7 @@ def escape_intersections(detections, w, h):
     bounds = [coords2bounds(coord, w, h) for coord in coords]
     return bounds, coords
 
-def slice_box(box_A:Polygon, box_B:Polygon, margin=-15, line_mult=10):
+def slice_box(box_A:Polygon, box_B:Polygon, margin=-10, line_mult=10):
     "Returns box_A sliced according to the distance to box_B."
     vec_AB = np.array([box_B.centroid.x - box_A.centroid.x, box_B.centroid.y - box_A.centroid.y])
     vec_ABp = np.array([-(box_B.centroid.y - box_A.centroid.y), box_B.centroid.x - box_A.centroid.x])
@@ -191,12 +175,16 @@ def polygon2mask(polygon, shape):
 
 def polygon2ellipse(polygon):
     if len(polygon) < 5:
-            polygon.append([(polygon[0][0] + polygon[1][0])//2, 
-                            (polygon[0][1] + polygon[1][1])//2])
-    return cv2.fitEllipse(np.array(polygon).astype("int"))
+            polygon.append([(polygon[0][0] + polygon[1][0])//2 +10, 
+                            (polygon[0][1] + polygon[1][1])//2 +10])
+    (x, y), (MA, ma), angle = cv2.fitEllipse(np.array(polygon).astype("int"))
+    return (x, y), (MA, ma), angle
 
 def polygon2ellipsemask(polygon, shape):
     mask = np.zeros(shape, dtype="uint8")
-    ellipse = polygon2ellipse(polygon)
-    return cv2.ellipse(mask, ellipse, color=255, thickness=-1)
+    (x, y), (MA, ma), angle = polygon2ellipse(polygon)
+    x, y, MA, ma = int(x), int(y), int(MA/2.5), int(ma/2)
+    return cv2.ellipse(mask, (x, y), 
+                            (MA, ma), 
+                            angle, 0, 360, color=255, thickness=-1)
 

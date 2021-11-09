@@ -34,6 +34,7 @@ from ppgan.modules.keypoint_detector import KPDetector
 from ppgan.models.generators.occlusion_aware import OcclusionAwareGenerator
 from ppgan.faceutils import face_detection
 from ppgan.faceutils.mask.face_parser import FaceParser
+from ppgan.faceutils.face_segmentation.face_seg import FaceSeg
 from ppgan.faceutils.face_detection.detection_utils import union_results, polygon2mask, polygon2ellipsemask
 from gfpgan import GFPGANer
 import moviepy.editor as mp
@@ -210,17 +211,18 @@ class FirstOrderPredictor(BasePredictor):
 
         reader = imageio.get_reader(driving_video)
         fps = reader.get_meta_data()['fps']
+
         
         try:
-            raw_driving_video = [im for im in reader]
+            driving_video = [cv2.resize(im, (self.image_size, self.image_size)) / 255.0  for im in reader]
         except RuntimeError:
             print("Read driving video error!")
             pass
         reader.close()
 
-        driving_video = [
-            cv2.resize(frame, (self.image_size, self.image_size)) / 255.0 for frame in raw_driving_video
-        ]
+        # driving_video = [
+        #     cv2.resize(frame, (self.image_size, self.image_size)) / 255.0 for frame in raw_driving_video
+        # ]
         results = []
         start = time.time()
         bboxes, coords = self.extract_bbox(source_image.copy())
@@ -260,9 +262,10 @@ class FirstOrderPredictor(BasePredictor):
                 if len(results) == 1:
                     frame[y1:y2, x1:x2] = out
                     break
-                else:
+                else: 
                     #patch = np.zeros(frame.shape).astype('uint8')
                     patch[y1:y2, x1:x2] = out * np.dstack([(box_masks[j] > 0)]*3)
+                    
                     #mask = np.zeros(frame.shape[:2]).astype('uint8')
                     mask[y1:y2, x1:x2] = box_masks[j]
                 frame = cv2.copyTo(patch, mask, frame)
@@ -311,22 +314,26 @@ class FirstOrderPredictor(BasePredictor):
             predictions = []
             source = paddle.to_tensor(source_image[np.newaxis].astype(
                 np.float32)).transpose([0, 3, 1, 2])
-
-            driving = paddle.to_tensor(
-                np.array(driving_video).astype(
-                    np.float32)).transpose([0, 3, 1, 2])
-            
             kp_source = kp_detector(source)
-            kp_driving_initial = kp_detector(driving[0:1])
             kp_source_batch = {}
             kp_source_batch["value"] = paddle.tile(kp_source["value"], repeat_times=[self.batch_size, 1, 1])
             kp_source_batch["jacobian"] = paddle.tile(kp_source["jacobian"], repeat_times=[self.batch_size, 1, 1, 1])
             source = paddle.tile(source, repeat_times=[self.batch_size, 1, 1, 1])
+
+            driving = paddle.to_tensor(
+                np.array(driving_video[:1]).astype(
+                    np.float32)).transpose([0, 3, 1, 2])
+            kp_driving_initial = kp_detector(driving[:1])
+            
             begin_idx = 0
-            for frame_idx in tqdm(range(int(np.ceil(float(driving.shape[0]) / self.batch_size)))):
-                frame_num = min(self.batch_size, driving.shape[0] - begin_idx)
-                driving_frame = driving[begin_idx: begin_idx + frame_num]
-                kp_driving = kp_detector(driving_frame)
+            for _ in tqdm(range(int(np.ceil(float(len(driving_video)) / self.batch_size)))):
+                frame_num = min(self.batch_size, len(driving_video) - begin_idx)
+                driving = paddle.to_tensor(
+                    np.array(driving_video[begin_idx:begin_idx + frame_num]).astype(
+                    np.float32)).transpose([0, 3, 1, 2])
+
+                # driving_frame = driving[begin_idx: begin_idx + frame_num]
+                kp_driving = kp_detector(driving)
                 kp_source_img = {}
                 kp_source_img["value"] = kp_source_batch["value"][0:frame_num]
                 kp_source_img["jacobian"] = kp_source_batch["jacobian"][0:frame_num]
@@ -360,33 +367,58 @@ class FirstOrderPredictor(BasePredictor):
         result, coords = self.detection_func(image, predictions)
         return np.array(result), np.array(coords)
 
-    def extract_masks(self, results, coords, source_image):
-        face_parcer = FaceParser()
+
+    def extract_masks(self, results, coords, source_image, model_type="face_seg"):
+        if len(results) == 1:
+            return 
+        if model_type == "face_seg": 
+            face_model = FaceSeg()
+        else:
+            face_model = FaceParser()
         box_masks = []
-        if len(results) != 1:
-            frame = source_image.copy()     
-            for i in tqdm(range(0, len(results), 2)):
-                x1, y1, x2, y2, _ = results[i]['rec']
+        frame = source_image.copy()     
+        polygons = [polygon2ellipsemask(coord, frame.shape[:2]) for coord in coords]
+        for i in tqdm(range(0, len(results), 2)):
+            x1, y1, x2, y2, _ = results[i]['rec']
+            if i + 1 < len(results):
                 x11, y11, x21, y21, _ = results[i+1]['rec']
                 width, height = max(x2-x1, x21-x11), max(y2-y1, y21-y11)
                 mask_image = cv2.hconcat([cv2.resize(frame[y1:y2, x1:x2], (width, height)),
-                                         cv2.resize(frame[y11:y21, x11:x21], (width, height))])
+                                            cv2.resize(frame[y11:y21, x11:x21], (width, height))])
                 h, w = mask_image.shape[:2]
-                box_mask = face_parcer.parse(cv2.resize(mask_image, (512, 512)).astype(np.float32))
-                box_mask = cv2.resize(np.array(box_mask).astype('uint8'), (w, h))        
-                box_mask[box_mask != 0] = 1
+                if model_type == "face_parser":
+                    box_mask = face_model.parse(cv2.resize(mask_image, (512, 512)).astype(np.float32))
+                    box_mask = cv2.resize(np.array(box_mask).astype('uint8'), (w, h))        
+                    box_mask[box_mask != 0] = 1
+                else:
+                    box_mask = cv2.resize(face_model(mask_image), (w, h))
+                ### masks + detections
                 # box_masks.append(cv2.bitwise_and(cv2.resize(box_mask[:, :w//2], (x2-x1, y2-y1)), 
                 #                                polygon2mask(coords[i], frame.shape[:2])[y1:y2, x1:x2]))
                 # box_masks.append(cv2.bitwise_and(cv2.resize(box_mask[:, w//2:], (x21-x11, y21-y11)), 
                 #                                polygon2mask(coords[i+1], frame.shape[:2])[y11:y21, x11:x21]))
-        
-                # box_masks.append(cv2.bitwise_and(cv2.resize(box_mask[:, :w//2], (x2-x1, y2-y1)), 
-                #                               polygon2ellipsemask(coords[i], frame.shape[:2])[y1:y2, x1:x2]))
-                # box_masks.append(cv2.bitwise_and(cv2.resize(box_mask[:, w//2:], (x21-x11, y21-y11)), 
-                #                                polygon2ellipsemask(coords[i+1], frame.shape[:2])[y11:y21, x11:x21]))
-                box_masks.append(polygon2ellipsemask(coords[i], frame.shape[:2])[y1:y2, x1:x2])
-                box_masks.append(polygon2ellipsemask(coords[i+1], frame.shape[:2])[y11:y21, x11:x21])
+                ### masks + ellipse detections
+                box_masks.append(cv2.bitwise_and(cv2.resize(box_mask[:, :w//2], (x2-x1, y2-y1)), 
+                                              polygons[i][y1:y2, x1:x2]))
+                box_masks.append(cv2.bitwise_and(cv2.resize(box_mask[:, w//2:], (x21-x11, y21-y11)), 
+                                              polygons[i+1][y11:y21, x11:x21]))
                 
+                ### just ellipse detections
+                # box_masks.append(polygons[i][y1:y2, x1:x2])
+                # box_masks.append(polygons[i+1][y11:y21, x11:x21])
+            else:
+                if model_type == "face_parser":
+                    box_mask = face_model.parse(cv2.resize(frame[y1:y2, x1:x2], (512, 512)).astype(np.float32))
+                    box_mask = cv2.resize(np.array(box_mask).astype('uint8'), (x2-x1, y2-y1))        
+                    box_mask[box_mask != 0] = 1
+                else:
+                    box_mask = face_model(frame[y1:y2, x1:x2])
+                ### just ellipse detections
+                # box_masks.append(polygons[i][y1:y2, x1:x2])
+                ### masks + ellipse detections
+                box_masks.append(cv2.bitwise_and(box_mask, 
+                                               polygons[i][y1:y2, x1:x2]))
+                ### masks + detections
+                # box_masks.append(cv2.bitwise_and(cv2.resize(box_mask, (x2-x1, y2-y1)), 
+                #                                polygon2mask(coords[i], frame.shape[:2])[y1:y2, x1:x2]))
         return box_masks
-
-            
