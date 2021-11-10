@@ -175,6 +175,7 @@ def polygon2mask(polygon, shape):
 
 def polygon2ellipse(polygon):
     if len(polygon) < 5:
+            polygon = list(polygon)
             polygon.append([(polygon[0][0] + polygon[1][0])//2 +10, 
                             (polygon[0][1] + polygon[1][1])//2 +10])
     (x, y), (MA, ma), angle = cv2.fitEllipse(np.array(polygon).astype("int"))
