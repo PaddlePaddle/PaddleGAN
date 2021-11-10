@@ -172,10 +172,6 @@ class FirstOrderModel(BaseModel):
             self.is_train = True
             self.setup_net_parallel()
         
-        #checkpoint = paddle.load('/root/.cache/ppgan/vox-cpk.pdparams')
-        #self.nets['kp_detector'].set_state_dict(checkpoint['kp_detector'])
-        #self.nets['generator'].set_state_dict(checkpoint['generator'])
-        
         self.nets['kp_detector'].eval()
         self.nets['generator'].eval()
         with paddle.no_grad():
