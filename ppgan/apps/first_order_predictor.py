@@ -91,7 +91,7 @@ class FirstOrderPredictor(BasePredictor):
         self.image_size = image_size
         if weight_path is None:
             if mobile_net:
-                vox_cpk_weight_url = 'https://paddlegan.bj.bcebos.com/applications/first_order_model/vox_mobile.pdparams'
+                vox_cpk_weight_url = 'https://paddlegan.bj.bcebos.com/applications/first_order_model/vox-mobile.pdparams'
             
             else:
                 if self.image_size == 512:
