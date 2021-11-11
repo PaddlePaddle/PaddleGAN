@@ -1,0 +1,39 @@
+StyleGANv2:
+  dataset_web: https://paddlegan.bj.bcebos.com/datasets/ffhq.tar
+  config: configs/stylegan_v2_256_ffhq.yaml
+  fp_item: fp32
+  bs_item: 3 8
+  total_iters: 100
+  log_interval: 5
+
+FOMM:
+  dataset_web: https://paddlegan.bj.bcebos.com/datasets/fom_test_data.tar
+  config: configs/firstorder_vox_256.yaml
+  fp_item: fp32
+  bs_item: 8 16
+  epochs: 1
+  log_interval: 11
+
+esrgan:
+  dataset_web: https://paddlegan.bj.bcebos.com/datasets/DIV2KandSet14.tar
+  config: configs/esrgan_psnr_x4_div2k.yaml
+  fp_item: fp32
+  bs_item: 32 64
+  total_iters: 300
+  log_interval: 10
+
+edvr:
+  dataset: data/REDS
+  config: configs/edvr_m_wo_tsa.yaml
+  fp_item: fp32
+  bs_item: 4 64
+  total_iters: 300
+  log_interval: 10
+
+basicvsr:
+  dataset: data/REDS
+  config: configs/basicvsr_reds.yaml
+  fp_item: fp32
+  bs_item: 2 4
+  total_iters: 300
+  log_interval: 10

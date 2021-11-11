@@ -1,26 +1,13 @@
-#   Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-import paddle
+# Copyright (c) MMEditing Authors.
 
 import numpy as np
 
+import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
+from paddle.vision.ops import DeformConv2D
 from ...utils.download import get_path_from_url
 from ...modules.init import kaiming_normal_, constant_
-
 from .builder import GENERATORS
 
 
@@ -619,3 +606,69 @@ class BasicVSRNet(nn.Layer):
             outputs[i] = out
 
         return paddle.stack(outputs, axis=1)
+
+
+class SecondOrderDeformableAlignment(nn.Layer):
+    """Second-order deformable alignment module.
+    Args:
+        in_channels (int): Same as nn.Conv2d.
+        out_channels (int): Same as nn.Conv2d.
+        kernel_size (int or tuple[int]): Same as nn.Conv2d.
+        stride (int or tuple[int]): Same as nn.Conv2d.
+        padding (int or tuple[int]): Same as nn.Conv2d.
+        dilation (int or tuple[int]): Same as nn.Conv2d.
+        groups (int): Same as nn.Conv2d.
+        deformable_groups (int).
+    """
+    def __init__(self,
+                 in_channels=128,
+                 out_channels=64,
+                 kernel_size=3,
+                 stride=1,
+                 padding=1,
+                 dilation=1,
+                 groups=1,
+                 deformable_groups=16):
+        super(SecondOrderDeformableAlignment, self).__init__()
+
+        self.conv_offset = nn.Sequential(
+            nn.Conv2D(3 * out_channels + 4, out_channels, 3, 1, 1),
+            nn.LeakyReLU(negative_slope=0.1),
+            nn.Conv2D(out_channels, out_channels, 3, 1, 1),
+            nn.LeakyReLU(negative_slope=0.1),
+            nn.Conv2D(out_channels, out_channels, 3, 1, 1),
+            nn.LeakyReLU(negative_slope=0.1),
+            nn.Conv2D(out_channels, 27 * deformable_groups, 3, 1, 1),
+        )
+        self.dcn = DeformConv2D(in_channels,
+                                out_channels,
+                                kernel_size=kernel_size,
+                                stride=stride,
+                                padding=padding,
+                                dilation=dilation,
+                                deformable_groups=deformable_groups)
+        self.init_offset()
+
+    def init_offset(self):
+        constant_(self.conv_offset[-1].weight, 0)
+        constant_(self.conv_offset[-1].bias, 0)
+
+    def forward(self, x, extra_feat, flow_1, flow_2):
+        extra_feat = paddle.concat([extra_feat, flow_1, flow_2], axis=1)
+        out = self.conv_offset(extra_feat)
+        o1, o2, mask = paddle.chunk(out, 3, axis=1)
+
+        # offset
+        offset = 10 * paddle.tanh(paddle.concat((o1, o2), axis=1))
+        offset_1, offset_2 = paddle.chunk(offset, 2, axis=1)
+        offset_1 = offset_1 + flow_1.flip(1).tile(
+            [1, offset_1.shape[1] // 2, 1, 1])
+        offset_2 = offset_2 + flow_2.flip(1).tile(
+            [1, offset_2.shape[1] // 2, 1, 1])
+        offset = paddle.concat([offset_1, offset_2], axis=1)
+
+        # mask
+        mask = F.sigmoid(mask)
+
+        out = self.dcn(x, offset, mask)
+        return out

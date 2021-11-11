@@ -60,6 +60,13 @@ def parse_args():
                         help="path to reference images")
     parser.add_argument("--model_path", default=None, help="model for loading")
 
+    # for profiler                
+    parser.add_argument('-p',
+                        '--profiler_options',
+                        type=str,
+                        default=None,
+                        help='The option of profiler, which should be in format \"key1=value1;key2=value2;key3=value3\".'
+    )
     args = parser.parse_args()
 
     return args

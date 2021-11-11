@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# code was heavily based on https://github.com/rosinality/stylegan2-pytorch
+# MIT License
+# Copyright (c) 2019 Kim Seonghyeon
+
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F

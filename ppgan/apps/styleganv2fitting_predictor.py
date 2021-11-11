@@ -38,14 +38,12 @@ def make_image(tensor):
 
 
 class StyleGANv2FittingPredictor(StyleGANv2Predictor):
-    def run(
-            self,
+    def run(self,
             image,
             need_align=False,
             start_lr=0.1,
             final_lr=0.025,
-            latent_level=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-                          11],  # for ffhq (0~17)
+            latent_level=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
             step=100,
             mse_weight=1,
             pre_latent=None):

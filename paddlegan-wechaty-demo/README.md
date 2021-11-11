@@ -40,7 +40,7 @@
 
 3. 安装项目所需的PaddleGAN的module
 
-    此demo以`first order motion`为示例，其他module根据项目所需安装，更多的模型请查阅[PaddleGAN模型API接口说明](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/zh_CN/apis/apps.md)。
+    此demo以`first order motion`为示例，其他module根据项目所需安装，更多的模型请查阅[PaddleGAN模型API接口说明](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/apis/apps.md)。
 
 4. Set token for your bot
 
@@ -82,9 +82,9 @@ async def on_message(msg: Message):
     Message Handler for the Bot
     """
     ### PaddleGAN fom
-    
+
     global fom, source, driving
-    
+
     if isinstance(msg.text(), str) and len(msg.text()) > 0 \
         and msg._payload.type == MessageType.MESSAGE_TYPE_TEXT \
         and "fom" in msg.text():
@@ -95,21 +95,21 @@ async def on_message(msg: Message):
     if fom and msg._payload.type == MessageType.MESSAGE_TYPE_IMAGE:
         fileBox = await msg.to_file_box()
         await fileBox.to_file("test_fom/source.jpg", True)
-        
+
         bot_response = u"好嘞, 收到图片"
         await msg.say(bot_response)
 
         source = True
-        
+
     if fom and msg._payload.type == MessageType.MESSAGE_TYPE_VIDEO:
         fileBox = await msg.to_file_box()
         await fileBox.to_file("test_fom/driving.mp4", True)
-        
+
         bot_response = u"好嘞, 收到驱动视频"
         await msg.say(bot_response)
 
         driving = True
-       
+
     if source and driving:
         bot_response = u"都收到啦，稍等一下嘿嘿"
         await msg.say(bot_response)
@@ -120,7 +120,7 @@ async def on_message(msg: Message):
         file_box = FileBox.from_file("test_fom/result.mp4")
         await msg.say(file_box)
 
-    ###    
+    ###  
 
 ```
 
@@ -128,4 +128,3 @@ async def on_message(msg: Message):
 <div align='center'>
   <img src='https://user-images.githubusercontent.com/48054808/124779361-4ca4c800-df74-11eb-9a45-e4c82bab346b.jpeg'width='300'/>
 </div>
-

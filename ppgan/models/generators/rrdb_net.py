@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# code was based on https://github.com/xinntao/ESRGAN
+
 import functools
 import paddle
 import paddle.nn as nn

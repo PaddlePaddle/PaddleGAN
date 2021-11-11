@@ -1,28 +1,28 @@
-from easydict import EasyDict as edict
+from .config import AttrDict
 
-_C = edict()
+_audio_cfg = AttrDict()
 
-_C.num_mels = 80
-_C.rescale = True
-_C.rescaling_max = 0.9
-_C.use_lws = False
-_C.n_fft = 800
-_C.hop_size = 200
-_C.win_size = 800
-_C.sample_rate = 16000
-_C.frame_shift_ms = None
-_C.signal_normalization = True
-_C.allow_clipping_in_normalization = True
-_C.symmetric_mels = True
-_C.max_abs_value = 4.
-_C.preemphasize = True
-_C.preemphasis = 0.97
-_C.min_level_db = -100
-_C.ref_level_db = 20
-_C.fmin = 55
-_C.fmax = 7600
-_C.fps = 25
+_audio_cfg.num_mels = 80
+_audio_cfg.rescale = True
+_audio_cfg.rescaling_max = 0.9
+_audio_cfg.use_lws = False
+_audio_cfg.n_fft = 800
+_audio_cfg.hop_size = 200
+_audio_cfg.win_size = 800
+_audio_cfg.sample_rate = 16000
+_audio_cfg.frame_shift_ms = None
+_audio_cfg.signal_normalization = True
+_audio_cfg.allow_clipping_in_normalization = True
+_audio_cfg.symmetric_mels = True
+_audio_cfg.max_abs_value = 4.
+_audio_cfg.preemphasize = True
+_audio_cfg.preemphasis = 0.97
+_audio_cfg.min_level_db = -100
+_audio_cfg.ref_level_db = 20
+_audio_cfg.fmin = 55
+_audio_cfg.fmax = 7600
+_audio_cfg.fps = 25
 
 
 def get_audio_config():
-    return _C
+    return _audio_cfg

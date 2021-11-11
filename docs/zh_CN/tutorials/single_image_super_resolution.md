@@ -2,14 +2,15 @@
 
 ## 1.1 原理介绍
 
-  超分是放大和改善图像细节的过程。它通常将低分辨率图像作为输入，将同一图像放大到更高分辨率作为输出。这里我们提供了三种超分辨率模型，即[RealSR](https://openaccess.thecvf.com/content_CVPRW_2020/papers/w31/Ji_Real-World_Super-Resolution_via_Kernel_Estimation_and_Noise_Injection_CVPRW_2020_paper.pdf), [ESRGAN](https://arxiv.org/abs/1809.00219v2), [LESRCNN](https://arxiv.org/abs/2007.04344).
+  超分是放大和改善图像细节的过程。它通常将低分辨率图像作为输入，将同一图像放大到更高分辨率作为输出。这里我们提供了四种超分辨率模型，即[RealSR](https://openaccess.thecvf.com/content_CVPRW_2020/papers/w31/Ji_Real-World_Super-Resolution_via_Kernel_Estimation_and_Noise_Injection_CVPRW_2020_paper.pdf), [ESRGAN](https://arxiv.org/abs/1809.00219v2), [LESRCNN](https://arxiv.org/abs/2007.04344),[PAN](https://arxiv.org/pdf/2010.01073.pdf).
   [RealSR](https://openaccess.thecvf.com/content_CVPRW_2020/papers/w31/Ji_Real-World_Super-Resolution_via_Kernel_Estimation_and_Noise_Injection_CVPRW_2020_paper.pdf)通过估计各种模糊内核以及实际噪声分布，为现实世界的图像设计一种新颖的真实图片降采样框架。基于该降采样框架，可以获取与真实世界图像共享同一域的低分辨率图像。RealSR是一个旨在提高感知度的真实世界超分辨率模型。对合成噪声数据和真实世界图像进行的大量实验表明，RealSR模型能够有效降低了噪声并提高了视觉质量。
   [ESRGAN](https://arxiv.org/abs/1809.00219v2)是增强型SRGAN，为了进一步提高SRGAN的视觉质量，ESRGAN在SRGAN的基础上改进了SRGAN的三个关键组件。此外，ESRGAN还引入了未经批量归一化的剩余密集块（RRDB）作为基本的网络构建单元，让鉴别器预测相对真实性而不是绝对值，并利用激活前的特征改善感知损失。得益于这些改进，提出的ESRGAN实现了比SRGAN更好的视觉质量和更逼真、更自然的纹理，并在PIRM2018-SR挑战赛中获得第一名。
-  考虑到CNNs在SISR的应用上往往会消耗大量的计算量和存储空间来训练SR模型，轻量级增强SR-CNN（[LESRCNN](https://arxiv.org/abs/2007.04344)）被提出。大量实验表明，LESRCNN在定性和定量评价方面优于现有的SISR算法。
+  考虑到CNNs在SISR的应用上往往会消耗大量的计算量和存储空间来训练SR模型。轻量级增强SR-CNN（[LESRCNN](https://arxiv.org/abs/2007.04344)）被提出。大量实验表明，LESRCNN在定性和定量评价方面优于现有的SISR算法。
+  之后[PAN](https://arxiv.org/pdf/2010.01073.pdf)设计了一种用于图像超分辨率（SR）的轻量级卷积神经网络。
 
 
 
-## 1.2 如何使用 
+## 1.2 如何使用
 
 ### 1.2.1 数据准备
 
@@ -107,7 +108,17 @@
 | lesrcnn_x4  | 31.9476 / 0.8909 | 28.4110 / 0.7770 | 30.231 / 0.8326 |
 | esrgan_psnr_x4  | 32.5512 / 0.8991 | 28.8114 / 0.7871 | 30.7565 / 0.8449 |
 | esrgan_x4  | 28.7647 / 0.8187 | 25.0065 / 0.6762 | 26.9013 / 0.7542 |
+| pan_x4  | 30.4574 / 0.8643 | 26.7204 / 0.7434 | 28.9187 / 0.8176 |
 | drns_x4  | 32.6684 / 0.8999 | 28.9037 / 0.7885 | - |
+
+PAN指标对比
+
+paddle模型使用DIV2K数据集训练，torch模型使用df2k和DIV2K数据集训练。
+
+| 框架 | Set5 | Set14 |
+|---|---|---|
+| paddle  | 30.4574 / 0.8643 | 26.7204 / 0.7434 |
+| torch  | 30.2183 / 0.8643 | 26.8035 / 0.7445 |
 
 
 <!-- ![](../../imgs/horse2zebra.png) -->
@@ -122,6 +133,7 @@
 | lesrcnn_x4  | DIV2K | [lesrcnn_x4](https://paddlegan.bj.bcebos.com/models/lesrcnn_x4.pdparams)
 | esrgan_psnr_x4  | DIV2K | [esrgan_psnr_x4](https://paddlegan.bj.bcebos.com/models/esrgan_psnr_x4.pdparams)
 | esrgan_x4  | DIV2K | [esrgan_x4](https://paddlegan.bj.bcebos.com/models/esrgan_x4.pdparams)
+| pan_x4  | DIV2K | [pan_x4](https://paddlegan.bj.bcebos.com/models/pan_x4.pdparams)
 | drns_x4  | DIV2K | [drns_x4](https://paddlegan.bj.bcebos.com/models/DRNSx4.pdparams)
 
 
@@ -164,7 +176,19 @@
   publisher={Elsevier}
   }
   ```
-- 4. [Closed-loop Matters: Dual Regression Networks for Single Image Super-Resolution](https://arxiv.org/pdf/2003.07018.pdf)
+- 4. [Efficient Image Super-Resolution Using Pixel Attention](https://arxiv.org/pdf/2010.01073.pdf)
+
+  ```
+  @inproceedings{Hengyuan2020Efficient,
+  title={Efficient Image Super-Resolution Using Pixel Attention},
+  author={Hengyuan Zhao and Xiangtao Kong and Jingwen He and Yu Qiao and Chao Dong},
+  booktitle={Computer Vision – ECCV 2020 Workshops},
+  volume={12537},
+  pages={56-72},
+  year={2020}
+  }
+  ```
+  - 5. [Closed-loop Matters: Dual Regression Networks for Single Image Super-Resolution](https://arxiv.org/pdf/2003.07018.pdf)
 
   ```
   @inproceedings{guo2020closed,

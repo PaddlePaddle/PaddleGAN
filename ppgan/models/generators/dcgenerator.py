@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# code was heavily based on https://github.com/aidotse/Team-Haste
+# MIT License
+# Copyright (c) 2020 AI Sweden
+
 import paddle
 import paddle.nn as nn
 import functools
@@ -26,7 +30,6 @@ from .builder import GENERATORS
 class DCGenerator(nn.Layer):
     """Resnet-based generator that consists of Resnet blocks between a few downsampling/upsampling operations.
 
-    code and idea from Justin Johnson's neural style transfer project(https://github.com/jcjohnson/fast-neural-style)
     """
     def __init__(self,
                  input_nz,
@@ -38,12 +41,12 @@ class DCGenerator(nn.Layer):
         """Construct a DCGenerator generator
 
         Args:
-            input_nz (int)      -- the number of dimension in input noise
-            input_nc (int)      -- the number of channels in input images
-            output_nc (int)     -- the number of channels in output images
-            ngf (int)           -- the number of filters in the last conv layer
-            norm_layer          -- normalization layer
-            padding_type (str)  -- the name of padding layer in conv layers: reflect | replicate | zero
+            input_nz (int): the number of dimension in input noise
+            input_nc (int): the number of channels in input images
+            output_nc (int): the number of channels in output images
+            ngf (int): the number of filters in the last conv layer
+            norm_layer: normalization layer
+            padding_type (str): the name of padding layer in conv layers: reflect | replicate | zero
         """
         super(DCGenerator, self).__init__()
 
@@ -59,62 +62,63 @@ class DCGenerator(nn.Layer):
         if norm_type == 'batch':
             model = [
                 nn.Conv2DTranspose(input_nz,
-                                    ngf * mult,
-                                    kernel_size=4,
-                                    stride=1,
-                                    padding=0,
-                                    bias_attr=use_bias),
+                                   ngf * mult,
+                                   kernel_size=4,
+                                   stride=1,
+                                   padding=0,
+                                   bias_attr=use_bias),
                 BatchNorm2D(ngf * mult),
                 nn.ReLU()
             ]
         else:
             model = [
                 nn.Conv2DTranspose(input_nz,
-                                    ngf * mult,
-                                    kernel_size=4,
-                                    stride=1,
-                                    padding=0,
-                                    bias_attr=use_bias),
+                                   ngf * mult,
+                                   kernel_size=4,
+                                   stride=1,
+                                   padding=0,
+                                   bias_attr=use_bias),
                 norm_layer(ngf * mult),
                 nn.ReLU()
             ]
 
-        for i in range(1,n_downsampling):  # add upsampling layers
+        # add upsampling layers
+        for i in range(1, n_downsampling):
             mult = 2**(n_downsampling - i)
-            output_size = 2**(i+2)
+            output_size = 2**(i + 2)
             if norm_type == 'batch':
                 model += [
-                nn.Conv2DTranspose(ngf * mult,
-                                    ngf * mult//2,
-                                    kernel_size=4,
-                                    stride=2,
-                                    padding=1,
-                                    bias_attr=use_bias),
-                BatchNorm2D(ngf * mult//2),
-                nn.ReLU()
-            ]
+                    nn.Conv2DTranspose(ngf * mult,
+                                       ngf * mult // 2,
+                                       kernel_size=4,
+                                       stride=2,
+                                       padding=1,
+                                       bias_attr=use_bias),
+                    BatchNorm2D(ngf * mult // 2),
+                    nn.ReLU()
+                ]
             else:
                 model += [
                     nn.Conv2DTranspose(ngf * mult,
-                                    int(ngf * mult//2),
-                                    kernel_size=4,
-                                    stride=2,
-                                    padding=1,
-                                    bias_attr=use_bias),
+                                       int(ngf * mult // 2),
+                                       kernel_size=4,
+                                       stride=2,
+                                       padding=1,
+                                       bias_attr=use_bias),
                     norm_layer(int(ngf * mult // 2)),
                     nn.ReLU()
                 ]
 
         output_size = 2**(6)
         model += [
-                nn.Conv2DTranspose(ngf ,
-                                output_nc,
-                                kernel_size=4,
-                                stride=2,
-                                padding=1,
-                                bias_attr=use_bias),
-                nn.Tanh()
-                ]
+            nn.Conv2DTranspose(ngf,
+                               output_nc,
+                               kernel_size=4,
+                               stride=2,
+                               padding=1,
+                               bias_attr=use_bias),
+            nn.Tanh()
+        ]
 
         self.model = nn.Sequential(*model)
 

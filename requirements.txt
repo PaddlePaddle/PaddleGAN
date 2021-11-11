@@ -3,9 +3,10 @@ PyYAML>=5.1
 scikit-image>=0.14.0
 scipy>=1.1.0
 opencv-python
+imageio==2.9.0
 imageio-ffmpeg
-librosa==0.7.0
-numba==0.48
+librosa
+numba==0.53.1
 easydict
 munch
 natsort
