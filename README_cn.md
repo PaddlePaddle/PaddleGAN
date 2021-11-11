@@ -53,7 +53,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 ## 产品动态
 
-- 😍 **双十一浪漫献礼：[StyleGAN V2人脸属性编辑](./docs/zh_CN/tutorials/styleganv2editing.md)之性别转换--怕什么孤单？和自己谈一场恋爱吧！** 😍
+- 😍 **人脸编辑神器：[StyleGAN V2人脸属性编辑](./docs/zh_CN/tutorials/styleganv2editing.md)之性别转换--怕什么孤单？和自己谈一场恋爱吧！** 😍
   - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/2565277?contributionType=1)**
   <div align='center'>
     <img src='https://user-images.githubusercontent.com/48054808/141226707-58bd661e-2102-4fb7-8e18-c794a6b59ee8.gif' width='600'/>
