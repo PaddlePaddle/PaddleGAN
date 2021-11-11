@@ -24,11 +24,6 @@ from ppgan.engine.trainer import Trainer
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--export_model",
-        default=None,
-        type=str,
-        help="The path prefix of inference model to be used.", )
     parser.add_argument('-c',
                         '--config-file',
                         metavar="FILE",
@@ -50,6 +45,12 @@ def parse_args():
                         default=None,
                         required=True,
                         help="the inputs size")
+    parser.add_argument(
+        "--output_dir",
+        default=None,
+        type=str,
+        help="The path prefix of inference model to be used.",
+    )
     args = parser.parse_args()
     return args
 
@@ -63,7 +64,7 @@ def main(args, cfg):
     for net_name, net in model.nets.items():
         if net_name in state_dicts:
             net.set_state_dict(state_dicts[net_name])
-    model.export_model(cfg.export_model, args.export_model, inputs_size)
+    model.export_model(cfg.export_model, args.output_dir, inputs_size)
 
 
 if __name__ == "__main__":
