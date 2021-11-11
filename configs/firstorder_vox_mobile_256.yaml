@@ -112,7 +112,7 @@ model:
 
 lr_scheduler:
   name: MultiStepDecay
-  epoch_milestones: [237360, 356040]
+  epoch_milestones: [2000000000000] #just fix learning rate, and change into [237360, 356040] for "both" mode fine tune
   lr_generator: 2.0e-4
   lr_discriminator: 2.0e-4
   lr_kp_detector: 2.0e-4
@@ -139,11 +139,11 @@ log_config:
   visiual_interval: 10
 
 validate:
-  interval: 3000
+  interval: 20000000000  #close validate step to speed up training, if you need to see the process, change it into 20000
   save_img: true
 
 snapshot_config:
-  interval: 1
+  interval: 5
 
 optimizer:
   name: Adam
