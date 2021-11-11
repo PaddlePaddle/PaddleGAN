@@ -53,7 +53,12 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 ## 产品动态
 
-- 👩‍🚀**宇宙漫游指南：[LapStyle](./docs/zh_CN/tutorials/lap_style.md)风格迁移带你「沉浸式」体验太空漫游**👨‍🚀
+- 😍 **双十一浪漫献礼：[StyleGAN V2人脸属性编辑](./docs/zh_CN/tutorials/styleganv2editing.md)之性别转换--怕什么孤单？和自己谈一场恋爱吧！** 😍
+  - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/2565277?contributionType=1)**
+  <div align='center'>
+    <img src='https://user-images.githubusercontent.com/48054808/141226707-58bd661e-2102-4fb7-8e18-c794a6b59ee8.gif' width='600'/>
+  </div>
+- 👩‍🚀 **宇宙漫游指南：[LapStyle](./docs/zh_CN/tutorials/lap_style.md)风格迁移带你「沉浸式」体验太空漫游** 👨‍🚀
 
   - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/2343740?contributionType=1)**
 
@@ -63,7 +68,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
       <img src='https://user-images.githubusercontent.com/48054808/133392652-f4811b1e-0676-4402-808b-a4c96c611368.gif' width='250'/>
     </div>
 
-- 🧙‍♂️**新增创意项目**：制作专属于你的**会动的霍格沃兹魔法头像**🧙‍♀️
+- 🧙‍♂️ **新增创意项目**：制作专属于你的**会动的霍格沃兹魔法头像** 🧙‍♀️
 
   - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/2288888?channelType=0&channel=0)**
 
