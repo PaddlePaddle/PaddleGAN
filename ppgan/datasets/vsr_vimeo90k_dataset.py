@@ -36,8 +36,6 @@ class VSRVimeo90KDataset(BaseDataset):
 
     Examples:
 
-    ::
-
         00001/0233
         00001/0234
 

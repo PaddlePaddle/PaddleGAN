@@ -79,7 +79,7 @@ class SSIM(PSNR):
             single_seq = []
 
         for pred, gt in zip(preds, gts):
-            value = calculate_psnr(pred, gt, self.crop_border, self.input_order,
+            value = calculate_ssim(pred, gt, self.crop_border, self.input_order,
                                    self.test_y_channel)
             if is_seq:
                 single_seq.append(value)

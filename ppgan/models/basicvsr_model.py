@@ -43,7 +43,6 @@ class BasicVSRModel(BaseSRModel):
         self.flag = True
         self.lr_mult = lr_mult
         init_basicvsr_weight(self.nets['generator'])
-        self.cnt = 0
 
     def setup_input(self, input):
         self.lq = paddle.to_tensor(input['lq'])
@@ -92,16 +91,6 @@ class BasicVSRModel(BaseSRModel):
             self.visual_items['output'] = output[:, 0, :, :, :].cpu()
         self.nets['generator'].train()
 
-        # import pickle
-        # output = pickle.load(open('/workspace/codes/mmediting03/torch_vid4_out_%s.pkl' % self.cnt, 'rb'))
-        # gt = pickle.load(open('/workspace/codes/mmediting03/torch_vid4_gt_%s.pkl' % self.cnt, 'rb'))
-        # print('pickle load finish!')
-        # output = paddle.to_tensor(output)
-        # gt = paddle.to_tensor(gt)
-        # self.cnt += 1
-        # pickle.dump(self.lq.numpy(), open('paddle_vid4_lq.pkl', 'wb'))
-        # pickle.dump(output.numpy(), open('paddle_vid4_out.pkl', 'wb'))
-        # pickle.dump(self.gt.numpy(), open('paddle_vid4_gt.pkl', 'wb'))
         out_img = []
         gt_img = []
 
