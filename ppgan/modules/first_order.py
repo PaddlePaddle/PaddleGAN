@@ -1,18 +1,6 @@
-#   Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # code was heavily based on https://github.com/AliaksandrSiarohin/first-order-model
+# Users should be careful about adopting these functions in any commercial matters.
+# https://github.com/AliaksandrSiarohin/first-order-model/blob/master/LICENSE.md
 
 import paddle
 import paddle.nn as nn
@@ -314,7 +302,8 @@ class SameBlock2d(nn.Layer):
                               kernel_size=kernel_size,
                               padding=padding,
                               groups=groups,
-                              bias_attr=(mobile_net == False))
+                              bias_attr=(mobile_net == False),
+                              weight_attr=nn.initializer.KaimingUniform())
         self.norm = SyncBatchNorm(out_features)
 
     def forward(self, x):
@@ -437,10 +426,14 @@ class AntiAliasInterpolation2d(nn.Layer):
     """
     Band-limited downsampling, for better preservation of the input signal.
     """
-    def __init__(self, channels, scale):
+    def __init__(self, channels, scale, mobile_net=False):
         super(AntiAliasInterpolation2d, self).__init__()
-        sigma = (1 / scale - 1) / 2
-        kernel_size = 2 * round(sigma * 4) + 1
+        if mobile_net:
+            sigma = 0.25
+            kernel_size = 3
+        else:
+            sigma = (1 / scale - 1) / 2
+            kernel_size = 2 * round(sigma * 4) + 1
         self.ka = kernel_size // 2
         self.kb = self.ka - 1 if kernel_size % 2 == 0 else self.ka
 

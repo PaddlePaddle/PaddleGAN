@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# code was based on https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix
+
 import paddle
 import paddle.nn as nn
 import functools
@@ -26,6 +28,16 @@ class ResnetGenerator(nn.Layer):
     """Resnet-based generator that consists of Resnet blocks between a few downsampling/upsampling operations.
 
     code and idea from Justin Johnson's neural style transfer project(https://github.com/jcjohnson/fast-neural-style)
+
+    Args:
+            input_nc (int): the number of channels in input images
+            output_nc (int): the number of channels in output images
+            ngf (int): the number of filters in the last conv layer
+            norm_type (str): the name of the normalization layer: batch | instance | none
+            use_dropout (bool): if use dropout layers
+            n_blocks (int): the number of ResNet blocks
+            padding_type (str): the name of padding layer in conv layers: reflect | replicate | zero
+
     """
     def __init__(self,
                  input_nc,
@@ -35,17 +47,7 @@ class ResnetGenerator(nn.Layer):
                  use_dropout=False,
                  n_blocks=6,
                  padding_type='reflect'):
-        """Construct a Resnet-based generator
 
-        Args:
-            input_nc (int)      -- the number of channels in input images
-            output_nc (int)     -- the number of channels in output images
-            ngf (int)           -- the number of filters in the last conv layer
-            norm_type (str)     -- the name of the normalization layer: batch | instance | none
-            use_dropout (bool)  -- if use dropout layers
-            n_blocks (int)      -- the number of ResNet blocks
-            padding_type (str)  -- the name of padding layer in conv layers: reflect | replicate | zero
-        """
         assert (n_blocks >= 0)
         super(ResnetGenerator, self).__init__()
 
@@ -133,12 +135,12 @@ class ResnetBlock(nn.Layer):
                          use_bias):
         """Construct a convolutional block.
 
-        Parameters:
-            dim (int)           -- the number of channels in the conv layer.
-            padding_type (str)  -- the name of padding layer: reflect | replicate | zero
-            norm_layer          -- normalization layer
-            use_dropout (bool)  -- if use dropout layers.
-            use_bias (bool)     -- if the conv layer uses bias or not
+        Args:
+            dim (int): the number of channels in the conv layer.
+            padding_type (str): the name of padding layer: reflect | replicate | zero.
+            norm_layer (paddle.nn.Layer): normalization layer.
+            use_dropout (bool): whether to  use dropout layers.
+            use_bias (bool): whether to use the conv layer bias or not.
 
         Returns a conv block (with a conv layer, a normalization layer, and a non-linearity layer (ReLU))
         """

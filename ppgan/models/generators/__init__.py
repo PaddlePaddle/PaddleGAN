@@ -36,3 +36,4 @@ from .iconvsr import IconVSR
 from .gpen import GPEN
 from .pan import PAN
 from .generater_photopen import SPADEGenerator
+from .basicvsr_plus_plus import BasicVSRPlusPlus
