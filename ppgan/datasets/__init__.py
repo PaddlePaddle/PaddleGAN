@@ -26,3 +26,5 @@ from .firstorder_dataset import FirstOrderDataset
 from .lapstyle_dataset import LapStyleDataset
 from .sr_reds_multiple_gt_dataset import SRREDSMultipleGTDataset
 from .mpr_dataset import MPRTrain, MPRVal, MPRTest
+from .vsr_vimeo90k_dataset import VSRVimeo90KDataset
+from .vsr_folder_dataset import VSRFolderDataset

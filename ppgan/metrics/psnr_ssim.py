@@ -30,17 +30,26 @@ class PSNR(paddle.metric.Metric):
     def reset(self):
         self.results = []
 
-    def update(self, preds, gts):
+    def update(self, preds, gts, is_seq=False):
         if not isinstance(preds, (list, tuple)):
             preds = [preds]
 
         if not isinstance(gts, (list, tuple)):
             gts = [gts]
 
+        if is_seq:
+            single_seq = []
+
         for pred, gt in zip(preds, gts):
             value = calculate_psnr(pred, gt, self.crop_border, self.input_order,
                                    self.test_y_channel)
-            self.results.append(value)
+            if is_seq:
+                single_seq.append(value)
+            else:
+                self.results.append(value)
+
+        if is_seq:
+            self.results.append(np.mean(single_seq))
 
     def accumulate(self):
         if paddle.distributed.get_world_size() > 1:
@@ -59,17 +68,26 @@ class PSNR(paddle.metric.Metric):
 
 @METRICS.register()
 class SSIM(PSNR):
-    def update(self, preds, gts):
+    def update(self, preds, gts, is_seq=False):
         if not isinstance(preds, (list, tuple)):
             preds = [preds]
 
         if not isinstance(gts, (list, tuple)):
             gts = [gts]
 
+        if is_seq:
+            single_seq = []
+
         for pred, gt in zip(preds, gts):
-            value = calculate_ssim(pred, gt, self.crop_border, self.input_order,
+            value = calculate_psnr(pred, gt, self.crop_border, self.input_order,
                                    self.test_y_channel)
-            self.results.append(value)
+            if is_seq:
+                single_seq.append(value)
+            else:
+                self.results.append(value)
+
+        if is_seq:
+            self.results.append(np.mean(single_seq))
 
     def name(self):
         return 'SSIM'
