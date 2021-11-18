@@ -39,7 +39,7 @@ run_cmd="set -xe;
 
 nvidia-docker run --name test_paddlegan -i  \
     --net=host \
-    --shm-size=1g \
+    --shm-size=128g \
     -v $PWD:/workspace \
     ${ImageName}  /bin/bash -c "${run_cmd}"
 ```
