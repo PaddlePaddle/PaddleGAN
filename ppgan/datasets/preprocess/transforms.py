@@ -55,6 +55,7 @@ class Transforms():
 
     def __call__(self, datas):
         data = []
+
         for k in self.input_keys:
             data.append(datas[k])
         data = tuple(data)
@@ -133,7 +134,10 @@ class PairedRandomHorizontalFlip(T.RandomHorizontalFlip):
 
     def _apply_image(self, image):
         if self.params['flip']:
-            return F.hflip(image)
+            if isinstance(image, list):
+                image = [F.hflip(v) for v in image]
+            else:
+                return F.hflip(image)
         return image
 
 
@@ -149,7 +153,10 @@ class PairedRandomVerticalFlip(T.RandomHorizontalFlip):
 
     def _apply_image(self, image):
         if self.params['flip']:
-            return F.hflip(image)
+            if isinstance(image, list):
+                image = [F.vflip(v) for v in image]
+            else:
+                return F.vflip(image)
         return image
 
 
@@ -180,8 +187,106 @@ class PairedRandomTransposeHW(T.BaseTransform):
 
     def _apply_image(self, image):
         if self.params['transpose']:
-            image = image.transpose(1, 0, 2)
+            if isinstance(image, list):
+                image = [v.transpose(1, 0, 2) for v in image]
+            else:
+                image = image.transpose(1, 0, 2)
         return image
+
+
+@TRANSFORMS.register()
+class TransposeSequence(T.Transpose):
+    """Transpose input data or a video sequence to a target format.
+    For example, most transforms use HWC mode image,
+    while the Neural Network might use CHW mode input tensor.
+    output image will be an instance of numpy.ndarray.
+
+    Args:
+        order (list|tuple, optional): Target order of input data. Default: (2, 0, 1).
+        keys (list[str]|tuple[str], optional): Same as ``BaseTransform``. Default: None.
+
+    Examples:
+
+        .. code-block:: python
+
+            import numpy as np
+            from PIL import Image
+
+            transform = TransposeSequence()
+
+            fake_img = Image.fromarray((np.random.rand(300, 320, 3) * 255.).astype(np.uint8))
+
+            fake_img_seq = [fake_img, fake_img, fake_img]
+            fake_img_seq = transform(fake_img_seq)
+
+    """
+    def _apply_image(self, img):
+        if isinstance(img, list):
+            imgs = []
+            for im in img:
+                if F._is_tensor_image(im):
+                    return im.transpose(self.order)
+
+                if F._is_pil_image(im):
+                    im = np.asarray(im)
+
+                if len(im.shape) == 2:
+                    im = im[..., np.newaxis]
+                imgs.append(im.transpose(self.order))
+            return imgs
+        else:
+            if F._is_tensor_image(img):
+                return img.transpose(self.order)
+
+            if F._is_pil_image(img):
+                img = np.asarray(img)
+
+            if len(img.shape) == 2:
+                img = img[..., np.newaxis]
+            return img.transpose(self.order)
+
+
+@TRANSFORMS.register()
+class NormalizeSequence(T.Normalize):
+    """Normalize the input data with mean and standard deviation.
+    Given mean: ``(M1,...,Mn)`` and std: ``(S1,..,Sn)`` for ``n`` channels,
+    this transform will normalize each channel of the input data.
+    ``output[channel] = (input[channel] - mean[channel]) / std[channel]``
+
+    Args:
+        mean (int|float|list|tuple): Sequence of means for each channel.
+        std (int|float|list|tuple): Sequence of standard deviations for each channel.
+        data_format (str, optional): Data format of img, should be 'HWC' or
+            'CHW'. Default: 'CHW'.
+        to_rgb (bool, optional): Whether to convert to rgb. Default: False.
+        keys (list[str]|tuple[str], optional): Same as ``BaseTransform``. Default: None.
+
+    Examples:
+
+        .. code-block:: python
+
+            import numpy as np
+            from PIL import Image
+
+            normalize_seq = NormalizeSequence(mean=[127.5, 127.5, 127.5],
+                                  std=[127.5, 127.5, 127.5],
+                                  data_format='HWC')
+
+            fake_img = Image.fromarray((np.random.rand(300, 320, 3) * 255.).astype(np.uint8))
+            fake_img_seq = [fake_img, fake_img, fake_img]
+            fake_img_seq = normalize_seq(fake_img_seq)
+
+    """
+    def _apply_image(self, img):
+        if isinstance(img, list):
+            imgs = [
+                F.normalize(v, self.mean, self.std, self.data_format,
+                            self.to_rgb) for v in img
+            ]
+            return np.stack(imgs, axis=0).astype('float32')
+
+        return F.normalize(img, self.mean, self.std, self.data_format,
+                           self.to_rgb)
 
 
 @TRANSFORMS.register()
@@ -204,15 +309,19 @@ class SRPairedRandomCrop(T.BaseTransform):
         self.scale_list = scale_list
 
     def __call__(self, inputs):
-        """inputs must be (lq_img, gt_img)"""
+        """inputs must be (lq_img or list[lq_img], gt_img or list[gt_img])"""
         scale = self.scale
         lq_patch_size = self.gt_patch_size // scale
 
         lq = inputs[0]
         gt = inputs[1]
 
-        h_lq, w_lq, _ = lq.shape
-        h_gt, w_gt, _ = gt.shape
+        if isinstance(lq, list):
+            h_lq, w_lq, _ = lq[0].shape
+            h_gt, w_gt, _ = gt[0].shape
+        else:
+            h_lq, w_lq, _ = lq.shape
+            h_gt, w_gt, _ = gt.shape
 
         if h_gt != h_lq * scale or w_gt != w_lq * scale:
             raise ValueError('scale size not match')
@@ -222,18 +331,30 @@ class SRPairedRandomCrop(T.BaseTransform):
         # randomly choose top and left coordinates for lq patch
         top = random.randint(0, h_lq - lq_patch_size)
         left = random.randint(0, w_lq - lq_patch_size)
-        # crop lq patch
-        lq = lq[top:top + lq_patch_size, left:left + lq_patch_size, ...]
-        # crop corresponding gt patch
-        top_gt, left_gt = int(top * scale), int(left * scale)
-        gt = gt[top_gt:top_gt + self.gt_patch_size,
-                left_gt:left_gt + self.gt_patch_size, ...]
 
-        if self.scale_list and self.scale == 4:
-            lqx2 = F.resize(gt, (lq_patch_size * 2, lq_patch_size * 2),
-                            'bicubic')
-            outputs = (lq, lqx2, gt)
-            return outputs
+        if isinstance(lq, list):
+            lq = [
+                v[top:top + lq_patch_size, left:left + lq_patch_size, ...]
+                for v in lq
+            ]
+            top_gt, left_gt = int(top * scale), int(left * scale)
+            gt = [
+                v[top_gt:top_gt + self.gt_patch_size,
+                  left_gt:left_gt + self.gt_patch_size, ...] for v in gt
+            ]
+        else:
+            # crop lq patch
+            lq = lq[top:top + lq_patch_size, left:left + lq_patch_size, ...]
+            # crop corresponding gt patch
+            top_gt, left_gt = int(top * scale), int(left * scale)
+            gt = gt[top_gt:top_gt + self.gt_patch_size,
+                    left_gt:left_gt + self.gt_patch_size, ...]
+
+            if self.scale_list and self.scale == 4:
+                lqx2 = F.resize(gt, (lq_patch_size * 2, lq_patch_size * 2),
+                                'bicubic')
+                outputs = (lq, lqx2, gt)
+                return outputs
 
         outputs = (lq, gt)
         return outputs
@@ -411,3 +532,36 @@ class PairedColorJitter(T.BaseTransform):
         for f in self.params:
             img = f(img)
         return img
+
+
+@TRANSFORMS.register()
+class MirrorVideoSequence:
+    """Double a short video sequences by mirroring the sequences
+
+    Example:
+        Given a sequence with N frames (x1, ..., xN), extend the
+    sequence to (x1, ..., xN, xN, ..., x1).
+
+    Args:
+        keys (list[str]): The frame lists to be extended.
+    """
+    def __init__(self, keys=None):
+        self.keys = keys
+
+    def __call__(self, datas):
+        """Call function.
+
+        Args:
+            datas (dict): A dict containing the necessary information and
+                data for augmentation.
+
+        Returns:
+            dict: A dict containing the processed data and information.
+        """
+        lrs, hrs = datas
+        assert isinstance(lrs, list) and isinstance(hrs, list)
+
+        lrs = lrs + lrs[::-1]
+        hrs = hrs + hrs[::-1]
+
+        return (lrs, hrs)
