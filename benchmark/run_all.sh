@@ -64,9 +64,7 @@ for model_mode in ${model_mode_list[@]}; do
       eval dataset_web='$'"${model_mode}_dataset_web"
       eval dataset='$'"${model_mode}_dataset"
       eval log_interval='$'"${model_mode}_log_interval"
-      if [ -n "$dataset" ]; then
-          cp -r ${dataset} data/
-      else
+      if [ -n "$dataset_web" ]; then
           wget ${dataset_web} -O data/${model_mode}.tar
           tar -vxf data/${model_mode}.tar -C data/
       fi
