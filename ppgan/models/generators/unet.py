@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# code was based on https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix
 import functools
 import paddle
 import paddle.nn as nn
@@ -30,17 +31,19 @@ class UnetGenerator(nn.Layer):
                  ngf=64,
                  norm_type='batch',
                  use_dropout=False):
-        """Construct a Unet generator
-        Args:
-            input_nc (int)  -- the number of channels in input images
-            output_nc (int) -- the number of channels in output images
-            num_downs (int) -- the number of downsamplings in UNet. For example, # if |num_downs| == 7,
-                                image of size 128x128 will become of size 1x1 # at the bottleneck
-            ngf (int)       -- the number of filters in the last conv layer
-            norm_layer      -- normalization layer
-
-        We construct the U-Net from the innermost layer to the outermost layer.
+        """
+        Construct a Unet generator
+        the U-Net from the innermost layer to the outermost layer.
         It is a recursive process.
+
+        Args:
+            input_nc (int): the number of channels in input images.
+            output_nc (int): the number of channels in output images.
+            num_downs (int): the number of downsamplings in UNet. For example, # if |num_downs| == 7,
+                                image of size 128x128 will become of size 1x1 # at the bottleneck.
+            ngf (int): the number of filters in the last conv layer.
+            norm_type (str): normalization type, default: 'batch'.
+
         """
         super(UnetGenerator, self).__init__()
         norm_layer = build_norm_layer(norm_type)
@@ -105,15 +108,15 @@ class UnetSkipConnectionBlock(nn.Layer):
                  use_dropout=False):
         """Construct a Unet submodule with skip connections.
 
-        Parameters:
-            outer_nc (int) -- the number of filters in the outer conv layer
-            inner_nc (int) -- the number of filters in the inner conv layer
-            input_nc (int) -- the number of channels in input images/features
-            submodule (UnetSkipConnectionBlock) -- previously defined submodules
-            outermost (bool)    -- if this module is the outermost module
-            innermost (bool)    -- if this module is the innermost module
-            norm_layer          -- normalization layer
-            use_dropout (bool)  -- if use dropout layers.
+        Args:
+            outer_nc (int): the number of filters in the outer conv layer
+            inner_nc (int): the number of filters in the inner conv layer
+            input_nc (int): the number of channels in input images/features
+            submodule (UnetSkipConnectionBlock): previously defined submodules
+            outermost (bool): if this module is the outermost module
+            innermost (bool): if this module is the innermost module
+            norm_layer (paddle.nn.Layer): normalization layer
+            use_dropout (bool): whether to  use dropout layers.
         """
         super(UnetSkipConnectionBlock, self).__init__()
         self.outermost = outermost
@@ -173,5 +176,6 @@ class UnetSkipConnectionBlock(nn.Layer):
     def forward(self, x):
         if self.outermost:
             return self.model(x)
-        else:  # add skip connections
+        # add skip connections
+        else:
             return paddle.concat([x, self.model(x)], 1)

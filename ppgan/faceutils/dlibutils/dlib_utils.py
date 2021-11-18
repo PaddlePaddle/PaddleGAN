@@ -1,5 +1,5 @@
 # code was heavily based on https://github.com/wtjiang98/PSGAN
-# MIT License 
+# MIT License
 # Copyright (c) 2020 Wentao Jiang
 
 import os

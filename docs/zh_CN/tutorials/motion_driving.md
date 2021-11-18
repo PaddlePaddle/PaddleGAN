@@ -148,10 +148,12 @@ python -u tools/first-order-demo.py  \
      --mobile_net
 ```
 目前压缩采用mobilenet+剪枝的方法，和之前对比：
-|                  |        大小(M)    | reconstruction loss |
+|                  |        大小(M)    |       l1 loss       |
 | :--------------: | :--------------: | :-----------------: |
-|       原始        |        229       |        0.012058867    |
-|       压缩        |        6.1       |      0.015025159    |
+|       原始        |        229       |      0.041781392    |
+|       压缩        |        10.1      |      0.047878753    |
+
+face keypoints 的评估指标参见（https://github.com/AliaksandrSiarohin/pose-evaluation）
 
 **训练:**
 先将configs/firstorder_vox_mobile_256.yaml 中的mode设置成kp_detector, 训练压缩版

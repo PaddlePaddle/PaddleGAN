@@ -73,6 +73,8 @@ class FirstOrderModel(BaseModel):
         discriminator_cfg.update({'train_params': train_params})
         self.nets['Dis'] = build_discriminator(discriminator_cfg)
         self.visualizer = Visualizer()
+        self.test_loss = []
+        self.is_train = False
 
     def setup_lr_schedulers(self, lr_cfg):
         self.kp_lr = MultiStepDecay(learning_rate=lr_cfg['lr_kp_detector'],
@@ -131,9 +133,7 @@ class FirstOrderModel(BaseModel):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
         self.losses_generator, self.generated = \
             self.nets['Gen_Full'](self.input_data.copy(), self.nets['discriminator'])
-        self.visual_items['driving_source_gen'] = self.visualizer.visualize(
-            self.input_data['driving'].detach(),
-            self.input_data['source'].detach(), self.generated)
+        
 
     def backward_G(self):
         loss_values = [val.mean() for val in self.losses_generator.values()]
@@ -150,6 +150,7 @@ class FirstOrderModel(BaseModel):
         self.losses.update(dict(zip(losses_discriminator.keys(), loss_values)))
 
     def train_iter(self, optimizers=None):
+        self.train = True
         self.forward()
         # update G
         self.set_requires_grad(self.nets['discriminator'], False)
@@ -167,10 +168,12 @@ class FirstOrderModel(BaseModel):
             self.optimizers['optimizer_Dis'].step()
 
     def test_iter(self, metrics=None):
-        self.setup_net_parallel()
+        if not self.is_train:
+            self.is_train = True
+            self.setup_net_parallel()
+        
         self.nets['kp_detector'].eval()
         self.nets['generator'].eval()
-        loss_list = []
         with paddle.no_grad():
             kp_source = self.nets['kp_detector'](self.input_data['video'][:, :,
                                                                           0])
@@ -181,10 +184,13 @@ class FirstOrderModel(BaseModel):
                 out = self.nets['generator'](source,
                                              kp_source=kp_source,
                                              kp_driving=kp_driving)
+                out.update({'kp_source': kp_source, 'kp_driving': kp_driving})
                 loss = paddle.abs(out['prediction'] -
                                   driving).mean().cpu().numpy()
-                loss_list.append(loss)
-        print("Reconstruction loss: %s" % np.mean(loss_list))
+                self.test_loss.append(loss)
+            self.visual_items['driving_source_gen'] = self.visualizer.visualize(
+                driving, source, out)
+        print("Reconstruction loss: %s" % np.mean(self.test_loss))
         self.nets['kp_detector'].train()
         self.nets['generator'].train()
 
@@ -289,6 +295,9 @@ class FirstOrderModelMobile(FirstOrderModel):
         self.kp_weight_path = kp_weight_path
         self.gen_weight_path = gen_weight_path
         self.visualizer = Visualizer()
+        self.test_loss = []
+        self.is_train = False
+        
 
     def setup_net_parallel(self):
         if isinstance(self.nets['Gen_Full'], paddle.DataParallel):
@@ -302,23 +311,23 @@ class FirstOrderModelMobile(FirstOrderModel):
             self.nets['generator'] = self.nets['Gen_Full'].generator
             self.nets['discriminator'] = self.nets['Dis'].discriminator
         self.kp_detector_ori = self.Gen_Full_ori.kp_extractor
-
+        if self.is_train:
+            return
+       
         from ppgan.utils.download import get_path_from_url
         vox_cpk_weight_url = 'https://paddlegan.bj.bcebos.com/applications/first_order_model/vox-cpk.pdparams'
         weight_path = get_path_from_url(vox_cpk_weight_url)
         checkpoint = paddle.load(weight_path)
         if (self.mode == "kp_detector"):
+            print("load pretrained generator... ")
             self.nets['generator'].set_state_dict(checkpoint['generator'])
             for param in self.nets['generator'].parameters():
                 param.stop_gradient = True
         elif self.mode == "generator":
+            print("load pretrained kp_detector... ")
             self.nets['kp_detector'].set_state_dict(checkpoint['kp_detector'])
             for param in self.nets['kp_detector'].parameters():
                 param.stop_gradient = True
-
-        self.kp_detector_ori.set_state_dict(checkpoint['kp_detector'])
-        for param in self.kp_detector_ori.parameters():
-            param.stop_gradient = True
 
     def setup_optimizers(self, lr_cfg, optimizer):
         self.setup_net_parallel()
@@ -344,6 +353,7 @@ class FirstOrderModelMobile(FirstOrderModel):
         elif self.mode == "both":
             super(FirstOrderModelMobile,
                   self).setup_optimizers(lr_cfg, optimizer)
+            print("load both pretrained kp_detector and generator")
             checkpoint = paddle.load(self.kp_weight_path)
             self.nets['kp_detector'].set_state_dict(checkpoint['kp_detector'])
             checkpoint = paddle.load(self.gen_weight_path)
@@ -362,6 +372,7 @@ class FirstOrderModelMobile(FirstOrderModel):
                 self.nets['Gen_Full'](self.input_data.copy(), self.nets['discriminator'])
 
     def train_iter(self, optimizers=None):
+        self.is_train = True
         if (self.mode == "both"):
             super(FirstOrderModelMobile, self).train_iter(optimizers=optimizers)
             return

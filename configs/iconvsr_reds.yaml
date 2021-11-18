@@ -10,6 +10,7 @@ min_max:
 model:
   name: BasicVSRModel
   fix_iter: 5000
+  lr_mult: 0.125
   generator:
     name: IconVSR
     mid_channels: 64
