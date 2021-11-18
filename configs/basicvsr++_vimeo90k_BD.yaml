@@ -50,7 +50,7 @@ dataset:
               keys: [image, image]
             - name: PairedRandomTransposeHW
               keys: [image, image]
-            - name: Transpose
+            - name: TransposeSequence
               keys: [image, image]
             - name: MirrorVideoSequence
             - name: NormalizeSequence
