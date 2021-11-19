@@ -32,9 +32,9 @@ class PixelNorm(nn.Layer):
     def __init__(self):
         super().__init__()
 
-    def forward(self, input):
-        return input * paddle.rsqrt(
-            paddle.mean(input * input, 1, keepdim=True) + 1e-8)
+    def forward(self, inputs):
+        return inputs * paddle.rsqrt(
+            paddle.mean(inputs * inputs, 1, keepdim=True) + 1e-8)
 
 
 class ModulatedConv2D(nn.Layer):
@@ -93,8 +93,8 @@ class ModulatedConv2D(nn.Layer):
             f"{self.__class__.__name__}({self.in_channel}, {self.out_channel}, {self.kernel_size}, "
             f"upsample={self.upsample}, downsample={self.downsample})")
 
-    def forward(self, input, style):
-        batch, in_channel, height, width = input.shape
+    def forward(self, inputs, style):
+        batch, in_channel, height, width = inputs.shape
 
         style = self.modulation(style).reshape((batch, 1, in_channel, 1, 1))
         weight = self.scale * self.weight * style
@@ -107,13 +107,13 @@ class ModulatedConv2D(nn.Layer):
                                  self.kernel_size, self.kernel_size))
 
         if self.upsample:
-            input = input.reshape((1, batch * in_channel, height, width))
+            inputs = inputs.reshape((1, batch * in_channel, height, width))
             weight = weight.reshape((batch, self.out_channel, in_channel,
                                      self.kernel_size, self.kernel_size))
             weight = weight.transpose((0, 2, 1, 3, 4)).reshape(
                 (batch * in_channel, self.out_channel, self.kernel_size,
                  self.kernel_size))
-            out = F.conv2d_transpose(input,
+            out = F.conv2d_transpose(inputs,
                                      weight,
                                      padding=0,
                                      stride=2,
@@ -123,16 +123,16 @@ class ModulatedConv2D(nn.Layer):
             out = self.blur(out)
 
         elif self.downsample:
-            input = self.blur(input)
-            _, _, height, width = input.shape
-            input = input.reshape((1, batch * in_channel, height, width))
-            out = F.conv2d(input, weight, padding=0, stride=2, groups=batch)
+            inputs = self.blur(inputs)
+            _, _, height, width = inputs.shape
+            inputs = inputs.reshape((1, batch * in_channel, height, width))
+            out = F.conv2d(inputs, weight, padding=0, stride=2, groups=batch)
             _, _, height, width = out.shape
             out = out.reshape((batch, self.out_channel, height, width))
 
         else:
-            input = input.reshape((1, batch * in_channel, height, width))
-            out = F.conv2d(input, weight, padding=self.padding, groups=batch)
+            inputs = inputs.reshape((1, batch * in_channel, height, width))
+            out = F.conv2d(inputs, weight, padding=self.padding, groups=batch)
             _, _, height, width = out.shape
             out = out.reshape((batch, self.out_channel, height, width))
 
@@ -165,8 +165,8 @@ class ConstantInput(nn.Layer):
             (1, channel, size, size),
             default_initializer=nn.initializer.Normal())
 
-    def forward(self, input):
-        batch = input.shape[0]
+    def forward(self, inputs):
+        batch = inputs.shape[0]
         out = self.input.tile((batch, 1, 1, 1))
 
         return out
@@ -198,8 +198,8 @@ class StyledConv(nn.Layer):
         self.activate = FusedLeakyReLU(out_channel *
                                        2 if is_concat else out_channel)
 
-    def forward(self, input, style, noise=None):
-        out = self.conv(input, style)
+    def forward(self, inputs, style, noise=None):
+        out = self.conv(inputs, style)
         out = self.noise(out, noise=noise)
         out = self.activate(out)
 
@@ -225,8 +225,8 @@ class ToRGB(nn.Layer):
         self.bias = self.create_parameter((1, 3, 1, 1),
                                           nn.initializer.Constant(0.0))
 
-    def forward(self, input, style, skip=None):
-        out = self.conv(input, style)
+    def forward(self, inputs, style, skip=None):
+        out = self.conv(inputs, style)
         out = out + self.bias
 
         if skip is not None:
@@ -349,15 +349,28 @@ class StyleGANv2Generator(nn.Layer):
 
         return latent
 
-    def get_latent(self, input):
-        return self.style(input)
+    def get_latent(self, inputs):
+        return self.style(inputs)
+
+    def get_mean_style(self):
+        mean_style = None
+        with paddle.no_grad():
+            for i in range(10):
+                style = self.mean_latent(1024)
+                if mean_style is None:
+                    mean_style = style
+                else:
+                    mean_style += style
+
+        mean_style /= 10
+        return mean_style
 
     def forward(
         self,
         styles,
         return_latents=False,
         inject_index=None,
-        truncation=1,
+        truncation=1.0,
         truncation_latent=None,
         input_is_latent=False,
         noise=None,
@@ -375,9 +388,10 @@ class StyleGANv2Generator(nn.Layer):
                     for i in range(self.num_layers)
                 ]
 
-        if truncation < 1:
+        if truncation < 1.0:
             style_t = []
-
+            if truncation_latent is None:
+                truncation_latent = self.get_mean_style()
             for style in styles:
                 style_t.append(truncation_latent + truncation *
                                (style - truncation_latent))

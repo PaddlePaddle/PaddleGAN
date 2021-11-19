@@ -160,10 +160,12 @@ def flow_warp(x,
     Returns:
         Tensor: Warped image or feature map.
     """
-    if x.shape[-2:] != flow.shape[1:3]:
+    x_h, x_w = x.shape[-2:]
+    flow_h, flow_w = flow.shape[1:3]
+    if x_h != flow_h or x_w != flow_w:
         raise ValueError(f'The spatial sizes of input ({x.shape[-2:]}) and '
                          f'flow ({flow.shape[1:3]}) are not the same.')
-    _, _, h, w = x.shape
+    _, _, h, w = paddle.shape(x)
     # create mesh grid
     grid_y, grid_x = paddle.meshgrid(paddle.arange(0, h), paddle.arange(0, w))
     grid = paddle.stack((grid_x, grid_y), axis=2)  # (w, h, 2)
@@ -279,7 +281,7 @@ class SPyNet(nn.Layer):
             Tensor: Estimated optical flow: (n, 2, h, w).
         """
 
-        n, _, h, w = ref.shape
+        n, _, h, w = paddle.shape(ref)
 
         # normalize the input images
         ref = [(ref - self.mean) / self.std]
@@ -293,7 +295,7 @@ class SPyNet(nn.Layer):
         supp = supp[::-1]
 
         # flow computation
-        flow = paddle.to_tensor(np.zeros([n, 2, h // 32, w // 32], 'float32'))
+        flow = paddle.zeros([n, 2, h // 32, w // 32])
 
         # level=0
         flow_up = flow
@@ -376,7 +378,7 @@ class SPyNet(nn.Layer):
         """
 
         # upsize to a multiple of 32
-        h, w = ref.shape[2:4]
+        h, w = paddle.shape(ref)[2:4]
         w_up = w if (w % 32) == 0 else 32 * (w // 32 + 1)
         h_up = h if (h % 32) == 0 else 32 * (h // 32 + 1)
         ref = F.interpolate(ref,
@@ -554,7 +556,8 @@ class BasicVSRNet(nn.Layer):
             Tensor: Output HR sequence with shape (n, t, c, 4h, 4w).
         """
 
-        n, t, c, h, w = lrs.shape
+        n, _, c, h, w = lrs.shape
+        t = paddle.shape(lrs)[1]
         assert h >= 64 and w >= 64, (
             'The height and width of inputs should be at least 64, '
             f'but got {h} and {w}.')
@@ -567,12 +570,11 @@ class BasicVSRNet(nn.Layer):
 
         # backward-time propgation
         outputs = []
-        feat_prop = paddle.to_tensor(
-            np.zeros([n, self.mid_channels, h, w], 'float32'))
+        feat_prop = paddle.zeros([n, self.mid_channels, h, w])
         for i in range(t - 1, -1, -1):
             if i < t - 1:  # no warping required for the last timestep
-                flow = flows_backward[:, i, :, :, :]
-                feat_prop = flow_warp(feat_prop, flow.transpose([0, 2, 3, 1]))
+                flow1 = flows_backward[:, i, :, :, :]
+                feat_prop = flow_warp(feat_prop, flow1.transpose([0, 2, 3, 1]))
 
             feat_prop = paddle.concat([lrs[:, i, :, :, :], feat_prop], axis=1)
             feat_prop = self.backward_resblocks(feat_prop)

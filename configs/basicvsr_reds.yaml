@@ -90,3 +90,6 @@ log_config:
 
 snapshot_config:
   interval: 5000
+
+export_model:
+  - {name: 'generator', inputs_num: 1}
