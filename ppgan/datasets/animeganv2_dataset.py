@@ -36,9 +36,9 @@ class AnimeGANV2Dataset(paddle.io.Dataset):
         """Initialize this dataset class.
 
         Args:
-            cfg (dict) -- stores all the experiment flags
+            dataroot (dict): Directory of dataset.
+
         """
-        # self.cfg = cfg
         self.root = dataroot
         self.style = style
 

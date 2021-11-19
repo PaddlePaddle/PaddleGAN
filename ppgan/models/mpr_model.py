@@ -77,12 +77,3 @@ class MPRModel(BaseModel):
     def forward(self):
         """Run forward pass; called by both functions <train_iter> and <test_iter>."""
         pass
-
-
-def init_edvr_weight(net):
-    def reset_func(m):
-        if hasattr(m, 'weight') and (not isinstance(
-                m, (nn.BatchNorm, nn.BatchNorm2D))):
-            reset_parameters(m)
-
-    net.apply(reset_func)

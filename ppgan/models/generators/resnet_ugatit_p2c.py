@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# code was heavily based on https://github.com/znxlwm/UGATIT-pytorch
+# MIT License
+# Copyright (c) 2019 Hyeonwoo Kang
 
 import paddle
 import paddle.nn as nn
@@ -45,72 +48,82 @@ class ResnetUGATITP2CGenerator(nn.Layer):
             nn.ReLU()
         ]
 
-        DownBlock += [
-            HourGlass(ngf, ngf),
-            HourGlass(ngf, ngf)
-        ]
+        DownBlock += [HourGlass(ngf, ngf), HourGlass(ngf, ngf)]
 
         # Down-Sampling
         n_downsampling = 2
         for i in range(n_downsampling):
-            mult = 2 ** i
+            mult = 2**i
             DownBlock += [
                 nn.Pad2D([1, 1, 1, 1], 'reflect'),
-                nn.Conv2D(ngf*mult, ngf*mult*2, kernel_size=3, stride=2, bias_attr=False),
-                nn.InstanceNorm2D(ngf*mult*2, weight_attr=False, bias_attr=False),
+                nn.Conv2D(ngf * mult,
+                          ngf * mult * 2,
+                          kernel_size=3,
+                          stride=2,
+                          bias_attr=False),
+                nn.InstanceNorm2D(ngf * mult * 2,
+                                  weight_attr=False,
+                                  bias_attr=False),
                 nn.ReLU()
             ]
 
         # Encoder Bottleneck
-        mult = 2 ** n_downsampling
+        mult = 2**n_downsampling
         for i in range(n_blocks):
-            setattr(self, 'EncodeBlock'+str(i+1), ResnetBlock(ngf*mult))
+            setattr(self, 'EncodeBlock' + str(i + 1), ResnetBlock(ngf * mult))
 
         # Class Activation Map
-        self.gap_fc = nn.Linear(ngf*mult, 1, bias_attr=False)
-        self.gmp_fc = nn.Linear(ngf*mult, 1, bias_attr=False)
-        self.conv1x1 = nn.Conv2D(ngf*mult*2, ngf*mult, kernel_size=1, stride=1)
+        self.gap_fc = nn.Linear(ngf * mult, 1, bias_attr=False)
+        self.gmp_fc = nn.Linear(ngf * mult, 1, bias_attr=False)
+        self.conv1x1 = nn.Conv2D(ngf * mult * 2,
+                                 ngf * mult,
+                                 kernel_size=1,
+                                 stride=1)
         self.relu = nn.ReLU()
 
         # Gamma, Beta block
         FC = []
         if self.light:
             FC += [
-                nn.Linear(ngf*mult, ngf*mult, bias_attr=False),
+                nn.Linear(ngf * mult, ngf * mult, bias_attr=False),
                 nn.ReLU(),
-                nn.Linear(ngf*mult, ngf*mult, bias_attr=False),
+                nn.Linear(ngf * mult, ngf * mult, bias_attr=False),
                 nn.ReLU()
             ]
 
         else:
             FC += [
-                nn.Linear(img_size//mult*img_size//mult*ngf*mult, ngf*mult, bias_attr=False),
+                nn.Linear(img_size // mult * img_size // mult * ngf * mult,
+                          ngf * mult,
+                          bias_attr=False),
                 nn.ReLU(),
-                nn.Linear(ngf*mult, ngf*mult, bias_attr=False),
+                nn.Linear(ngf * mult, ngf * mult, bias_attr=False),
                 nn.ReLU()
             ]
 
         # Decoder Bottleneck
-        mult = 2 ** n_downsampling
+        mult = 2**n_downsampling
         for i in range(n_blocks):
-            setattr(self, 'DecodeBlock'+str(i + 1), ResnetSoftAdaLINBlock(ngf*mult))
+            setattr(self, 'DecodeBlock' + str(i + 1),
+                    ResnetSoftAdaLINBlock(ngf * mult))
 
         # Up-Sampling
         UpBlock = []
         for i in range(n_downsampling):
-            mult = 2 ** (n_downsampling - i)
+            mult = 2**(n_downsampling - i)
             UpBlock += [
                 nn.Upsample(scale_factor=2),
                 nn.Pad2D([1, 1, 1, 1], 'reflect'),
-                nn.Conv2D(ngf*mult, ngf*mult//2, kernel_size=3, stride=1, bias_attr=False),
-                LIN(ngf*mult//2),
+                nn.Conv2D(ngf * mult,
+                          ngf * mult // 2,
+                          kernel_size=3,
+                          stride=1,
+                          bias_attr=False),
+                LIN(ngf * mult // 2),
                 nn.ReLU()
             ]
 
-        UpBlock += [
-            HourGlass(ngf, ngf),
-            HourGlass(ngf, ngf, False)
-            ]
+        UpBlock += [HourGlass(ngf, ngf), HourGlass(ngf, ngf, False)]
 
         UpBlock += [
             nn.Pad2D([3, 3, 3, 3], 'reflect'),
@@ -129,8 +142,9 @@ class ResnetUGATITP2CGenerator(nn.Layer):
 
         content_features = []
         for i in range(self.n_blocks):
-            x = getattr(self, 'EncodeBlock'+str(i+1))(x)
-            content_features.append(F.adaptive_avg_pool2d(x, 1).reshape([bs, -1]))
+            x = getattr(self, 'EncodeBlock' + str(i + 1))(x)
+            content_features.append(
+                F.adaptive_avg_pool2d(x, 1).reshape([bs, -1]))
 
         gap = F.adaptive_avg_pool2d(x, 1)
         gap_logit = self.gap_fc(gap.reshape([bs, -1]))
@@ -155,7 +169,10 @@ class ResnetUGATITP2CGenerator(nn.Layer):
             style_features = self.FC(x.reshape([bs, -1]))
 
         for i in range(self.n_blocks):
-            x = getattr(self, 'DecodeBlock'+str(i+1))(x, content_features[4-i-1], style_features)
+            x = getattr(self,
+                        'DecodeBlock' + str(i + 1))(x,
+                                                    content_features[4 - i - 1],
+                                                    style_features)
 
         out = self.UpBlock(x)
 
@@ -168,25 +185,27 @@ class ConvBlock(nn.Layer):
         self.dim_in = dim_in
         self.dim_out = dim_out
 
-        self.conv_block1 = self.__convblock(dim_in, dim_out//2)
-        self.conv_block2 = self.__convblock(dim_out//2, dim_out//4)
-        self.conv_block3 = self.__convblock(dim_out//4, dim_out//4)
+        self.conv_block1 = self.__convblock(dim_in, dim_out // 2)
+        self.conv_block2 = self.__convblock(dim_out // 2, dim_out // 4)
+        self.conv_block3 = self.__convblock(dim_out // 4, dim_out // 4)
 
         if self.dim_in != self.dim_out:
             self.conv_skip = nn.Sequential(
                 nn.InstanceNorm2D(dim_in, weight_attr=False, bias_attr=False),
                 nn.ReLU(),
-                nn.Conv2D(dim_in, dim_out, kernel_size=1, stride=1, bias_attr=False)
-            )
+                nn.Conv2D(dim_in,
+                          dim_out,
+                          kernel_size=1,
+                          stride=1,
+                          bias_attr=False))
 
     @staticmethod
     def __convblock(dim_in, dim_out):
         return nn.Sequential(
             nn.InstanceNorm2D(dim_in, weight_attr=False, bias_attr=False),
-            nn.ReLU(),
-            nn.Pad2D([1, 1, 1, 1], 'reflect'),
-            nn.Conv2D(dim_in, dim_out, kernel_size=3, stride=1, bias_attr=False)
-        )
+            nn.ReLU(), nn.Pad2D([1, 1, 1, 1], 'reflect'),
+            nn.Conv2D(dim_in, dim_out, kernel_size=3, stride=1,
+                      bias_attr=False))
 
     def forward(self, x):
         residual = x
@@ -210,24 +229,25 @@ class HourGlassBlock(nn.Layer):
         self.n_block = 9
 
         for i in range(self.n_skip):
-            setattr(self, 'ConvBlockskip'+str(i+1), ConvBlock(dim_in, dim_in))
+            setattr(self, 'ConvBlockskip' + str(i + 1),
+                    ConvBlock(dim_in, dim_in))
 
         for i in range(self.n_block):
-            setattr(self, 'ConvBlock'+str(i+1), ConvBlock(dim_in, dim_in))
+            setattr(self, 'ConvBlock' + str(i + 1), ConvBlock(dim_in, dim_in))
 
     def forward(self, x):
         skips = []
         for i in range(self.n_skip):
-            skips.append(getattr(self, 'ConvBlockskip'+str(i+1))(x))
+            skips.append(getattr(self, 'ConvBlockskip' + str(i + 1))(x))
             x = F.avg_pool2d(x, 2)
-            x = getattr(self, 'ConvBlock'+str(i+1))(x)
+            x = getattr(self, 'ConvBlock' + str(i + 1))(x)
 
         x = self.ConvBlock5(x)
 
         for i in range(self.n_skip):
-            x = getattr(self, 'ConvBlock'+str(i+6))(x)
+            x = getattr(self, 'ConvBlock' + str(i + 6))(x)
             x = F.upsample(x, scale_factor=2)
-            x = skips[self.n_skip-i-1] + x
+            x = skips[self.n_skip - i - 1] + x
 
         return x
 
@@ -238,12 +258,14 @@ class HourGlass(nn.Layer):
         self.use_res = use_res
 
         self.HG = nn.Sequential(
-            HourGlassBlock(dim_in),
-            ConvBlock(dim_out, dim_out),
-            nn.Conv2D(dim_out, dim_out, kernel_size=1, stride=1, bias_attr=False),
+            HourGlassBlock(dim_in), ConvBlock(dim_out, dim_out),
+            nn.Conv2D(dim_out,
+                      dim_out,
+                      kernel_size=1,
+                      stride=1,
+                      bias_attr=False),
             nn.InstanceNorm2D(dim_out, weight_attr=False, bias_attr=False),
-            nn.ReLU()
-        )
+            nn.ReLU())
 
         self.Conv1 = nn.Conv2D(dim_out, 3, kernel_size=1, stride=1)
 
@@ -292,12 +314,20 @@ class ResnetSoftAdaLINBlock(nn.Layer):
     def __init__(self, dim, use_bias=False):
         super(ResnetSoftAdaLINBlock, self).__init__()
         self.pad1 = nn.Pad2D([1, 1, 1, 1], 'reflect')
-        self.conv1 = nn.Conv2D(dim, dim, kernel_size=3, stride=1, bias_attr=use_bias)
+        self.conv1 = nn.Conv2D(dim,
+                               dim,
+                               kernel_size=3,
+                               stride=1,
+                               bias_attr=use_bias)
         self.norm1 = SoftAdaLIN(dim)
         self.relu1 = nn.ReLU()
 
         self.pad2 = nn.Pad2D([1, 1, 1, 1], 'reflect')
-        self.conv2 = nn.Conv2D(dim, dim, kernel_size=3, stride=1, bias_attr=use_bias)
+        self.conv2 = nn.Conv2D(dim,
+                               dim,
+                               kernel_size=3,
+                               stride=1,
+                               bias_attr=use_bias)
         self.norm2 = SoftAdaLIN(dim)
 
     def forward(self, x, content_features, style_features):
@@ -317,23 +347,28 @@ class SoftAdaLIN(nn.Layer):
         super(SoftAdaLIN, self).__init__()
         self.norm = AdaLIN(num_features, eps)
 
-        self.w_gamma = self.create_parameter([1, num_features], default_initializer=nn.initializer.Constant(0.))
-        self.w_beta = self.create_parameter([1, num_features], default_initializer=nn.initializer.Constant(0.))
+        self.w_gamma = self.create_parameter(
+            [1, num_features], default_initializer=nn.initializer.Constant(0.))
+        self.w_beta = self.create_parameter(
+            [1, num_features], default_initializer=nn.initializer.Constant(0.))
 
-        self.c_gamma = nn.Sequential(nn.Linear(num_features, num_features, bias_attr=False),
-                                     nn.ReLU(),
-                                     nn.Linear(num_features, num_features, bias_attr=False))
-        self.c_beta = nn.Sequential(nn.Linear(num_features, num_features, bias_attr=False),
-                                    nn.ReLU(),
-                                    nn.Linear(num_features, num_features, bias_attr=False))
+        self.c_gamma = nn.Sequential(
+            nn.Linear(num_features, num_features, bias_attr=False), nn.ReLU(),
+            nn.Linear(num_features, num_features, bias_attr=False))
+        self.c_beta = nn.Sequential(
+            nn.Linear(num_features, num_features, bias_attr=False), nn.ReLU(),
+            nn.Linear(num_features, num_features, bias_attr=False))
         self.s_gamma = nn.Linear(num_features, num_features, bias_attr=False)
         self.s_beta = nn.Linear(num_features, num_features, bias_attr=False)
 
     def forward(self, x, content_features, style_features):
-        content_gamma, content_beta = self.c_gamma(content_features), self.c_beta(content_features)
-        style_gamma, style_beta = self.s_gamma(style_features), self.s_beta(style_features)
+        content_gamma, content_beta = self.c_gamma(
+            content_features), self.c_beta(content_features)
+        style_gamma, style_beta = self.s_gamma(style_features), self.s_beta(
+            style_features)
 
-        w_gamma_, w_beta_ = self.w_gamma.expand([x.shape[0], -1]), self.w_beta.expand([x.shape[0], -1])
+        w_gamma_, w_beta_ = self.w_gamma.expand(
+            [x.shape[0], -1]), self.w_beta.expand([x.shape[0], -1])
         soft_gamma = (1. - w_gamma_) * style_gamma + w_gamma_ * content_gamma
         soft_beta = (1. - w_beta_) * style_beta + w_beta_ * content_beta
 
@@ -345,16 +380,25 @@ class AdaLIN(nn.Layer):
     def __init__(self, num_features, eps=1e-5):
         super(AdaLIN, self).__init__()
         self.eps = eps
-        self.rho = self.create_parameter([1, num_features, 1, 1], default_initializer=nn.initializer.Constant(0.9))
+        self.rho = self.create_parameter(
+            [1, num_features, 1, 1],
+            default_initializer=nn.initializer.Constant(0.9))
 
     def forward(self, x, gamma, beta):
-        in_mean, in_var = paddle.mean(x, axis=[2, 3], keepdim=True), paddle.var(x, axis=[2, 3], keepdim=True)
+        in_mean, in_var = paddle.mean(x, axis=[2, 3],
+                                      keepdim=True), paddle.var(x,
+                                                                axis=[2, 3],
+                                                                keepdim=True)
         out_in = (x - in_mean) / paddle.sqrt(in_var + self.eps)
-        ln_mean, ln_var = paddle.mean(x, axis=[1, 2, 3], keepdim=True), paddle.var(x, axis=[1, 2, 3], keepdim=True)
+        ln_mean, ln_var = paddle.mean(x, axis=[1, 2, 3],
+                                      keepdim=True), paddle.var(x,
+                                                                axis=[1, 2, 3],
+                                                                keepdim=True)
         out_ln = (x - ln_mean) / paddle.sqrt(ln_var + self.eps)
         out = self.rho.expand([x.shape[0], -1, -1, -1]) * out_in + \
               (1-self.rho.expand([x.shape[0], -1, -1, -1])) * out_ln
-        out = out * gamma.unsqueeze(2).unsqueeze(3) + beta.unsqueeze(2).unsqueeze(3)
+        out = out * gamma.unsqueeze(2).unsqueeze(3) + beta.unsqueeze(
+            2).unsqueeze(3)
 
         return out
 
@@ -363,17 +407,31 @@ class LIN(nn.Layer):
     def __init__(self, num_features, eps=1e-5):
         super(LIN, self).__init__()
         self.eps = eps
-        self.rho = self.create_parameter([1, num_features, 1, 1], default_initializer=nn.initializer.Constant(0.))
-        self.gamma = self.create_parameter([1, num_features, 1, 1], default_initializer=nn.initializer.Constant(1.))
-        self.beta = self.create_parameter([1, num_features, 1, 1], default_initializer=nn.initializer.Constant(0.))
+        self.rho = self.create_parameter(
+            [1, num_features, 1, 1],
+            default_initializer=nn.initializer.Constant(0.))
+        self.gamma = self.create_parameter(
+            [1, num_features, 1, 1],
+            default_initializer=nn.initializer.Constant(1.))
+        self.beta = self.create_parameter(
+            [1, num_features, 1, 1],
+            default_initializer=nn.initializer.Constant(0.))
 
     def forward(self, x):
-        in_mean, in_var = paddle.mean(x, axis=[2, 3], keepdim=True), paddle.var(x, axis=[2, 3], keepdim=True)
+        in_mean, in_var = paddle.mean(x, axis=[2, 3],
+                                      keepdim=True), paddle.var(x,
+                                                                axis=[2, 3],
+                                                                keepdim=True)
         out_in = (x - in_mean) / paddle.sqrt(in_var + self.eps)
-        ln_mean, ln_var = paddle.mean(x, axis=[1, 2, 3], keepdim=True), paddle.var(x, axis=[1, 2, 3], keepdim=True)
+        ln_mean, ln_var = paddle.mean(x, axis=[1, 2, 3],
+                                      keepdim=True), paddle.var(x,
+                                                                axis=[1, 2, 3],
+                                                                keepdim=True)
         out_ln = (x - ln_mean) / paddle.sqrt(ln_var + self.eps)
         out = self.rho.expand([x.shape[0], -1, -1, -1]) * out_in + \
               (1-self.rho.expand([x.shape[0], -1, -1, -1])) * out_ln
-        out = out * self.gamma.expand([x.shape[0], -1, -1, -1]) + self.beta.expand([x.shape[0], -1, -1, -1])
+        out = out * self.gamma.expand([x.shape[0], -1, -1, -1
+                                       ]) + self.beta.expand(
+                                           [x.shape[0], -1, -1, -1])
 
         return out

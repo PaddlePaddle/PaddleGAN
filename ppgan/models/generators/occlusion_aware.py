@@ -1,18 +1,6 @@
-#   Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # code was heavily based on https://github.com/AliaksandrSiarohin/first-order-model
+# Users should be careful about adopting these functions in any commercial matters.
+# https://github.com/AliaksandrSiarohin/first-order-model/blob/master/LICENSE.md
 
 import paddle
 from paddle import nn
@@ -53,7 +41,26 @@ class OcclusionAwareGenerator(nn.Layer):
         else:
             self.dense_motion_network = None
 
-        self.first = SameBlock2d(num_channels,
+        if mobile_net:
+            self.first = nn.Sequential(
+                    SameBlock2d(num_channels,
+                                    num_channels,
+                                    kernel_size=3,
+                                    padding=1,
+                                    mobile_net=mobile_net),
+                    SameBlock2d(num_channels,
+                                    num_channels,
+                                    kernel_size=3,
+                                    padding=1,
+                                    mobile_net=mobile_net),
+                    SameBlock2d(num_channels,
+                                    block_expansion,
+                                    kernel_size=3,
+                                    padding=1,
+                                    mobile_net=mobile_net)
+                )
+        else:
+            self.first = SameBlock2d(num_channels,
                                  block_expansion,
                                  kernel_size=(7, 7),
                                  padding=(3, 3),
@@ -121,8 +128,28 @@ class OcclusionAwareGenerator(nn.Layer):
                 self.bottleneck.add_sublayer(
                     'r' + str(i),
                     ResBlock2d(in_features, kernel_size=(3, 3), padding=(1, 1)))
-
-        self.final = nn.Conv2D(block_expansion,
+        if mobile_net:
+            self.final = nn.Sequential(
+                    nn.Conv2D(block_expansion,
+                                block_expansion,
+                                kernel_size=3,
+                                weight_attr=nn.initializer.KaimingUniform(),
+                                padding=1),
+                    nn.ReLU(),
+                    nn.Conv2D(block_expansion,
+                                block_expansion,
+                                kernel_size=3,
+                                weight_attr=nn.initializer.KaimingUniform(),
+                                padding=1),
+                    nn.ReLU(),
+                    nn.Conv2D(block_expansion,
+                                num_channels,
+                                kernel_size=3,
+                                weight_attr=nn.initializer.KaimingUniform(),
+                                padding=1)
+                )
+        else:
+            self.final = nn.Conv2D(block_expansion,
                                num_channels,
                                kernel_size=(7, 7),
                                padding=(3, 3))

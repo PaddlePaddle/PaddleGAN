@@ -41,7 +41,13 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 ## 🚀 Recent Updates
 
-- 👩‍🚀**A Space Odyssey ：[LapStyle](./docs/zh_CN/tutorials/lap_style.md) image translation take you travel around the universe**👨‍🚀
+- 😍 **Boy or Girl？：[StyleGAN V2 Face Editing](./docs/en_US/tutorials/styleganv2editing.md)-Changing genders！** 😍
+  - **[Online Toturials](https://aistudio.baidu.com/aistudio/projectdetail/2565277?contributionType=1)**
+  <div align='center'>
+    <img src='https://user-images.githubusercontent.com/48054808/141226707-58bd661e-2102-4fb7-8e18-c794a6b59ee8.gif' width='600'/>
+  </div>
+ 
+- 👩‍🚀 **A Space Odyssey ：[LapStyle](./docs/zh_CN/tutorials/lap_style.md) image translation take you travel around the universe**👨‍🚀
 
   - **[Online Toturials](https://aistudio.baidu.com/aistudio/projectdetail/2343740?contributionType=1)**
 
@@ -51,7 +57,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
       <img src='https://user-images.githubusercontent.com/48054808/133392652-f4811b1e-0676-4402-808b-a4c96c611368.gif' width='250'/>
     </div>
 
-- 🧙‍♂️**Latest Creative Project：create magic/dynamic profile for your student ID in Hogwarts** 🧙‍♀️
+- 🧙‍♂️ **Latest Creative Project：create magic/dynamic profile for your student ID in Hogwarts** 🧙‍♀️
 
   - **[Online Toturials](https://aistudio.baidu.com/aistudio/projectdetail/2288888?channelType=0&channel=0)**
 
@@ -59,7 +65,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
       <img src='https://ai-studio-static-online.cdn.bcebos.com/da1c51844ac048aa8d4fa3151be95215eee75d8bb488409d92ec17285b227c2c' width='250'/>
     </div>
   
-- **💞Add Face Morphing function💞: you can perfectly merge any two faces and make the new face get any facial expressions!**
+- **💞 Add Face Morphing function💞 : you can perfectly merge any two faces and make the new face get any facial expressions!**
 
   - Tutorials: https://aistudio.baidu.com/aistudio/projectdetail/2254031
 

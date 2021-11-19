@@ -29,7 +29,7 @@ class BasicVSRModel(BaseSRModel):
 
     Paper: BasicVSR: The Search for Essential Components in Video Super-Resolution and Beyond, CVPR, 2021
     """
-    def __init__(self, generator, fix_iter, pixel_criterion=None):
+    def __init__(self, generator, fix_iter, lr_mult, pixel_criterion=None):
         """Initialize the BasicVSR class.
 
         Args:
@@ -41,6 +41,7 @@ class BasicVSRModel(BaseSRModel):
         self.fix_iter = fix_iter
         self.current_iter = 1
         self.flag = True
+        self.lr_mult = lr_mult
         init_basicvsr_weight(self.nets['generator'])
 
     def setup_input(self, input):
@@ -65,7 +66,7 @@ class BasicVSRModel(BaseSRModel):
                 for name, param in self.nets['generator'].named_parameters():
                     param.trainable = True
                     if 'spynet' in name:
-                        param.optimize_attr['learning_rate'] = 0.125
+                        param.optimize_attr['learning_rate'] = self.lr_mult
                 self.flag = False
                 for net in self.nets.values():
                     net.find_unused_parameters = False
@@ -102,7 +103,7 @@ class BasicVSRModel(BaseSRModel):
 
         if metrics is not None:
             for metric in metrics.values():
-                metric.update(out_img, gt_img)
+                metric.update(out_img, gt_img, is_seq=True)
 
 
 def init_basicvsr_weight(net):

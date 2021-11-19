@@ -1,3 +1,5 @@
+# code was based on https://github.com/xinntao/ESRGAN
+
 import paddle.nn as nn
 
 from .builder import DISCRIMINATORS

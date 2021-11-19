@@ -25,7 +25,7 @@ from ..utils.visual import tensor2img
 
 
 class BaseModel(ABC):
-    """This class is an abstract base class (ABC) for models.
+    r"""This class is an abstract base class (ABC) for models.
     To create a subclass, you need to implement the following five functions:
         -- <__init__>:          initialize the class.
         -- <setup_input>:       unpack data from dataset and apply preprocessing.
@@ -186,12 +186,18 @@ class BaseModel(ABC):
     def export_model(self, export_model, output_dir=None, inputs_size=[]):
         inputs_num = 0
         for net in export_model:
-            input_spec = [paddle.static.InputSpec(
-                shape=inputs_size[inputs_num + i], dtype="float32") for i in range(net["inputs_num"])]
+            input_spec = [
+                paddle.static.InputSpec(shape=inputs_size[inputs_num + i],
+                                        dtype="float32")
+                for i in range(net["inputs_num"])
+            ]
             inputs_num = inputs_num + net["inputs_num"]
             static_model = paddle.jit.to_static(self.nets[net["name"]],
                                                 input_spec=input_spec)
             if output_dir is None:
-                output_dir = 'export_model'
-            paddle.jit.save(static_model, os.path.join(
-                output_dir, '{}_{}'.format(self.__class__.__name__.lower(), net["name"])))
+                output_dir = 'inference_model'
+            paddle.jit.save(
+                static_model,
+                os.path.join(
+                    output_dir, '{}_{}'.format(self.__class__.__name__.lower(),
+                                               net["name"])))

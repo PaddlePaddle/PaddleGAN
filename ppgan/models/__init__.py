@@ -32,3 +32,4 @@ from .firstorder_model import FirstOrderModel
 from .lapstyle_model import LapStyleDraModel, LapStyleRevFirstModel, LapStyleRevSecondModel
 from .basicvsr_model import BasicVSRModel
 from .mpr_model import MPRModel
+from .photopen_model import PhotoPenModel

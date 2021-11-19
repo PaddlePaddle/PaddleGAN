@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# code was heavily based on https://github.com/wtjiang98/PSGAN
+# MIT License 
+# Copyright (c) 2020 Wentao Jiang
+
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
