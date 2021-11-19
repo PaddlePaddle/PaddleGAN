@@ -4,7 +4,6 @@ import numpy as np
 
 from ppgan.utils.config import get_config
 from ppgan.datasets.builder import build_dataloader
-from ppgan.models.generators.builder import build_generator
 from ppgan.engine.trainer import IterLoader
 from ppgan.utils.visual import save_image
 from ppgan.utils.visual import tensor2img
