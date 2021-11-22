@@ -56,7 +56,7 @@ class SRREDSMultipleGTDataset(Dataset):
                  scale=4,
                  val_partition='REDS4',
                  batch_size=4,
-                 total_keys=270):
+                 num_clips=270):
         super(SRREDSMultipleGTDataset, self).__init__()
         self.mode = mode
         self.fileroot = str(lq_folder)
@@ -70,7 +70,7 @@ class SRREDSMultipleGTDataset(Dataset):
         self.scale = scale
         self.val_partition = val_partition
         self.batch_size = batch_size
-        self.total_keys = total_keys
+        self.num_clips = num_clips  # training num of LQ and GT pairs
         self.data_infos = self.load_annotations()
 
     def __getitem__(self, idx):
@@ -95,7 +95,7 @@ class SRREDSMultipleGTDataset(Dataset):
             dict: Returned dict for LQ and GT pairs.
         """
         # generate keys
-        keys = [f'{i:03d}' for i in range(0, self.total_keys)]
+        keys = [f'{i:03d}' for i in range(0, self.num_clips)]
 
         if self.val_partition == 'REDS4':
             val_partition = ['000', '011', '015', '020']
