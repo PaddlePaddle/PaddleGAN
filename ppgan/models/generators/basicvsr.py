@@ -248,6 +248,7 @@ class SPyNet(nn.Layer):
 
     Paper:
         Optical Flow Estimation using a Spatial Pyramid Network, CVPR, 2017
+        
     """
     def __init__(self):
         super().__init__()
@@ -268,6 +269,7 @@ class SPyNet(nn.Layer):
 
     def compute_flow(self, ref, supp):
         """Compute flow from ref to supp.
+
         Note that in this function, the images are already resized to a
         multiple of 32.
 
@@ -608,7 +610,7 @@ class BasicVSRNet(nn.Layer):
 
 class SecondOrderDeformableAlignment(nn.Layer):
     """Second-order deformable alignment module.
-    
+
     Args:
         in_channels (int): Same as nn.Conv2d.
         out_channels (int): Same as nn.Conv2d.
