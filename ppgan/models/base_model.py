@@ -25,7 +25,7 @@ from ..utils.visual import tensor2img
 
 
 class BaseModel(ABC):
-    """This class is an abstract base class (ABC) for models.
+    r"""This class is an abstract base class (ABC) for models.
     To create a subclass, you need to implement the following five functions:
         -- <__init__>:          initialize the class.
         -- <setup_input>:       unpack data from dataset and apply preprocessing.
