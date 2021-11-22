@@ -14,7 +14,6 @@ from .builder import GENERATORS
 @paddle.no_grad()
 def default_init_weights(layer_list, scale=1, bias_fill=0, **kwargs):
     """Initialize network weights.
-
     Args:
         layer_list (list[nn.Layer] | nn.Layer): Layers to be initialized.
         scale (float): Scale initialized weights, especially for residual
@@ -43,13 +42,11 @@ def default_init_weights(layer_list, scale=1, bias_fill=0, **kwargs):
 
 class PixelShufflePack(nn.Layer):
     """ Pixel Shuffle upsample layer.
-
     Args:
         in_channels (int): Number of input channels.
         out_channels (int): Number of output channels.
         scale_factor (int): Upsample ratio.
         upsample_kernel (int): Kernel size of Conv layer to expand channels.
-
     Returns:
         Upsampled feature map.
     """
@@ -75,10 +72,8 @@ class PixelShufflePack(nn.Layer):
 
     def forward(self, x):
         """Forward function for PixelShufflePack.
-
         Args:
             x (Tensor): Input tensor with shape (in_channels, c, h, w).
-
         Returns:
             Tensor with shape (out_channels, c, scale_factor*h, scale_factor*w).
         """
@@ -89,11 +84,9 @@ class PixelShufflePack(nn.Layer):
 
 def MakeMultiBlocks(func, num_layers, nf=64):
     """Make layers by stacking the same blocks.
-
     Args:
         func (nn.Layer): nn.Layer class for basic block.
         num_layers (int): number of blocks.
-
     Returns:
         nn.Sequential: Stacked blocks in nn.Sequential.
     """
@@ -105,11 +98,9 @@ def MakeMultiBlocks(func, num_layers, nf=64):
 
 class ResidualBlockNoBN(nn.Layer):
     """Residual block without BN.
-
     It has a style of:
         ---Conv-ReLU-Conv-+-
          |________________|
-
     Args:
         nf (int): Channel number of intermediate features.
             Default: 64.
@@ -127,10 +118,8 @@ class ResidualBlockNoBN(nn.Layer):
 
     def forward(self, x):
         """Forward function.
-
         Args:
             x (Tensor): Input tensor with shape (n, c, h, w).
-
         Returns:
             Tensor with shape (n, c, h, w).
         """
@@ -145,7 +134,6 @@ def flow_warp(x,
               padding_mode='zeros',
               align_corners=True):
     """Warp an image or a feature map with optical flow.
-
     Args:
         x (Tensor): Tensor with size (n, c, h, w).
         flow (Tensor): Tensor with size (n, h, w, 2). The last dimension is
@@ -156,7 +144,6 @@ def flow_warp(x,
         padding_mode (str): Padding mode: 'zeros' or 'border' or 'reflection'.
             Default: 'zeros'.
         align_corners (bool): Whether align corners. Default: True.
-
     Returns:
         Tensor: Warped image or feature map.
     """
@@ -165,7 +152,7 @@ def flow_warp(x,
     if x_h != flow_h or x_w != flow_w:
         raise ValueError(f'The spatial sizes of input ({x.shape[-2:]}) and '
                          f'flow ({flow.shape[1:3]}) are not the same.')
-    _, _, h, w = paddle.shape(x)
+    _, _, h, w = x.shape
     # create mesh grid
     grid_y, grid_x = paddle.meshgrid(paddle.arange(0, h), paddle.arange(0, w))
     grid = paddle.stack((grid_x, grid_y), axis=2)  # (w, h, 2)
@@ -187,7 +174,6 @@ def flow_warp(x,
 
 class SPyNetBasicModule(nn.Layer):
     """Basic Module for SPyNet.
-
     Paper:
         Optical Flow Estimation using a Spatial Pyramid Network, CVPR, 2017
     """
@@ -227,7 +213,6 @@ class SPyNetBasicModule(nn.Layer):
             tensor_input (Tensor): Input tensor with shape (b, 8, h, w).
                 8 channels contain:
                 [reference image (3), neighbor image (3), initial flow (2)].
-
         Returns:
             Tensor: Refined flow with shape (b, 2, h, w)
         """
@@ -241,14 +226,11 @@ class SPyNetBasicModule(nn.Layer):
 
 class SPyNet(nn.Layer):
     """SPyNet network structure.
-
     The difference to the SPyNet in paper is that
         1. more SPyNetBasicModule is used in this version, and
         2. no batch normalization is used in this version.
-
     Paper:
         Optical Flow Estimation using a Spatial Pyramid Network, CVPR, 2017
-
     """
     def __init__(self):
         super().__init__()
@@ -269,19 +251,16 @@ class SPyNet(nn.Layer):
 
     def compute_flow(self, ref, supp):
         """Compute flow from ref to supp.
-
         Note that in this function, the images are already resized to a
         multiple of 32.
-
         Args:
             ref (Tensor): Reference image with shape of (n, 3, h, w).
             supp (Tensor): Supporting image with shape of (n, 3, h, w).
-
         Returns:
             Tensor: Estimated optical flow: (n, 2, h, w).
         """
 
-        n, _, h, w = paddle.shape(ref)
+        n, _, h, w = ref.shape
 
         # normalize the input images
         ref = [(ref - self.mean) / self.std]
@@ -366,19 +345,16 @@ class SPyNet(nn.Layer):
 
     def forward(self, ref, supp):
         """Forward function of SPyNet.
-
         This function computes the optical flow from ref to supp.
-
         Args:
             ref (Tensor): Reference image with shape of (n, 3, h, w).
             supp (Tensor): Supporting image with shape of (n, 3, h, w).
-
         Returns:
             Tensor: Estimated optical flow: (n, 2, h, w).
         """
 
         # upsize to a multiple of 32
-        h, w = paddle.shape(ref)[2:4]
+        h, w = ref.shape[2:4]
         w_up = w if (w % 32) == 0 else 32 * (w // 32 + 1)
         h_up = h if (h % 32) == 0 else 32 * (h // 32 + 1)
         ref = F.interpolate(ref,
@@ -412,7 +388,6 @@ class SPyNet(nn.Layer):
 
 class ResidualBlocksWithInputConv(nn.Layer):
     """Residual blocks with a convolution in front.
-
     Args:
         in_channels (int): Number of input channels of the first conv.
         out_channels (int): Number of channels of the residual blocks.
@@ -434,10 +409,8 @@ class ResidualBlocksWithInputConv(nn.Layer):
     def forward(self, feat):
         """
         Forward function for ResidualBlocksWithInputConv.
-
         Args:
             feat (Tensor): Input feature with shape (n, in_channels, h, w)
-
         Returns:
             Tensor: Output feature with shape (n, out_channels, h, w)
         """
@@ -449,12 +422,10 @@ class ResidualBlocksWithInputConv(nn.Layer):
 @GENERATORS.register()
 class BasicVSRNet(nn.Layer):
     """BasicVSR network structure for video super-resolution.
-
     Support only x4 upsampling.
     Paper:
         BasicVSR: The Search for Essential Components in Video Super-Resolution
         and Beyond, CVPR, 2021
-
     Args:
         mid_channels (int): Channel number of the intermediate features.
             Default: 64.
@@ -500,10 +471,8 @@ class BasicVSRNet(nn.Layer):
 
     def check_if_mirror_extended(self, lrs):
         """Check whether the input is a mirror-extended sequence.
-
         If mirror-extended, the i-th (i=0, ..., t-1) frame is equal to the
         (t-1-i)-th frame.
-
         Args:
             lrs (tensor): Input LR images with shape (n, t, c, h, w)
         """
@@ -517,13 +486,10 @@ class BasicVSRNet(nn.Layer):
 
     def compute_flow(self, lrs):
         """Compute optical flow using SPyNet for feature warping.
-
         Note that if the input is an mirror-extended sequence, 'flows_forward'
         is not needed, since it is equal to 'flows_backward.flip(1)'.
-
         Args:
             lrs (tensor): Input LR images with shape (n, t, c, h, w)
-
         Return:
             tuple(Tensor): Optical flow. 'flows_forward' corresponds to the
                 flows used for forward-time propagation (current to previous).
@@ -548,16 +514,14 @@ class BasicVSRNet(nn.Layer):
 
     def forward(self, lrs):
         """Forward function for BasicVSR.
-
         Args:
             lrs (Tensor): Input LR sequence with shape (n, t, c, h, w).
-
         Returns:
             Tensor: Output HR sequence with shape (n, t, c, 4h, 4w).
         """
 
-        n, _, c, h, w = lrs.shape
-        t = paddle.shape(lrs)[1]
+        n, t, c, h, w = lrs.shape
+        t = paddle.to_tensor(t)
         assert h >= 64 and w >= 64, (
             'The height and width of inputs should be at least 64, '
             f'but got {h} and {w}.')
@@ -578,10 +542,8 @@ class BasicVSRNet(nn.Layer):
 
             feat_prop = paddle.concat([lrs[:, i, :, :, :], feat_prop], axis=1)
             feat_prop = self.backward_resblocks(feat_prop)
-
             outputs.append(feat_prop)
         outputs = outputs[::-1]
-
         # forward-time propagation and upsampling
         feat_prop = paddle.zeros_like(feat_prop)
         for i in range(0, t):

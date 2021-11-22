@@ -55,7 +55,8 @@ class SRREDSMultipleGTDataset(Dataset):
                  use_rot=False,
                  scale=4,
                  val_partition='REDS4',
-                 batch_size=4):
+                 batch_size=4,
+                 total_keys=270):
         super(SRREDSMultipleGTDataset, self).__init__()
         self.mode = mode
         self.fileroot = str(lq_folder)
@@ -69,6 +70,7 @@ class SRREDSMultipleGTDataset(Dataset):
         self.scale = scale
         self.val_partition = val_partition
         self.batch_size = batch_size
+        self.total_keys = total_keys
         self.data_infos = self.load_annotations()
 
     def __getitem__(self, idx):
@@ -93,7 +95,7 @@ class SRREDSMultipleGTDataset(Dataset):
             dict: Returned dict for LQ and GT pairs.
         """
         # generate keys
-        keys = [f'{i:03d}' for i in range(0, 270)]
+        keys = [f'{i:03d}' for i in range(0, self.total_keys)]
 
         if self.val_partition == 'REDS4':
             val_partition = ['000', '011', '015', '020']
@@ -170,7 +172,9 @@ class SRREDSMultipleGTDataset(Dataset):
         gt_list = rlt[number_frames:]
 
         # stack LQ images to NHWC, N is the frame number
-        frame_list = [v.transpose(2, 0, 1).astype('float32') for v in frame_list]
+        frame_list = [
+            v.transpose(2, 0, 1).astype('float32') for v in frame_list
+        ]
         gt_list = [v.transpose(2, 0, 1).astype('float32') for v in gt_list]
 
         img_LQs = np.stack(frame_list, axis=0)

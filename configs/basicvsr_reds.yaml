@@ -38,6 +38,7 @@ dataset:
       use_rot: True
       scale: 4
       val_partition: REDS4
+      total_keys: 270
 
   test:
     name: SRREDSMultipleGTDataset
