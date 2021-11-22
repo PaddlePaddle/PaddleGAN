@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
 import math
 import random
 import paddle
@@ -22,7 +23,7 @@ from .criterions import build_criterion
 from .generators.builder import build_generator
 from .discriminators.builder import build_discriminator
 from ..solver import build_lr_scheduler, build_optimizer
-import os
+
 
 
 def r1_penalty(real_pred, real_img):

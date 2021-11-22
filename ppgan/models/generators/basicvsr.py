@@ -248,7 +248,7 @@ class SPyNet(nn.Layer):
 
     Paper:
         Optical Flow Estimation using a Spatial Pyramid Network, CVPR, 2017
-        
+
     """
     def __init__(self):
         super().__init__()
@@ -578,8 +578,10 @@ class BasicVSRNet(nn.Layer):
 
             feat_prop = paddle.concat([lrs[:, i, :, :, :], feat_prop], axis=1)
             feat_prop = self.backward_resblocks(feat_prop)
+
             outputs.append(feat_prop)
         outputs = outputs[::-1]
+        
         # forward-time propagation and upsampling
         feat_prop = paddle.zeros_like(feat_prop)
         for i in range(0, t):

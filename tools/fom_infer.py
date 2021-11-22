@@ -99,12 +99,12 @@ def main():
         driving_paths = [driving_path]
 
     # 创建 config
-    kp_detector_config = paddle_infer.Config(
-        args.model_path + "/kp_detector.pdmodel",
-        args.model_path + "/kp_detector.pdiparams")
-    generator_config = paddle_infer.Config(
-        args.model_path + "/generator.pdmodel",
-        args.model_path + "/generator.pdiparams")
+    kp_detector_config = paddle_infer.Config(os.path.join(
+        args.model_path, "/kp_detector.pdmodel"),
+        os.path.join(args.model_path, "/kp_detector.pdiparams"))
+    generator_config = paddle_infer.Config(os.path.join(
+        args.model_path, "/generator.pdmodel"),
+        os.path.join(args.model_path, "/generator.pdiparams"))
     if args.device == "gpu":
         kp_detector_config.enable_use_gpu(100, 0)
         generator_config.enable_use_gpu(100, 0)
