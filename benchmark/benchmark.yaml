@@ -12,7 +12,7 @@ FOMM:
   fp_item: fp32
   bs_item: 8 16
   epochs: 1
-  log_interval: 11
+  log_interval: 1
 
 esrgan:
   dataset_web: https://paddlegan.bj.bcebos.com/datasets/DIV2KandSet14.tar

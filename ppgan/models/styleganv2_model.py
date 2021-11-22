@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
 import math
 import random
 import paddle
@@ -22,6 +23,7 @@ from .criterions import build_criterion
 from .generators.builder import build_generator
 from .discriminators.builder import build_discriminator
 from ..solver import build_lr_scheduler, build_optimizer
+
 
 
 def r1_penalty(real_pred, real_img):
@@ -195,7 +197,6 @@ class StyleGAN2Model(BaseModel):
             noises = []
             for _ in range(num_noise):
                 noises.append(paddle.randn([batch, self.num_style_feat]))
-
         return noises
 
     def mixing_noise(self, batch, prob):
@@ -294,3 +295,25 @@ class StyleGAN2Model(BaseModel):
                     metric.update(fake_img, self.real_img)
         self.nets['gen_ema'].train()
 
+    class InferGenerator(paddle.nn.Layer):
+        def set_generator(self, generator):
+            self.generator = generator
+
+        def forward(self, style, truncation):
+            truncation_latent = self.generator.get_mean_style()
+            out = self.generator(styles=style,
+                                 truncation=truncation,
+                                 truncation_latent=truncation_latent)
+            return out[0]
+
+    def export_model(self,
+                     export_model=None,
+                     output_dir=None,
+                     inputs_size=[[1, 1, 512], [1, 1]]):
+        infer_generator = self.InferGenerator()
+        infer_generator.set_generator(self.nets['gen'])
+        style = paddle.rand(shape=inputs_size[0], dtype='float32')
+        truncation = paddle.rand(shape=inputs_size[1], dtype='float32')
+        paddle.jit.save(infer_generator,
+                        os.path.join(output_dir, "stylegan2model_gen"),
+                        input_spec=[style, truncation])

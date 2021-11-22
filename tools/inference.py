@@ -19,13 +19,14 @@ def parse_args():
         default=None,
         type=str,
         required=True,
-        help="The path prefix of inference model to be used.", )
-    parser.add_argument(
-        "--model_type",
-        default=None,
-        type=str,
-        required=True,
-        help="Model type selected in the list: " + ", ".join(MODEL_CLASSES))
+        help="The path prefix of inference model to be used.",
+    )
+    parser.add_argument("--model_type",
+                        default=None,
+                        type=str,
+                        required=True,
+                        help="Model type selected in the list: " +
+                        ", ".join(MODEL_CLASSES))
     parser.add_argument(
         "--device",
         default="gpu",
@@ -65,12 +66,14 @@ def main():
     args = parse_args()
     cfg = get_config(args.config_file, args.opt)
     predictor = create_predictor(args.model_path, args.device)
-    input_handles = [predictor.get_input_handle(
-        name) for name in predictor.get_input_names()]
-    output_handle = predictor.get_output_handle(
-        predictor.get_output_names()[0])
-    test_dataloader = build_dataloader(
-        cfg.dataset.test, is_train=False, distributed=False)
+    input_handles = [
+        predictor.get_input_handle(name)
+        for name in predictor.get_input_names()
+    ]
+    output_handle = predictor.get_output_handle(predictor.get_output_names()[0])
+    test_dataloader = build_dataloader(cfg.dataset.test,
+                                       is_train=False,
+                                       distributed=False)
 
     max_eval_steps = len(test_dataloader)
     iter_loader = IterLoader(test_dataloader)
@@ -110,8 +113,8 @@ def main():
                 prediction[j] = prediction[j][::-1, :, :]
                 image_numpy = paddle.to_tensor(prediction[j])
                 image_numpy = tensor2img(image_numpy, (0, 1))
-                save_image(
-                    image_numpy, "infer_output/wav2lip/{}_{}.png".format(i, j))
+                save_image(image_numpy,
+                           "infer_output/wav2lip/{}_{}.png".format(i, j))
         elif model_type == "esrgan":
             lq = data['lq'].numpy()
             input_handles[0].copy_from_cpu(lq)
@@ -128,6 +131,23 @@ def main():
             prediction = paddle.to_tensor(prediction[0])
             image_numpy = tensor2img(prediction, min_max)
             save_image(image_numpy, "infer_output/edvr/{}.png".format(i))
+        elif model_type == "stylegan2":
+            noise = paddle.randn([1, 1, 512]).cpu().numpy()
+            input_handles[0].copy_from_cpu(noise)
+            input_handles[1].copy_from_cpu(np.array([0.7]).astype('float32'))
+            predictor.run()
+            prediction = output_handle.copy_to_cpu()
+            prediction = paddle.to_tensor(prediction[0])
+            image_numpy = tensor2img(prediction, min_max)
+            save_image(image_numpy, "infer_output/stylegan2/{}.png".format(i))
+        elif model_type == "basicvsr":
+            lq = data['lq'].numpy()
+            input_handles[0].copy_from_cpu(lq)
+            predictor.run()
+            prediction = output_handle.copy_to_cpu()
+            prediction = paddle.to_tensor(prediction[0])
+            image_numpy = tensor2img(prediction, min_max)
+            save_image(image_numpy, "infer_output/basicvsr/{}.png".format(i))
 
 
 if __name__ == '__main__':
