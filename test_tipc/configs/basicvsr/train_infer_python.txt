@@ -4,7 +4,7 @@ python:python3.7
 gpu_list:0
 ##
 auto_cast:null
-total_iters:lite_train_lite_infer=5|whole_train_whole_infer=200
+total_iters:lite_train_lite_infer=10|whole_train_whole_infer=200
 output_dir:./output/
 dataset.train.batch_size:lite_train_lite_infer=1|whole_train_whole_infer=1
 pretrained_model:null
@@ -13,7 +13,7 @@ train_infer_img_dir:./data/basicvsr_reds/test
 null:null
 ##
 trainer:norm_train
-norm_train:tools/main.py -c configs/basicvsr_reds.yaml -o dataset.train.dataset.num_clips=2
+norm_train:tools/main.py -c configs/basicvsr_reds.yaml --seed 123 -o dataset.train.dataset.num_clips=2 dataset.train.num_workers=0 log_config.interval=1 snapshot_config.interval=5 
 pact_train:null
 fpgm_train:null
 distill_train:null
@@ -37,7 +37,7 @@ inference_dir:basicvsrmodel_generator
 train_model:./inference/basicvsr/basicvsrmodel_generator
 infer_export:null
 infer_quant:False
-inference:tools/inference.py --model_type basicvsr -c configs/basicvsr_reds.yaml  -o dataset.test.num_clips=2 dataset.test.number_frames=6
+inference:tools/inference.py --model_type basicvsr -c configs/basicvsr_reds.yaml  -o dataset.test.num_clips=2 dataset.test.number_frames=6 --output_path test_tipc/output/
 --device:gpu
 null:null
 null:null

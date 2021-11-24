@@ -15,9 +15,14 @@
 import os
 import time
 import paddle
+import numpy as np
+import random
+        
 
 from .logger import setup_logger
-
+paddle.seed(123)
+random.seed(123)
+np.random.seed(123)
 
 def setup(args, cfg):
     if args.evaluate_only:
@@ -44,3 +49,10 @@ def setup(args, cfg):
         paddle.set_device('gpu')
     else:
         paddle.set_device('cpu')
+    
+    if args.seed:
+        paddle.seed(args.seed)
+        random.seed(args.seed)
+        np.random.seed(args.seed)    
+        paddle.framework.random._manual_program_seed(args.seed)
+    

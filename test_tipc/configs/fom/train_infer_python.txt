@@ -4,7 +4,7 @@ python:python3.7
 gpu_list:0
 ##
 auto_cast:null
-epochs:lite_train_lite_infer=10|whole_train_whole_infer=100
+epochs:lite_train_lite_infer=1|whole_train_whole_infer=100
 output_dir:./output/
 dataset.train.batch_size:lite_train_lite_infer=8|whole_train_whole_infer=8
 pretrained_model:null
@@ -13,7 +13,7 @@ train_infer_img_dir:./data/firstorder_vox_256/test
 null:null
 ##
 trainer:norm_train
-norm_train:tools/main.py -c configs/firstorder_vox_256.yaml -o 
+norm_train:tools/main.py -c configs/firstorder_vox_256.yaml --seed 123 -o dataset.train.num_workers=0 log_config.interval=1 snapshot_config.interval=1 dataset.train.num_repeats=1 dataset.train.id_sampling=False
 pact_train:null
 fpgm_train:null
 distill_train:null
@@ -37,7 +37,7 @@ inference_dir:fom_dy2st
 train_model:./inference/fom_dy2st/
 infer_export:null
 infer_quant:False
-inference:tools/fom_infer.py --driving_path data/first_order/Voxceleb/test --output_path infer_output/fom
+inference:tools/fom_infer.py --driving_path data/first_order/Voxceleb/test --output_path test_tipc/output/fom/
 --device:gpu
 null:null
 null:null
