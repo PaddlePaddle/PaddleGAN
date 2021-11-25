@@ -95,12 +95,6 @@ function func_inference(){
                 for threads in ${cpu_threads_list[*]}; do
                     for batch_size in ${batch_size_list[*]}; do
                         for precision in ${precision_list[*]}; do
-                            if [ ${use_mkldnn} = "False" ] && [ ${precision} = "fp16" ]; then
-                                continue
-                            fi # skip when enable fp16 but disable mkldnn
-                            if [ ${_flag_quant} = "True" ] && [ ${precision} != "int8" ]; then
-                                continue
-                            fi # skip when quant model inference but precision is not int8
                             set_precision=$(func_set_params "${precision_key}" "${precision}")
                             
                             _save_log_path="${_log_path}/python_infer_cpu_usemkldnn_${use_mkldnn}_threads_${threads}_precision_${precision}_batchsize_${batch_size}.log"

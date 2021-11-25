@@ -43,10 +43,10 @@ test_tipc/
 
 	├── ...  
 ├── results/   # 预先保存的预测结果，用于和实际预测结果进行精读比对
-	├── python_basicvsr_results_fp32.txt           # 预存的basicvsr模型python预测fp32精度的结果
-	├── python_cyclegan_results_fp32.txt           # 预存的cyclegan模型python预测fp32精度的结果
-	├── python_pix2pix_results_fp32.txt            # 预存的pix2pix模型python预测的fp32精度的结果
-	├── python_stylegan_results_fp32.txt           # 预存的stylegan模型python预测的fp32精度的结果
+	├── python_basicvsr_results_fp32.txt            # 预存的basicvsr模型python预测fp32精度的结果
+	├── python_cyclegan_results_fp32.txt            # 预存的cyclegan模型python预测fp32精度的结果
+	├── python_pix2pix_results_fp32.txt             # 预存的pix2pix模型python预测的fp32精度的结果
+	├── python_stylegan2_results_fp32.txt           # 预存的stylegan2模型python预测的fp32精度的结果
 	├── ...
 ├── prepare.sh                        # 完成test_*.sh运行所需要的数据和模型下载
 ├── test_train_inference_python.sh    # 测试python训练预测的主程序

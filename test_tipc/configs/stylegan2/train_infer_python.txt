@@ -4,7 +4,7 @@ python:python3.7
 gpu_list:0
 ##
 auto_cast:null
-total_iters::lite_train_lite_infer=10|whole_train_whole_infer=800
+total_iters:lite_train_lite_infer=10|whole_train_whole_infer=800
 output_dir:./output/
 dataset.train.batch_size:lite_train_lite_infer=3|whole_train_whole_infer=3
 pretrained_model:null
@@ -13,7 +13,7 @@ train_infer_img_dir:null
 null:null
 ##
 trainer:norm_train
-norm_train:tools/main.py -c configs/stylegan_v2_256_ffhq.yaml -o
+norm_train:tools/main.py -c configs/stylegan_v2_256_ffhq.yaml --seed 123 -o dataset.train.num_workers=0 log_config.interval=1 snapshot_config.interval=10
 pact_train:null
 fpgm_train:null
 distill_train:null
@@ -37,7 +37,7 @@ inference_dir:stylegan2model_gen
 train_model:./inference/stylegan2/stylegan2model_gen
 infer_export:null
 infer_quant:False
-inference:tools/inference.py --model_type stylegan2 -c configs/stylegan_v2_256_ffhq.yaml
+inference:tools/inference.py --model_type stylegan2 --seed 123 -c configs/stylegan_v2_256_ffhq.yaml --output_path test_tipc/output/
 --device:gpu
 null:null
 null:null

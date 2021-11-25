@@ -108,7 +108,7 @@ Run failed with command - python3.7 tools/export_model.py -c configs/basicvsr_re
 #### 使用方式
 运行命令：
 ```shell
-python3.7 test_tipc/compare_results.py --gt_file=./test_tipc/results/python_*.txt  --log_file=./test_tipc/output/python_*.log --atol=1e-3 --rtol=1e-3
+python3.7 test_tipc/compare_results.py --gt_file=./test_tipc/results/*.txt  --log_file=./test_tipc/output/*/*.txt --atol=1e-3 --rtol=1e-3
 ```
 
 参数介绍：  

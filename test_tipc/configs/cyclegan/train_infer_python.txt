@@ -4,7 +4,7 @@ python:python3.7
 gpu_list:0|0,1
 ##
 auto_cast:null
-epochs:lite_train_lite_infer=5|whole_train_whole_infer=200
+epochs:lite_train_lite_infer=1|whole_train_whole_infer=200
 output_dir:./output/
 dataset.train.batch_size:lite_train_lite_infer=1|whole_train_whole_infer=1
 pretrained_model:null
@@ -13,7 +13,7 @@ train_infer_img_dir:./data/horse2zebra/test
 null:null
 ##
 trainer:norm_train
-norm_train:tools/main.py -c configs/cyclegan_horse2zebra.yaml -o
+norm_train:tools/main.py -c configs/cyclegan_horse2zebra.yaml --seed 123 -o log_config.interval=10 snapshot_config.interval=1
 pact_train:null
 fpgm_train:null
 distill_train:null
@@ -37,7 +37,7 @@ inference_dir:cycleganmodel_netG_A
 train_model:./inference/cyclegan_horse2zebra/cycleganmodel_netG_A
 infer_export:null
 infer_quant:False
-inference:tools/inference.py --model_type cyclegan -c configs/cyclegan_horse2zebra.yaml
+inference:tools/inference.py --model_type cyclegan --seed 123 -c configs/cyclegan_horse2zebra.yaml --output_path test_tipc/output/
 --device:gpu
 null:null
 null:null
