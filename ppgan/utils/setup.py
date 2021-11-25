@@ -17,12 +17,7 @@ import time
 import paddle
 import numpy as np
 import random
-        
-
 from .logger import setup_logger
-paddle.seed(123)
-random.seed(123)
-np.random.seed(123)
 
 def setup(args, cfg):
     if args.evaluate_only:

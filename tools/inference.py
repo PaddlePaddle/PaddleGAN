@@ -52,6 +52,12 @@ def parse_args():
                         "--opt",
                         nargs='+',
                         help="set configuration options")
+    # fix random numbers by setting seed
+    parser.add_argument('--seed',
+                        type=int,
+                        default=None,
+                        help='fix random numbers by setting seed\".'
+    )
     args = parser.parse_args()
     return args
 
@@ -83,12 +89,11 @@ def setup_metrics(cfg):
     return metrics
 
 def main():
-    seed = 123
-    paddle.seed(seed)
-    random.seed(seed)
-    np.random.seed(seed)    
-    
     args = parse_args()
+    if args.seed:
+        paddle.seed(args.seed)
+        random.seed(args.seed)
+        np.random.seed(args.seed)    
     cfg = get_config(args.config_file, args.opt)
     predictor = create_predictor(args.model_path, args.device)
     input_handles = [

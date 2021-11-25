@@ -37,7 +37,7 @@ inference_dir:cycleganmodel_netG_A
 train_model:./inference/cyclegan_horse2zebra/cycleganmodel_netG_A
 infer_export:null
 infer_quant:False
-inference:tools/inference.py --model_type cyclegan -c configs/cyclegan_horse2zebra.yaml --output_path test_tipc/output/
+inference:tools/inference.py --model_type cyclegan --seed 123 -c configs/cyclegan_horse2zebra.yaml --output_path test_tipc/output/
 --device:gpu
 null:null
 null:null

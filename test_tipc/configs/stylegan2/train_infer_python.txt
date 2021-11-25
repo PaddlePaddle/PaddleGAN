@@ -37,7 +37,7 @@ inference_dir:stylegan2model_gen
 train_model:./inference/stylegan2/stylegan2model_gen
 infer_export:null
 infer_quant:False
-inference:tools/inference.py --model_type stylegan2 -c configs/stylegan_v2_256_ffhq.yaml --output_path test_tipc/output/
+inference:tools/inference.py --model_type stylegan2 --seed 123 -c configs/stylegan_v2_256_ffhq.yaml --output_path test_tipc/output/
 --device:gpu
 null:null
 null:null

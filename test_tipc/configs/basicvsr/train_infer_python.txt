@@ -37,7 +37,7 @@ inference_dir:basicvsrmodel_generator
 train_model:./inference/basicvsr/basicvsrmodel_generator
 infer_export:null
 infer_quant:False
-inference:tools/inference.py --model_type basicvsr -c configs/basicvsr_reds.yaml  -o dataset.test.num_clips=2 dataset.test.number_frames=6 --output_path test_tipc/output/
+inference:tools/inference.py --model_type basicvsr -c configs/basicvsr_reds.yaml --seed 123 -o dataset.test.num_clips=2 dataset.test.number_frames=6 --output_path test_tipc/output/
 --device:gpu
 null:null
 null:null

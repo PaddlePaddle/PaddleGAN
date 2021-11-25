@@ -37,7 +37,7 @@ inference_dir:pix2pixmodel_netG
 train_model:./inference/pix2pix_facade/pix2pixmodel_netG
 infer_export:null
 infer_quant:False
-inference:tools/inference.py --model_type pix2pix -c configs/pix2pix_facades.yaml --output_path test_tipc/output/
+inference:tools/inference.py --model_type pix2pix --seed 123 -c configs/pix2pix_facades.yaml --output_path test_tipc/output/
 --device:cpu
 null:null
 null:null
