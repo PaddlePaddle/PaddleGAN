@@ -1,4 +1,4 @@
-total_iters: 300000
+total_iters: 150000
 output_dir: output_dir
 find_unused_parameters: True
 checkpoints_dir: checkpoints
@@ -8,13 +8,22 @@ min_max:
   (0., 1.)
 
 model:
-  name: BasicVSRModel
-  fix_iter: 5000
-  lr_mult: 0.125
+  name: MultiStageVSRModel
+  fix_iter: 2500
   generator:
-    name: BasicVSRNet
-    mid_channels: 64
-    num_blocks: 30
+    name: MSVSR
+    mid_channels: 32
+    num_init_blocks: 2
+    num_blocks: 3
+    num_reconstruction_blocks: 2
+    only_last: True
+    use_tiny_spynet: True
+    deform_groups: 4
+    stage1_groups: 8
+    auxiliary_loss: True
+    use_refine_align: True
+    aux_reconstruction_blocks: 1
+    use_local_connnect: True
   pixel_criterion:
     name: CharbonnierLoss
     reduction: mean
@@ -23,8 +32,9 @@ dataset:
   train:
     name: RepeatDataset
     times: 1000
-    num_workers: 4
-    batch_size: 2  #4 gups
+    num_workers: 6
+    batch_size: 2  #8 gpus
+    use_shared_memory: True
     dataset:
       name: SRREDSMultipleGTDataset
       mode: train
@@ -33,7 +43,7 @@ dataset:
       crop_size: 256
       interval_list: [1]
       random_reverse: False
-      number_frames: 15
+      number_frames: 20
       use_flip: True
       use_rot: True
       scale: 4
@@ -57,7 +67,7 @@ dataset:
 lr_scheduler:
   name: CosineAnnealingRestartLR
   learning_rate: !!float 2e-4
-  periods: [300000]
+  periods: [150000]
   restart_weights: [1]
   eta_min: !!float 1e-7
 
@@ -78,15 +88,15 @@ validate:
     psnr: # metric name, can be arbitrary
       name: PSNR
       crop_border: 0
-      test_y_channel: False
+      test_y_channel: false
     ssim:
       name: SSIM
       crop_border: 0
-      test_y_channel: False
+      test_y_channel: false
 
 log_config:
-  interval: 100
-  visiual_interval: 500
+  interval: 10
+  visiual_interval: 5000
 
 snapshot_config:
   interval: 5000

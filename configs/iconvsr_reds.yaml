@@ -23,8 +23,8 @@ dataset:
   train:
     name: RepeatDataset
     times: 1000
-    num_workers: 4  # 6
-    batch_size: 2  # 4*2
+    num_workers: 4
+    batch_size: 2  #4 gups
     dataset:
       name: SRREDSMultipleGTDataset
       mode: train

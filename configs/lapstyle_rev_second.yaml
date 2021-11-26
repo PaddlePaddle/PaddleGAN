@@ -38,7 +38,7 @@ dataset:
     load_size: 540
     crop_size: 512
     num_workers: 16
-    batch_size: 2
+    batch_size: 2 #1 gups
   test:
     name: LapStyleDataset
     content_root: data/coco/test2017/
