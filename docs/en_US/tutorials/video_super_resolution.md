@@ -143,7 +143,7 @@ Deblur quantitative comparis on the REDS4
 VSR quantitative comparis on the vimeo90k, Vid4, udm10
 | 模型 | vimeo90k | Vid4 | udm10 |
 |---|---|---|---|
-| PP-MSVSR_vimeo90k_x4 |37.54/0.9499|28.13/0.8582|40.06/0.9688|
+| PP-MSVSR_vimeo90k_x4 |37.54/0.9499|28.13/0.8604|40.06/0.9699|
 
 ## 1.4 Model Download
 | Method | Dataset | Download Link |
