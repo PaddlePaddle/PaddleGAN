@@ -117,17 +117,17 @@
 度量指标为 PSNR / SSIM.
 
 REDS4测试数据集上超分性能对比
-| 模型 | REDS4 |
-|---|---|
-| EDVR_M_wo_tsa_SRx4  | 30.4429 / 0.8684 |
-| EDVR_M_w_tsa_SRx4  | 30.5169 / 0.8699 |
-| EDVR_L_wo_tsa_SRx4  | 30.8649 / 0.8761 |
-| EDVR_L_w_tsa_SRx4  | 30.9336 / 0.8773 |
-| BasicVSR_x4  | 31.4325 / 0.8913 |
-| IconVSR_x4  | 31.6882 / 0.8950 |
-| BasicVSR++_x4  | 32.4018 / 0.9071 |
-| PP-MSVSR_reds_x4  | 31.2740 / 0.8888 |
-| PP-MSVSR-L_reds_x4  | 32.5321 / 0.9083 |
+| 模型| 参数量（M） | 计算量（G） | REDS4 |
+|---|---|---|---|
+| EDVR_M_wo_tsa_SRx4  | 3.00 | 223 | 30.4429 / 0.8684 |
+| EDVR_M_w_tsa_SRx4  | 3.30 | 232 | 30.5169 / 0.8699 |
+| EDVR_L_wo_tsa_SRx4  | 19.42 | 974 | 30.8649 / 0.8761 |
+| EDVR_L_w_tsa_SRx4  | 20.63 | 1010 | 30.9336 / 0.8773 |
+| BasicVSR_x4  | 6.29 | 374 | 31.4325 / 0.8913 |
+| IconVSR_x4  | 8.69 | 516 | 31.6882 / 0.8950 |
+| BasicVSR++_x4  | 7.32 | 406 | 32.4018 / 0.9071 |
+| PP-MSVSR_reds_x4  | 1.45 | 111 | 31.2535 / 0.8884 |
+| PP-MSVSR-L_reds_x4  | 7.42 | 543 | 32.5321 / 0.9083 |
 
 REDS4测试数据集上去模糊性能对比
 | 模型 | REDS4 |
@@ -138,8 +138,7 @@ REDS4测试数据集上去模糊性能对比
 vimeo90k，Vid4，udm10测试数据集上超分性能对比
 | 模型 | vimeo90k | Vid4 | udm10 |
 |---|---|---|---|
-| PP-MSVSR_vimeo90k_x4 |---|28.1257|---|
-| PP-MSVSR-L_vimeo90k_x4 |---|---|---|
+| PP-MSVSR_vimeo90k_x4 |37.54/0.9499|28.13/0.8582|40.06/0.9688|
 
 ## 1.4 模型下载
 | 模型 | 数据集 | 下载地址 |
@@ -153,10 +152,9 @@ vimeo90k，Vid4，udm10测试数据集上超分性能对比
 | BasicVSR_x4  | REDS | [BasicVSR_x4](https://paddlegan.bj.bcebos.com/models/BasicVSR_reds_x4.pdparams)
 | IconVSR_x4  | REDS | [IconVSR_x4](https://paddlegan.bj.bcebos.com/models/IconVSR_reds_x4.pdparams)
 | BasicVSR++_x4  | REDS | [BasicVSR++_x4](https://paddlegan.bj.bcebos.com/models/BasicVSR%2B%2B_reds_x4.pdparams)
-| PP-MSVSR_reds_x4  | REDS | [PP-MSVSR_reds_x4]()
-| PP-MSVSR-L_reds_x4  | REDS | [PP-MSVSR-L_reds_x4]()
-| PP-MSVSR_vimeo90k_x4  | vimeo90k | [PP-MSVSR_vimeo90k_x4]()
-| PP-MSVSR-L_vimeo90k_x4  | vimeo90k | [PP-MSVSR-L_vimeo90k_x4]()
+| PP-MSVSR_reds_x4  | REDS | [PP-MSVSR_reds_x4](https://paddlegan.bj.bcebos.com/models/PP-MSVSR_reds_x4.pdparams)
+| PP-MSVSR-L_reds_x4  | REDS | [PP-MSVSR-L_reds_x4](https://paddlegan.bj.bcebos.com/models/PP-MSVSR-L_reds_x4.pdparams)
+| PP-MSVSR_vimeo90k_x4  | vimeo90k | [PP-MSVSR_vimeo90k_x4](https://paddlegan.bj.bcebos.com/models/PP-MSVSR_vimeo90k_x4.pdparams)
 
 # 参考文献
 
