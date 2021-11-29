@@ -314,6 +314,8 @@ class StyleGAN2Model(BaseModel):
         infer_generator.set_generator(self.nets['gen'])
         style = paddle.rand(shape=inputs_size[0], dtype='float32')
         truncation = paddle.rand(shape=inputs_size[1], dtype='float32')
+        if output_dir is None:
+            output_dir = 'inference_model'
         paddle.jit.save(infer_generator,
                         os.path.join(output_dir, "stylegan2model_gen"),
                         input_spec=[style, truncation])
