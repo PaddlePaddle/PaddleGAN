@@ -8,7 +8,9 @@ import argparse
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--content_img", type=str, help="path to content image")
+    parser.add_argument("--content_img_path",
+                        type=str,
+                        help="path to content image")
 
     parser.add_argument("--output_path",
                         type=str,
@@ -31,7 +33,7 @@ if __name__ == "__main__":
     parser.add_argument("--style_image_path",
                         type=str,
                         default=None,
-                        help="if weight_path is not None, path to style image")
+                        help="path to style image")
 
     parser.add_argument("--cpu",
                         dest="cpu",
@@ -45,6 +47,5 @@ if __name__ == "__main__":
 
     predictor = LapStylePredictor(output=args.output_path,
                                   style=args.style,
-                                  weight_path=args.weight_path,
-                                  style_image_path=args.style_image_path)
-    predictor.run(args.content_img)
+                                  weight_path=args.weight_path)
+    predictor.run(args.content_img_path, args.style_image_path)

@@ -23,18 +23,21 @@ PaddleGAN为大家提供了四种不同艺术风格的预训练模型，风格�
 | :----------------------------------------------------------: | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | <img src='https://user-images.githubusercontent.com/48054808/130388598-1e2b27e7-be66-49df-84d5-57b4dc7730d6.png' width='300'/> | <img src='https://user-images.githubusercontent.com/48054808/130388606-78a3a682-2ae4-4753-a07c-671a46930de8.png' width='300'/> | <img src='https://user-images.githubusercontent.com/48054808/130388615-b04197b3-2fdf-4494-ad17-490afe0fd1cd.png' width='300'/> | <img src='https://user-images.githubusercontent.com/48054808/130388623-2eec0cca-fee1-47f0-8398-cae0171aa7a5.png' width='300'/> | <img src='https://user-images.githubusercontent.com/48054808/130388624-f27d0712-ba71-42b2-ada4-44bf60e36512.png' width='300'/> |
 
+4个风格图像下载地址如下：
+| [StarryNew](https://user-images.githubusercontent.com/79366697/118655415-1ec8c000-b81c-11eb-8002-90bf8d477860.png) | [Stars](https://user-images.githubusercontent.com/79366697/118655423-20928380-b81c-11eb-92bd-0deeb320ff14.png) | [Ocean](https://user-images.githubusercontent.com/79366697/118655407-1c666600-b81c-11eb-83a6-300ee1952415.png) | [Circuit](https://user-images.githubusercontent.com/79366697/118655399-196b7580-b81c-11eb-8bc5-d5ece80c18ba.jpg)|
+
 只需运行下面的代码即可迁移至指定风格：
 
 ```
-python applications/tools/lapstyle.py --content_img ${PATH_OF_CONTENT_IMG}
+python applications/tools/lapstyle.py --content_img_path ${PATH_OF_CONTENT_IMG} --style_image_path ${PATH_OF_STYLE_IMG}
 ```
 ### **参数**
 
-- `--content_img (str)`: 输入的内容图像路径。
+- `--content_img_path (str)`: 输入的内容图像路径。
+- `--style_image_path (str)`: 输入的风格图像路径。
 - `--output_path (str)`: 输出的图像路径，默认为`output_dir`。
 - `--weight_path (str)`: 模型权重路径，设置`None`时会自行下载预训练模型，默认为`None`。
 - `--style (str)`: 生成图像风格，当`weight_path`为`None`时，可以在`starrynew`, `circuit`, `ocean` 和 `stars`中选择，默认为`starrynew`。
-- `--style_image_path (str)`: 输入的风格图像路径，当`weight_path`不为`None`时需要输入，默认为`None`。
 
 ## 3. 模型训练
 
