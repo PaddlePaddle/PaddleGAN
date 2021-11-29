@@ -14,6 +14,15 @@ function _set_params(){
     run_log_path=${TRAIN_LOG_DIR:-$(pwd)}  # TRAIN_LOG_DIR 后续QA设置该参数
     need_profile=${9:-"off"}
 
+    index=1
+    base_batch_size=${batch_size}
+    mission_name="图像生成"
+    direction_id=0
+    keyword="ips:"
+    keyword_loss="G_idt_A_loss:"
+    skip_steps=5
+    ips_unit="images/s"
+
 #   以下不用修改
     device=${CUDA_VISIBLE_DEVICES//,/ }
     arr=(${device})
@@ -23,9 +32,6 @@ function _set_params(){
     log_profile=${run_log_path}/${model_name}_model.profile
 }
 
-function _analysis_log(){
-    python benchmark/analysis_log.py ${model_name} ${log_file} ${res_log_file}
-}
 
 function _train(){
     echo "Train on ${num_gpu_devices} GPUs"
@@ -65,9 +71,8 @@ function _train(){
         cp mylog/workerlog.0 ${log_file}
     fi
 
-    _analysis_log
-    
 }
 
+source ${BENCHMARK_ROOT}/scripts/run_model.sh # 在该脚本中会对符合benchmark规范的log使用analysis.py 脚本进行性能数据解析;该脚本在连调时可从benchmark repo中下载https://github.com/PaddlePaddle/benchmark/blob/master/scripts/run_model.sh;如果不联调只想要产出训练log可以注掉本行,提交时需打开
 _set_params $@
-_train
+_run
