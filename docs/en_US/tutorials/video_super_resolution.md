@@ -18,7 +18,7 @@
 ## 1.2 How to use  
 
 ### 1.2.1 Prepare Datasets
-  Here are 4 commonly used video super-resolution dataset, REDS, vimeo90k, Vid4, udm10. The REDS and vimeo90k dataset include train dataset and test dataset, Vid4 and udm10 are test dataset. Download and decompress the required dataset and place it under the ``PaddleGAN/data``.
+  Here are 4 commonly used video super-resolution dataset, REDS, Vimeo90K, Vid4, UDM10. The REDS and Vimeo90K dataset include train dataset and test dataset, Vid4 and UDM10 are test dataset. Download and decompress the required dataset and place it under the ``PaddleGAN/data``.
 
   REDS（[download](https://seungjunnah.github.io/Datasets/reds.html)）is a newly proposed high-quality (720p) video dataset in the NTIRE19 Competition. REDS consists of 240 training clips, 30 validation clips and 30 testing clips (each with 100 consecutive frames). Since the test ground truth is not available, we select four representative clips (they are '000', '011', '015', '020', with diverse scenes and motions) as our test set, denoted by REDS4. The remaining training and validation clips are re-grouped as our training dataset (a total of 266 clips).
 
@@ -38,13 +38,13 @@
               ...
   ```
 
-  vimeo90k ([download](http://toflow.csail.mit.edu/)) is designed by Tianfan Xue etc. for the following four video processing tasks: temporal frame interpolation, video denoising, video deblocking, and video super-resolution. Vimeo90K is a large-scale, high-quality video dataset. This dataset consists of 89,800 video clips downloaded from vimeo.com, which covers large variaty of scenes and actions.
+  Vimeo90K ([download](http://toflow.csail.mit.edu/)) is designed by Tianfan Xue etc. for the following four video processing tasks: temporal frame interpolation, video denoising, video deblocking, and video super-resolution. Vimeo90K is a large-scale, high-quality video dataset. This dataset consists of 89,800 video clips downloaded from vimeo.com, which covers large variaty of scenes and actions.
 
-  The structure of the processed vimeo90k is as follows:
+  The structure of the processed Vimeo90K is as follows:
   ```
     PaddleGAN
       ├── data
-          ├── vimeo90k
+          ├── Vimeo90K
                 ├── vimeo_septuplet
                 |    |──sequences
                 |    └──sep_trainlist.txt
@@ -68,8 +68,8 @@
               ...
   ```
 
-  udm10 ([Data Download](https://paddlegan.bj.bcebos.com/datasets/udm10_paddle.tar)) is a commonly used test dataset for VSR, which contains 10 video segments.
-  The structure of the processed udm10 is as follows:
+  UDM10 ([Data Download](https://paddlegan.bj.bcebos.com/datasets/udm10_paddle.tar)) is a commonly used test dataset for VSR, which contains 10 video segments.
+  The structure of the processed UDM10 is as follows:
   ```
     PaddleGAN
       ├── data
@@ -121,7 +121,7 @@ The experimental results are evaluated on RGB channel.
 
 The metrics are PSNR / SSIM.
 
-VSR quantitative comparis on the REDS4
+VSR quantitative comparis on the test dataset REDS4 from REDS dataset
 | Method | Paramete(M) | FLOPs(G) | REDS4 |
 |---|---|---|---|
 | EDVR_M_wo_tsa_SRx4  | 3.00 | 223 | 30.4429 / 0.8684 |
@@ -134,14 +134,14 @@ VSR quantitative comparis on the REDS4
 | PP-MSVSR_reds_x4  | 1.45 | 111 | 31.2535 / 0.8884 |
 | PP-MSVSR-L_reds_x4  | 7.42 | 543 | 32.5321 / 0.9083 |
 
-Deblur quantitative comparis on the REDS4
+Deblur quantitative comparis on the test dataset REDS4 from REDS dataset
 | Method | REDS4 |
 |---|---|
 | EDVR_L_wo_tsa_deblur  | 34.9587 / 0.9509 |
 | EDVR_L_w_tsa_deblur  | 35.1473 / 0.9526 |
 
-VSR quantitative comparis on the vimeo90k, Vid4, udm10
-| 模型 | vimeo90k | Vid4 | udm10 |
+VSR quantitative comparis on the Vimeo90K, Vid4, UDM10
+| Model | Vimeo90K | Vid4 | UDM10 |
 |---|---|---|---|
 | PP-MSVSR_vimeo90k_x4 |37.54/0.9499|28.13/0.8604|40.06/0.9699|
 
@@ -159,7 +159,7 @@ VSR quantitative comparis on the vimeo90k, Vid4, udm10
 | BasicVSR++_x4  | REDS | [BasicVSR++_x4](https://paddlegan.bj.bcebos.com/models/BasicVSR%2B%2B_reds_x4.pdparams)
 | PP-MSVSR_reds_x4  | REDS | [PP-MSVSR_reds_x4](https://paddlegan.bj.bcebos.com/models/PP-MSVSR_reds_x4.pdparams)
 | PP-MSVSR-L_reds_x4  | REDS | [PP-MSVSR-L_reds_x4](https://paddlegan.bj.bcebos.com/models/PP-MSVSR-L_reds_x4.pdparams)
-| PP-MSVSR_vimeo90k_x4  | vimeo90k | [PP-MSVSR_vimeo90k_x4](https://paddlegan.bj.bcebos.com/models/PP-MSVSR_vimeo90k_x4.pdparams)
+| PP-MSVSR_vimeo90k_x4  | Vimeo90K | [PP-MSVSR_vimeo90k_x4](https://paddlegan.bj.bcebos.com/models/PP-MSVSR_vimeo90k_x4.pdparams)
 
 
 

@@ -59,7 +59,7 @@ dataset:
 
   test:
     name: VSRFolderDataset
-    # for udm10 dataset
+    # for UDM10 dataset
     # lq_folder: data/udm10/BDx4
     # gt_folder: data/udm10/GT
     lq_folder: data/Vid4/BDx4
@@ -67,7 +67,7 @@ dataset:
     preprocess:
         - name: GetNeighboringFramesIdx
           interval_list: [1]
-          # for udm10 dataset
+          # for UDM10 dataset
           # filename_tmpl: '{:04d}.png'
           filename_tmpl: '{:08d}.png'
         - name: ReadImageSequence

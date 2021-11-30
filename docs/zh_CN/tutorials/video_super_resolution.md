@@ -17,7 +17,7 @@
 
 ### 1.2.1 数据准备
 
-  这里提供4个视频超分辨率常用数据集，REDS，vimeo90k，Vid4，udm10。其中REDS和vimeo90k数据集包括训练集和测试集，Vid4和udm10为测试数据集。将需要的数据集下载解压后放到``PaddleGAN/data``文件夹下 。
+  这里提供4个视频超分辨率常用数据集，REDS，Vimeo90K，Vid4，UDM10。其中REDS和vimeo90k数据集包括训练集和测试集，Vid4和UDM10为测试数据集。将需要的数据集下载解压后放到``PaddleGAN/data``文件夹下 。
 
   REDS（[数据下载](https://seungjunnah.github.io/Datasets/reds.html)）数据集是NTIRE19公司最新提出的高质量（720p）视频数据集，其由240个训练片段、30个验证片段和30个测试片段组成（每个片段有100个连续帧）。由于测试数据集不可用，这里在训练集选择了四个具有代表性的片段（分别为'000', '011', '015', '020'，它们具有不同的场景和动作）作为测试集，用REDS4表示。剩下的训练和验证片段被重新分组为训练数据集（总共266个片段）。
 
@@ -37,13 +37,13 @@
               ...
   ```
 
-  vimeo90k（[数据下载](http://toflow.csail.mit.edu/)）数据集是Tianfan Xue等人构建的一个用于视频超分、视频降噪、视频去伪影、视频插帧的数据集。vimeo90k是大规模、高质量的视频数据集，包含从vimeo.com下载的 89,800 个视频剪辑，涵盖了大量场景和动作。
+  Vimeo90K（[数据下载](http://toflow.csail.mit.edu/)）数据集是Tianfan Xue等人构建的一个用于视频超分、视频降噪、视频去伪影、视频插帧的数据集。Vimeo90K是大规模、高质量的视频数据集，包含从vimeo.com下载的 89,800 个视频剪辑，涵盖了大量场景和动作。
 
-  处理后的数据集 vimeo90k 的组成形式如下:
+  处理后的数据集 Vimeo90K 的组成形式如下:
   ```
     PaddleGAN
       ├── data
-          ├── vimeo90k
+          ├── Vimeo90K
                 ├── vimeo_septuplet
                 |    |──sequences
                 |    └──sep_trainlist.txt
@@ -68,9 +68,9 @@
               ...
   ```
 
-  udm10（[数据下载](https://paddlegan.bj.bcebos.com/datasets/udm10_paddle.tar)）数据集是常用的视频超分验证数据集，包含10个视频段。
+  UDM10（[数据下载](https://paddlegan.bj.bcebos.com/datasets/udm10_paddle.tar)）数据集是常用的视频超分验证数据集，包含10个视频段。
 
-  处理后的数据集 udm10 的组成形式如下:
+  处理后的数据集 UDM10 的组成形式如下:
   ```
     PaddleGAN
       ├── data
@@ -116,7 +116,7 @@
 
 度量指标为 PSNR / SSIM.
 
-REDS4测试数据集上超分性能对比
+REDS的测试数据集REDS4上的超分性能对比
 | 模型| 参数量（M） | 计算量（G） | REDS4 |
 |---|---|---|---|
 | EDVR_M_wo_tsa_SRx4  | 3.00 | 223 | 30.4429 / 0.8684 |
@@ -129,14 +129,14 @@ REDS4测试数据集上超分性能对比
 | PP-MSVSR_reds_x4  | 1.45 | 111 | 31.2535 / 0.8884 |
 | PP-MSVSR-L_reds_x4  | 7.42 | 543 | 32.5321 / 0.9083 |
 
-REDS4测试数据集上去模糊性能对比
+REDS的测试数据集REDS4上的去模糊性能对比
 | 模型 | REDS4 |
 |---|---|
 | EDVR_L_wo_tsa_deblur  | 34.9587 / 0.9509 |
 | EDVR_L_w_tsa_deblur  | 35.1473 / 0.9526 |
 
-vimeo90k，Vid4，udm10测试数据集上超分性能对比
-| 模型 | vimeo90k | Vid4 | udm10 |
+Vimeo90K，Vid4，UDM10测试数据集上超分性能对比
+| 模型 | Vimeo90K | Vid4 | UDM10 |
 |---|---|---|---|
 | PP-MSVSR_vimeo90k_x4 |37.54/0.9499|28.13/0.8604|40.06/0.9699|
 
@@ -154,7 +154,7 @@ vimeo90k，Vid4，udm10测试数据集上超分性能对比
 | BasicVSR++_x4  | REDS | [BasicVSR++_x4](https://paddlegan.bj.bcebos.com/models/BasicVSR%2B%2B_reds_x4.pdparams)
 | PP-MSVSR_reds_x4  | REDS | [PP-MSVSR_reds_x4](https://paddlegan.bj.bcebos.com/models/PP-MSVSR_reds_x4.pdparams)
 | PP-MSVSR-L_reds_x4  | REDS | [PP-MSVSR-L_reds_x4](https://paddlegan.bj.bcebos.com/models/PP-MSVSR-L_reds_x4.pdparams)
-| PP-MSVSR_vimeo90k_x4  | vimeo90k | [PP-MSVSR_vimeo90k_x4](https://paddlegan.bj.bcebos.com/models/PP-MSVSR_vimeo90k_x4.pdparams)
+| PP-MSVSR_vimeo90k_x4  | Vimeo90K | [PP-MSVSR_vimeo90k_x4](https://paddlegan.bj.bcebos.com/models/PP-MSVSR_vimeo90k_x4.pdparams)
 
 # 参考文献
 

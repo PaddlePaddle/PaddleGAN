@@ -24,7 +24,7 @@ dataset:
     name: RepeatDataset
     times: 1000
     num_workers: 4
-    batch_size: 2  #4 gups
+    batch_size: 2  #4 GPUs
     dataset:
       name: SRREDSMultipleGTDataset
       mode: train

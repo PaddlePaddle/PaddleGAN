@@ -79,9 +79,9 @@ class MultiStageVSRModel(BaseSRModel):
 
         output = self.nets['generator'](self.lq)
         if isinstance(output, (list, tuple)):
-            out_stage1, output = output
-            loss_pix_stage1 = self.pixel_criterion(out_stage1, self.gt)
-            self.losses['loss_pix_stage1'] = loss_pix_stage1
+            out_stage2, output = output
+            loss_pix_stage2 = self.pixel_criterion(out_stage2, self.gt)
+            self.losses['loss_pix_stage2'] = loss_pix_stage2
         self.visual_items['output'] = output[:, 0, :, :, :]
         # pixel loss
         loss_pix = self.pixel_criterion(output, self.gt)
