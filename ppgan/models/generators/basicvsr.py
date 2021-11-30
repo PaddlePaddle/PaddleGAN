@@ -160,7 +160,9 @@ def flow_warp(x,
     Returns:
         Tensor: Warped image or feature map.
     """
-    if x.shape[-2:] != flow.shape[1:3]:
+    x_h, x_w = x.shape[-2:]
+    flow_h, flow_w = flow.shape[1:3]
+    if x_h != flow_h or x_w != flow_w:
         raise ValueError(f'The spatial sizes of input ({x.shape[-2:]}) and '
                          f'flow ({flow.shape[1:3]}) are not the same.')
     _, _, h, w = x.shape
@@ -293,7 +295,7 @@ class SPyNet(nn.Layer):
         supp = supp[::-1]
 
         # flow computation
-        flow = paddle.to_tensor(np.zeros([n, 2, h // 32, w // 32], 'float32'))
+        flow = paddle.zeros([n, 2, h // 32, w // 32])
 
         # level=0
         flow_up = flow
@@ -555,6 +557,7 @@ class BasicVSRNet(nn.Layer):
         """
 
         n, t, c, h, w = lrs.shape
+        t = paddle.to_tensor(t)
         assert h >= 64 and w >= 64, (
             'The height and width of inputs should be at least 64, '
             f'but got {h} and {w}.')
@@ -567,19 +570,18 @@ class BasicVSRNet(nn.Layer):
 
         # backward-time propgation
         outputs = []
-        feat_prop = paddle.to_tensor(
-            np.zeros([n, self.mid_channels, h, w], 'float32'))
+        feat_prop = paddle.zeros([n, self.mid_channels, h, w])
         for i in range(t - 1, -1, -1):
             if i < t - 1:  # no warping required for the last timestep
-                flow = flows_backward[:, i, :, :, :]
-                feat_prop = flow_warp(feat_prop, flow.transpose([0, 2, 3, 1]))
+                flow1 = flows_backward[:, i, :, :, :]
+                feat_prop = flow_warp(feat_prop, flow1.transpose([0, 2, 3, 1]))
 
             feat_prop = paddle.concat([lrs[:, i, :, :, :], feat_prop], axis=1)
             feat_prop = self.backward_resblocks(feat_prop)
 
             outputs.append(feat_prop)
         outputs = outputs[::-1]
-
+        
         # forward-time propagation and upsampling
         feat_prop = paddle.zeros_like(feat_prop)
         for i in range(0, t):
@@ -610,6 +612,7 @@ class BasicVSRNet(nn.Layer):
 
 class SecondOrderDeformableAlignment(nn.Layer):
     """Second-order deformable alignment module.
+
     Args:
         in_channels (int): Same as nn.Conv2d.
         out_channels (int): Same as nn.Conv2d.

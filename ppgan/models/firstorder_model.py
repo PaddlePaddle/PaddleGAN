@@ -226,6 +226,8 @@ class FirstOrderModel(BaseModel):
         driving2 = {'value': value2, 'jacobian': j2}
         driving3 = {'value': value, 'jacobian': j}
 
+        if output_dir is None:
+            output_dir = 'inference_model'
         outpath = os.path.join(output_dir, "fom_dy2st")
         if not os.path.exists(outpath):
             os.makedirs(outpath)

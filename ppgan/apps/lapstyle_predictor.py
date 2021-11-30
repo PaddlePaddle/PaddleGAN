@@ -28,13 +28,9 @@ from ppgan.models.generators import DecoderNet, Encoder, RevisionNet
 from .base_predictor import BasePredictor
 
 LapStyle_circuit_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/lapstyle_circuit.pdparams'
-circuit_IMG_URL = 'https://user-images.githubusercontent.com/79366697/118655399-196b7580-b81c-11eb-8bc5-d5ece80c18ba.jpg'
 LapStyle_ocean_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/lapstyle_ocean.pdparams'
-ocean_IMG_URL = 'https://user-images.githubusercontent.com/79366697/118655407-1c666600-b81c-11eb-83a6-300ee1952415.png'
 LapStyle_starrynew_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/lapstyle_starrynew.pdparams'
-starrynew_IMG_URL = 'https://user-images.githubusercontent.com/79366697/118655415-1ec8c000-b81c-11eb-8002-90bf8d477860.png'
 LapStyle_stars_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/lapstyle_stars.pdparams'
-stars_IMG_URL = 'https://user-images.githubusercontent.com/79366697/118655423-20928380-b81c-11eb-92bd-0deeb320ff14.png'
 
 
 def img(img):
@@ -117,8 +113,7 @@ class LapStylePredictor(BasePredictor):
     def __init__(self,
                  output='output_dir',
                  style='starrynew',
-                 weight_path=None,
-                 style_image_path=None):
+                 weight_path=None):
         self.input = input
         self.output = os.path.join(output, 'LapStyle')
         if not os.path.exists(self.output):
@@ -127,31 +122,18 @@ class LapStylePredictor(BasePredictor):
         self.net_dec = DecoderNet()
         self.net_rev = RevisionNet()
         self.net_rev_2 = RevisionNet()
+
         if weight_path is None:
-            self.style_image_path = os.path.join(self.output, 'style.png')
             if style == 'starrynew':
                 weight_path = get_path_from_url(LapStyle_starrynew_WEIGHT_URL)
-                urllib.request.urlretrieve(starrynew_IMG_URL,
-                                           filename=self.style_image_path)
             elif style == 'circuit':
                 weight_path = get_path_from_url(LapStyle_circuit_WEIGHT_URL)
-                urllib.request.urlretrieve(circuit_IMG_URL,
-                                           filename=self.style_image_path)
             elif style == 'ocean':
                 weight_path = get_path_from_url(LapStyle_ocean_WEIGHT_URL)
-                urllib.request.urlretrieve(ocean_IMG_URL,
-                                           filename=self.style_image_path)
             elif style == 'stars':
                 weight_path = get_path_from_url(LapStyle_stars_WEIGHT_URL)
-                urllib.request.urlretrieve(stars_IMG_URL,
-                                           filename=self.style_image_path)
             else:
                 raise Exception(f'has not implemented {style}.')
-        else:
-            if style_image_path is None:
-                raise Exception('style_image_path can not be None.')
-            else:
-                self.style_image_path = style_image_path
         self.net_enc.set_dict(paddle.load(weight_path)['net_enc'])
         self.net_enc.eval()
         self.net_dec.set_dict(paddle.load(weight_path)['net_dec'])
@@ -161,12 +143,15 @@ class LapStylePredictor(BasePredictor):
         self.net_rev_2.set_dict(paddle.load(weight_path)['net_rev_2'])
         self.net_rev_2.eval()
 
-    def run(self, content_img_path):
+    def run(self, content_img_path, style_image_path):
         content_img, style_img, h, w = img_read(content_img_path,
-                                                self.style_image_path)
+                                                style_image_path)
         content_img_visual = tensor2img(content_img, min_max=(0., 1.))
         content_img_visual = cv.cvtColor(content_img_visual, cv.COLOR_RGB2BGR)
         cv.imwrite(os.path.join(self.output, 'content.png'), content_img_visual)
+        style_img_visual = tensor2img(style_img, min_max=(0., 1.))
+        style_img_visual = cv.cvtColor(style_img_visual, cv.COLOR_RGB2BGR)
+        cv.imwrite(os.path.join(self.output, 'style.png'), style_img_visual)
         pyr_ci = make_laplace_pyramid(content_img, 2)
         pyr_si = make_laplace_pyramid(style_img, 2)
         pyr_ci.append(content_img)

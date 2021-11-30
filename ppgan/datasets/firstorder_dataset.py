@@ -123,7 +123,7 @@ def read_video(name: Path, frame_shape=tuple([256, 256, 3]), saveto='folder'):
             except FileExistsError:
                 pass
             for idx, img in enumerate(video_array_reshape):
-                cv2.imwrite(sub_dir.joinpath('%i.png' % idx), img)
+                cv2.imwrite(str(sub_dir.joinpath('%i.png' % idx)), img[:,:,[2,1,0]])
             name.unlink()
         return video_array_reshape
     else:
@@ -207,7 +207,6 @@ class FramesDataset(Dataset):
                     num_frames, replace=True,
                     size=2)) if self.is_train else range(num_frames)
             video_array = [video_array[i] for i in frame_idx]
-
         # convert to 3-channel image
         if video_array[0].shape[-1] == 4:
             video_array = [i[..., :3] for i in video_array]
@@ -218,7 +217,6 @@ class FramesDataset(Dataset):
                 np.tile(i[..., np.newaxis], (1, 1, 3)) for i in video_array
             ]
         out = {}
-
         if self.is_train:
             if self.transform is not None:  #modify
                 t = self.transform(tuple(video_array))

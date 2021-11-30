@@ -115,3 +115,6 @@ validate:
     fid: # metric name, can be arbitrary
         name: FID
         batch_size: 8
+
+export_model:
+  - {name: 'netG', inputs_num: 1}
