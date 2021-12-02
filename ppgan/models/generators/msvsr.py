@@ -111,7 +111,7 @@ class MSVSR(nn.Layer):
 
         for i, layer in enumerate(prop_names):
             if i > 1 and self.use_refine_align:
-                self.deform_align[layer] = RefineAlignmentModule(
+                self.deform_align[layer] = ReAlignmentModule(
                     mid_channels,
                     mid_channels,
                     3,
@@ -628,7 +628,7 @@ class AlignmentModule(nn.Layer):
         return out, offset, mask
 
 
-class RefineAlignmentModule(nn.Layer):
+class ReAlignmentModule(nn.Layer):
     """refine deformable alignment module.
     Args:
         in_channels (int): Same as nn.Conv2d.
@@ -649,7 +649,7 @@ class RefineAlignmentModule(nn.Layer):
                  dilation=1,
                  groups=1,
                  deformable_groups=16):
-        super(RefineAlignmentModule, self).__init__()
+        super(ReAlignmentModule, self).__init__()
 
         self.mdconv = DeformConv2D(in_channels,
                                    out_channels,
@@ -686,10 +686,10 @@ class RefineAlignmentModule(nn.Layer):
                 extra_feat,
                 flow_1,
                 feat_current,
-                refined_flow=None,
-                refined_mask=None):
-        if refined_flow is not None:
-            pre_feat = self.mdconv(x, refined_flow, refined_mask)
+                pre_stage_flow=None,
+                pre_stage_mask=None):
+        if pre_stage_flow is not None:
+            pre_feat = self.mdconv(x, pre_stage_flow, pre_stage_mask)
             extra_feat = paddle.concat([pre_feat, feat_current, flow_1], axis=1)
         else:
             extra_feat = paddle.concat([extra_feat, flow_1], axis=1)
@@ -698,15 +698,15 @@ class RefineAlignmentModule(nn.Layer):
 
         # offset
         offset = 10 * paddle.tanh(paddle.concat((o1, o2), axis=1))
-        if refined_flow is not None:
-            offset = offset + refined_flow
+        if pre_stage_flow is not None:
+            offset = offset + pre_stage_flow
         else:
             offset = offset + flow_1.flip(1).tile(
                 [1, offset.shape[1] // 2, 1, 1])
 
         # mask
-        if refined_mask is not None:
-            mask = (F.sigmoid(mask) + refined_mask) / 2.0
+        if pre_stage_mask is not None:
+            mask = (F.sigmoid(mask) + pre_stage_mask) / 2.0
         else:
             mask = F.sigmoid(mask)
         out = self.dcn(x, offset, mask)
