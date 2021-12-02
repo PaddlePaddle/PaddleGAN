@@ -1,20 +1,29 @@
-total_iters: 600000
+total_iters: 300000
 output_dir: output_dir
 find_unused_parameters: True
 checkpoints_dir: checkpoints
+use_dataset: True
 # tensor range for function tensor2img
 min_max:
   (0., 1.)
 
 model:
-  name: BasicVSRModel
-  fix_iter: 5000
-  lr_mult: 0.25
+  name: MultiStageVSRModel
+  fix_iter: -1
   generator:
-    name: BasicVSRPlusPlus
-    mid_channels: 64
-    num_blocks: 7
-    is_low_res_input: True
+    name: MSVSR
+    mid_channels: 32
+    num_init_blocks: 2
+    num_blocks: 3
+    num_reconstruction_blocks: 2
+    only_last: True
+    use_tiny_spynet: True
+    deform_groups: 4
+    stage1_groups: 8
+    auxiliary_loss: True
+    use_refine_align: True
+    aux_reconstruction_blocks: 1
+    use_local_connnect: True
   pixel_criterion:
     name: CharbonnierLoss
     reduction: mean
@@ -24,7 +33,7 @@ dataset:
     name: RepeatDataset
     times: 1000
     num_workers: 4
-    batch_size: 1  #4 gpus
+    batch_size: 2  #8 gpus
     dataset:
       name: VSRVimeo90KDataset
       # mode: train
@@ -59,7 +68,7 @@ dataset:
 
   test:
     name: VSRFolderDataset
-    # for UDM10 dataset
+    # for udm10 dataset
     # lq_folder: data/udm10/BDx4
     # gt_folder: data/udm10/GT
     lq_folder: data/Vid4/BDx4
@@ -67,7 +76,7 @@ dataset:
     preprocess:
         - name: GetNeighboringFramesIdx
           interval_list: [1]
-          # for UDM10 dataset
+          # for udm10 dataset
           # filename_tmpl: '{:04d}.png'
           filename_tmpl: '{:08d}.png'
         - name: ReadImageSequence
@@ -86,8 +95,8 @@ dataset:
 
 lr_scheduler:
   name: CosineAnnealingRestartLR
-  learning_rate: !!float 1e-4
-  periods: [600000]
+  learning_rate: !!float 2e-4
+  periods: [300000]
   restart_weights: [1]
   eta_min: !!float 1e-7
 
@@ -101,7 +110,7 @@ optimizer:
   beta2: 0.99
 
 validate:
-  interval: 5000
+  interval: 2500
   save_img: false
 
   metrics:
@@ -116,7 +125,7 @@ validate:
 
 log_config:
   interval: 10
-  visiual_interval: 500
+  visiual_interval: 5000
 
 snapshot_config:
-  interval: 5000
+  interval: 2500

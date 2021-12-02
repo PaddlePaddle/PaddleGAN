@@ -8,13 +8,22 @@ min_max:
   (0., 1.)
 
 model:
-  name: BasicVSRModel
-  fix_iter: 5000
-  lr_mult: 0.125
+  name: MultiStageVSRModel
+  fix_iter: 2500
   generator:
-    name: BasicVSRNet
+    name: MSVSR
     mid_channels: 64
-    num_blocks: 30
+    num_init_blocks: 5
+    num_blocks: 7
+    num_reconstruction_blocks: 5
+    only_last: False
+    use_tiny_spynet: False
+    deform_groups: 8
+    stage1_groups: 8
+    auxiliary_loss: True
+    use_refine_align: True
+    aux_reconstruction_blocks: 2
+    use_local_connnect: True
   pixel_criterion:
     name: CharbonnierLoss
     reduction: mean
@@ -24,7 +33,8 @@ dataset:
     name: RepeatDataset
     times: 1000
     num_workers: 4
-    batch_size: 2  #4 GPUs
+    batch_size: 2  #8 gpus
+    use_shared_memory: True
     dataset:
       name: SRREDSMultipleGTDataset
       mode: train
@@ -33,12 +43,11 @@ dataset:
       crop_size: 256
       interval_list: [1]
       random_reverse: False
-      number_frames: 15
+      number_frames: 30
       use_flip: True
       use_rot: True
       scale: 4
       val_partition: REDS4
-      num_clips: 270
 
   test:
     name: SRREDSMultipleGTDataset
@@ -79,18 +88,15 @@ validate:
     psnr: # metric name, can be arbitrary
       name: PSNR
       crop_border: 0
-      test_y_channel: False
+      test_y_channel: false
     ssim:
       name: SSIM
       crop_border: 0
-      test_y_channel: False
+      test_y_channel: false
 
 log_config:
-  interval: 100
-  visiual_interval: 500
+  interval: 10
+  visiual_interval: 5000
 
 snapshot_config:
   interval: 5000
-
-export_model:
-  - {name: 'generator', inputs_num: 1}
