@@ -303,7 +303,9 @@ class MSVSR(nn.Layer):
         pre_mask = {}
 
         # propagation branches module
-        for prop_name in ['stage2_backward', 'stage2_forward']:
+        prop_names = ['stage2_backward', 'stage2_forward']
+        for index in range(2):
+            prop_name = prop_names[index]
             pre_offset[prop_name] = [0 for _ in range(t)]
             pre_mask[prop_name] = [0 for _ in range(t)]
             feats[prop_name] = []
@@ -372,7 +374,9 @@ class MSVSR(nn.Layer):
         n, t, _, h, w = flows_backward.shape
 
         # propagation branches module
-        for prop_name in ['stage3_backward', 'stage3_forward']:
+        prop_names = ['stage3_backward', 'stage3_forward']
+        for index in range(2):
+            prop_name = prop_names[index]
             feats[prop_name] = []
             frame_idx = range(0, t + 1)
             flow_idx = range(-1, t)
@@ -439,7 +443,8 @@ class MSVSR(nn.Layer):
         mapping_idx = list(range(0, num_outputs))
         mapping_idx += mapping_idx[::-1]
 
-        for i in range(0, lqs.shape[1]):
+        t = lqs.shape[1]
+        for i in range(0, t):
             hr = [feats[k][i] for k in feats if (k != 'spatial')]
             feat_current = feats['spatial'][mapping_idx[i]]
             hr.insert(0, feat_current)
@@ -479,16 +484,13 @@ class MSVSR(nn.Layer):
         """
 
         outputs = []
-        outputs_head = []
         num_outputs = len(feats['spatial'])
 
         mapping_idx = list(range(0, num_outputs))
         mapping_idx += mapping_idx[::-1]
 
-        cas_outs = []
-        pas = []
-        hrs = []
-        for i in range(0, lqs.shape[1]):
+        t = lqs.shape[1]
+        for i in range(0, t):
             hr = [
                 feats[k].pop(0) for k in feats
                 if (k != 'spatial' and k != 'feat_stage1')

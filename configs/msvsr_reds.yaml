@@ -48,6 +48,7 @@ dataset:
       use_rot: True
       scale: 4
       val_partition: REDS4
+      num_clips: 270
 
   test:
     name: SRREDSMultipleGTDataset
@@ -63,6 +64,7 @@ dataset:
     val_partition: REDS4
     num_workers: 0
     batch_size: 1
+    num_clips: 270
 
 lr_scheduler:
   name: CosineAnnealingRestartLR
@@ -100,3 +102,6 @@ log_config:
 
 snapshot_config:
   interval: 5000
+
+export_model:
+  - {name: 'generator', inputs_num: 1}

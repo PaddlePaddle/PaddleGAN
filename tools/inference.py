@@ -14,7 +14,8 @@ from ppgan.utils.filesystem import makedirs
 from ppgan.metrics import build_metric
 
 
-MODEL_CLASSES = ["pix2pix", "cyclegan", "wav2lip", "esrgan", "edvr", "fom", "stylegan2", "basicvsr"]
+MODEL_CLASSES = ["pix2pix", "cyclegan", "wav2lip", "esrgan", \
+                 "edvr", "fom", "stylegan2", "basicvsr", "msvsr"]
 
 
 def parse_args():
@@ -106,7 +107,6 @@ def main():
 
     max_eval_steps = len(test_dataloader)
     iter_loader = IterLoader(test_dataloader)
-
     min_max = cfg.get('min_max', None)
     if min_max is None:
         min_max = (-1., 1.)
@@ -192,7 +192,7 @@ def main():
             real_img = paddle.to_tensor(data['A'])
             for metric in metrics.values():
                 metric.update(prediction, real_img)
-        elif model_type == "basicvsr":
+        elif model_type in ["basicvsr", "msvsr"]:
             lq = data['lq'].numpy()
             input_handles[0].copy_from_cpu(lq)
             predictor.run()
@@ -208,9 +208,9 @@ def main():
                 gt_img.append(tensor2img(gt_tensor, (0.,1.)))
                 
             image_numpy = tensor2img(prediction[0], min_max)
-            save_image(image_numpy, os.path.join(args.output_path, "basicvsr/{}.png".format(i)))
+            save_image(image_numpy, os.path.join(args.output_path, model_type, "{}.png".format(i)))
 
-            metric_file = os.path.join(args.output_path, "basicvsr/metric.txt")
+            metric_file = os.path.join(args.output_path, model_type, "metric.txt")
             for metric in metrics.values():
                 metric.update(out_img, gt_img, is_seq=True)
 
