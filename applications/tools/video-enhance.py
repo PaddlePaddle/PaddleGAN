@@ -20,7 +20,9 @@ from ppgan.apps import DeepRemasterPredictor
 from ppgan.apps import DeOldifyPredictor
 from ppgan.apps import RealSRPredictor
 from ppgan.apps import EDVRPredictor
-from ppgan.apps import PPMSVSRPredictor, BasicVSRPredictor, BasiVSRPlusPlusPredictor, IconVSRPredictor, PPMSVSRLargePredictor
+from ppgan.apps import PPMSVSRPredictor, BasicVSRPredictor, \
+                       BasiVSRPlusPlusPredictor, IconVSRPredictor, \
+                       PPMSVSRLargePredictor
 
 parser = argparse.ArgumentParser(description='Fix video')
 parser.add_argument('--input', type=str, default=None, help='Input video')

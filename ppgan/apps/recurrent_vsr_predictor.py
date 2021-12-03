@@ -151,7 +151,6 @@ class BasicVSRPredictor(BasePredictor):
                     outs = outs[-1]
 
                 outs = outs[0].numpy()
-            # infer_result_list = [outs[i, :, :, :] for i in range(self.bs)]
 
             infer_result_list = [outs[i, :, :, :] for i in range(outs.shape[0])]
 
