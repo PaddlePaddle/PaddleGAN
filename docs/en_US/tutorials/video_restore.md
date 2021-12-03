@@ -113,3 +113,64 @@ ppgan.apps.EDVRPredictor(output='output', weight_path=None)
 
 - `output (str, Optional)`: path of your output, default: `output`.
 - `weight_path (None, Optional)`: path of your model weight. If it is not set, the default weight will be downloaded from the cloud to the local. Default: `None`.
+
+### Video super-resolution model -- BasicVSRPredictor & IconVSRPredictor
+BasicVSR is a generic and efficient baseline for VSR. With minimal redesigns of existing components including optical flow and residual blocks, it outperforms existing state of the arts with high efficiency. BasicVSR adopts a typical bidirectional recurrent network. The upsampling module U contains multiple pixel-shuffle and convolutions. The red and blue colors represent the backward and forward propagations, respectively. The propagation branches contain only generic components. S, W, and R refer to the flow estimation module, spatial warping module, and residual blocks, respectively.
+
+![](../../imgs/basicvsr_arch.jpg)
+
+```
+ppgan.apps.BasiVSRPredictor(output='output', weight_path=None, num_frames=10)
+ppgan.apps.IconVSRPredictor(output='output', weight_path=None, num_frames=10)
+```
+#### Parameters
+
+- `output (str, Optional)`: path of your output, default: `output`.
+- `weight_path (None, Optional)`: path of your model weight. If it is not set, the default weight will be downloaded from the cloud to the local. Default: `None`.
+- `num_frames (10, Optional)`: the number of video frames input at a time. Default: `10`.
+
+
+### Video super-resolution model -- BasicVSRPlusPlusPredictor
+BasicVSR++ consists of two effective modifications for improving propagation and alignment. The proposed second-order grid propagation and flow-guided deformable alignment allow BasicVSR++ to significantly outperform existing state of the arts with comparable runtime. BasicVSR++ won 3 champions and 1 runner-up in NTIRE 2021 Video Restoration and Enhancement Challenge.
+
+![](../../imgs/basicvsr++_arch.jpg)
+
+```
+ppgan.apps.BasiVSRPlusPlusPredictor(output='output', weight_path=None, num_frames=10)
+```
+#### Parameters
+
+- `output (str, Optional)`: path of your output, default: `output`.
+- `weight_path (None, Optional)`: path of your model weight. If it is not set, the default weight will be downloaded from the cloud to the local. Default: `None`.
+- `num_frames (10, Optional)`: the number of video frames input at a time. Default: `10`.
+
+
+### Video super-resolution model -- BasicVSRPlusPlusPredictor
+BasicVSR++ consists of two effective modifications for improving propagation and alignment. The proposed second-order grid propagation and flow-guided deformable alignment allow BasicVSR++ to significantly outperform existing state of the arts with comparable runtime. BasicVSR++ won 3 champions and 1 runner-up in NTIRE 2021 Video Restoration and Enhancement Challenge.
+
+![](../../imgs/basicvsr++_arch.jpg)
+
+```
+ppgan.apps.BasiVSRPlusPlusPredictor(output='output', weight_path=None, num_frames=10)
+```
+#### Parameters
+
+- `output (str, Optional)`: path of your output, default: `output`.
+- `weight_path (None, Optional)`: path of your model weight. If it is not set, the default weight will be downloaded from the cloud to the local. Default: `None`.
+- `num_frames (10, Optional)`: the number of video frames input at a time. Default: `10`.
+
+
+### Video super-resolution model -- PPMSVSRPredictor
+PP-MSVSR proposes local fusion module, auxiliary loss and re-align module to refine the enhanced result progressively.
+
+![](../../imgs/msvsr_arch.jpg)
+
+```
+ppgan.apps.PPMSVSRPredictor(output='output', weight_path=None, num_frames=10)
+ppgan.apps.PPMSVSRLargePredictor(output='output', weight_path=None, num_frames=10)
+```
+#### Parameters
+
+- `output (str, Optional)`: path of your output, default: `output`.
+- `weight_path (None, Optional)`: path of your model weight. If it is not set, the default weight will be downloaded from the cloud to the local. Default: `None`.
+- `num_frames (10, Optional)`: the number of video frames input at a time. Default: `10`.
