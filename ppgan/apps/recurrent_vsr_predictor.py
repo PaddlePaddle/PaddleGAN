@@ -1,4 +1,4 @@
-#  Copyright (c) 2020 PaddlePaddle Authors. All Rights Reserve.
+#  Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ from ppgan.utils.download import get_path_from_url
 from ppgan.utils.video import frames2video, video2frames
 from ppgan.models.generators import BasicVSRNet, IconVSR, BasicVSRPlusPlus, MSVSR
 from .base_predictor import BasePredictor
+from .edvr_predictor import get_img, read_img, save_img
 
 BasicVSR_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/BasicVSR_reds_x4.pdparams'
 IconVSR_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/IconVSR_reds_x4.pdparams'
@@ -33,39 +34,6 @@ BasicVSR_PP_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/BasicVSR%2B%2B_
 PP_MSVSR_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/PP-MSVSR_reds_x4.pdparams'
 PP_MSVSR_BD_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/PP-MSVSR_vimeo90k_x4.pdparams'
 PP_MSVSR_L_WEIGHT_URL = 'https://paddlegan.bj.bcebos.com/models/PP-MSVSR-L_reds_x4.pdparams'
-
-
-def get_img(pred):
-    pred = pred.squeeze()
-    pred = np.clip(pred, a_min=0., a_max=1.0)
-    pred = pred * 255
-    pred = pred.round()
-    pred = pred.astype('uint8')
-    pred = np.transpose(pred, (1, 2, 0))  # chw -> hwc
-    pred = pred[:, :, ::-1]  # rgb -> bgr
-    return pred
-
-
-def save_img(img, framename):
-    dirname = os.path.dirname(framename)
-    if not os.path.exists(dirname):
-        os.makedirs(dirname)
-
-    cv2.imwrite(framename, img)
-
-
-def read_img(path, size=None, is_gt=False):
-    """read image by cv2
-    return: Numpy float32, HWC, BGR, [0,1]"""
-    img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
-
-    img = img.astype(np.float32) / 255.
-    if img.ndim == 2:
-        img = np.expand_dims(img, axis=2)
-
-    if img.shape[2] > 3:
-        img = img[:, :, :3]
-    return img
 
 
 class RecurrentDataset(Dataset):
@@ -221,13 +189,13 @@ class PPMSVSRLargePredictor(BasicVSRPredictor):
         self.name = 'PPMSVSR-L'
         self.output = os.path.join(output, self.name)
         self.num_frames = num_frames
-        self.model = MSVSR(64,
-                           5,
-                           7,
-                           5,
-                           False,
-                           False,
-                           8,
+        self.model = MSVSR(mid_channels=64,
+                           num_init_blocks=5,
+                           num_blocks=7,
+                           num_reconstruction_blocks=5,
+                           only_last=False,
+                           use_tiny_spynet=False,
+                           deform_groups=8,
                            aux_reconstruction_blocks=2)
         if weight_path is None:
             weight_path = get_path_from_url(PP_MSVSR_L_WEIGHT_URL)
