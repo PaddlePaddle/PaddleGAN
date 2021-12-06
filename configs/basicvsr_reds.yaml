@@ -54,6 +54,7 @@ dataset:
     val_partition: REDS4
     num_workers: 0
     batch_size: 1
+    num_clips: 270
 
 lr_scheduler:
   name: CosineAnnealingRestartLR
