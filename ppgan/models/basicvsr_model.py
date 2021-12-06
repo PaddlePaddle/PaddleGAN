@@ -103,7 +103,7 @@ class BasicVSRModel(BaseSRModel):
 
         if metrics is not None:
             for metric in metrics.values():
-                metric.update(out_img, gt_img)
+                metric.update(out_img, gt_img, is_seq=True)
 
 
 def init_basicvsr_weight(net):

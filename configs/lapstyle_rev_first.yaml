@@ -38,7 +38,7 @@ dataset:
     load_size: 280
     crop_size: 256
     num_workers: 16
-    batch_size: 5
+    batch_size: 5 #1 GPUs
   test:
     name: LapStyleDataset
     content_root: data/coco/test2017/

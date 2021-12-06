@@ -20,6 +20,9 @@ from ppgan.apps import DeepRemasterPredictor
 from ppgan.apps import DeOldifyPredictor
 from ppgan.apps import RealSRPredictor
 from ppgan.apps import EDVRPredictor
+from ppgan.apps import PPMSVSRPredictor, BasicVSRPredictor, \
+                       BasiVSRPlusPlusPredictor, IconVSRPredictor, \
+                       PPMSVSRLargePredictor
 
 parser = argparse.ArgumentParser(description='Fix video')
 parser.add_argument('--input', type=str, default=None, help='Input video')
@@ -41,6 +44,26 @@ parser.add_argument('--RealSR_weight',
                     default=None,
                     help='Path to model weight')
 parser.add_argument('--EDVR_weight',
+                    type=str,
+                    default=None,
+                    help='Path to model weight')
+parser.add_argument('--PPMSVSR_weight',
+                    type=str,
+                    default=None,
+                    help='Path to model weight')
+parser.add_argument('--PPMSVSRLarge_weight',
+                    type=str,
+                    default=None,
+                    help='Path to model weight')
+parser.add_argument('--BasicVSR_weight',
+                    type=str,
+                    default=None,
+                    help='Path to model weight')
+parser.add_argument('--IconVSR_weight',
+                    type=str,
+                    default=None,
+                    help='Path to model weight')
+parser.add_argument('--BasiVSRPlusPlus_weight',
                     type=str,
                     default=None,
                     help='Path to model weight')
@@ -75,6 +98,11 @@ parser.add_argument('--render_factor',
                     type=int,
                     default=32,
                     help='model inputsize=render_factor*16')
+#vsr input number frames
+parser.add_argument('--num_frames',
+                    type=int,
+                    default=10,
+                    help='num frames for recurrent vsr model')
 #process order support model name:[DAIN, DeepRemaster, DeOldify, RealSR, EDVR]
 parser.add_argument('--process_order',
                     type=str,
@@ -120,6 +148,33 @@ if __name__ == "__main__":
             frames_path, temp_video_path = predictor.run(temp_video_path)
         elif order == 'EDVR':
             predictor = EDVRPredictor(args.output, weight_path=args.EDVR_weight)
+            frames_path, temp_video_path = predictor.run(temp_video_path)
+        elif order == 'PPMSVSR':
+            predictor = PPMSVSRPredictor(args.output,
+                                         weight_path=args.PPMSVSR_weight,
+                                         num_frames=args.num_frames)
+            frames_path, temp_video_path = predictor.run(temp_video_path)
+        elif order == 'PPMSVSRLarge':
+            predictor = PPMSVSRLargePredictor(
+                args.output,
+                weight_path=args.PPMSVSRLarge_weight,
+                num_frames=args.num_frames)
+            frames_path, temp_video_path = predictor.run(temp_video_path)
+        elif order == 'BasicVSR':
+            predictor = BasicVSRPredictor(args.output,
+                                          weight_path=args.BasicVSR_weight,
+                                          num_frames=args.num_frames)
+            frames_path, temp_video_path = predictor.run(temp_video_path)
+        elif order == 'IconVSR':
+            predictor = IconVSRPredictor(args.output,
+                                         weight_path=args.IconVSR_weight,
+                                         num_frames=args.num_frames)
+            frames_path, temp_video_path = predictor.run(temp_video_path)
+        elif order == 'BasiVSRPlusPlus':
+            predictor = BasiVSRPlusPlusPredictor(
+                args.output,
+                weight_path=args.BasiVSRPlusPlus_weight,
+                num_frames=args.num_frames)
             frames_path, temp_video_path = predictor.run(temp_video_path)
 
         print('Model {} output frames path:'.format(order), frames_path)

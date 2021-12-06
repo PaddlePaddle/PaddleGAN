@@ -67,6 +67,12 @@ def parse_args():
                         default=None,
                         help='The option of profiler, which should be in format \"key1=value1;key2=value2;key3=value3\".'
     )
+    # fix random numbers by setting seed
+    parser.add_argument('--seed',
+                        type=int,
+                        default=None,
+                        help='fix random numbers by setting seed\".'
+    )
     args = parser.parse_args()
 
     return args

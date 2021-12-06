@@ -14,16 +14,19 @@ Artistic style transfer aims at migrating the style from an example image to a c
 
 
 ## 2 Quick experience
+Here four style images:
+| [StarryNew](https://user-images.githubusercontent.com/79366697/118655415-1ec8c000-b81c-11eb-8002-90bf8d477860.png) | [Stars](https://user-images.githubusercontent.com/79366697/118655423-20928380-b81c-11eb-92bd-0deeb320ff14.png) | [Ocean](https://user-images.githubusercontent.com/79366697/118655407-1c666600-b81c-11eb-83a6-300ee1952415.png) | [Circuit](https://user-images.githubusercontent.com/79366697/118655399-196b7580-b81c-11eb-8bc5-d5ece80c18ba.jpg)|
+
 ```
-python applications/tools/lapstyle.py --content_img ${PATH_OF_CONTENT_IMG}
+python applications/tools/lapstyle.py --content_img_path ${PATH_OF_CONTENT_IMG} --style_image_path ${PATH_OF_STYLE_IMG}
 ```
 ### Parameters
 
-- `--content_img (str)`: path to content image.
+- `--content_img_path (str)`: path to content image.
+- `--style_image_path (str)`: path to style image.
 - `--output_path (str)`: path to output image dir, default value:`output_dir`.
 - `--weight_path (str)`: path to model weight path, if `weight_path` is `None`, the pre-training model will be downloaded automatically, default value:`None`.
 - `--style (str)`: style of output image, if `weight_path` is `None`, `style` can be chosen in `starrynew`, `circuit`, `ocean` and `stars`, default value:`starrynew`.
-- `--style_image_path (str)`: path to style image, it need to input when `weight_path` is not `None`, default value:`None`.
 
 ## 3 How to use  
 

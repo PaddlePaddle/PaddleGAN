@@ -42,7 +42,7 @@ dataset:
     scale: 4
     fix_random_seed: 10
     num_workers: 3
-    batch_size: 4  # 8GUPs
+    batch_size: 4  # 8GPUs
 
 
   test:

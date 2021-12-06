@@ -30,3 +30,7 @@ from .pixel2style2pixel_predictor import Pixel2Style2PixelPredictor
 from .wav2lip_predictor import Wav2LipPredictor
 from .mpr_predictor import MPRPredictor
 from .lapstyle_predictor import LapStylePredictor
+from .photopen_predictor import PhotoPenPredictor
+from .recurrent_vsr_predictor import (PPMSVSRPredictor, BasicVSRPredictor, \
+                                     BasiVSRPlusPlusPredictor, IconVSRPredictor, \
+                                     PPMSVSRLargePredictor)

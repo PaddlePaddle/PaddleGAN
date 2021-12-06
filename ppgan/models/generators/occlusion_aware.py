@@ -41,7 +41,26 @@ class OcclusionAwareGenerator(nn.Layer):
         else:
             self.dense_motion_network = None
 
-        self.first = SameBlock2d(num_channels,
+        if mobile_net:
+            self.first = nn.Sequential(
+                    SameBlock2d(num_channels,
+                                    num_channels,
+                                    kernel_size=3,
+                                    padding=1,
+                                    mobile_net=mobile_net),
+                    SameBlock2d(num_channels,
+                                    num_channels,
+                                    kernel_size=3,
+                                    padding=1,
+                                    mobile_net=mobile_net),
+                    SameBlock2d(num_channels,
+                                    block_expansion,
+                                    kernel_size=3,
+                                    padding=1,
+                                    mobile_net=mobile_net)
+                )
+        else:
+            self.first = SameBlock2d(num_channels,
                                  block_expansion,
                                  kernel_size=(7, 7),
                                  padding=(3, 3),
@@ -109,8 +128,28 @@ class OcclusionAwareGenerator(nn.Layer):
                 self.bottleneck.add_sublayer(
                     'r' + str(i),
                     ResBlock2d(in_features, kernel_size=(3, 3), padding=(1, 1)))
-
-        self.final = nn.Conv2D(block_expansion,
+        if mobile_net:
+            self.final = nn.Sequential(
+                    nn.Conv2D(block_expansion,
+                                block_expansion,
+                                kernel_size=3,
+                                weight_attr=nn.initializer.KaimingUniform(),
+                                padding=1),
+                    nn.ReLU(),
+                    nn.Conv2D(block_expansion,
+                                block_expansion,
+                                kernel_size=3,
+                                weight_attr=nn.initializer.KaimingUniform(),
+                                padding=1),
+                    nn.ReLU(),
+                    nn.Conv2D(block_expansion,
+                                num_channels,
+                                kernel_size=3,
+                                weight_attr=nn.initializer.KaimingUniform(),
+                                padding=1)
+                )
+        else:
+            self.final = nn.Conv2D(block_expansion,
                                num_channels,
                                kernel_size=(7, 7),
                                padding=(3, 3))

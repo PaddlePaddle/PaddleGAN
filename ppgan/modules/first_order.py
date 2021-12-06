@@ -302,7 +302,8 @@ class SameBlock2d(nn.Layer):
                               kernel_size=kernel_size,
                               padding=padding,
                               groups=groups,
-                              bias_attr=(mobile_net == False))
+                              bias_attr=(mobile_net == False),
+                              weight_attr=nn.initializer.KaimingUniform())
         self.norm = SyncBatchNorm(out_features)
 
     def forward(self, x):
@@ -425,10 +426,14 @@ class AntiAliasInterpolation2d(nn.Layer):
     """
     Band-limited downsampling, for better preservation of the input signal.
     """
-    def __init__(self, channels, scale):
+    def __init__(self, channels, scale, mobile_net=False):
         super(AntiAliasInterpolation2d, self).__init__()
-        sigma = (1 / scale - 1) / 2
-        kernel_size = 2 * round(sigma * 4) + 1
+        if mobile_net:
+            sigma = 0.25
+            kernel_size = 3
+        else:
+            sigma = (1 / scale - 1) / 2
+            kernel_size = 2 * round(sigma * 4) + 1
         self.ka = kernel_size // 2
         self.kb = self.ka - 1 if kernel_size % 2 == 0 else self.ka
 
