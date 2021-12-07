@@ -4,14 +4,14 @@
 ## 1.1 原理介绍
 
   视频超分源于图像超分，其目的是从一个或多个低分辨率（LR）图像中恢复高分辨率（HR）图像。它们的区别也很明显，由于视频是由多个帧组成的，所以视频超分通常利用帧间的信息来进行修复。
-  
+
   这里我们提供百度自研SOTA超分系列模型PP-MSVSR、业界领先视频超分模型[EDVR](https://arxiv.org/pdf/1905.02716.pdf)、[BasicVSR](https://arxiv.org/pdf/2012.02181.pdf)，[IconVSR](https://arxiv.org/pdf/2012.02181.pdf)和[BasicVSR++](https://arxiv.org/pdf/2104.13371v1.pdf)。
 
 ### ⭐ PP-MSVSR ⭐
-  百度自研的PP-MSVSR是一种多阶段视频超分深度架构，具有局部融合模块、辅助损失和细化对齐模块，以逐步细化增强结果。具体来说，在第一阶段设计了局部融合模块，在特征传播之前进行局部特征融合, 以加强特征传播中跨帧特征的融合。在第二阶段中引入了一个辅助损失，使传播模块获得的特征保留了更多与HR空间相关的信息。在第三阶段中引入了一个细化的对齐模块，以充分利用前一阶段传播模块的特征信息。大量实验证实，PP-MSVSR在Vid4数据集性能优异，仅使用 1.45M 参数PSNR指标即可达到28.13dB。
-  
+  百度自研的[PP-MSVSR](https://arxiv.org/pdf/2112.02828.pdf)是一种多阶段视频超分深度架构，具有局部融合模块、辅助损失和细化对齐模块，以逐步细化增强结果。具体来说，在第一阶段设计了局部融合模块，在特征传播之前进行局部特征融合, 以加强特征传播中跨帧特征的融合。在第二阶段中引入了一个辅助损失，使传播模块获得的特征保留了更多与HR空间相关的信息。在第三阶段中引入了一个细化的对齐模块，以充分利用前一阶段传播模块的特征信息。大量实验证实，PP-MSVSR在Vid4数据集性能优异，仅使用 1.45M 参数PSNR指标即可达到28.13dB。
+
   PP-MSVSR提供两种体积模型，开发者可根据实际场景灵活选择：PP-MSVSR（参数量1.45M）与PP-MSVSR-L（参数量7.42）。
-  
+
 ### EDVR
   [EDVR](https://arxiv.org/pdf/1905.02716.pdf)模型在NTIRE19视频恢复和增强挑战赛的四个赛道中都赢得了冠军，并以巨大的优势超过了第二名。视频超分的主要难点在于（1）如何在给定大运动的情况下对齐多个帧；（2）如何有效地融合具有不同运动和模糊的不同帧。首先，为了处理大的运动，EDVR模型设计了一个金字塔级联的可变形（PCD）对齐模块，在该模块中，从粗到精的可变形卷积被使用来进行特征级的帧对齐。其次，EDVR使用了时空注意力（TSA）融合模块，该模块在时间和空间上同时应用注意力机制，以强调后续恢复的重要特征。
 
@@ -201,6 +201,10 @@ Vimeo90K，Vid4，UDM10测试数据集上超分性能对比
 - 4. [PP-MSVSR: Multi-Stage Video Super-Resolution]()
 
   ```
-  @article{
+  @article{jiang2021PP-MSVSR,
+    author = {Jiang, Lielin and Wang, Na and Dang, Qingqing and Liu, Rui and Lai, Baohua},
+    title = {PP-MSVSR: Multi-Stage Video Super-Resolution},
+    booktitle = {arXiv preprint arXiv:2112.02828},
+    year = {2021}
     }
   ```

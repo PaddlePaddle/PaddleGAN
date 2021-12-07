@@ -11,7 +11,7 @@
 
   [BasicVSR++](https://arxiv.org/pdf/2104.13371v1.pdf) redesign BasicVSR by proposing second-order grid propagation and flowguided deformable alignment. By empowering the recurrent framework with the enhanced propagation and alignment, BasicVSR++ can exploit spatiotemporal information across misaligned video frames more effectively. The new components lead to an improved performance under a similar computational constraint. In particular, BasicVSR++ surpasses BasicVSR by 0.82 dB in PSNR with similar number of parameters. In NTIRE 2021, BasicVSR++ obtains three champions and one runner-up in the Video Super-Resolution and Compressed Video Enhancement Challenges.
 
-  PP-MSVSR is a multi-stage VSR deep architecture,  with local fusion module, auxiliary loss and refined align module to refine the enhanced result progressively. Specifically, in order to strengthen the fusion of features across frames in feature propagation, a local fusion module is designed in stage-1 to perform local feature fusion before feature propagation. Moreover, an auxiliary loss in stage-2 is introduced to make the features obtained by the propagation module reserve more correlated information connected to the HR space, and introduced a refined align module in stage-3 to make full use of the feature information of the previous stage. Extensive experiments substantiate that PP-MSVSR achieves a promising performance of Vid4 datasets, which PSNR metric can achieve 28.13 with only 1.45M parameters.
+  [PP-MSVSR](https://arxiv.org/pdf/2112.02828.pdf) is a multi-stage VSR deep architecture,  with local fusion module, auxiliary loss and refined align module to refine the enhanced result progressively. Specifically, in order to strengthen the fusion of features across frames in feature propagation, a local fusion module is designed in stage-1 to perform local feature fusion before feature propagation. Moreover, an auxiliary loss in stage-2 is introduced to make the features obtained by the propagation module reserve more correlated information connected to the HR space, and introduced a refined align module in stage-3 to make full use of the feature information of the previous stage. Extensive experiments substantiate that PP-MSVSR achieves a promising performance of Vid4 datasets, which PSNR metric can achieve 28.13 with only 1.45M parameters.
 
 
 
@@ -202,6 +202,10 @@ VSR quantitative comparis on the Vimeo90K, Vid4, UDM10
 - 4. [PP-MSVSR: Multi-Stage Video Super-Resolution]()
 
   ```
-  @article{
+  @article{jiang2021PP-MSVSR,
+    author = {Jiang, Lielin and Wang, Na and Dang, Qingqing and Liu, Rui and Lai, Baohua},
+    title = {PP-MSVSR: Multi-Stage Video Super-Resolution},
+    booktitle = {arXiv preprint arXiv:2112.02828},
+    year = {2021}
     }
   ```
