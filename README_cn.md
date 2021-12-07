@@ -17,27 +17,20 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 ## 近期活动🔥🔥🔥
 
-- 🔥**2021.7.9-2021.9**🔥
+- 🔥**2021.12.08**🔥
 
-  **💙AI创造营：Metaverse启动机之重构现世💙**
+  **💙 AI快车道👩‍🏫：视频超分算法及行业应用 💙**
+  - **视频超分SOTA算法详解**
+  - **视频传输大幅降本提速方案**
+  - **影像修复视频超分案例实践**
+  - **直播link🔗：http://live.bilibili.com/21689802**
+  - **报名链接💡：https://paddleqiyeban.wjx.cn/vj/tKidSqZ.aspx?udsid=453804**
 
-  **PaddlePaddle × Wechaty × Mixlab 创意赛，参赛者可大开脑洞，运用PaddleGAN的花式能力，打造属于你自己的聊天机器人！**
-
-  **奖品丰厚，等你来拿🎁🎈🎊**
-
-  💰**一等奖 1 名**：3万元人民币 / 队
-
-  🎮**二等奖 2 名**：PS5游戏机 1个(价值5000元) / 队
-
-  🕶**三等奖 3 名**：VR眼镜 1个(价值3000元) / 队
-
-  💝**最佳人气奖 1 名**：3D打印机 1个(价值2000元) / 队
-
-  **还在等什么，快来点击报名吧：https://aistudio.baidu.com/aistudio/competition/detail/98**
-
-  **如何用PaddleGAN在比赛中杀出重围？请见：[PaddleGAN X WeChaty Demo示例](./paddlegan-wechaty-demo/REAME.md)**
-
-  **更多详情，请查看[比赛讲解直播回放](https://www.bilibili.com/video/BV18y4y1T7Ek)💞**
+  ⭐ **扫码加入技术交流群** ⭐
+  
+  <div align='center'>
+    <img src='https://user-images.githubusercontent.com/48054808/144846956-cca238df-4106-43d5-a21e-7370f501971a.png' width='200'/>
+  </div>
 
 - 2021.4.15~4.22
 
@@ -52,7 +45,12 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   **想要看直播回放视频请点击链接：https://www.bilibili.com/video/BV1GZ4y1g7xc**
 
 ## 产品动态
-
+- 💛 **最新发布** 💛 
+  
+  👀 **视频超分SOTA算法[PP-MSVSR](./docs/zh_CN/tutorials/video_super_resolution.md)：一行命令从"马赛克"到"高清影像"** 👀
+  <div align='center'>
+    <img src='https://user-images.githubusercontent.com/48054808/144848981-00c6ad21-0702-4381-9544-becb227ed9f0.gif' width='600'/>
+  </div>
 - 😍 **人脸编辑神器：[StyleGAN V2人脸属性编辑](./docs/zh_CN/tutorials/styleganv2editing.md)之性别转换--怕什么孤单？和自己谈一场恋爱吧！** 😍
   - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/2565277?contributionType=1)**
   <div align='center'>
