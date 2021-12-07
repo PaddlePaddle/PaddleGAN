@@ -201,6 +201,10 @@ Vimeo90K，Vid4，UDM10测试数据集上超分性能对比
 - 4. [PP-MSVSR: Multi-Stage Video Super-Resolution]()
 
   ```
-  @article{
+  @article{jiang2021PP-MSVSR,
+    author = {Jiang, Lielin and Wang, Na and Dang, Qingqing and Liu, Rui and Lai, Baohua},
+    title = {PP-MSVSR: Multi-Stage Video Super-Resolution},
+    booktitle = {arXiv preprint arXiv:2112.02828},
+    year = {2021}
     }
   ```
