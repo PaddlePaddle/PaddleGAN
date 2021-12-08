@@ -242,3 +242,13 @@ class CycleGANModel(BaseModel):
         self.backward_D_B()
         # update D_A and D_B's weights
         optimizers['optimD'].step()
+
+
+    def test_iter(self, metrics=None):
+        self.nets['netG_A'].eval()
+        self.forward()
+        with paddle.no_grad():
+            if metrics is not None:
+                for metric in metrics.values():
+                    metric.update(self.fake_B, self.real_B)
+        self.nets['netG_A'].train()
