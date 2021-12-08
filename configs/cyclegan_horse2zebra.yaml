@@ -120,6 +120,11 @@ log_config:
 snapshot_config:
   interval: 5
 
-export_model:
-  - {name: 'netG_A', inputs_num: 1}
-  - {name: 'netG_B', inputs_num: 1}
+validate:
+  interval: 29750
+  save_img: false
+  metrics:
+    fid: # metric name, can be arbitrary
+        name: FID
+        batch_size: 8
+
