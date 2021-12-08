@@ -15,24 +15,6 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 ## 🎪 Hot Activities
 
-- 🔥 **2021.7.9-2021.9** 🔥
-
-  **💙 AI Creation Camp 💙**
-
-  **You can implement any abilities in PaddleGAN with Wechaty to create your own chat robot 🤖 !**
-
-  **A plenty of gifts 🎁 waiting for you!**
-
-  **💰First Prize: 30,000RMB**
-
-  **🎮 Second Prize: PS5**
-
-  **🕶 Third Prize: VR Glass**
-
-  **🏵 Most Popular Prize: 3D Printer**
-
-  **Still hezitating? Click here and sign up!**  **https://aistudio.baidu.com/aistudio/competition/detail/98**
-
 - 2021.4.15~4.22
 
   GAN 7 Days Course Camp: Baidu Senior Research Developers help you learn the basic and advanced GAN knowledge in 7 days!
@@ -41,6 +23,11 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 ## 🚀 Recent Updates
 
+- 🔥 **Latest Release: [PP-MSVSR](./docs/en_US/tutorials/video_super_resolution.md)** 🔥 
+    - **Video Super Resolution SOTA models**
+  <div align='center'>
+    <img src='https://user-images.githubusercontent.com/48054808/144848981-00c6ad21-0702-4381-9544-becb227ed9f0.gif' width='600'/>
+  </div>
 - 😍 **Boy or Girl？：[StyleGAN V2 Face Editing](./docs/en_US/tutorials/styleganv2editing.md)-Changing genders！** 😍
   - **[Online Toturials](https://aistudio.baidu.com/aistudio/projectdetail/2565277?contributionType=1)**
   <div align='center'>
