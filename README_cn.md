@@ -230,9 +230,9 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 ## 版本更新
 - v2.1.0 (2021.12.8)
-  - 发布自研视频超分辨率模型PP-MSVSR以及多个预训练权重
+  - 发布视频超分辨率模型PP-MSVSR以及多个预训练权重
   - 发布BasicVSR，IconVSR与Basicvsr++等多个效果领先的视频超分辨率模型及其预训练模型
-  - 发布轻量级动作驱动模型fom-mobile（基于 Fisrt Order Motion Model），并优化融合效果
+  - 发布轻量级动作驱动模型（体积压缩：229M->10.1M），并优化融合效果
   - 发布高分辨率的FOMM和Wav2Lip预训练模型
   - 发布人脸反演，人脸融合和人脸编辑等多个基于StyleGANv2的有趣应用
   - 发布百度自研且效果领先的风格迁移模型LapStyle及其有趣应用，并上线官网[体验页面](https://www.paddlepaddle.org.cn/paddlegan)

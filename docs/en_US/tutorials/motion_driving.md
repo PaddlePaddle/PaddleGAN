@@ -31,7 +31,7 @@ The proposed method is not exclusively for facial expression transfer, it also s
 
     At the same time, PaddleGAN also provides a ["faceutils" tool](https://github.com/PaddlePaddle/PaddleGAN/tree/develop/ppgan/faceutils) for face-related work, including face detection, face segmentation, keypoints detection, etc.
 
-- #### Face Enhancement 
+- #### Face Enhancement
 
   - **This effect significantly improves the definition of the driven video.**
 
@@ -154,8 +154,8 @@ Currently, we use mobilenet combined with pruning to compress models, see the co
 
 |            | Size(M) | reconstruction loss |
 | ---------- | ------- | ------------------- |
-| Original   | 229     | 0.012058867         |
-| Compressed | 6.1     | 0.015025159         |
+| Original   | 229     | 0.041781392         |
+| Compressed | 10.1    | 0.047878753         |
 
 **Training:** First, set mode in configs/firstorder_vox_mobile_256.yaml as kp_detector, train the compressed kp_detector model, and immobilize the original  generator model. Then set mode in configs/firstorder_vox_mobile_256.yaml as generator，train the compressed generator model, and immobilize the original kp_detector model. Finally, set mode as both and modify kp_weight_path and gen_weight_path in the config to the path of trained model to train together。
 

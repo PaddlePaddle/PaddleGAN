@@ -213,9 +213,9 @@ You can run those projects in the [AI Studio](https://aistudio.baidu.com/aistudi
 
 ## Changelog
 - v2.1.0 (2021.12.8)
-   - Release a self-developed video super-resolution model PP-MSVSR and multiple pre-training weights
-   - Release several SOTA video super-resolution models and their pre-trained models such as BasicVSR, IconVSR and Basicvsr++
-   - Release the light-weight motion-driven model fom-mobile (based on Fisrt Order Motion Model), and optimized the fusion effect
+   - Release a video super-resolution model PP-MSVSR and multiple pre-training weights
+   - Release several SOTA video super-resolution models and their pre-trained models such as BasicVSR, IconVSR and BasicVSR++
+   - Release the light-weight motion-driven model(Volume compression: 229M->10.1M), and optimized the fusion effect
    - Release high-resolution FOMM and Wav2Lip pre-trained models
    - Release several interesting applications based on StyleGANv2, such as face inversion, face fusion and face editing
    - Released Baidu’s self-developed and effective style transfer model LapStyle and its interesting applications, and launched the official website [experience page](https://www.paddlepaddle.org.cn/paddlegan)
