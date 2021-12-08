@@ -100,18 +100,18 @@ make
 编译成功后，预测入口程序为`build/main`其主要命令参数说明如下：
 |  参数   | 说明  |
 |  ----  | ----  |
-| --model_dir  | 导出的检测预测模型所在路径 |
+| --model_dir  | 导出的预测模型所在路径 |
+| --model_dir  | 导出的预测模型配置文件所在路径 |
 | --video_file  | 要预测的视频文件路径 |
+| --frame_enum  | 超分视频序列 |
 | --device  | 运行时的设备，可选择`CPU/GPU/XPU`，默认为`CPU`|
 | --gpu_id  |  指定进行推理的GPU device id(默认值为0)|
 | --run_mode | 使用GPU时，默认为fluid, 可选（fluid/trt_fp32/trt_fp16/trt_int8）|
 | --batch_size  | 检测模型预测时的batch size，在指定`image_dir`时有效 |
 | --batch_size_keypoint  | 关键点模型预测时的batch size，默认为8 |
-| --run_benchmark | 是否重复预测来进行benchmark测速 ｜
 | --output_dir | 输出图片所在的文件夹, 默认为output ｜
 | --use_mkldnn | CPU预测中是否开启MKLDNN加速 |
 | --cpu_threads | 设置cpu线程数，默认为1 |
-| --use_dark | 关键点模型输出预测是否使用DarkPose后处理，默认为true |
 
 `样例一`：
 ```shell
