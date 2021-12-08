@@ -1,2 +1,2 @@
-Metric psnr: 27.3670
-Metric ssim: 0.8021
+Metric psnr: 24.3250
+Metric ssim: 0.6497
