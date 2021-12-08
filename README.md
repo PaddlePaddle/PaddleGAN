@@ -223,8 +223,8 @@ You can run those projects in the [AI Studio](https://aistudio.baidu.com/aistudi
 
 - v2.0.0 (2021.6.2)
   - Release [Fisrt Order Motion](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/motion_driving.md) model and multiple pre-training weights
-  -Release applications that support [Multi-face action driven](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/motion_driving.md#1-test-for-face)
-  - Release video super-resolution model [EDVR] (https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/video_super_resolution.md) and multiple pre-training weights
+  - Release applications that support [Multi-face action driven](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/motion_driving.md#1-test-for-face)
+  - Release video super-resolution model [EDVR](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/video_super_resolution.md) and multiple pre-training weights
   - Release the contents of [7-day punch-in training camp](https://github.com/PaddlePaddle/PaddleGAN/tree/develop/education) corresponding to PaddleGAN
   - Enhance the robustness of PaddleGAN running on the windows platform
 
