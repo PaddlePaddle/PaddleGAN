@@ -212,7 +212,7 @@ You can run those projects in the [AI Studio](https://aistudio.baidu.com/aistudi
 
 
 ## Changelog
--v2.1.0 (2021.12.8)
+- v2.1.0 (2021.12.8)
    - Release a self-developed video super-resolution model PP-MSVSR and multiple pre-training weights
    - Release several SOTA video super-resolution models and their pre-trained models such as BasicVSR, IconVSR and Basicvsr++
    - Release the light-weight motion-driven model fom-mobile (based on Fisrt Order Motion Model), and optimized the fusion effect
@@ -221,14 +221,14 @@ You can run those projects in the [AI Studio](https://aistudio.baidu.com/aistudi
    - Released Baidu’s self-developed and effective style transfer model LapStyle and its interesting applications, and launched the official website [experience page](https://www.paddlepaddle.org.cn/paddlegan)
    - Release a light-weight image super-resolution model PAN
 
--v2.0.0 (2021.6.2)
+- v2.0.0 (2021.6.2)
   - Release [Fisrt Order Motion](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/motion_driving.md) model and multiple pre-training weights
   -Release applications that support [Multi-face action driven](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/motion_driving.md#1-test-for-face)
   - Release video super-resolution model [EDVR] (https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/video_super_resolution.md) and multiple pre-training weights
   - Release the contents of [7-day punch-in training camp](https://github.com/PaddlePaddle/PaddleGAN/tree/develop/education) corresponding to PaddleGAN
   - Enhance the robustness of PaddleGAN running on the windows platform
 
--v2.0.0-beta (2021.3.1)
+- v2.0.0-beta (2021.3.1)
   - Completely switch the API of Paddle 2.0.0 version.
   - Release of super-resolution models: ESRGAN, RealSR, LESRCNN, DRN, etc.
   - Release lip migration model: Wav2Lip
