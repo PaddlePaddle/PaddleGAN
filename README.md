@@ -219,7 +219,7 @@ You can run those projects in the [AI Studio](https://aistudio.baidu.com/aistudi
    - Release high-resolution FOMM and Wav2Lip pre-trained models
    - Release several interesting applications based on StyleGANv2, such as face inversion, face fusion and face editing
    - Released Baidu’s self-developed and effective style transfer model LapStyle and its interesting applications, and launched the official website [experience page](https://www.paddlepaddle.org.cn/paddlegan)
-   - Release a deblurring model MPRNet and a light-weight image super-resolution model PAN
+   - Release a light-weight image super-resolution model PAN
 
 -v2.0.0 (2021.6.2)
   - Release [Fisrt Order Motion](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/motion_driving.md) model and multiple pre-training weights

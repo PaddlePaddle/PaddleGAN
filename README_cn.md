@@ -236,7 +236,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   - 发布高分辨率的FOMM和Wav2Lip预训练模型
   - 发布人脸反演，人脸融合和人脸编辑等多个基于StyleGANv2的有趣应用
   - 发布百度自研且效果领先的风格迁移模型LapStyle及其有趣应用，并上线官网[体验页面](https://www.paddlepaddle.org.cn/paddlegan)
-  - 发布去模糊模型MPRNet与轻量的图像超分辨模型PAN
+  - 发布轻量的图像超分辨模型PAN
 
 - v2.0.0 (2021.6.2)
   - 发布[Fisrt Order Motion](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/motion_driving.md)模型以及多个预训练权重
