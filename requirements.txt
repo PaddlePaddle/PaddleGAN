@@ -10,3 +10,4 @@ numba==0.53.1
 easydict
 munch
 natsort
+matplotlib
