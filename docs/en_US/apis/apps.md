@@ -7,7 +7,12 @@ PaddleGAN（ppgan.apps）provides prediction APIs covering multiple applications
   * [DeepRemaster](#ppgan.apps.DeepRemasterPredictor)
 * Super Resolution:
   * [RealSR](#ppgan.apps.RealSRPredictor)
+  * [PPMSVSR](#ppgan.apps.PPMSVSRPredictor)
+  * [PPMSVSRLarge](#ppgan.apps.PPMSVSRLargePredictor)
   * [EDVR](#ppgan.apps.EDVRPredictor)
+  * [BasicVSR](#ppgan.apps.BasicVSRPredictor)
+  * [IconVSR](#ppgan.apps.IconVSRPredictor)
+  * [BasiVSRPlusPlus](#ppgan.apps.BasiVSRPlusPlusPredictor)
 * Video Frame Interpolation:
   * [DAIN](#ppgan.apps.DAINPredictor)
 * Motion Driving:
@@ -205,21 +210,83 @@ run_video(video)
 > > - tuple(frame_path(str), out_path(str)): frame_path is the save path of each frame of the video after super resolution,  and out_path is the save path of the video after super resolution.
 
 
+
+## ppgan.apps.PPMSVSRPredictor
+
+```python
+ppgan.apps.PPMSVSRPredictor(output='output', weight_path=None, num_frames=10)
+```
+
+> Build the instance of PPMSVSR. PPMSVSR is a multi-stage VSR deep architecture. For more details, see the paper, PP-MSVSR: Multi-Stage Video Super-Resolution (https://arxiv.org/pdf/2112.02828.pdf).  The interface imposes 4x super resolution on the input video. The recommended video format is mp4.
+>
+> **Parameter**
+>
+> ```
+> from ppgan.apps import PPMSVSRPredictor
+> sr = PPMSVSRPredictor()
+> # test a video file
+> sr.run("docs/imgs/test.mp4")
+> ```
+> **参数**
+>
+> > - output (str):  path of the output image, default: output. Note that the path should be set as output/EDVR.
+> > - weight_path (str): path of the model, default: None，pre-trained integral model will then be automatically downloaded.
+> > - num_frames (int): the number of input frames of the PPMSVSR model, the default value: 10. Note that the larger the num_frames, the better the effect of the video after super resolution.
+```python
+run(video_path)
+```
+
+> The execution interface after building the instance.
+> **Parameter**
+>
+> > - video_path (str): path of the video files.
+>
+> **Return Value**
+>
+> > - tuple(str, str): the former is the save path of each frame of the video after super resolution, the latter is the save path of the video after super resolution.
+
+
+## ppgan.apps.PPMSVSRLargePredictor
+
+```python
+ppgan.apps.PPMSVSRLargePredictor(output='output', weight_path=None, num_frames=10)
+```
+
+> Build the instance of PPMSVSRLarge. PPMSVSRLarge is a Large PPMSVSR model. For more details, see the paper, PP-MSVSR: Multi-Stage Video Super-Resolution (https://arxiv.org/pdf/2112.02828.pdf).  The interface imposes 4x super resolution on the input video. The recommended video format is mp4.
+>
+> **Parameter**
+>
+> ```
+> from ppgan.apps import PPMSVSRLargePredictor
+> sr = PPMSVSRLargePredictor()
+> # test a video file
+> sr.run("docs/imgs/test.mp4")
+> ```
+> **参数**
+>
+> > - output (str):  path of the output image, default: output. Note that the path should be set as output/EDVR.
+> > - weight_path (str): path of the model, default: None，pre-trained integral model will then be automatically downloaded.
+> > - num_frames (int): the number of input frames of the PPMSVSR model, the default value: 10. Note that the larger the num_frames, the better the effect of the video after super resolution.
+```python
+run(video_path)
+```
+
+> The execution interface after building the instance.
+> **Parameter**
+>
+> > - video_path (str): path of the video files.
+>
+> **Return Value**
+>
+> > - tuple(str, str): the former is the save path of each frame of the video after super resolution, the latter is the save path of the video after super resolution.
+
 ## ppgan.apps.EDVRPredictor
 
 ```python
 ppgan.apps.EDVRPredictor(output='output', weight_path=None)
 ```
 
-> Build the instance of RealSR. EDVR is a model designed for video super resolution. For more details, see the paper, EDVR: Video Restoration with Enhanced Deformable Convolutional Networks (https://arxiv.org/abs/1905.02716).  The interface imposes 2x super resolution on the input video. The recommended video format is mp4.
->
-> *Note: The interface is only available in static graph, add the following codes to enable static graph before using it：
->
-> ```
-> import paddle
-> paddle.enable_static() #enable static graph
-> paddle.disable_static() #disable static graph
-> ```
+> Build the instance of EDVR. EDVR is a model designed for video super resolution. For more details, see the paper, EDVR: Video Restoration with Enhanced Deformable Convolutional Networks (https://arxiv.org/abs/1905.02716).  The interface imposes 4x super resolution on the input video. The recommended video format is mp4.
 >
 > **Parameter**
 >
@@ -245,6 +312,111 @@ run(video_path)
 > **Return Value**
 >
 > > - tuple(str, str): the former is the save path of each frame of the video after super resolution, the latter is the save path of the video after super resolution.
+
+
+## ppgan.apps.BasicVSRPredictor
+
+```python
+ppgan.apps.BasicVSRPredictor(output='output', weight_path=None, num_frames=10)
+```
+
+> Build the instance of BasicVSR. BasicVSR is a model designed for video super resolution. For more details, see the paper, BasicVSR: The Search for Essential Components in Video Super-Resolution and Beyond (https://arxiv.org/pdf/2012.02181.pdf).  The interface imposes 4x super resolution on the input video. The recommended video format is mp4.
+>
+> **Parameter**
+>
+> ```
+> from ppgan.apps import BasicVSRPredictor
+> sr = BasicVSRPredictor()
+> # test a video file
+> sr.run("docs/imgs/test.mp4")
+> ```
+> **参数**
+>
+> > - output (str):  path of the output image, default: output. Note that the path should be set as output/EDVR.
+> > - weight_path (str): path of the model, default: None，pre-trained integral model will then be automatically downloaded.
+> > - num_frames (int): the number of input frames of the PPMSVSR model, the default value: 10. Note that the larger the num_frames, the better the effect of the video after super resolution.
+```python
+run(video_path)
+```
+
+> The execution interface after building the instance.
+> **Parameter**
+>
+> > - video_path (str): path of the video files.
+>
+> **Return Value**
+>
+> > - tuple(str, str): the former is the save path of each frame of the video after super resolution, the latter is the save path of the video after super resolution.
+
+## ppgan.apps.IconVSRPredictor
+
+```python
+ppgan.apps.IconVSRPredictor(output='output', weight_path=None, num_frames=10)
+```
+
+> Build the instance of IconVSR. IconVSR is a VSR model expanded by BasicVSR. For more details, see the paper, BasicVSR: The Search for Essential Components in Video Super-Resolution and Beyond (https://arxiv.org/pdf/2012.02181.pdf).  The interface imposes 4x super resolution on the input video. The recommended video format is mp4.
+>
+> **Parameter**
+>
+> ```
+> from ppgan.apps import IconVSRPredictor
+> sr = IconVSRPredictor()
+> # test a video file
+> sr.run("docs/imgs/test.mp4")
+> ```
+> **参数**
+>
+> > - output (str):  path of the output image, default: output. Note that the path should be set as output/EDVR.
+> > - weight_path (str): path of the model, default: None，pre-trained integral model will then be automatically downloaded.
+> > - num_frames (int): the number of input frames of the PPMSVSR model, the default value: 10. Note that the larger the num_frames, the better the effect of the video after super resolution.
+```python
+run(video_path)
+```
+
+> The execution interface after building the instance.
+> **Parameter**
+>
+> > - video_path (str): path of the video files.
+>
+> **Return Value**
+>
+> > - tuple(str, str): the former is the save path of each frame of the video after super resolution, the latter is the save path of the video after super resolution.
+
+
+## ppgan.apps.BasiVSRPlusPlusPredictor
+
+```python
+ppgan.apps.BasiVSRPlusPlusPredictor(output='output', weight_path=None, num_frames=10)
+```
+
+> Build the instance of BasiVSRPlusPlus. BasiVSRPlusPlus is a model designed for video super resolution. For more details, see the paper, BasicVSR++: Improving Video Super-Resolution with Enhanced Propagation and Alignment (https://arxiv.org/pdf/2104.13371v1.pdf).  The interface imposes 4x super resolution on the input video. The recommended video format is mp4.
+>
+> **Parameter**
+>
+> ```
+> from ppgan.apps import BasiVSRPlusPlusPredictor
+> sr = BasiVSRPlusPlusPredictor()
+> # test a video file
+> sr.run("docs/imgs/test.mp4")
+> ```
+> **参数**
+>
+> > - output (str):  path of the output image, default: output. Note that the path should be set as output/EDVR.
+> > - weight_path (str): path of the model, default: None，pre-trained integral model will then be automatically downloaded.
+> > - num_frames (int): the number of input frames of the PPMSVSR model, the default value: 10. Note that the larger the num_frames, the better the effect of the video after super resolution.
+```python
+run(video_path)
+```
+
+> The execution interface after building the instance.
+> **Parameter**
+>
+> > - video_path (str): path of the video files.
+>
+> **Return Value**
+>
+> > - tuple(str, str): the former is the save path of each frame of the video after super resolution, the latter is the save path of the video after super resolution.
+
 
 
 ## ppgan.apps.DAINPredictor

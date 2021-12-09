@@ -8,14 +8,14 @@ PaddleGAN提供一系列影像修复能力，包括 **[图片上色](./photo_col
 
 ```
 cd applications
-python tools/video-enhance.py --input you_video_path.mp4 --process_order DAIN DeOldify EDVR --output output_dir
+python tools/video-enhance.py --input you_video_path.mp4 --process_order DAIN DeOldify PPMSVSR --output output_dir
 ```
 
 ### **参数**
 
 - `--input (str)`: 输入的视频路径。
 - `--output (str)`: 输出的视频路径。
-- `--process_order`: 调用的模型名字和顺序，比如输入为 `DAIN DeOldify EDVR`，则会顺序调用 `DAINPredictor` `DeOldifyPredictor` `EDVRPredictor` 。
+- `--process_order`: 调用的模型名字和顺序，比如输入为 `DAIN DeOldify PPMSVSR`，则会顺序调用 `DAINPredictor` `DeOldifyPredictor` `PPMSVSRPredictor` 。
 
 <div align='center'>
   <img src='https://user-images.githubusercontent.com/48054808/117925494-e9a70400-b329-11eb-9f38-a48ef946a3a4.gif' width='600'>
