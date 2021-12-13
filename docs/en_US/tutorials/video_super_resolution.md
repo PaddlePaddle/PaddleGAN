@@ -7,9 +7,9 @@
 
 ### 🔥 PP-MSVSR 🔥
   [PP-MSVSR](https://arxiv.org/pdf/2112.02828.pdf) is a multi-stage VSR deep architecture,  with local fusion module, auxiliary loss and refined align module to refine the enhanced result progressively. Specifically, in order to strengthen the fusion of features across frames in feature propagation, a local fusion module is designed in stage-1 to perform local feature fusion before feature propagation. Moreover, an auxiliary loss in stage-2 is introduced to make the features obtained by the propagation module reserve more correlated information connected to the HR space, and introduced a refined align module in stage-3 to make full use of the feature information of the previous stage. Extensive experiments substantiate that PP-MSVSR achieves a promising performance of Vid4 datasets, which PSNR metric can achieve 28.13 with only 1.45M parameters.
-  
+
   Additionally, [PP-MSVSR](https://arxiv.org/pdf/2112.02828.pdf) provides two different models with 1.45M and 7.4M parameters in order to satisfy different requirements.
-  
+
 ### EDVR
   [EDVR](https://arxiv.org/pdf/1905.02716.pdf) wins the champions and outperforms the second place by a large margin in all four tracks in the NTIRE19 video restoration and enhancement challenges. The main difficulties of video super-resolution from two aspects: (1) how to align multiple frames given large motions, and (2) how to effectively fuse different frames with diverse motion and blur. First, to handle large motions, EDVR devise a Pyramid, Cascading and Deformable (PCD) alignment module, in which frame alignment is done at the feature level using deformable convolutions in a coarse-to-fine manner. Second, EDVR propose a Temporal and Spatial Attention (TSA) fusion module, in which attention is applied both temporally and spatially, so as to emphasize important features for subsequent restoration.
 
@@ -203,7 +203,7 @@ VSR quantitative comparis on the Vimeo90K, Vid4, UDM10
     }
   ```
 
-- 4. [PP-MSVSR: Multi-Stage Video Super-Resolution]()
+- 4. [PP-MSVSR: Multi-Stage Video Super-Resolution](https://arxiv.org/pdf/2112.02828.pdf)
 
   ```
   @article{jiang2021PP-MSVSR,

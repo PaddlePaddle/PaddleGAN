@@ -48,6 +48,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 - 💛 **最新发布** 💛
 
   👀 **视频超分SOTA算法[PP-MSVSR](./docs/zh_CN/tutorials/video_super_resolution.md)：一行命令从"马赛克"到"高清影像"** 👀
+  - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/3205183)**
   <div align='center'>
     <img src='https://user-images.githubusercontent.com/48054808/144848981-00c6ad21-0702-4381-9544-becb227ed9f0.gif' width='600'/>
   </div>
