@@ -51,6 +51,12 @@ def parse_args():
         type=str,
         help="The path prefix of inference model to be used.",
     )
+    parser.add_argument(
+        "--export_serving_model",
+        default=False,
+        type=bool,
+        help="export serving model.",
+    )
     args = parser.parse_args()
     return args
 
@@ -64,7 +70,7 @@ def main(args, cfg):
     for net_name, net in model.nets.items():
         if net_name in state_dicts:
             net.set_state_dict(state_dicts[net_name])
-    model.export_model(cfg.export_model, args.output_dir, inputs_size)
+    model.export_model(cfg.export_model, args.output_dir, inputs_size, args.export_serving_model)
 
 
 if __name__ == "__main__":

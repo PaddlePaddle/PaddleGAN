@@ -183,7 +183,7 @@ class BaseModel(ABC):
                 for param in net.parameters():
                     param.trainable = requires_grad
 
-    def export_model(self, export_model, output_dir=None, inputs_size=[]):
+    def export_model(self, export_model, output_dir=None, inputs_size=[], export_serving_model=False):
         inputs_num = 0
         for net in export_model:
             input_spec = [
@@ -201,3 +201,16 @@ class BaseModel(ABC):
                 os.path.join(
                     output_dir, '{}_{}'.format(self.__class__.__name__.lower(),
                                                net["name"])))
+            if export_serving_model:
+                from paddle_serving_client.io import inference_model_to_serving
+                model_name = '{}_{}'.format(self.__class__.__name__.lower(),
+                                                    net["name"])
+
+                inference_model_to_serving(
+                    dirname=output_dir,
+                    serving_server="{}/{}/serving_server".format(output_dir,
+                                                                model_name),
+                    serving_client="{}/{}/serving_client".format(output_dir,
+                                                                model_name),
+                    model_filename="{}.pdmodel".format(model_name),
+                    params_filename="{}.pdiparams".format(model_name))

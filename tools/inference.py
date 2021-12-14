@@ -58,11 +58,61 @@ def parse_args():
                         default=None,
                         help='fix random numbers by setting seed\".'
     )
+    # for tensorRT
+    parser.add_argument(
+        "--run_mode",
+        default="fluid",
+        type=str,
+        choices=["fluid", "trt_fp32", "trt_fp16"],
+        help="mode of running(fluid/trt_fp32/trt_fp16)")
+    parser.add_argument(
+        "--trt_min_shape",
+        default=1,
+        type=int,
+        help="trt_min_shape for tensorRT")
+    parser.add_argument(
+        "--trt_max_shape",
+        default=1280,
+        type=int,
+        help="trt_max_shape for tensorRT")
+    parser.add_argument(
+        "--trt_opt_shape",
+        default=640,
+        type=int,
+        help="trt_opt_shape for tensorRT")
+    parser.add_argument(
+        "--min_subgraph_size",
+        default=3,
+        type=int,
+        help="trt_opt_shape for tensorRT")
+    parser.add_argument(
+        "--batch_size",
+        default=1,
+        type=int,
+        help="batch_size for tensorRT")
+    parser.add_argument(
+        "--use_dynamic_shape",
+        dest="use_dynamic_shape",
+        action="store_true",
+        help="use_dynamic_shape for tensorRT")
+    parser.add_argument(
+        "--trt_calib_mode",
+        dest="trt_calib_mode",
+        action="store_true",
+        help="trt_calib_mode for tensorRT")
     args = parser.parse_args()
     return args
 
 
-def create_predictor(model_path, device="gpu"):
+def create_predictor(model_path, device="gpu",
+                   run_mode='fluid',
+                   batch_size=1,
+                   min_subgraph_size=3,
+                   use_dynamic_shape=False,
+                   trt_min_shape=1,
+                   trt_max_shape=1280,
+                   trt_opt_shape=640,
+                   trt_calib_mode=False):
     config = paddle.inference.Config(model_path + ".pdmodel",
                                      model_path + ".pdiparams")
     if device == "gpu":
@@ -73,6 +123,34 @@ def create_predictor(model_path, device="gpu"):
         config.enable_xpu(100)
     else:
         config.disable_gpu()
+    
+    precision_map = {
+        'trt_int8': paddle.inference.Config.Precision.Int8,
+        'trt_fp32': paddle.inference.Config.Precision.Float32,
+        'trt_fp16': paddle.inference.Config.Precision.Half
+    }
+    if run_mode in precision_map.keys():
+        config.enable_tensorrt_engine(
+            workspace_size=1 << 25,
+            max_batch_size=batch_size,
+            min_subgraph_size=min_subgraph_size,
+            precision_mode=precision_map[run_mode],
+            use_static=False,
+            use_calib_mode=trt_calib_mode)
+
+        if use_dynamic_shape:
+            min_input_shape = {
+                'image': [batch_size, 3, trt_min_shape, trt_min_shape]
+            }
+            max_input_shape = {
+                'image': [batch_size, 3, trt_max_shape, trt_max_shape]
+            }
+            opt_input_shape = {
+                'image': [batch_size, 3, trt_opt_shape, trt_opt_shape]
+            }
+            config.set_trt_dynamic_shape_info(min_input_shape, max_input_shape,
+                                              opt_input_shape)
+            print('trt set dynamic shape done!')
 
     predictor = paddle.inference.create_predictor(config)
     return predictor
@@ -95,11 +173,21 @@ def main():
         random.seed(args.seed)
         np.random.seed(args.seed)    
     cfg = get_config(args.config_file, args.opt)
-    predictor = create_predictor(args.model_path, args.device)
+    predictor = create_predictor(args.model_path, 
+                                 args.device, 
+                                 args.run_mode,
+                                 args.batch_size,
+                                 args.min_subgraph_size,
+                                 args.use_dynamic_shape,
+                                 args.trt_min_shape,
+                                 args.trt_max_shape,
+                                 args.trt_opt_shape,
+                                 args.trt_calib_mode)
     input_handles = [
         predictor.get_input_handle(name)
         for name in predictor.get_input_names()
     ]
+
     output_handle = predictor.get_output_handle(predictor.get_output_names()[0])
     test_dataloader = build_dataloader(cfg.dataset.test,
                                        is_train=False,
@@ -196,9 +284,12 @@ def main():
             lq = data['lq'].numpy()
             input_handles[0].copy_from_cpu(lq)
             predictor.run()
+            if len(predictor.get_output_names()) > 1:
+                output_handle = predictor.get_output_handle(predictor.get_output_names()[-1])
             prediction = output_handle.copy_to_cpu()
             prediction = paddle.to_tensor(prediction)
             _, t, _, _, _ = prediction.shape
+
             out_img = []
             gt_img = []
             for ti in range(t):
