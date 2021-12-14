@@ -36,7 +36,6 @@ dataset:
     batch_size: 2  #8 gpus
     dataset:
       name: VSRVimeo90KDataset
-      # mode: train
       lq_folder: data/vimeo90k/vimeo_septuplet_BD_matlabLRx4/sequences
       gt_folder: data/vimeo90k/vimeo_septuplet/sequences
       ann_file: data/vimeo90k/vimeo_septuplet/sep_trainlist.txt
@@ -62,7 +61,7 @@ dataset:
               keys: [image, image]
             - name: MirrorVideoSequence
             - name: NormalizeSequence
-              mean: [0., .0, 0.]
+              mean: [0., 0., 0.]
               std: [255., 255., 255.]
               keys: [image, image]
 
@@ -89,7 +88,7 @@ dataset:
             - name: TransposeSequence
               keys: [image, image]
             - name: NormalizeSequence
-              mean: [0., .0, 0.]
+              mean: [0., 0., 0.]
               std: [255., 255., 255.]
               keys: [image, image]
 

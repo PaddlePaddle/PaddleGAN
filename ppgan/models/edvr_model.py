@@ -48,7 +48,7 @@ class EDVRModel(BaseSRModel):
         self.visual_items['lq+1'] = self.lq[:, 3, :, :, :]
         self.visual_items['lq+2'] = self.lq[:, 4, :, :, :]
         if 'gt' in input:
-            self.gt = input['gt']
+            self.gt = input['gt'][:, 0, :, :, :]
             self.visual_items['gt'] = self.gt
         self.image_paths = input['lq_path']
 

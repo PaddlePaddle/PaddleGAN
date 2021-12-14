@@ -19,47 +19,79 @@ model:
     front_RBs: 5
     back_RBs: 40
     center: 2
-    predeblur: True  #False
-    HR_in: True  #False
+    predeblur: True
+    HR_in: True
     w_TSA: False
   pixel_criterion:
     name: CharbonnierLoss
 
 dataset:
   train:
-    name: REDSDataset
-    mode: train
-    gt_folder: data/REDS/train_sharp/X4
-    lq_folder: data/REDS/train_blur/X4
-    img_format: png
-    crop_size: 256
-    interval_list: [1]
-    random_reverse: False
-    number_frames: 5
-    use_flip: True
-    use_rot: True
-    buf_size: 1024
-    scale: 1
-    fix_random_seed: 10
+    name: RepeatDataset
+    times: 1000
     num_workers: 6
-    batch_size: 8
+    batch_size: 8  #4 gpus
+    dataset:
+      name: VSRREDSDataset
+      lq_folder: data/REDS/train_sharp_bicubic/X4
+      gt_folder: data/REDS/train_sharp/X4
+      ann_file: data/REDS/meta_info_REDS_GT.txt
+      num_frames: 5
+      val_partition: REDS4
+      test_mode: False
+      preprocess:
+        - name: GetFrameIdx
+          interval_list: [1]
+          frames_per_clip: 99
+        - name: ReadImageSequence
+          key: lq
+        - name: ReadImageSequence
+          key: gt
+        - name: Transforms
+          input_keys: [lq, gt]
+          pipeline:
+            - name: SRPairedRandomCrop
+              gt_patch_size: 256
+              scale: 1
+              keys: [image, image]
+            - name: PairedRandomHorizontalFlip
+              keys: [image, image]
+            - name: PairedRandomVerticalFlip
+              keys: [image, image]
+            - name: PairedRandomTransposeHW
+              keys: [image, image]
+            - name: TransposeSequence
+              keys: [image, image]
+            - name: NormalizeSequence
+              mean: [0., 0., 0.]
+              std: [255., 255., 255.]
+              keys: [image, image]
 
 
   test:
-    name: REDSDataset
-    mode: test
+    name: VSRREDSDataset
+    lq_folder: data/REDS/REDS4_test_sharp_bicubic/X4
     gt_folder: data/REDS/REDS4_test_sharp/X4
-    lq_folder: data/REDS/REDS4_test_blur/X4
-    img_format: png
-    interval_list: [1]
-    random_reverse: False
-    number_frames: 5
-    batch_size: 1
-    use_flip: False
-    use_rot: False
-    buf_size: 1024
-    scale: 1
-    fix_random_seed: 10
+    ann_file: data/REDS/meta_info_REDS_GT.txt
+    num_frames: 5
+    val_partition: REDS4
+    test_mode: True
+    preprocess:
+        - name: GetFrameIdxwithPadding
+          padding: reflection_circle
+        - name: ReadImageSequence
+          key: lq
+        - name: ReadImageSequence
+          key: gt
+        - name: Transforms
+          input_keys: [lq, gt]
+          pipeline:
+            - name: TransposeSequence
+              keys: [image, image]
+            - name: NormalizeSequence
+              mean: [0., 0., 0.]
+              std: [255., 255., 255.]
+              keys: [image, image]
 
 lr_scheduler:
   name: CosineAnnealingRestartLR
