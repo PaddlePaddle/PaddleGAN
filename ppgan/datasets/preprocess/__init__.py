@@ -1,4 +1,4 @@
-from .io import LoadImageFromFile, ReadImageSequence, GetNeighboringFramesIdx
+from .io import LoadImageFromFile, ReadImageSequence, GetNeighboringFramesIdx, GetFrameIdx, GetFrameIdxwithPadding
 from .transforms import (PairedRandomCrop, PairedRandomHorizontalFlip,
                          PairedRandomVerticalFlip, PairedRandomTransposeHW,
                          SRPairedRandomCrop, SplitPairedImage, SRNoise,

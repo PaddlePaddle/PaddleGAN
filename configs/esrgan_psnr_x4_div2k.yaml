@@ -44,7 +44,7 @@ dataset:
           - name: Transpose
             keys: [image, image]
           - name: Normalize
-            mean: [0., .0, 0.]
+            mean: [0., 0., 0.]
             std: [255., 255., 255.]
             keys: [image, image]
   test:
@@ -63,7 +63,7 @@ dataset:
           - name: Transpose
             keys: [image, image]
           - name: Normalize
-            mean: [0., .0, 0.]
+            mean: [0., 0., 0.]
             std: [255., 255., 255.]
             keys: [image, image]
 
