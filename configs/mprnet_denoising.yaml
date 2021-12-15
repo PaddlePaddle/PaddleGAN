@@ -5,7 +5,7 @@ model:
   name: MPRModel
   generator:
     name: MPRNet
-    n_feat: 96
+    n_feat: 80
     scale_unetfeats: 48
     scale_orsnetfeats: 32
 
@@ -17,14 +17,14 @@ model:
 dataset:
   train:
     name: MPRTrain
-    rgb_dir: 'data/GoPro/train'
+    rgb_dir: 'data/SIDD/train'
     num_workers: 16
-    batch_size: 2 # 8GPUs
+    batch_size: 4 # 4GPUs
     img_options:
       patch_size: 256
   test:
     name: MPRTrain
-    rgb_dir: 'data/GoPro/test'
+    rgb_dir: 'data/SIDD/val'
     num_workers: 16
     batch_size: 4
     img_options:

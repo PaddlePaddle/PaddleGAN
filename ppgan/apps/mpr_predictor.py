@@ -55,13 +55,11 @@ model_cfgs = {
 
 class MPRPredictor(BasePredictor):
     def __init__(self,
-                 images_path=None,
                  output_path='output_dir',
                  weight_path=None,
                  seed=None,
                  task=None):
         self.output_path = output_path
-        self.images_path = images_path
         self.task = task
         self.max_size = 640
         self.img_multiple_of = 8
@@ -108,7 +106,7 @@ class MPRPredictor(BasePredictor):
             img = img.resize((dw, dh))
         return img
 
-    def run(self):
+    def run(self, images_path=None):
         os.makedirs(self.output_path, exist_ok=True)
         task_path = os.path.join(self.output_path, self.task)
         os.makedirs(task_path, exist_ok=True)

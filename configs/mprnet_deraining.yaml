@@ -5,9 +5,9 @@ model:
   name: MPRModel
   generator:
     name: MPRNet
-    n_feat: 96
-    scale_unetfeats: 48
-    scale_orsnetfeats: 32
+    n_feat: 40
+    scale_unetfeats: 20
+    scale_orsnetfeats: 16
 
   char_criterion:
     name: CharbonnierLoss
@@ -17,14 +17,14 @@ model:
 dataset:
   train:
     name: MPRTrain
-    rgb_dir: 'data/GoPro/train'
+    rgb_dir: 'data/Synthetic_Rain_Datasets/train'
     num_workers: 16
-    batch_size: 2 # 8GPUs
+    batch_size: 4 # 4GPUs
     img_options:
       patch_size: 256
   test:
     name: MPRTrain
-    rgb_dir: 'data/GoPro/test'
+    rgb_dir: 'data/Synthetic_Rain_Datasets/test/Rain100L'
     num_workers: 16
     batch_size: 4
     img_options:
