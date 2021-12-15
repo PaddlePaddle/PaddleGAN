@@ -34,7 +34,7 @@ dataset:
     batch_size: 8  #4 gpus
     dataset:
       name: VSRREDSDataset
-      lq_folder: data/REDS/train_sharp_bicubic/X4
+      lq_folder: data/REDS/train_blur/X4
       gt_folder: data/REDS/train_sharp/X4
       ann_file: data/REDS/meta_info_REDS_GT.txt
       num_frames: 5
@@ -71,7 +71,7 @@ dataset:
 
   test:
     name: VSRREDSDataset
-    lq_folder: data/REDS/REDS4_test_sharp_bicubic/X4
+    lq_folder: data/REDS/REDS4_test_blur/X4
     gt_folder: data/REDS/REDS4_test_sharp/X4
     ann_file: data/REDS/meta_info_REDS_GT.txt
     num_frames: 5
