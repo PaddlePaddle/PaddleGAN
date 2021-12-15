@@ -39,14 +39,17 @@ GoPro
 
 ```
 
-The Denoising training datasets is SIDD, an image denoising datasets, containing 30,000 noisy images from 10 different lighting conditions, which can be downloaded from [here](https://www.eecs.yorku.ca/~kamel/sidd/dataset.php).
+The Denoising training datasets is SIDD, an image denoising datasets, containing 30,000 noisy images from 10 different lighting conditions, which can be downloaded from [training datasets](https://www.eecs.yorku.ca/~kamel/sidd/dataset.php) and [Test datasets](https://drive.google.com/drive/folders/1S44fHXaVxAYW3KLNxK41NYCnyX9S79su).
 After downloading, decompress it to the data directory. After decompression, the structure of `SIDDdataset` is as following:
 
 ```sh
 SIDD
 ├── train
-├── val
-└── test
+│   ├── input
+│   └── target
+└── val
+    ├── input
+    └── target
 
 ```
 

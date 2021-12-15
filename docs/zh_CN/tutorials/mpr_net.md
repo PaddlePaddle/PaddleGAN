@@ -39,14 +39,17 @@ GoPro
 
 ```
 
-Denoising训练数据是SIDD，一个图像去噪数据集，包含来自10个不同光照条件下的3万幅噪声图像，可以从[这里](https://www.eecs.yorku.ca/~kamel/sidd/dataset.php)下载。
+Denoising训练数据是SIDD，一个图像去噪数据集，包含来自10个不同光照条件下的3万幅噪声图像，可以从[训练数据集下载](https://www.eecs.yorku.ca/~kamel/sidd/dataset.php)和[测试数据集下载](https://drive.google.com/drive/folders/1S44fHXaVxAYW3KLNxK41NYCnyX9S79su)下载。
 下载后解压到data目录下，解压完成后数据分布如下所示：
 
 ```sh
 SIDD
 ├── train
-├── val
-└── test
+│   ├── input
+│   └── target
+└── val
+    ├── input
+    └── target
 
 ```
 
