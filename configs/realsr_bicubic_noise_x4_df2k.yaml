@@ -61,7 +61,7 @@ dataset:
           - name: Transpose
             keys: [image, image]
           - name: Normalize
-            mean: [0., .0, 0.]
+            mean: [0., 0., 0.]
             std: [255., 255., 255.]
             keys: [image, image]
           - name: SRNoise
@@ -84,7 +84,7 @@ dataset:
           - name: Transpose
             keys: [image, image]
           - name: Normalize
-            mean: [0., .0, 0.]
+            mean: [0., 0., 0.]
             std: [255., 255., 255.]
             keys: [image, image]
 

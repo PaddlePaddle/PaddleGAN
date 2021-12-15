@@ -53,7 +53,7 @@ dataset:
               keys: [image, image]
             - name: MirrorVideoSequence
             - name: NormalizeSequence
-              mean: [0., .0, 0.]
+              mean: [0., 0., 0.]
               std: [255., 255., 255.]
               keys: [image, image]
 
@@ -80,7 +80,7 @@ dataset:
             - name: TransposeSequence
               keys: [image, image]
             - name: NormalizeSequence
-              mean: [0., .0, 0.]
+              mean: [0., 0., 0.]
               std: [255., 255., 255.]
               keys: [image, image]
 
