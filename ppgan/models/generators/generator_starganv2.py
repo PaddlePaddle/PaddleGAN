@@ -16,22 +16,6 @@ from ppgan.utils.download import get_path_from_url
 FAN_WEIGHT_URL = "https://paddlegan.bj.bcebos.com/models/wing.pdparams"
 
 
-class AvgPool2D(nn.Layer):
-    """
-    AvgPool2D
-    Peplace avg_pool2d because paddle.grad will cause avg_pool2d to report an error when training.
-    In the future Paddle framework will supports avg_pool2d and remove this class.
-    """
-    def __init__(self):
-        super(AvgPool2D, self).__init__()
-        self.filter = paddle.to_tensor([[1, 1], [1, 1]], dtype='float32')
-
-    def forward(self, x):
-        filter = self.filter.unsqueeze(0).unsqueeze(1).tile(
-            [x.shape[1], 1, 1, 1])
-        return F.conv2d(x, filter, stride=2, padding=0, groups=x.shape[1]) / 4
-
-
 class ResBlk(nn.Layer):
     def __init__(self,
                  dim_in,
@@ -45,6 +29,7 @@ class ResBlk(nn.Layer):
         self.downsample = downsample
         self.learned_sc = dim_in != dim_out
         self._build_weights(dim_in, dim_out)
+        self.maxpool = nn.AvgPool2D(kernel_size=2)
 
     def _build_weights(self, dim_in, dim_out):
         self.conv1 = nn.Conv2D(dim_in, dim_in, 3, 1, 1)
@@ -63,7 +48,7 @@ class ResBlk(nn.Layer):
         if self.learned_sc:
             x = self.conv1x1(x)
         if self.downsample:
-            x = AvgPool2D()(x)
+            x = self.maxpool(x)
         return x
 
     def _residual(self, x):
@@ -72,7 +57,7 @@ class ResBlk(nn.Layer):
         x = self.actv(x)
         x = self.conv1(x)
         if self.downsample:
-            x = AvgPool2D()(x)
+            x = self.maxpool(x)
         if self.normalize:
             x = self.norm2(x)
         x = self.actv(x)

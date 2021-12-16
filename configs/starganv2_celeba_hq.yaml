@@ -33,7 +33,7 @@ model:
 dataset:
   train:
     name: StarGANv2Dataset
-    dataroot: data/stargan-v2/celeba_hq/train/
+    dataroot: data/celeba_hq/train/
     is_train: True
     num_workers: 8
     batch_size: 4
@@ -52,11 +52,11 @@ dataset:
             size: [*IMAGE_SIZE, *IMAGE_SIZE]
             scale: [0.8, 1.0]
             ratio: [0.9, 1.1]
-            interpolation: 'bilinear' 
+            interpolation: 'bilinear'
             keys: [image, image, image]
           - name: Resize
             size: [*IMAGE_SIZE, *IMAGE_SIZE]
-            interpolation: 'bilinear' 
+            interpolation: 'bilinear'
             keys: [image, image, image]
           - name: RandomHorizontalFlip
             prob: 0.5
@@ -70,7 +70,7 @@ dataset:
 
   test:
     name: StarGANv2Dataset
-    dataroot: data/stargan-v2/celeba_hq/val/
+    dataroot: data/celeba_hq/val/
     is_train: False
     num_workers: 8
     batch_size: 16
@@ -133,12 +133,12 @@ optimizer:
     weight_decay: 0.0001
 
 validate:
-  interval: 5000
+  interval: 3000
   save_img: false
 
 log_config:
-  interval: 5
-  visiual_interval: 100
+  interval: 100
+  visiual_interval: 3000
 
 snapshot_config:
   interval: 5
