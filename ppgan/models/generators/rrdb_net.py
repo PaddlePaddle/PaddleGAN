@@ -22,6 +22,26 @@ import paddle.nn.functional as F
 from .builder import GENERATORS
 
 
+def pixel_unshuffle(x, scale):
+    """ Pixel unshuffle function.
+
+    Args:
+        x (paddle.Tensor): Input feature.
+        scale (int): Downsample ratio.
+
+    Returns:
+        paddle.Tensor: the pixel unshuffled feature.
+    """
+    b, c, h, w = x.shape
+    out_channel = c * (scale**2)
+    assert h % scale == 0 and w % scale == 0
+    hh = h // scale
+    ww = w // scale
+    x_reshaped = x.reshape([b, c, hh, scale, ww, scale])
+    return x_reshaped.transpose([0, 1, 3, 5, 2,
+                                 4]).reshape([b, out_channel, hh, ww])
+
+
 class ResidualDenseBlock_5C(nn.Layer):
     def __init__(self, nf=64, gc=32, bias=True):
         super(ResidualDenseBlock_5C, self).__init__()
@@ -66,13 +86,21 @@ def make_layer(block, n_layers):
 
 @GENERATORS.register()
 class RRDBNet(nn.Layer):
-    def __init__(self, in_nc, out_nc, nf, nb, gc=32):
+    def __init__(self, in_nc, out_nc, nf, nb, gc=32, scale=4):
         super(RRDBNet, self).__init__()
+
+        self.scale = scale
+        if scale == 2:
+            in_nc = in_nc * 4
+        elif scale == 1:
+            in_nc = in_nc * 16
+
         RRDB_block_f = functools.partial(RRDB, nf=nf, gc=gc)
 
         self.conv_first = nn.Conv2D(in_nc, nf, 3, 1, 1, bias_attr=True)
         self.RRDB_trunk = make_layer(RRDB_block_f, nb)
         self.trunk_conv = nn.Conv2D(nf, nf, 3, 1, 1, bias_attr=True)
+
         #### upsampling
         self.upconv1 = nn.Conv2D(nf, nf, 3, 1, 1, bias_attr=True)
         self.upconv2 = nn.Conv2D(nf, nf, 3, 1, 1, bias_attr=True)
@@ -82,7 +110,14 @@ class RRDBNet(nn.Layer):
         self.lrelu = nn.LeakyReLU(negative_slope=0.2)
 
     def forward(self, x):
-        fea = self.conv_first(x)
+        if self.scale == 2:
+            fea = pixel_unshuffle(x, scale=2)
+        elif self.scale == 1:
+            fea = pixel_unshuffle(x, scale=4)
+        else:
+            fea = x
+
+        fea = self.conv_first(fea)
         trunk = self.trunk_conv(self.RRDB_trunk(fea))
         fea = fea + trunk
 
