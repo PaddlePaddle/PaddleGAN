@@ -1,4 +1,4 @@
-# epoch: 3000 for total batch size =16
+# epoch: 3000 for total batch size=16
 total_iters: 400000
 output_dir: output_dir
 
