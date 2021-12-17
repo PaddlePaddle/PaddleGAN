@@ -249,23 +249,25 @@ class CalcStyleLoss():
 class EdgeLoss():
     def __init__(self):
         k = paddle.to_tensor([[.05, .25, .4, .25, .05]])
-        self.kernel = paddle.matmul(k.t(),k).unsqueeze(0).tile([3,1,1,1])
+        self.kernel = paddle.matmul(k.t(), k).unsqueeze(0).tile([3, 1, 1, 1])
         self.loss = CharbonnierLoss()
 
     def conv_gauss(self, img):
         n_channels, _, kw, kh = self.kernel.shape
-        img = F.pad(img, [kw//2, kh//2, kw//2, kh//2], mode='replicate')
+        img = F.pad(img, [kw // 2, kh // 2, kw // 2, kh // 2], mode='replicate')
         return F.conv2d(img, self.kernel, groups=n_channels)
 
     def laplacian_kernel(self, current):
-        filtered    = self.conv_gauss(current)    # filter
-        down        = filtered[:,:,::2,::2]               # downsample
-        new_filter  = paddle.zeros_like(filtered)
-        new_filter[:,:,::2,::2] = down*4                  # upsample
-        filtered    = self.conv_gauss(new_filter) # filter
+        filtered = self.conv_gauss(current)  # filter
+        down = filtered[:, :, ::2, ::2]  # downsample
+        new_filter = paddle.zeros_like(filtered)
+        new_filter.stop_gradient = True
+        new_filter[:, :, ::2, ::2] = down * 4  # upsample
+        filtered = self.conv_gauss(new_filter)  # filter
         diff = current - filtered
         return diff
 
     def __call__(self, x, y):
+        y.stop_gradient = True
         loss = self.loss(self.laplacian_kernel(x), self.laplacian_kernel(y))
         return loss
