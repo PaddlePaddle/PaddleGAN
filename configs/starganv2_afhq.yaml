@@ -30,7 +30,7 @@ model:
 dataset:
   train:
     name: StarGANv2Dataset
-    dataroot: data/afhq/train
+    dataroot: data/stargan-v2/afhq/train
     is_train: True
     num_workers: 8
     batch_size: 4
@@ -67,7 +67,7 @@ dataset:
 
   test:
     name: StarGANv2Dataset
-    dataroot: data/afhq/val
+    dataroot: data/stargan-v2/afhq/val
     is_train: False
     num_workers: 8
     batch_size: 16

@@ -33,7 +33,7 @@ model:
 dataset:
   train:
     name: StarGANv2Dataset
-    dataroot: data/celeba_hq/train/
+    dataroot: data/stargan-v2/celeba_hq/train/
     is_train: True
     num_workers: 8
     batch_size: 4
@@ -70,7 +70,7 @@ dataset:
 
   test:
     name: StarGANv2Dataset
-    dataroot: data/celeba_hq/val/
+    dataroot: data/stargan-v2/celeba_hq/val/
     is_train: False
     num_workers: 8
     batch_size: 16
