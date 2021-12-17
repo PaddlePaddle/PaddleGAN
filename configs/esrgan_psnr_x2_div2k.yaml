@@ -1,0 +1,106 @@
+total_iters: 1000000
+output_dir: output_dir
+# tensor range for function tensor2img
+min_max:
+  (0., 1.)
+
+model:
+  name: BaseSRModel
+  generator:
+    name: RRDBNet
+    in_nc: 3
+    out_nc: 3
+    nf: 64
+    nb: 23
+    scale: 2
+  pixel_criterion:
+    name: L1Loss
+
+dataset:
+  train:
+    name: SRDataset
+    gt_folder: data/DIV2K/DIV2K_train_HR_sub
+    lq_folder: data/DIV2K/DIV2K_train_LR_bicubic/X2_sub
+    num_workers: 4
+    batch_size: 8
+    scale: 2
+    preprocess:
+      - name: LoadImageFromFile
+        key: lq
+      - name: LoadImageFromFile
+        key: gt
+      - name: Transforms
+        input_keys: [lq, gt]
+        pipeline:
+          - name: SRPairedRandomCrop
+            gt_patch_size: 128
+            scale: 2
+            keys: [image, image]
+          - name: PairedRandomHorizontalFlip
+            keys: [image, image]
+          - name: PairedRandomVerticalFlip
+            keys: [image, image]
+          - name: PairedRandomTransposeHW
+            keys: [image, image]
+          - name: Transpose
+            keys: [image, image]
+          - name: Normalize
+            mean: [0., .0, 0.]
+            std: [255., 255., 255.]
+            keys: [image, image]
+  test:
+    name: SRDataset
+    gt_folder: data/Set14/GTmod12
+    lq_folder: data/Set14/LRbicx2
+    scale: 2
+    preprocess:
+      - name: LoadImageFromFile
+        key: lq
+      - name: LoadImageFromFile
+        key: gt
+      - name: Transforms
+        input_keys: [lq, gt]
+        pipeline:
+          - name: Transpose
+            keys: [image, image]
+          - name: Normalize
+            mean: [0., .0, 0.]
+            std: [255., 255., 255.]
+            keys: [image, image]
+
+lr_scheduler:
+  name: CosineAnnealingRestartLR
+  learning_rate: 0.0002
+  periods: [250000, 250000, 250000, 250000]
+  restart_weights: [1, 1, 1, 1]
+  eta_min: !!float 1e-7
+
+optimizer:
+  name: Adam
+  # add parameters of net_name to optim
+  # name should in self.nets
+  net_names:
+    - generator
+  beta1: 0.9
+  beta2: 0.99
+
+validate:
+  interval: 5000
+  save_img: false
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      name: PSNR
+      crop_border: 2
+      test_y_channel: True
+    ssim:
+      name: SSIM
+      crop_border: 2
+      test_y_channel: True
+
+log_config:
+  interval: 100
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 5000

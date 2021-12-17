@@ -120,6 +120,10 @@ paddle模型使用DIV2K数据集训练，torch模型使用df2k和DIV2K数据集�
 | paddle  | 30.4574 / 0.8643 | 26.7204 / 0.7434 |
 | torch  | 30.2183 / 0.8643 | 26.8035 / 0.7445 |
 
+去模糊模型
+| 模型 | GoPro | 下载地址 |
+|---|---|---|
+| MPRNet  | 33.4360 / 0.9410 | [链接](https://paddlegan.bj.bcebos.com/models/MPR_Deblurring.pdparams) |
 
 <!-- ![](../../imgs/horse2zebra.png) -->
 

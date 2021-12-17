@@ -29,6 +29,7 @@ from ..utils.filesystem import makedirs, save, load
 from ..utils.timer import TimeAverager
 from ..utils.profiler import add_profiler_step
 
+
 class IterLoader:
     def __init__(self, dataloader):
         self._dataloader = dataloader
@@ -429,15 +430,35 @@ class Trainer:
     def load(self, weight_path):
         state_dicts = load(weight_path)
 
-        for net_name, net in self.model.nets.items():
-            if net_name in state_dicts:
-                net.set_state_dict(state_dicts[net_name])
-                self.logger.info(
-                    'Loaded pretrained weight for net {}'.format(net_name))
+        def is_dict_in_dict_weight(state_dict):
+            if isinstance(state_dict, dict) and len(state_dict) > 0:
+                val = list(state_dict.values())[0]
+                if isinstance(val, dict):
+                    return True
+                else:
+                    return False
             else:
-                self.logger.warning(
-                    'Can not find state dict of net {}. Skip load pretrained weight for net {}'
-                    .format(net_name, net_name))
+                return False
+
+        if is_dict_in_dict_weight(state_dicts):
+            for net_name, net in self.model.nets.items():
+                if net_name in state_dicts:
+                    net.set_state_dict(state_dicts[net_name])
+                    self.logger.info(
+                        'Loaded pretrained weight for net {}'.format(net_name))
+                else:
+                    self.logger.warning(
+                        'Can not find state dict of net {}. Skip load pretrained weight for net {}'
+                        .format(net_name, net_name))
+        else:
+            assert len(self.model.nets
+                       ) == 1, 'checkpoint only contain weight of one net, \
+                                                but model contains more than one net!'
+
+            net_name, net = list(self.model.nets.items())[0]
+            net.set_state_dict(state_dicts)
+            self.logger.info(
+                'Loaded pretrained weight for net {}'.format(net_name))
 
     def close(self):
         """
