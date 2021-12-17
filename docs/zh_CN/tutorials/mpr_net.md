@@ -85,11 +85,22 @@ python tools/main.py --config-file configs/mprnet_deblurring.yaml --evaluate-onl
 ```
 
 ## 3 结果展示
-| 任务      | 原始图像                            | 修复后图像                       |
-| -------- | ----------------------------------- | ---------------------------------- |
-| Deblurring|  |  |
-| Denoising|  |  |
-| Deraining|  |  |
+
+去模糊
+| 模型 | 数据集 | PSNR/SSIM |
+|---|---|---|
+| MPRNet | GoPro | 32.66/0.959 |
+
+去噪
+| 模型 | 数据集 | PSNR/SSIM |
+|---|---|---|
+| MPRNet | SIDD |  39.71 / 0.958 |
+
+去模糊
+| 模型 | 数据集 | PSNR/SSIM |
+|---|---|---|
+| MPRNet | Rain100L | 36.40 / 0.965 |
+
 
 ## 4 模型下载
 

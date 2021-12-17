@@ -26,8 +26,8 @@ dataset:
   test:
     name: MPRVal
     rgb_dir: 'data/GoPro/test'
-    num_workers: 4
-    batch_size: 2
+    num_workers: 1
+    batch_size: 1
     img_options:
       patch_size: 256
 
