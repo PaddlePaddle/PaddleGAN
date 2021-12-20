@@ -53,13 +53,13 @@ if [ ${MODE} = "lite_train_lite_infer" ];then
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/fom_lite.tar  --no-check-certificate --no-check-certificate
         cd ./data/ && tar xf fom_lite.tar && cd ../
     elif [ ${model_name} == "basicvsr" ]; then
-        rm -rf ./data/basicvsr*
-        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/basicvsr_lite.tar --no-check-certificate
-        cd ./data/ && tar xf basicvsr_lite.tar && cd ../
+        rm -rf ./data/reds*
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/reds_lite.tar --no-check-certificate
+        cd ./data/ && tar xf reds_lite.tar && cd ../
     elif [ ${model_name} == "msvsr" ]; then
-        rm -rf ./data/basicvsr*
-        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/basicvsr_lite.tar --no-check-certificate
-        cd ./data/ && tar xf basicvsr_lite.tar && cd ../
+        rm -rf ./data/reds*
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/reds_lite.tar --no-check-certificate
+        cd ./data/ && tar xf reds_lite.tar && cd ../
     fi
     
 elif [ ${MODE} = "whole_train_whole_infer" ];then
@@ -90,13 +90,13 @@ elif [ ${MODE} = "lite_train_whole_infer" ];then
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/ffhq.tar --no-check-certificate
         cd ./data/ && tar xf ffhq.tar && cd ../
     elif [ ${model_name} == "basicvsr" ]; then
-        rm -rf ./data/REDS*
-        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/basicvsr_lite.tar --no-check-certificate
-        cd ./data/ && tar xf basicvsr_lite.tar && cd ../
+        rm -rf ./data/reds*
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/reds_lite.tar --no-check-certificate
+        cd ./data/ && tar xf reds_lite.tar && cd ../
     elif [ ${model_name} == "msvsr" ]; then
-        rm -rf ./data/REDS*
-        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/basicvsr_lite.tar --no-check-certificate
-        cd ./data/ && tar xf basicvsr_lite.tar && cd ../
+        rm -rf ./data/reds*
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/reds_lite.tar --no-check-certificate
+        cd ./data/ && tar xf reds_lite.tar && cd ../
     fi
 elif [ ${MODE} = "whole_infer" ];then
     if [ ${model_name} = "pix2pix" ]; then
@@ -127,19 +127,19 @@ elif [ ${MODE} = "whole_infer" ];then
         cd ./inference && tar xf stylegan2_1024.tar && cd ../
         cd ./data/ && tar xf ffhq.tar && cd ../
     elif [ ${model_name} == "basicvsr" ]; then
-        rm -rf ./data/basic*
+        rm -rf ./data/reds*
         rm -rf ./inference/basic*
-        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/basicvsr_lite_test.tar --no-check-certificate
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/reds_lite.tar --no-check-certificate
         wget -nc  -P ./inference https://paddlegan.bj.bcebos.com/static_model/basicvsr.tar --no-check-certificate
         cd ./inference && tar xf basicvsr.tar && cd ../
-        cd ./data/ && tar xf basicvsr_lite_test.tar && cd ../
+        cd ./data/ && tar xf reds_lite.tar && cd ../
     elif [ ${model_name} == "msvsr" ]; then
-        rm -rf ./data/basic*
+        rm -rf ./data/reds*
         rm -rf ./inference/msvsr*
-        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/basicvsr_lite_test.tar --no-check-certificate
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/reds_lite.tar --no-check-certificate
         wget -nc  -P ./inference https://paddlegan.bj.bcebos.com/static_model/msvsr.tar --no-check-certificate
         cd ./inference && tar xf msvsr.tar && cd ../
-        cd ./data/ && tar xf basicvsr_lite_test.tar && cd ../
+        cd ./data/ && tar xf reds_lite.tar && cd ../
     fi
     
 fi
