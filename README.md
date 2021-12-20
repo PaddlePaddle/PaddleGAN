@@ -23,7 +23,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 ## 🚀 Recent Updates
 
-- 🔥 **Latest Release: [PP-MSVSR](./docs/en_US/tutorials/video_super_resolution.md)** 🔥 
+- 🔥 **Latest Release: [PP-MSVSR](./docs/en_US/tutorials/video_super_resolution.md)** 🔥
     - **Video Super Resolution SOTA models**
   <div align='center'>
     <img src='https://user-images.githubusercontent.com/48054808/144848981-00c6ad21-0702-4381-9544-becb227ed9f0.gif' width='600'/>
@@ -106,6 +106,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 * [Video Super Resolution(VSR)](./docs/en_US/tutorials/video_super_resolution.md)
 * [StyleGAN2](./docs/en_US/tutorials/styleganv2.md)
 * [Pixel2Style2Pixel](./docs/en_US/tutorials/pixel2style2pixel.md)
+* [StarGANv2](docs/en_US/tutorials/starganv2.md)
 
 
 ## Composite Application

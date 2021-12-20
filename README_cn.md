@@ -121,6 +121,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   * 照片动漫化：[AnimeGANv2](./docs/zh_CN/tutorials/animegan.md)
   * 人像动漫化：[U-GAT-IT](./docs/zh_CN/tutorials/ugatit.md)
   * 人脸卡通化：[Photo2Cartoon](docs/zh_CN/tutorials/photo2cartoon.md)
+  * 多种风格迁移：[StarGANv2](docs/zh_CN/tutorials/starganv2.md)
 * 动作迁移
   * 人脸表情迁移：[First Order Motion Model](./docs/zh_CN/tutorials/motion_driving.md)
   * 唇形合成：[Wav2Lip](docs/zh_CN/tutorials/wav2lip.md)
