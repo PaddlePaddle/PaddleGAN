@@ -18,14 +18,14 @@ model:
 dataset:
   train:
     name: MPRTrain
-    rgb_dir: 'data/GoPro/train'
+    rgb_dir: data/GoPro/train
     num_workers: 4
     batch_size: 2 # 8GPUs
     img_options:
       patch_size: 256
   test:
     name: MPRVal
-    rgb_dir: 'data/GoPro/test'
+    rgb_dir: data/GoPro/test
     num_workers: 1
     batch_size: 1
     img_options:

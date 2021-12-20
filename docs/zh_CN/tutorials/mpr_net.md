@@ -89,17 +89,17 @@ python tools/main.py --config-file configs/mprnet_deblurring.yaml --evaluate-onl
 去模糊
 | 模型 | 数据集 | PSNR/SSIM |
 |---|---|---|
-| MPRNet | GoPro | 32.66/0.959 |
+| MPRNet | GoPro | 33.4360/0.9410 |
 
 去噪
 | 模型 | 数据集 | PSNR/SSIM |
 |---|---|---|
-| MPRNet | SIDD |  39.71 / 0.958 |
+| MPRNet | SIDD |  43.6100 / 0.9586 |
 
-去模糊
+去雨
 | 模型 | 数据集 | PSNR/SSIM |
 |---|---|---|
-| MPRNet | Rain100L | 36.40 / 0.965 |
+| MPRNet | Rain100L | 36.2848 / 0.9651 |
 
 
 ## 4 模型下载

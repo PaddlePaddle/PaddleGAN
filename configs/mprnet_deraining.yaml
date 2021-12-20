@@ -17,16 +17,16 @@ model:
 dataset:
   train:
     name: MPRTrain
-    rgb_dir: 'data/Synthetic_Rain_Datasets/train'
+    rgb_dir: data/Synthetic_Rain_Datasets/train
     num_workers: 16
     batch_size: 4 # 4GPUs
     img_options:
       patch_size: 256
   test:
     name: MPRTrain
-    rgb_dir: 'data/Synthetic_Rain_Datasets/test/Rain100L'
-    num_workers: 16
-    batch_size: 4
+    rgb_dir: data/Synthetic_Rain_Datasets/test/Rain100L
+    num_workers: 1
+    batch_size: 1
     img_options:
       patch_size: 256
 
@@ -38,7 +38,7 @@ lr_scheduler:
   eta_min: !!float 1e-6
 
 validate:
-  interval: 10
+  interval: 5000
   save_img: false
 
   metrics:
