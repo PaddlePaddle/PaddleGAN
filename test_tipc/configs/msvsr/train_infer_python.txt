@@ -13,7 +13,7 @@ train_infer_img_dir:./data/msvsr_reds/test
 null:null
 ##
 trainer:norm_train
-norm_train:tools/main.py -c configs/msvsr_reds.yaml --seed 123 -o dataset.train.dataset.num_clips=2 dataset.train.num_workers=0 log_config.interval=1 snapshot_config.interval=5 dataset.train.dataset.number_frames=2 
+norm_train:tools/main.py -c configs/msvsr_reds.yaml --seed 123 -o dataset.train.num_workers=0 log_config.interval=1 snapshot_config.interval=5 dataset.train.dataset.num_frames=2 
 pact_train:null
 fpgm_train:null
 distill_train:null
@@ -37,8 +37,8 @@ inference_dir:multistagevsrmodel_generator
 train_model:./inference/msvsr/multistagevsrmodel_generator
 infer_export:null
 infer_quant:False
-inference:tools/inference.py --model_type msvsr -c configs/msvsr_reds.yaml --seed 123 -o dataset.test.num_clips=2 dataset.test.number_frames=2 --output_path test_tipc/output/
---device:gpu
+inference:tools/inference.py --model_type msvsr -c configs/msvsr_reds.yaml --seed 123 -o dataset.test.num_frames=2 --output_path test_tipc/output/
+--device:cpu
 null:null
 null:null
 null:null
