@@ -103,10 +103,14 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 * [Photo2Cartoon](./docs/en_US/tutorials/photo2cartoon.md)
 * [Wav2Lip](./docs/en_US/tutorials/wav2lip.md)
 * [Single Image Super Resolution(SISR)](./docs/en_US/tutorials/single_image_super_resolution.md)
+  * Including: RealSR, ESRGAN, LESRCNN, PAN, DRN
 * [Video Super Resolution(VSR)](./docs/en_US/tutorials/video_super_resolution.md)
+  * Including: ⭐ PP-MSVSR ⭐, EDVR, BasicVSR, BasicVSR++
 * [StyleGAN2](./docs/en_US/tutorials/styleganv2.md)
 * [Pixel2Style2Pixel](./docs/en_US/tutorials/pixel2style2pixel.md)
 * [StarGANv2](docs/en_US/tutorials/starganv2.md)
+* [MPR Net](./docs/en_US/tutorials/mpr_net.md)
+* [FaceEnhancement](./docs/en_US/tutorials/face_enhancement.md)
 
 
 ## Composite Application
