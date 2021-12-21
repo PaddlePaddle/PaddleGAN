@@ -125,16 +125,22 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 * 动作迁移
   * 人脸表情迁移：[First Order Motion Model](./docs/zh_CN/tutorials/motion_driving.md)
   * 唇形合成：[Wav2Lip](docs/zh_CN/tutorials/wav2lip.md)
-* 生成
+* 基础GAN
   * [DCGAN](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/ppgan/models/dc_gan_model.py)
   * WGAN
+* 人脸生成
   * 人脸生成：[StyleGAN2](./docs/zh_CN/tutorials/styleganv2.md)
-  * 图像编码：[Pixel2Style2Pixel](./docs/zh_CN/tutorials/pixel2style2pixel.md)
+  * 人脸编码：[Pixel2Style2Pixel](./docs/zh_CN/tutorials/pixel2style2pixel.md)
+  * 人脸增强：[FaceEnhancement](./docs/zh_CN/tutorials/face_enhancement.md)
+  * 人脸解析：[FaceParsing](./docs/zh_CN/tutorials/face_parse.md)
 * 分辨率提升
   * 单张图片超分：[Single Image Super Resolution(SISR)](./docs/zh_CN/tutorials/single_image_super_resolution.md)
+    * 包含模型：RealSR、ESRGAN、LESRCNN、PAN、DRN
   * 视频超分：[Video Super Resolution(VSR)](./docs/zh_CN/tutorials/video_super_resolution.md)
-* 语义分割
-  * 人脸解析：[FaceParsing](./docs/zh_CN/tutorials/face_parse.md)
+    * 包含模型：⭐ PP-MSVSR ⭐、EDVR、BasicVSR、BasicVSR++
+* 图像视频修复
+  * 图像去模糊去噪去雨：[MPR Net](./docs/zh_CN/tutorials/mpr_net.md)
+  * 视频去模糊：[EDVR](./docs/zh_CN/tutorials/video_super_resolution.md)
 
 ## 产业级应用
 
