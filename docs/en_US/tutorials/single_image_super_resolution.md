@@ -130,11 +130,6 @@ The metrics are PSNR / SSIM.
 | pan_x4  | 30.4574 / 0.8643 | 26.7204 / 0.7434 | 28.9187 / 0.8176 |
 | drns_x4  | 32.6684 / 0.8999 | 28.9037 / 0.7885 | - |
 
-Deblur models zoo
-| model | GoPro | Download Link |
-|---|---|---|
-| MPRNet  | 33.4360 / 0.9410 | [link](https://paddlegan.bj.bcebos.com/models/MPR_Deblurring.pdparams) |
-
 <!-- ![](../../imgs/horse2zebra.png) -->
 
 
