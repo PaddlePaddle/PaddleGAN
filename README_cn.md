@@ -47,18 +47,21 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 - 👶 **人脸编辑神器：[StyleGAN V2人脸属性编辑](./docs/zh_CN/tutorials/styleganv2editing.md)之年龄变换--时光穿梭机，一键实现变老变年轻** 👨‍🦳
   - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/3251280?channelType=0&channel=0)**
   <div align='center'>
-    <img src='https://user-images.githubusercontent.com/48054808/146649047-765ec085-0a2c-4c88-9527-744836448651.gif' width='600'/>
+    <img src='https://user-images.githubusercontent.com/48054808/146649047-765ec085-0a2c-4c88-9527-744836448651.gif' width='200'/>
   </div>
+
 -  👀 **视频超分SOTA算法[PP-MSVSR](./docs/zh_CN/tutorials/video_super_resolution.md)：一行命令从"马赛克"到"高清影像"** 👀
-  - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/3205183)**
+    - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/3205183)**
   <div align='center'>
-    <img src='https://user-images.githubusercontent.com/48054808/144848981-00c6ad21-0702-4381-9544-becb227ed9f0.gif' width='600'/>
+    <img src='https://user-images.githubusercontent.com/48054808/144848981-00c6ad21-0702-4381-9544-becb227ed9f0.gif' width='400'/>
   </div>
+
 - 😍 **人脸编辑神器：[StyleGAN V2人脸属性编辑](./docs/zh_CN/tutorials/styleganv2editing.md)之性别转换--怕什么孤单？和自己谈一场恋爱吧！** 😍
   - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/2565277?contributionType=1)**
   <div align='center'>
-    <img src='https://user-images.githubusercontent.com/48054808/141226707-58bd661e-2102-4fb7-8e18-c794a6b59ee8.gif' width='600'/>
+    <img src='https://user-images.githubusercontent.com/48054808/141226707-58bd661e-2102-4fb7-8e18-c794a6b59ee8.gif' width='400'/>
   </div>
+
 - 👩‍🚀 **宇宙漫游指南：[LapStyle](./docs/zh_CN/tutorials/lap_style.md)风格迁移带你「沉浸式」体验太空漫游** 👨‍🚀
 
   - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/2343740?contributionType=1)**
@@ -75,7 +78,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 
     <div align='center'>
-      <img src='https://ai-studio-static-online.cdn.bcebos.com/da1c51844ac048aa8d4fa3151be95215eee75d8bb488409d92ec17285b227c2c' width='250'/>
+      <img src='https://ai-studio-static-online.cdn.bcebos.com/da1c51844ac048aa8d4fa3151be95215eee75d8bb488409d92ec17285b227c2c' width='200'/>
     </div>
 
 - ⭐ **新增人脸融合能力，结合新版Frirst Order Motion，实现人脸完美融合并带有丰富表情(๑^ں^๑)** ⭐
@@ -83,7 +86,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/2254031 )**
 
   <div align='center'>
-    <img src='https://user-images.githubusercontent.com/48054808/128299870-66a73bb3-57a4-4985-aadc-8ddeab048145.gif' width='300'/>
+    <img src='https://user-images.githubusercontent.com/48054808/128299870-66a73bb3-57a4-4985-aadc-8ddeab048145.gif' width='200'/>
   </div>
 
 - 新增First Order Motion分辨率512清晰版本，并加上人脸增强特效，使得面部细节更清晰，详情见[教程](./docs/zh_CN/tutorials/motion_driving.md)。
@@ -93,7 +96,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   - 完整推理代码及教程见： https://github.com/wzmsltw/PaintTransformer
 
     <div align='center'>
-      <img src='https://user-images.githubusercontent.com/48054808/129904830-8b87e310-ea51-4aff-b29b-88920ee82447.png' width='700'/>
+      <img src='https://user-images.githubusercontent.com/48054808/129904830-8b87e310-ea51-4aff-b29b-88920ee82447.png' width='500'/>
     </div>
 
 ## 文档教程
