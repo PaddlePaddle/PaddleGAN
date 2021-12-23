@@ -23,8 +23,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   - **视频超分SOTA算法详解**
   - **视频传输大幅降本提速方案**
   - **影像修复视频超分案例实践**
-  - **直播link🔗：http://live.bilibili.com/21689802**
-  - **报名链接💡：https://paddleqiyeban.wjx.cn/vj/tKidSqZ.aspx?udsid=453804**
+  - **课程回放链接🔗：https://aistudio.baidu.com/aistudio/education/group/info/25179**
 
   ⭐ **扫码加入技术交流群** ⭐
 
@@ -45,9 +44,12 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   **想要看直播回放视频请点击链接：https://www.bilibili.com/video/BV1GZ4y1g7xc**
 
 ## 产品动态
-- 💛 **最新发布** 💛
-
-  👀 **视频超分SOTA算法[PP-MSVSR](./docs/zh_CN/tutorials/video_super_resolution.md)：一行命令从"马赛克"到"高清影像"** 👀
+- 👶 **人脸编辑神器：[StyleGAN V2人脸属性编辑](./docs/zh_CN/tutorials/styleganv2editing.md)之年龄变换--时光穿梭机，一键实现变老变年轻** 👨‍🦳
+  - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/3251280?channelType=0&channel=0)**
+  <div align='center'>
+    <img src='https://user-images.githubusercontent.com/48054808/146649047-765ec085-0a2c-4c88-9527-744836448651.gif' width='600'/>
+  </div>
+-  👀 **视频超分SOTA算法[PP-MSVSR](./docs/zh_CN/tutorials/video_super_resolution.md)：一行命令从"马赛克"到"高清影像"** 👀
   - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/3205183)**
   <div align='center'>
     <img src='https://user-images.githubusercontent.com/48054808/144848981-00c6ad21-0702-4381-9544-becb227ed9f0.gif' width='600'/>
