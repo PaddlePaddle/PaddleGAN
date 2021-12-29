@@ -309,7 +309,8 @@ class StyleGAN2Model(BaseModel):
     def export_model(self,
                      export_model=None,
                      output_dir=None,
-                     inputs_size=[[1, 1, 512], [1, 1]]):
+                     inputs_size=[[1, 1, 512], [1, 1]],
+                     export_serving_model=False):
         infer_generator = self.InferGenerator()
         infer_generator.set_generator(self.nets['gen'])
         style = paddle.rand(shape=inputs_size[0], dtype='float32')
