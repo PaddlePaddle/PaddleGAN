@@ -110,7 +110,7 @@ class MPRPredictor(BasePredictor):
         os.makedirs(self.output_path, exist_ok=True)
         task_path = os.path.join(self.output_path, self.task)
         os.makedirs(task_path, exist_ok=True)
-        image_files = self.get_images(self.images_path)
+        image_files = self.get_images(images_path)
         for image_file in tqdm(image_files):
             img = self.read_image(image_file)
             image_name = os.path.basename(image_file)

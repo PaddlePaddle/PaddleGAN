@@ -18,6 +18,8 @@ faceenhancer = FaceEnhancement()
 img = faceenhancer.enhance_from_image(img)
 ```
 
+注意：请将图片转为float类型输入，目前不支持int8类型
+
 ### 训练(TODO)
 
 未来还将添加训练脚本方便用户训练出更多类型的 GPEN 人脸增强。
