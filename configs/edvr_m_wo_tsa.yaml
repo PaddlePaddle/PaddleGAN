@@ -5,6 +5,9 @@ checkpoints_dir: checkpoints
 min_max:
   (0., 1.)
 
+# Conv config
+export FLAGS_cudnn_exhaustive_search=True
+
 model:
   name: EDVRModel
   tsa_iter: 0
