@@ -186,7 +186,7 @@ class LapStyleRevFirstModel(BaseModel):
         self.nets['net_dec'] = build_generator(draftnet_decode)
 
         self.set_requires_grad([self.nets['net_enc']], False)
-        self.set_requires_grad([self.nets['net_enc']], False)
+        self.set_requires_grad([self.nets['net_dec']], False)
 
         # define revision-net params
         self.nets['net_rev'] = build_generator(revnet_generator)
@@ -322,7 +322,7 @@ class LapStyleRevSecondModel(BaseModel):
         self.nets['net_enc'] = build_generator(draftnet_encode)
         self.nets['net_dec'] = build_generator(draftnet_decode)
         self.set_requires_grad([self.nets['net_enc']], False)
-        self.set_requires_grad([self.nets['net_enc']], False)
+        self.set_requires_grad([self.nets['net_dec']], False)
 
         # define the first revnet params
         self.nets['net_rev'] = build_generator(revnet_generator)
