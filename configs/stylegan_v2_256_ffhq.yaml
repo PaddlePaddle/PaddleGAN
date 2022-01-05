@@ -28,9 +28,6 @@ model:
 export_model:
   - {name: 'gen', inputs_num: 2}
 
-# Conv config
-export FLAGS_cudnn_exhaustive_search=True
-
 dataset:
   train:
     name: SingleDataset

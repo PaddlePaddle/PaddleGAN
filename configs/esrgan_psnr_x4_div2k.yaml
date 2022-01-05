@@ -1,6 +1,3 @@
-# Conv config
-export FLAGS_cudnn_exhaustive_search=True
-
 total_iters: 1000000
 output_dir: output_dir
 # tensor range for function tensor2img
