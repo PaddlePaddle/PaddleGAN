@@ -18,6 +18,8 @@ faceenhancer = FaceEnhancement()
 img = faceenhancer.enhance_from_image(img)
 ```
 
+Note: please convert the image to float type, currently does not support int8 type.
+
 ### Train (TODO)
 
 In the future, training scripts will be added to facilitate users to train more types of GPEN.
