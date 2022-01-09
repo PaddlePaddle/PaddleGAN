@@ -13,28 +13,18 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 [![License](https://img.shields.io/badge/license-Apache%202-red.svg)](LICENSE)![python version](https://img.shields.io/badge/python-3.6+-orange.svg)
 
+  ⭐ **扫码加入技术交流群** ⭐
+
 
 
 ## 近期活动🔥🔥🔥
 
-- **需求收集 💙 有奖填答**
-
-  亲爱的开发者朋友们大家好！
-  感谢您对PaddleGAN的关注与支持，为了更好地了解您的应用需求，我们精心筹划了这次有奖问卷，您的反馈将直接影响我们的产品设计，期待与您深入交流合作！
-  
-  我们会挑选20名高质量反馈者，送出50-100元不等的京东卡、《深度学习零基础实践》书籍等奖品
-  
-  问卷🔗：https://paddleqiyeban.wjx.cn/vj/O89Ippa.aspx
   
 - 🔥**2021.12.08**🔥
   **💙 AI快车道👩‍🏫：视频超分算法及行业应用 💙**
   - **课程回放链接🔗：https://aistudio.baidu.com/aistudio/education/group/info/25179**
 
-  ⭐ **扫码加入技术交流群** ⭐
 
-  <div align='center'>
-    <img src='https://user-images.githubusercontent.com/48054808/144846956-cca238df-4106-43d5-a21e-7370f501971a.png' width='200'/>
-  </div>
 
 - 2021.4.15~4.22
 
@@ -283,6 +273,12 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 <div align='center'>
   <img src='./docs/imgs/qq.png'width='250' height='300'/>
 </div>
+
+扫描二维码回复关键字"GAN"即可加入官方微信交流群！
+  <div align='center'>
+    <img src='https://user-images.githubusercontent.com/48054808/148520210-4ebfe1cf-c2cd-4287-a94c-79545fb4bb66.png' width='200'/>
+  </div>
+
 
 ### PaddleGAN 特别兴趣小组（Special Interest Group）
 
