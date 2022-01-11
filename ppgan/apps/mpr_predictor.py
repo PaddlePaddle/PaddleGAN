@@ -89,6 +89,7 @@ class MPRPredictor(BasePredictor):
     def get_images(self, images_path):
         if os.path.isdir(images_path):
             return natsorted(
+                glob(os.path.join(images_path, '*.jpeg')) +
                 glob(os.path.join(images_path, '*.jpg')) +
                 glob(os.path.join(images_path, '*.JPG')) +
                 glob(os.path.join(images_path, '*.png')) +

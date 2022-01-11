@@ -59,9 +59,9 @@ if __name__ == "__main__":
     if args.cpu:
         paddle.set_device('cpu')
 
-    predictor = MPRPredictor(images_path=args.images_path,
+    predictor = MPRPredictor(
                              output_path=args.output_path,
                              weight_path=args.weight_path,
                              seed=args.seed,
                              task=args.task)
-    predictor.run()
+    predictor.run(images_path=args.images_path)
