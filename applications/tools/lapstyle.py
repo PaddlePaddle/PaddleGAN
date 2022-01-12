@@ -24,6 +24,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--content_img_path",
                         type=str,
+                        required=True,
                         help="path to content image")
 
     parser.add_argument("--output_path",
@@ -46,7 +47,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--style_image_path",
                         type=str,
-                        default=None,
+                        required=True,
                         help="path to style image")
 
     parser.add_argument("--cpu",
