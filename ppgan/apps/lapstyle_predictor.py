@@ -145,9 +145,11 @@ class LapStylePredictor(BasePredictor):
 
     def run(self, content_img_path, style_image_path):
         if not self.is_image(content_img_path):
-            raise ValueError('The path of content_img is not image')
+            raise ValueError(
+                'The path of content_img is not exist or not image')
         if not self.is_image(style_image_path):
-            raise ValueError('The path of style_image is not image')
+            raise ValueError(
+                'The path of style_image is not exist or not image')
         content_img, style_img, h, w = img_read(content_img_path,
                                                 style_image_path)
         content_img_visual = tensor2img(content_img, min_max=(0., 1.))
