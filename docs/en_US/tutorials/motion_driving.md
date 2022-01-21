@@ -190,7 +190,7 @@ The prediction models will be exported to the directory of `output_inference/fom
 
 - [Deployment of FOM model  with Paddle Lite](https://github.com/PaddlePaddle/PaddleGAN/tree/develop/deploy/lite)
 
-- [FOM-Lite-Demo](https://paddlegan.bj.bcebos.com/applications/first_order_model/paddle_lite/apk/face_detection_demo 2.zip)。For more details, please refer to [Paddle-Lite](https://github.com/PaddlePaddle/Paddle-Lite) .
+- [FOM-Lite-Demo](https://paddlegan.bj.bcebos.com/applications/first_order_model/paddle_lite/apk/fom_demo.zip)。For more details, please refer to [Paddle-Lite](https://github.com/PaddlePaddle/Paddle-Lite) .
 
   Current problems： (a).Paddle Lite performs slightly worse than Paddle Inference，under optimization (b).Run Generator in a single thread, if the number of frames is too large, it will run at the small core rather than the large core.
 
