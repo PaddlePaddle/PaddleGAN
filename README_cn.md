@@ -13,7 +13,6 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 [![License](https://img.shields.io/badge/license-Apache%202-red.svg)](LICENSE)![python version](https://img.shields.io/badge/python-3.6+-orange.svg)
 
-  ⭐ **扫码加入技术交流群** ⭐
 
 
 
@@ -276,7 +275,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 扫描二维码回复关键字"GAN"即可加入官方微信交流群！
   <div align='center'>
-    <img src='https://user-images.githubusercontent.com/48054808/148520210-4ebfe1cf-c2cd-4287-a94c-79545fb4bb66.png' width='200'/>
+    <img src='https://user-images.githubusercontent.com/48054808/151125373-ab458d9b-b1b3-4157-a281-088697ab0639.png' width='200'/>
   </div>
 
 
