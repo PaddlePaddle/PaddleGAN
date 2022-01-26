@@ -144,10 +144,17 @@ class LapStylePredictor(BasePredictor):
         self.net_rev_2.eval()
 
     def run(self, content_img_path, style_image_path):
+        if not self.is_image(content_img_path):
+            raise ValueError(
+                'The path of content_img does not exist or is not image')
+        if not self.is_image(style_image_path):
+            raise ValueError(
+                'The path of style_image does not exist or is not image')
         content_img, style_img, h, w = img_read(content_img_path,
                                                 style_image_path)
         content_img_visual = tensor2img(content_img, min_max=(0., 1.))
         content_img_visual = cv.cvtColor(content_img_visual, cv.COLOR_RGB2BGR)
+        content_img_visual = cv.resize(content_img_visual, (w, h))
         cv.imwrite(os.path.join(self.output, 'content.png'), content_img_visual)
         style_img_visual = tensor2img(style_img, min_max=(0., 1.))
         style_img_visual = cv.cvtColor(style_img_visual, cv.COLOR_RGB2BGR)
@@ -159,20 +166,11 @@ class LapStylePredictor(BasePredictor):
         cF = self.net_enc(pyr_ci[2])
         sF = self.net_enc(pyr_si[2])
         stylized_small = self.net_dec(cF, sF)
-        stylized_small_visual = tensor2img(stylized_small, min_max=(0., 1.))
-        stylized_small_visual = cv.cvtColor(stylized_small_visual,
-                                            cv.COLOR_RGB2BGR)
-        cv.imwrite(os.path.join(self.output, 'stylized_small.png'),
-                   stylized_small_visual)
         stylized_up = F.interpolate(stylized_small, scale_factor=2)
 
         revnet_input = paddle.concat(x=[pyr_ci[1], stylized_up], axis=1)
         stylized_rev_lap = self.net_rev(revnet_input)
         stylized_rev = fold_laplace_pyramid([stylized_rev_lap, stylized_small])
-        stylized_rev_visual = tensor2img(stylized_rev, min_max=(0., 1.))
-        stylized_rev_visual = cv.cvtColor(stylized_rev_visual, cv.COLOR_RGB2BGR)
-        cv.imwrite(os.path.join(self.output, 'stylized_rev_first.png'),
-                   stylized_rev_visual)
         stylized_up = F.interpolate(stylized_rev, scale_factor=2)
 
         revnet_input = paddle.concat(x=[pyr_ci[0], stylized_up], axis=1)
