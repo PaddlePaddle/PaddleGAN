@@ -1,30 +1,49 @@
 
-#!usr/bin/env bash
-
-export BENCHMARK_ROOT=/workspace
-run_env=$BENCHMARK_ROOT/run_env
-log_date=`date "+%Y.%m%d.%H%M%S"`
-frame=paddle2.1.3
-cuda_version=10.2
-save_log_dir=${BENCHMARK_ROOT}/logs/${frame}_${log_date}_${cuda_version}/
-
-if [[ -d ${save_log_dir} ]]; then
-    rm -rf ${save_log_dir}
-fi
-
-# this for update the log_path coding mat
-export TRAIN_LOG_DIR=${save_log_dir}/train_log
-mkdir -p ${TRAIN_LOG_DIR}
-log_path=${TRAIN_LOG_DIR}
-
-################################# 配置python, 如:
-rm -rf $run_env
-mkdir $run_env
-echo `which python3.7`
-ln -s $(which python3.7)m-config  $run_env/python3-config
-ln -s $(which python3.7) $run_env/python
-ln -s $(which pip3.7) $run_env/pip
-
-export PATH=$run_env:${PATH}
-cd $BENCHMARK_ROOT
+# prepare
+pip install argparse
 pip install -v -e .
+# Download test dataset and save it to PaddleGAN/data
+# It automatic downloads the pretrained models saved in ~/.paddlegan
+data_item=${1:-'StyleGANv2'} 
+case ${data_item} in
+    StyleGANv2)    # 1 数据集<500M ,可直接打包放在各个套件自己的bce上。
+        wget https://paddlegan.bj.bcebos.com/datasets/ffhq.tar --no-check-certificate \
+        -O data/ffhq.tar
+        tar -vxf data/ffhq.tar -C data/  ;;
+    FOMM)
+        wget https://paddlegan.bj.bcebos.com/datasets/fom_test_data.tar  --no-check-certificate \
+        -O data/fom_test_data.tar
+        tar -vxf data/fom_test_data.tar -C data/  ;;
+    esrgan)
+        wget https://paddlegan.bj.bcebos.com/datasets/DIV2KandSet14.tar  --no-check-certificate \
+        -O data/DIV2KandSet14.tar
+        tar -vxf data/DIV2KandSet14.tar -C data/  ;;
+    edvr|basicvsr)
+        mkdir -p data/REDS 
+        python ${BENCHMARK_ROOT}/paddlecloud/file_upload_download.py \
+        --remote-path frame_benchmark/paddle/PaddleGAN/REDS/test_sharp \
+        --local-path ./data/REDS \
+        --mode download
+        python ${BENCHMARK_ROOT}/paddlecloud/file_upload_download.py \
+        --remote-path frame_benchmark/paddle/PaddleGAN/REDS/test_sharp_bicubic \
+        --local-path ./data/REDS \
+        --mode download
+        python ${BENCHMARK_ROOT}/paddlecloud/file_upload_download.py \
+        --remote-path frame_benchmark/paddle/PaddleGAN/REDS/train_sharp \
+        --local-path ./data/REDS \
+        --mode download
+        python ${BENCHMARK_ROOT}/paddlecloud/file_upload_download.py \
+        --remote-path frame_benchmark/paddle/PaddleGAN/REDS/train_sharp_bicubic \
+        --local-path ./data/REDS \
+        --mode download
+        tar -vxf data/REDS/train_sharp.tar -C data/REDS
+        tar -vxf data/REDS/train_sharp_bicubic.tar -C data/REDS
+        tar -vxf data/REDS/REDS4_test_sharp.tar -C data/REDS
+        tar -vxf data/REDS/REDS4_test_sharp_bicubic.tar -C data/REDS
+        wget https://paddlegan.bj.bcebos.com/datasets/meta_info_REDS_GT.tar  --no-check-certificate \
+        -O data/REDS/meta_info_REDS_GT.tar
+        tar -vxf data/REDS/meta_info_REDS_GT.tar -C data/REDS
+        echo "download data" #waiting data process
+        echo "dataset prepared done"  ;;
+    *) echo "choose data_item"; exit 1;
+esac

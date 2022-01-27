@@ -59,8 +59,7 @@ for model_mode in ${model_mode_list[@]}; do
             run_mode=mp
             basicvsr_name=basicvsr
             if [ ${model_mode} = ${basicvsr_name} ]; then
-#                CUDA_VISIBLE_DEVICES=0,1,2,3 bash benchmark/run_benchmark.sh ${run_mode} ${bs_item} ${fp_item} ${mode} ${max_iter} ${model_mode} ${config} ${log_interval} ${profile}  | tee ${log_path}/gan_dygraph_${model_mode}_${run_mode}_bs${bs_item}_${fp_item}_speed_4gpus4p 2>&1
-                echo "-----skip 4cards"
+                CUDA_VISIBLE_DEVICES=0,1,2,3 bash benchmark/run_benchmark.sh ${run_mode} ${bs_item} ${fp_item} ${mode} ${max_iter} ${model_mode} ${config} ${log_interval} ${profile}  | tee ${log_path}/gan_dygraph_${model_mode}_${run_mode}_bs${bs_item}_${fp_item}_speed_4gpus4p 2>&1
             else
                 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 bash benchmark/run_benchmark.sh ${run_mode} ${bs_item} ${fp_item} ${mode} ${max_iter} ${model_mode} ${config} ${log_interval} ${profile}  | tee ${log_path}/gan_dygraph_${model_mode}_${run_mode}_bs${bs_item}_${fp_item}_speed_8gpus8p 2>&1
             fi
