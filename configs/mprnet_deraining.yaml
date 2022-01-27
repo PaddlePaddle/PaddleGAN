@@ -1,0 +1,69 @@
+total_iters: 100000
+output_dir: output_dir
+
+model:
+  name: MPRModel
+  generator:
+    name: MPRNet
+    n_feat: 40
+    scale_unetfeats: 20
+    scale_orsnetfeats: 16
+
+  char_criterion:
+    name: CharbonnierLoss
+  edge_criterion:
+    name: EdgeLoss
+
+dataset:
+  train:
+    name: MPRTrain
+    rgb_dir: data/Synthetic_Rain_Datasets/train
+    num_workers: 16
+    batch_size: 4 # 4GPUs
+    img_options:
+      patch_size: 256
+  test:
+    name: MPRTrain
+    rgb_dir: data/Synthetic_Rain_Datasets/test/Rain100L
+    num_workers: 1
+    batch_size: 1
+    img_options:
+      patch_size: 256
+
+lr_scheduler:
+  name: CosineAnnealingRestartLR
+  learning_rate: !!float 2e-4
+  periods: [25000, 25000, 25000, 25000]
+  restart_weights: [1, 1, 1, 1]
+  eta_min: !!float 1e-6
+
+validate:
+  interval: 5000
+  save_img: false
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      name: PSNR
+      crop_border: 4
+      test_y_channel: True
+    ssim:
+      name: SSIM
+      crop_border: 4
+      test_y_channel: True
+
+optimizer:
+  name: Adam
+  # add parameters of net_name to optim
+  # name should in self.nets
+  net_names:
+    - generator
+  beta1: 0.9
+  beta2: 0.999
+  epsilon: 1e-8
+
+log_config:
+  interval: 10
+  visiual_interval: 5000
+
+snapshot_config:
+  interval: 5000

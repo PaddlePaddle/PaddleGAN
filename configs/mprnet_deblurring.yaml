@@ -1,10 +1,14 @@
-total_iters: 100000
+# epoch: 3000 for total batch size=16
+total_iters: 400000
 output_dir: output_dir
 
 model:
   name: MPRModel
   generator:
     name: MPRNet
+    n_feat: 96
+    scale_unetfeats: 48
+    scale_orsnetfeats: 32
 
   char_criterion:
     name: CharbonnierLoss
@@ -14,39 +18,39 @@ model:
 dataset:
   train:
     name: MPRTrain
-    rgb_dir: 'data/GoPro/train'
-    num_workers: 16
-    batch_size: 4
+    rgb_dir: data/GoPro/train
+    num_workers: 4
+    batch_size: 2 # 8GPUs
     img_options:
       patch_size: 256
   test:
-    name: MPRTrain
-    rgb_dir: 'data/GoPro/test'
-    num_workers: 16
-    batch_size: 4
+    name: MPRVal
+    rgb_dir: data/GoPro/test
+    num_workers: 1
+    batch_size: 1
     img_options:
       patch_size: 256
 
 lr_scheduler:
   name: CosineAnnealingRestartLR
-  learning_rate: !!float 2e-4
-  periods: [25000, 25000, 25000, 25000]
-  restart_weights: [1, 1, 1, 1]
+  learning_rate: !!float 1e-4
+  periods: [400000]
+  restart_weights: [1]
   eta_min: !!float 1e-6
 
 validate:
-  interval: 10
+  interval: 5000
   save_img: false
 
   metrics:
     psnr: # metric name, can be arbitrary
       name: PSNR
       crop_border: 4
-      test_y_channel: True
+      test_y_channel: false
     ssim:
       name: SSIM
       crop_border: 4
-      test_y_channel: True
+      test_y_channel: false
 
 optimizer:
   name: Adam
@@ -59,7 +63,7 @@ optimizer:
   epsilon: 1e-8
 
 log_config:
-  interval: 10
+  interval: 100
   visiual_interval: 5000
 
 snapshot_config:

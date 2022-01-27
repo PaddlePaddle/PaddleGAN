@@ -24,35 +24,63 @@ dataset:
     name: RepeatDataset
     times: 1000
     num_workers: 4
-    batch_size: 2  #4 GPUs
+    batch_size: 2  #4 gpus
     dataset:
-      name: SRREDSMultipleGTDataset
-      mode: train
+      name: VSRREDSMultipleGTDataset
       lq_folder: data/REDS/train_sharp_bicubic/X4
       gt_folder: data/REDS/train_sharp/X4
-      crop_size: 256
-      interval_list: [1]
-      random_reverse: False
-      number_frames: 15
-      use_flip: True
-      use_rot: True
-      scale: 4
-      val_partition: REDS4
+      ann_file: data/REDS/meta_info_REDS_GT.txt
+      num_frames: 15
+      preprocess:
+        - name: GetNeighboringFramesIdx
+          interval_list: [1]
+        - name: ReadImageSequence
+          key: lq
+        - name: ReadImageSequence
+          key: gt
+        - name: Transforms
+          input_keys: [lq, gt]
+          pipeline:
+            - name: SRPairedRandomCrop
+              gt_patch_size: 256
+              scale: 4
+              keys: [image, image]
+            - name: PairedRandomHorizontalFlip
+              keys: [image, image]
+            - name: PairedRandomVerticalFlip
+              keys: [image, image]
+            - name: PairedRandomTransposeHW
+              keys: [image, image]
+            - name: TransposeSequence
+              keys: [image, image]
+            - name: NormalizeSequence
+              mean: [0., 0., 0.]
+              std: [255., 255., 255.]
+              keys: [image, image]
 
   test:
-    name: SRREDSMultipleGTDataset
-    mode: test
+    name: VSRREDSMultipleGTDataset
     lq_folder: data/REDS/REDS4_test_sharp_bicubic/X4
     gt_folder: data/REDS/REDS4_test_sharp/X4
-    interval_list: [1]
-    random_reverse: False
-    number_frames: 100
-    use_flip: False
-    use_rot: False
-    scale: 4
-    val_partition: REDS4
-    num_workers: 0
-    batch_size: 1
+    ann_file: data/REDS/meta_info_REDS_GT.txt
+    num_frames: 100
+    test_mode: True
+    preprocess:
+        - name: GetNeighboringFramesIdx
+          interval_list: [1]
+        - name: ReadImageSequence
+          key: lq
+        - name: ReadImageSequence
+          key: gt
+        - name: Transforms
+          input_keys: [lq, gt]
+          pipeline:
+            - name: TransposeSequence
+              keys: [image, image]
+            - name: NormalizeSequence
+              mean: [0., 0., 0.]
+              std: [255., 255., 255.]
+              keys: [image, image]
 
 lr_scheduler:
   name: CosineAnnealingRestartLR

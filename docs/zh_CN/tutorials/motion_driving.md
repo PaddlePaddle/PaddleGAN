@@ -180,7 +180,7 @@ python tools/export_model.py \
 
 #### 4.2 PaddleLite部署
 - [使用Paddle Lite部署FOM模型](https://github.com/PaddlePaddle/PaddleGAN/tree/develop/deploy/lite)
-- [FOM-Lite-Demo](https://paddlegan.bj.bcebos.com/applications/first_order_model/paddle_lite/apk/face_detection_demo%202.zip)。更多内容，请参考[Paddle-Lite](https://github.com/PaddlePaddle/Paddle-Lite)
+- [FOM-Lite-Demo](https://paddlegan.bj.bcebos.com/applications/first_order_model/paddle_lite/apk/fom_demo.zip)。更多内容，请参考[Paddle-Lite](https://github.com/PaddlePaddle/Paddle-Lite)
 目前问题：
 (a).Paddle Lite运行效果略差于Paddle Inference，正在优化中
 (b).单线程跑Generator，帧数多了会跑到小核不跑大核

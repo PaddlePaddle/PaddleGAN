@@ -37,8 +37,8 @@ inference_dir:multistagevsrmodel_generator
 train_model:./inference/msvsr/multistagevsrmodel_generator
 infer_export:null
 infer_quant:False
-inference:tools/inference.py --model_type msvsr -c configs/msvsr_reds.yaml --seed 123 -o dataset.test.num_clips=2 dataset.test.number_frames=2 --output_path test_tipc/output/
---device:gpu
+inference:tools/inference.py --model_type msvsr -c configs/msvsr_reds.yaml --seed 123 -o dataset.test.num_frames=2 --output_path test_tipc/output/
+--device:cpu
 null:null
 null:null
 null:null

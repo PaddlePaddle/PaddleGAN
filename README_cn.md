@@ -15,22 +15,15 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 
 
+
 ## 近期活动🔥🔥🔥
 
-- 🔥**2021.12.08**🔥
-
-  **💙 AI快车道👩‍🏫：视频超分算法及行业应用 💙**
-  - **视频超分SOTA算法详解**
-  - **视频传输大幅降本提速方案**
-  - **影像修复视频超分案例实践**
-  - **直播link🔗：http://live.bilibili.com/21689802**
-  - **报名链接💡：https://paddleqiyeban.wjx.cn/vj/tKidSqZ.aspx?udsid=453804**
-
-  ⭐ **扫码加入技术交流群** ⭐
   
-  <div align='center'>
-    <img src='https://user-images.githubusercontent.com/48054808/144846956-cca238df-4106-43d5-a21e-7370f501971a.png' width='200'/>
-  </div>
+- 🔥**2021.12.08**🔥
+  **💙 AI快车道👩‍🏫：视频超分算法及行业应用 💙**
+  - **课程回放链接🔗：https://aistudio.baidu.com/aistudio/education/group/info/25179**
+
+
 
 - 2021.4.15~4.22
 
@@ -45,17 +38,24 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   **想要看直播回放视频请点击链接：https://www.bilibili.com/video/BV1GZ4y1g7xc**
 
 ## 产品动态
-- 💛 **最新发布** 💛 
-  
-  👀 **视频超分SOTA算法[PP-MSVSR](./docs/zh_CN/tutorials/video_super_resolution.md)：一行命令从"马赛克"到"高清影像"** 👀
+- 👶 **人脸编辑神器：[StyleGAN V2人脸属性编辑](./docs/zh_CN/tutorials/styleganv2editing.md)之年龄变换--时光穿梭机，一键实现变老变年轻** 👨‍🦳
+  - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/3251280?channelType=0&channel=0)**
   <div align='center'>
-    <img src='https://user-images.githubusercontent.com/48054808/144848981-00c6ad21-0702-4381-9544-becb227ed9f0.gif' width='600'/>
+    <img src='https://user-images.githubusercontent.com/48054808/146649047-765ec085-0a2c-4c88-9527-744836448651.gif' width='200'/>
   </div>
+
+-  👀 **视频超分SOTA算法[PP-MSVSR](./docs/zh_CN/tutorials/video_super_resolution.md)：一行命令从"马赛克"到"高清影像"** 👀
+    - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/3205183)**
+  <div align='center'>
+    <img src='https://user-images.githubusercontent.com/48054808/144848981-00c6ad21-0702-4381-9544-becb227ed9f0.gif' width='400'/>
+  </div>
+
 - 😍 **人脸编辑神器：[StyleGAN V2人脸属性编辑](./docs/zh_CN/tutorials/styleganv2editing.md)之性别转换--怕什么孤单？和自己谈一场恋爱吧！** 😍
   - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/2565277?contributionType=1)**
   <div align='center'>
-    <img src='https://user-images.githubusercontent.com/48054808/141226707-58bd661e-2102-4fb7-8e18-c794a6b59ee8.gif' width='600'/>
+    <img src='https://user-images.githubusercontent.com/48054808/141226707-58bd661e-2102-4fb7-8e18-c794a6b59ee8.gif' width='400'/>
   </div>
+
 - 👩‍🚀 **宇宙漫游指南：[LapStyle](./docs/zh_CN/tutorials/lap_style.md)风格迁移带你「沉浸式」体验太空漫游** 👨‍🚀
 
   - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/2343740?contributionType=1)**
@@ -72,7 +72,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 
     <div align='center'>
-      <img src='https://ai-studio-static-online.cdn.bcebos.com/da1c51844ac048aa8d4fa3151be95215eee75d8bb488409d92ec17285b227c2c' width='250'/>
+      <img src='https://ai-studio-static-online.cdn.bcebos.com/da1c51844ac048aa8d4fa3151be95215eee75d8bb488409d92ec17285b227c2c' width='200'/>
     </div>
 
 - ⭐ **新增人脸融合能力，结合新版Frirst Order Motion，实现人脸完美融合并带有丰富表情(๑^ں^๑)** ⭐
@@ -80,7 +80,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   - **[完整在线教程](https://aistudio.baidu.com/aistudio/projectdetail/2254031 )**
 
   <div align='center'>
-    <img src='https://user-images.githubusercontent.com/48054808/128299870-66a73bb3-57a4-4985-aadc-8ddeab048145.gif' width='300'/>
+    <img src='https://user-images.githubusercontent.com/48054808/128299870-66a73bb3-57a4-4985-aadc-8ddeab048145.gif' width='200'/>
   </div>
 
 - 新增First Order Motion分辨率512清晰版本，并加上人脸增强特效，使得面部细节更清晰，详情见[教程](./docs/zh_CN/tutorials/motion_driving.md)。
@@ -90,7 +90,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   - 完整推理代码及教程见： https://github.com/wzmsltw/PaintTransformer
 
     <div align='center'>
-      <img src='https://user-images.githubusercontent.com/48054808/129904830-8b87e310-ea51-4aff-b29b-88920ee82447.png' width='700'/>
+      <img src='https://user-images.githubusercontent.com/48054808/129904830-8b87e310-ea51-4aff-b29b-88920ee82447.png' width='500'/>
     </div>
 
 ## 文档教程
@@ -120,19 +120,26 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   * 照片动漫化：[AnimeGANv2](./docs/zh_CN/tutorials/animegan.md)
   * 人像动漫化：[U-GAT-IT](./docs/zh_CN/tutorials/ugatit.md)
   * 人脸卡通化：[Photo2Cartoon](docs/zh_CN/tutorials/photo2cartoon.md)
+  * 多种风格迁移：[StarGANv2](docs/zh_CN/tutorials/starganv2.md)
 * 动作迁移
   * 人脸表情迁移：[First Order Motion Model](./docs/zh_CN/tutorials/motion_driving.md)
   * 唇形合成：[Wav2Lip](docs/zh_CN/tutorials/wav2lip.md)
-* 生成
+* 基础GAN
   * [DCGAN](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/ppgan/models/dc_gan_model.py)
   * WGAN
+* 人脸生成
   * 人脸生成：[StyleGAN2](./docs/zh_CN/tutorials/styleganv2.md)
-  * 图像编码：[Pixel2Style2Pixel](./docs/zh_CN/tutorials/pixel2style2pixel.md)
+  * 人脸编码：[Pixel2Style2Pixel](./docs/zh_CN/tutorials/pixel2style2pixel.md)
+  * 人脸增强：[FaceEnhancement](./docs/zh_CN/tutorials/face_enhancement.md)
+  * 人脸解析：[FaceParsing](./docs/zh_CN/tutorials/face_parse.md)
 * 分辨率提升
   * 单张图片超分：[Single Image Super Resolution(SISR)](./docs/zh_CN/tutorials/single_image_super_resolution.md)
+    * 包含模型：RealSR、ESRGAN、LESRCNN、PAN、DRN
   * 视频超分：[Video Super Resolution(VSR)](./docs/zh_CN/tutorials/video_super_resolution.md)
-* 语义分割
-  * 人脸解析：[FaceParsing](./docs/zh_CN/tutorials/face_parse.md)
+    * 包含模型：⭐ PP-MSVSR ⭐、EDVR、BasicVSR、BasicVSR++
+* 图像视频修复
+  * 图像去模糊去噪去雨：[MPR Net](./docs/zh_CN/tutorials/mpr_net.md)
+  * 视频去模糊：[EDVR](./docs/zh_CN/tutorials/video_super_resolution.md)
 
 ## 产业级应用
 
@@ -229,6 +236,14 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 
 
 ## 版本更新
+- v2.1.0 (2021.12.8)
+  - 发布视频超分辨率模型PP-MSVSR以及多个预训练权重
+  - 发布BasicVSR，IconVSR与Basicvsr++等多个效果领先的视频超分辨率模型及其预训练模型
+  - 发布轻量级动作驱动模型（体积压缩：229M->10.1M），并优化融合效果
+  - 发布高分辨率的FOMM和Wav2Lip预训练模型
+  - 发布人脸反演，人脸融合和人脸编辑等多个基于StyleGANv2的有趣应用
+  - 发布百度自研且效果领先的风格迁移模型LapStyle及其有趣应用，并上线官网[体验页面](https://www.paddlepaddle.org.cn/paddlegan)
+  - 发布轻量的图像超分辨模型PAN
 
 - v2.0.0 (2021.6.2)
   - 发布[Fisrt Order Motion](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/motion_driving.md)模型以及多个预训练权重
@@ -236,6 +251,15 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   - 发布视频超分辨模型[EDVR](https://github.com/PaddlePaddle/PaddleGAN/blob/develop/docs/en_US/tutorials/video_super_resolution.md)以及多个预训练权重
   - 发布PaddleGAN对应的[七日打卡训练营](https://github.com/PaddlePaddle/PaddleGAN/tree/develop/education)内容
   - 增强PaddleGAN在windows平台运行的鲁棒性
+
+- v2.0.0-beta (2021.3.1)
+  - 完全切换Paddle 2.0.0版本的API。
+  - 发布超分辨模型：ESRGAN，RealSR，LESRCNN，DRN等
+  - 发布唇形迁移模型：Wav2Lip
+  - 发布街景动漫化模型：AnimeGANv2
+  - 发布人脸动漫化模型：U-GAT-IT ，Photo2Cartoon
+  - 发布高清人脸生成模型：StyleGAN2
+
 - v0.1.0 (2020.11.02)
   - 初版发布，支持Pixel2Pixel、CycleGAN、PSGAN模型，支持视频插针、超分、老照片/视频上色、视频动作生成等应用。
   - 模块化设计，接口简单易用。
@@ -248,6 +272,12 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
 <div align='center'>
   <img src='./docs/imgs/qq.png'width='250' height='300'/>
 </div>
+
+扫描二维码回复关键字"GAN"即可加入官方微信交流群！
+  <div align='center'>
+    <img src='https://user-images.githubusercontent.com/48054808/151125373-ab458d9b-b1b3-4157-a281-088697ab0639.png' width='200'/>
+  </div>
+
 
 ### PaddleGAN 特别兴趣小组（Special Interest Group）
 

@@ -1,6 +1,21 @@
+#  Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+
 import paddle
 import os
 import sys
+
 sys.path.insert(0, os.getcwd())
 from ppgan.apps import MPRPredictor
 import argparse
@@ -22,18 +37,18 @@ if __name__ == "__main__":
                         default=None,
                         help="sample random seed for model's image generation")
 
-    parser.add_argument('--images_path', 
-                        default=None, 
+    parser.add_argument('--images_path',
+                        default=None,
                         required=True,
-                        type=str, 
+                        type=str,
                         help='Single image or images directory.')
 
-    parser.add_argument('--task', 
-                        required=True, 
-                        type=str, 
-                        help='Task to run', 
+    parser.add_argument('--task',
+                        required=True,
+                        type=str,
+                        help='Task to run',
                         choices=['Deblurring', 'Denoising', 'Deraining'])
-                        
+
     parser.add_argument("--cpu",
                         dest="cpu",
                         action="store_true",
@@ -45,10 +60,8 @@ if __name__ == "__main__":
         paddle.set_device('cpu')
 
     predictor = MPRPredictor(
-        images_path=args.images_path,
-        output_path=args.output_path,
-        weight_path=args.weight_path,
-        seed=args.seed,
-        task=args.task
-    )
-    predictor.run()
+                             output_path=args.output_path,
+                             weight_path=args.weight_path,
+                             seed=args.seed,
+                             task=args.task)
+    predictor.run(images_path=args.images_path)

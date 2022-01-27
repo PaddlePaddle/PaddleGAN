@@ -5,7 +5,7 @@ dataset:
   train:
     name: FirstOrderDataset
     batch_size: 8
-    num_workers: 4
+    num_workers: 8
     use_shared_memory: False
     phase: train
     dataroot: data/first_order/Voxceleb/
