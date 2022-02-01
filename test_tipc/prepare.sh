@@ -79,7 +79,7 @@ elif [ ${MODE} = "whole_train_whole_infer" ];then
         cd ./data/ && unzip horse2zebra.zip && cd ../
     elif [ ${model_name} == "singan" ]; then
         rm -rf ./data/SinGAN*
-        wget -nc -P ./data/ https://bj.bcebos.com/v1/ai-studio-online/032eecbb73cf4b948b4848aac68d0f3422190aa2da7a456aaf8ad4c5811c614b -O SinGAN-official_images.zip --no-check-certificate
+        wget -nc https://bj.bcebos.com/v1/ai-studio-online/032eecbb73cf4b948b4848aac68d0f3422190aa2da7a456aaf8ad4c5811c614b -O ./data/SinGAN-official_images.zip --no-check-certificate
         cd ./data/ && unzip -q SinGAN-official_images.zip && cd ../
         mkdir -p ./data/singan
         mv ./data/SinGAN-official_images/Images/stone.png ./data/singan
@@ -111,7 +111,7 @@ elif [ ${MODE} = "lite_train_whole_infer" ];then
         cd ./data/ && tar xf reds_lite.tar && cd ../
     elif [ ${model_name} == "singan" ]; then
         rm -rf ./data/SinGAN*
-        wget -nc -P ./data/ https://bj.bcebos.com/v1/ai-studio-online/032eecbb73cf4b948b4848aac68d0f3422190aa2da7a456aaf8ad4c5811c614b -O SinGAN-official_images.zip --no-check-certificate
+        wget -nc https://bj.bcebos.com/v1/ai-studio-online/032eecbb73cf4b948b4848aac68d0f3422190aa2da7a456aaf8ad4c5811c614b -O ./data/SinGAN-official_images.zip --no-check-certificate
         cd ./data/ && unzip -q SinGAN-official_images.zip && cd ../
         mkdir -p ./data/singan
         mv ./data/SinGAN-official_images/Images/stone.png ./data/singan
