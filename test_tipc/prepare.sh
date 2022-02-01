@@ -161,6 +161,9 @@ elif [ ${MODE} = "whole_infer" ];then
     elif [ ${model_name} == "singan" ]; then
         rm -rf ./data/SinGAN*
         wget -nc https://bj.bcebos.com/v1/ai-studio-online/032eecbb73cf4b948b4848aac68d0f3422190aa2da7a456aaf8ad4c5811c614b -O ./data/SinGAN-official_images.zip --no-check-certificate
+        if [ ! -d inference ]; then
+            mkdir inference
+        fi
         wget -nc https://bj.bcebos.com/v1/ai-studio-online/c3a9b05e9c1b4b3dab21b47f0ff2aa4155f9ea42e9c04010a235b257b66564e0 -O ./inference/singan_static.zip --no-check-certificate
         cd ./data/ && unzip -q SinGAN-official_images.zip && cd ../
         cd ./inference/ && unzip -q singan_static.zip && cd ../
