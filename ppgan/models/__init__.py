@@ -34,3 +34,4 @@ from .basicvsr_model import BasicVSRModel
 from .mpr_model import MPRModel
 from .photopen_model import PhotoPenModel
 from .msvsr_model import MultiStageVSRModel
+from .singan_model import SinGANModel
