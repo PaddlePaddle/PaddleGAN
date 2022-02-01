@@ -6,14 +6,14 @@ gpu_list:0
 auto_cast:null
 total_iters:lite_train_lite_infer=100|whole_train_whole_infer=100000
 output_dir:./output/
-snapshot_config.interval:lite_train_lite_infer=30|whole_train_whole_infer=6000
-log_config.interval:lite_train_lite_infer=10|whole_train_whole_infer=100
+snapshot_config.interval:lite_train_lite_infer=25|whole_train_whole_infer=10000
+pretrained_model:null
 train_model_name:singan*/*checkpoint.pdparams
 train_infer_img_dir:./data/stone
 null:null
 ##
 trainer:norm_train
-norm_train:tools/main.py -c configs/singan_universal.yaml --seed 123 -o 
+norm_train:tools/main.py -c configs/singan_universal.yaml --seed 123 -o log_config.interval=50
 pact_train:null
 fpgm_train:null
 distill_train:null
