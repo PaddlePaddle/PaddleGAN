@@ -283,18 +283,16 @@ class SinGANModel(BaseModel):
         self.nets['netG'].train()
         
     class InferGenerator(paddle.nn.Layer):
-        def set_generator(self, generator):
+        def set_config(self, generator, noise_shapes, scale_num):
             self.generator = generator
-
-        def set_noise_shapes(self, shapes):
-            self.noise_shapes = shapes
+            self.noise_shapes = noise_shapes
+            self.scale_num = scale_num
 
         def forward(self, x):
             coarsest_shape = self.generator._coarsest_shape
-            scale_num = self.generator.scale_num.item()
             z_pyramid = [paddle.randn(shp) for shp in self.noise_shapes]
             x_init = paddle.zeros(coarsest_shape)
-            out = self.generator(z_pyramid, x_init, scale_num - 1, 0)
+            out = self.generator(z_pyramid, x_init, self.scale_num - 1, 0)
             return out
 
     def export_model(self,
@@ -304,8 +302,7 @@ class SinGANModel(BaseModel):
                      export_serving_model=False):
         noise_shapes = [pad_shape(x.shape, self.niose_pad_size) for x in self.reals]
         infer_generator = self.InferGenerator()
-        infer_generator.set_generator(self.nets['netG'])
-        infer_generator.set_noise_shapes(noise_shapes)
+        infer_generator.set_config(self.nets['netG'], noise_shapes, self.scale_num)
         paddle.jit.save(infer_generator,
                         os.path.join(output_dir, "singan_random_sample"),
                         input_spec=[1])
