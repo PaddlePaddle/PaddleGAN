@@ -12,24 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+import cv2
+import math
+import warnings
+from collections import OrderedDict
+from sklearn.cluster import KMeans
+
+import paddle
+import paddle.nn.functional as F
+import paddle.vision.transforms as T
+
 from .base_model import BaseModel
 from .builder import MODELS
 from .generators.builder import build_generator
 from .criterions.builder import build_criterion
 from .discriminators.builder import build_discriminator
 from ..solver import build_lr_scheduler, build_optimizer
-
-import os
-import cv2
-import math
-import paddle
-import paddle.nn.functional as F
-import paddle.vision.transforms as T
-
-from collections import OrderedDict
-from sklearn.cluster import KMeans
-
-import warnings
 warnings.filterwarnings('ignore', category=DeprecationWarning)
 warnings.filterwarnings('ignore', category=UserWarning)
 

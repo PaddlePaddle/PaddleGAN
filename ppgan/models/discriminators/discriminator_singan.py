@@ -1,7 +1,8 @@
 # code was based on https://github.com/tamarott/SinGAN
 
-from ..generators.generator_singan import ConvBlock
 import paddle.nn as nn
+
+from ..generators.generator_singan import ConvBlock
 from .builder import DISCRIMINATORS
 
 
