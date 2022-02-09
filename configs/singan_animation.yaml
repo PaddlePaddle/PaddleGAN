@@ -1,5 +1,5 @@
 total_iters: 100000
-output_dir: ./output_dir/
+output_dir: output_dir
 export_model: null
 
 model:
@@ -23,7 +23,7 @@ model:
   gp_criterion:
     name: GradientPenalty
     loss_weight: 0.1
-  train_image: ./data/singan/stone.png
+  train_image: data/singan/stone.png
   scale_factor: 0.75
   min_size: 25
   is_finetune: False
