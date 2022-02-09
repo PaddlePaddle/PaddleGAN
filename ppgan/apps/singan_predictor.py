@@ -167,7 +167,10 @@ class SinGANPredictor(BasePredictor):
                 for i in range(len(z_pyramid)):
                     z = paddle.chunk(z_pyramid[i], batch_size)
                     if i == 0 and generate_start_scale == 0:
-                        z_0 = F.interpolate(self.generator.z_fixed, pad_shape(x_init.shape[-2:], self.niose_pad_size), None, 'bicubic')
+                        z_0 = F.interpolate(
+                            self.generator.z_fixed, 
+                            pad_shape(x_init.shape[-2:], self.niose_pad_size), 
+                            None, 'bicubic')
                     else:
                         z_0 = 0
                     z_1 = z_0
