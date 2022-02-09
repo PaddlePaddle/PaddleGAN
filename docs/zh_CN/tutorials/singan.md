@@ -59,7 +59,7 @@ python applications/tools/singan.py \
 
 |训练图片|随机采样结果|
 | ---- | ---- |
-|![birds](../../imgs/singan-birds.png)|![sr](../../imgs/singan-birds-random_sample.png)|
+|![birds](https://user-images.githubusercontent.com/91609464/153211448-2614407b-a30b-467c-b1e5-7db88ff2ca74.png)|![birds-random_sample](https://user-images.githubusercontent.com/91609464/153211573-1af108ba-ad42-438a-94a9-e8f8f3e091eb.png)|
 
 #### 图像编辑&风格和谐化
 
@@ -75,7 +75,7 @@ python applications/tools/singan.py \
 
 |训练图片|编辑图片|编辑区域标注|SinGAN生成|
 |----|----|----|----|
-|![stone](../../imgs/singan-stone.png)|![stone-edit](../../imgs/singan-stone-edit.png)|![stone-edit-mask](../../imgs/singan-stone-edit-mask.png)|![stone-edit-mask-result](../../imgs/singan-stone-edit-result.png)|
+|![stone](https://user-images.githubusercontent.com/91609464/153211778-bb94d29d-a2b4-4d04-9900-89b20ae90b90.png)|![stone-edit](https://user-images.githubusercontent.com/91609464/153211867-df3d9035-d320-45ec-8043-488e9da49bff.png)|![stone-edit-mask](https://user-images.githubusercontent.com/91609464/153212047-9620f73c-58d9-48ed-9af7-a11470ad49c8.png)|![stone-edit-mask-result](https://user-images.githubusercontent.com/91609464/153211942-e0e639c2-3ea6-4ade-852b-73757b0bbab0.png)|
 
 #### 超分
 
@@ -88,7 +88,7 @@ python applications/tools/singan.py \
 ```
 |训练图片|超分结果|
 | ---- | ---- |
-|![mountains](../../imgs/singan-mountains.png)|![sr](../../imgs/singan-mountains-sr.png)|
+|![mountains](https://user-images.githubusercontent.com/91609464/153212146-efbbbbd6-e045-477a-87ae-10f121341060.png)|![sr](https://user-images.githubusercontent.com/91609464/153212176-530b7075-e72b-4c05-ad3e-2f2cdfc76dea.png)|
 
 
 #### 静图转动
@@ -105,7 +105,7 @@ python applications/tools/singan.py \
 
 |训练图片|动画效果|
 | ---- | ---- |
-|![lightning](../../imgs/singan-lightning.png)|![ss](../../imgs/singan-lightning.gif)|
+|![lightning](https://user-images.githubusercontent.com/91609464/153212291-6f8976bd-e873-423e-ab62-77997df2df7a.png)|![animation](https://user-images.githubusercontent.com/91609464/153212372-0543e6d6-5842-472b-af50-8b22670270ae.gif)|
 
 
 #### 手绘转照片
@@ -118,7 +118,7 @@ python applications/tools/singan.py \
 ```
 |训练图片|手绘图片|SinGAN生成|SinGAN微调后生成|
 |----|----|----|----|
-|![trees](../../imgs/singan-trees.png)|![trees-paint](../../imgs/singan-trees-paint.png)|![trees-paint2image](../../imgs/singan-trees-paint2image.png)|![trees-paint2image-finetuned](../../imgs/singan-trees-paint2image-finetuned.png)|
+|![trees](https://user-images.githubusercontent.com/91609464/153212536-0bb6489d-d488-49e0-a6b5-90ef578c9e4f.png)|![trees-paint](https://user-images.githubusercontent.com/91609464/153212511-ef2c6bea-1f8c-4685-951b-8db589414dfe.png)|![trees-paint2image](https://user-images.githubusercontent.com/91609464/153212531-c080c705-fd58-4ade-aac6-e2134838a75f.png)|![trees-paint2image-finetuned](https://user-images.githubusercontent.com/91609464/153212529-51d8d29b-6b58-4f29-8792-4b2b04f9266e.png)|
 
 ## 参考文献
 
