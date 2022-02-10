@@ -275,6 +275,7 @@ class SinGANModel(BaseModel):
             z_pyramid, 
             paddle.zeros(pad_shape(z_pyramid[0].shape, -self.niose_pad_size)), 
             self.scale_num - 1, 0)
+        self.visual_items['fake_img_test'] = fake_img
         with paddle.no_grad():
             if metrics is not None:
                 for metric in metrics.values():
