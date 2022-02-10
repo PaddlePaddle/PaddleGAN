@@ -22,7 +22,7 @@ SinGAN是一种新的可以从单个自然图像中学习的无条件生成模�
 启动训练：
 
 ```bash
-python tools/main.py -c PaddleGAN/configs/singan_universal.yaml\
+python tools/main.py -c configs/singan_universal.yaml \
                      -o model.train_image=训练图片.png
 ```
 
@@ -34,10 +34,18 @@ python tools/main.py -c configs/singan_finetune.yaml \
                      --load 已经训练好的模型.pdparams
 ```
 
+### 测试
+运行下面的命令，可以随机生成一张图片。需要注意的是，`训练图片.png`应当位于`data/singan`目录下，或者手动调整配置文件中`dataset.test.dataroot`的值。此外，这个目录中只能包含`训练图片.png`这一张图片。
+```bash
+python tools/main.py -c configs/singan_universal.yaml \
+                     -o model.train_image=训练图片.png \
+                     --load 已经训练好的模型.pdparams \
+                     --evaluate-only
+```
 
 ### 导出生成器权重
 
-训练结束后，需要使用 ``tools/extract_weight.py`` 来从训练模型（包含了生成器和判别器）中提取生成器的权重来给`applications/tools/singan.py`进行推理。
+训练结束后，需要使用 ``tools/extract_weight.py`` 来从训练模型（包含了生成器和判别器）中提取生成器的权重来给`applications/tools/singan.py`进行推理，以实现SinGAN的各种应用。
 
 ```bash
 python tools/extract_weight.py 训练过程中保存的权重文件.pdparams --net-name netG --output 生成器权重文件.pdparams
@@ -45,14 +53,16 @@ python tools/extract_weight.py 训练过程中保存的权重文件.pdparams --n
 
 ### 推理及结果展示
 
+*注意：您可以下面的命令中的`--weight_path 生成器权重文件.pdparams`可以换成`--pretrained_model <model> `来体验训练好的模型，其中`<model>`可以是`trees`、`stone`、`mountains`、`birds`和`lightning`。*
+
 #### 随机采样
 
 ```bash
 python applications/tools/singan.py \
        --weight_path 生成器权重文件.pdparams \
        --mode random_sample \
-       --scale_v 1 \ # 垂直缩放比例
-       --scale_h 1 \ # 水平缩放比例
+       --scale_v 1 \ # vertical scale
+       --scale_h 1 \ # horizontal scale
        --n_row 2 \
        --n_col 2
 ```
@@ -66,7 +76,7 @@ python applications/tools/singan.py \
 ```bash
 python applications/tools/singan.py \
        --weight_path 生成器权重文件.pdparams \
-       --mode editing \ # 或者 harmonization
+       --mode editing \ # or harmonization
        --ref_image 编辑后的图片.png \
        --mask_image 编辑区域标注图片.png \
        --generate_start_scale 2
@@ -97,10 +107,10 @@ python applications/tools/singan.py \
 python applications/tools/singan.py \
        --weight_path 生成器权重文件.pdparams \
        --mode animation \
-       --animation_alpha 0.6 \ # 这个参数决定了动画与训练图像的接近程度
-       --animation_beta 0.7 \ # 这个参数决定了动画的连续程度
-       --animation_frames 20 \ # 生成的动画的总帧数
-       --animation_duration 0.1	# 动画的每一帧停留时长
+       --animation_alpha 0.6 \ # this parameter determines how close the frames of the sequence remain to the training image
+       --animation_beta 0.7 \ # this parameter controls the smoothness and rate of change in the generated clip
+       --animation_frames 20 \ # frames of animation
+       --animation_duration 0.1	# duration of each frame
 ```
 
 |训练图片|动画效果|
@@ -119,6 +129,8 @@ python applications/tools/singan.py \
 |训练图片|手绘图片|SinGAN生成|SinGAN微调后生成|
 |----|----|----|----|
 |![trees](https://user-images.githubusercontent.com/91609464/153212536-0bb6489d-d488-49e0-a6b5-90ef578c9e4f.png)|![trees-paint](https://user-images.githubusercontent.com/91609464/153212511-ef2c6bea-1f8c-4685-951b-8db589414dfe.png)|![trees-paint2image](https://user-images.githubusercontent.com/91609464/153212531-c080c705-fd58-4ade-aac6-e2134838a75f.png)|![trees-paint2image-finetuned](https://user-images.githubusercontent.com/91609464/153212529-51d8d29b-6b58-4f29-8792-4b2b04f9266e.png)|
+
+
 
 ## 参考文献
 
