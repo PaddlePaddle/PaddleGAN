@@ -31,9 +31,13 @@ model_name=$(func_parser_value "${lines[1]}")
 
 trainer_list=$(func_parser_value "${lines[14]}")
 
+if [ ${MODE} = "benchmark_train" ];then
+    pip install -v -e .
+    MODE="lite_train_lite_infer"
+fi
+
 # MODE be one of ['lite_train_lite_infer' 'lite_train_whole_infer' 'whole_train_whole_infer',  
-#                 'whole_infer']
-MODE=$2
+#                 'whole_infer
 
 if [ ${MODE} = "lite_train_lite_infer" ];then
     if [ ${model_name} == "pix2pix" ]; then
