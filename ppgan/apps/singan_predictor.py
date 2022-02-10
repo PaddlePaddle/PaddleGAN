@@ -25,7 +25,16 @@ import paddle.vision.transforms as T
 from .base_predictor import BasePredictor
 from ..models.singan_model import pad_shape
 from ppgan.models.generators import SinGANGenerator
+from ppgan.utils.download import get_path_from_url
 from ppgan.utils.visual import tensor2img, save_image, make_grid
+
+pretrained_weights_url = {
+    'trees': 'https://paddlegan.bj.bcebos.com/models/singan_universal_trees.pdparams',
+    'stone': 'https://paddlegan.bj.bcebos.com/models/singan_universal_stone.pdparams',
+    'mountains': 'https://paddlegan.bj.bcebos.com/models/singan_universal_mountains.pdparams',
+    'birds': 'https://paddlegan.bj.bcebos.com/models/singan_universal_birds.pdparams',
+    'lightning': 'https://paddlegan.bj.bcebos.com/models/singan_universal_lightning.pdparams'
+}
 
 
 def imread(path):
@@ -54,13 +63,17 @@ class SinGANPredictor(BasePredictor):
     def __init__(self,
                  output_path='output_dir',
                  weight_path=None,
+                 pretrained_model=None,
                  seed=None):
         self.output_path = output_path
         if weight_path is None:
-            raise ValueError(
-                'Predictor need a weight path.')
-        else:
-            checkpoint = paddle.load(weight_path)
+            if pretrained_model in pretrained_weights_url.keys():
+                weight_path = get_path_from_url(
+                    pretrained_weights_url[pretrained_model])
+            else:
+                raise ValueError(
+                    'Predictor need a weight path or a pretrained model.')
+        checkpoint = paddle.load(weight_path)
 
         self.scale_num = checkpoint['scale_num'].item()
         self.coarsest_shape = checkpoint['coarsest_shape'].tolist()
@@ -81,7 +94,7 @@ class SinGANPredictor(BasePredictor):
         self.generator.eval()
         self.scale_factor = self.generator.scale_factor.item()
         self.niose_pad_size = 0 if self.noise_zero_pad \
-                                else self.generator.pad_size
+                                else self.generator._pad_size
         if seed is not None:
             paddle.seed(seed)
 

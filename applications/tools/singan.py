@@ -29,6 +29,11 @@ if __name__ == "__main__":
                         default=None,
                         help="path to model checkpoint path")
 
+    parser.add_argument("--pretrained_model",
+                        type=str,
+                        default=None,
+                        help="a pretianed model, only trees, stone, mountains, birds, and lightning are implemented.")
+
     parser.add_argument("--mode",
                         type=str,
                         default="random_sample",
@@ -92,12 +97,12 @@ if __name__ == "__main__":
     parser.add_argument("--n_row",
                         type=int,
                         default=5,
-                        help="row number of output image grid, which will be reset to 1 when mode is animation")
+                        help="row number of output image grid")
 
     parser.add_argument("--n_col",
                         type=int,
                         default=3,
-                        help="column number of output image grid, which will be reset to 1 when mode is animation")
+                        help="column number of output image grid")
 
     parser.add_argument("--cpu",
                         dest="cpu",
@@ -111,6 +116,7 @@ if __name__ == "__main__":
 
     predictor = SinGANPredictor(args.output_path,
                                 args.weight_path,
+                                args.pretrained_model,
                                 args.seed)
     predictor.run(args.mode,
                   args.generate_start_scale,
