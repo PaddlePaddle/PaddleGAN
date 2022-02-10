@@ -72,7 +72,7 @@ snapshot_config:
 
 validate:
   interval: -1
-  save_img: False
+  save_img: True
   metrics:
     fid: # metric name, can be arbitrary
       name: FID
