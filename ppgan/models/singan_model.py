@@ -97,7 +97,7 @@ class SinGANModel(BaseModel):
         generator['coarsest_shape'] =self.reals[0].shape
         self.nets['netG'] = build_generator(generator)
         self.niose_pad_size = 0 if generator.get('noise_zero_pad', True) \
-                                else self.nets['netG'].pad_size
+                                else self.nets['netG']._pad_size
         self.nets['netG'].scale_factor = paddle.to_tensor(self.scale_factor, 'float32')
 
         # build discriminator
