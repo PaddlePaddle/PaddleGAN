@@ -1,5 +1,5 @@
 ===========================train_params===========================
-model_name:fom
+model_name:FOMM
 python:python3.7
 gpu_list:0
 ##
@@ -49,3 +49,9 @@ null:null
 null:null
 --benchmark:True
 null:null
+===========================train_benchmark_params==========================
+batch_size:16
+fp_items:fp32
+epoch:1
+--profiler_options:batch_range=[10,20];state=GPU;tracer_option=Default;profile_path=model.profile
+flags:null

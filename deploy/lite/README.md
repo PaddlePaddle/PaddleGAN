@@ -1,6 +1,6 @@
 # Paddle-Lite端侧部署
 
-本教程将介绍基于[Paddle Lite](https://github.com/PaddlePaddle/Paddle-Lite) 在移动端部署PaddleDetection模型的详细步骤。
+本教程将介绍基于[Paddle Lite](https://github.com/PaddlePaddle/Paddle-Lite) 在移动端部署FOM模型的详细步骤。
 
 Paddle Lite是飞桨轻量化推理引擎，为手机、IOT端提供高效推理能力，并广泛整合跨平台硬件，为端侧部署及应用落地问题提供轻量化的部署方案。
 
@@ -11,7 +11,7 @@ Paddle Lite是飞桨轻量化推理引擎，为手机、IOT端提供高效推理
 - 安卓手机（armv7或armv8）
 
 ### 1.1 准备交叉编译环境
-交叉编译环境用于编译 Paddle Lite 和 PaddleDetection 的C++ demo。
+交叉编译环境用于编译 Paddle Lite 和 FOM 的C++ demo。
 支持多种开发环境，不同开发环境的编译流程请参考对应文档，请确保安装完成Java jdk、Android NDK(R17以上)。
 
 1. [Docker](https://paddle-lite.readthedocs.io/zh/latest/source_compile/compile_env.html#docker)
