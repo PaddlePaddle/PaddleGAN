@@ -15,6 +15,7 @@ Linux端基础训练预测功能测试的主程序为`test_train_inference_pytho
 | FOMM |FOMM | 生成  | 支持 | 多机多卡  | | |
 | BasicVSR |BasicVSR | 超分  | 支持 | 多机多卡  | | |
 |PP-MSVSR|PP-MSVSR | 超分|
+|SinGAN|SinGAN | 生成|支持|
 
 - 预测相关：预测功能汇总如下，
 
@@ -55,25 +56,25 @@ Linux端基础训练预测功能测试的主程序为`test_train_inference_pytho
 ```shell
 bash test_tipc/prepare.sh ./test_tipc/configs/basicvsr/train_infer_python.txt 'lite_train_lite_infer'
 bash test_tipc/test_train_inference_python.sh ./test_tipc/configs/basicvsr/train_infer_python.txt 'lite_train_lite_infer'
-```  
+```
 
 - 模式2：lite_train_whole_infer，使用少量数据训练，一定量数据预测，用于验证训练后的模型执行预测，预测速度是否合理；
 ```shell
 bash test_tipc/prepare.sh ./test_tipc/configs/basicvsr/train_infer_python.txt 'lite_train_whole_infer'
 bash test_tipc/test_train_inference_python.sh ./test_tipc/configs/basicvsr/train_infer_python.txt 'lite_train_whole_infer'
-```  
+```
 
 - 模式3：whole_infer，不训练，全量数据预测，走通开源模型评估、动转静，检查inference model预测时间和精度;
 ```shell
 bash test_tipc/prepare.sh ./test_tipc/configs/basicvsr/train_infer_python.txt 'whole_infer'
 bash test_tipc/test_train_inference_python.sh ./test_tipc/configs/basicvsr/train_infer_python.txt 'whole_infer'
-```  
+```
 
 - 模式4：whole_train_whole_infer，CE： 全量数据训练，全量数据预测，验证模型训练精度，预测精度，预测速度；
 ```shell
 bash test_tipc/prepare.sh ./test_tipc/configs/basicvsr/train_infer_python.txt 'whole_train_whole_infer'
 bash test_tipc/test_train_inference_python.sh ./test_tipc/configs/basicvsr/train_infer_python.txt 'whole_train_whole_infer'
-```  
+```
 
 运行相应指令后，在`test_tipc/output`文件夹下自动会保存运行日志。如'lite_train_lite_infer'模式下，会运行训练+inference的链条，因此，在`test_tipc/output`文件夹有以下文件：
 ```

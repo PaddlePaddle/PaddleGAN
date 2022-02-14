@@ -66,7 +66,13 @@ if [ ${MODE} = "lite_train_lite_infer" ];then
         rm -rf ./data/DIV2K*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/DIV2KandSet14.tar --no-check-certificate
         cd ./data/ && tar xf DIV2KandSet14.tar && cd ../ ;;
-    esac   
+    singan)
+        rm -rf ./data/SinGAN*
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/singan-official_images.zip --no-check-certificate
+        cd ./data/ && unzip -q singan-official_images.zip && cd ../ ;;
+        mkdir -p ./data/singan
+        mv ./data/SinGAN-official_images/Images/stone.png ./data/singan
+    esac 
 elif [ ${MODE} = "whole_train_whole_infer" ];then
     if [ ${model_name} == "pix2pix" ]; then
         rm -rf ./data/facades*
@@ -76,6 +82,12 @@ elif [ ${MODE} = "whole_train_whole_infer" ];then
         rm -rf ./data/horse2zebra*
         wget -nc -P ./data/ https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/horse2zebra.zip --no-check-certificate
         cd ./data/ && unzip horse2zebra.zip && cd ../
+    elif [ ${model_name} == "singan" ]; then
+        rm -rf ./data/SinGAN*
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/singan-official_images.zip --no-check-certificate
+        cd ./data/ && unzip -q singan-official_images.zip && cd ../
+        mkdir -p ./data/singan
+        mv ./data/SinGAN-official_images/Images/stone.png ./data/singan
     fi
 elif [ ${MODE} = "lite_train_whole_infer" ];then
     if [ ${model_name} == "pix2pix" ]; then
@@ -102,6 +114,12 @@ elif [ ${MODE} = "lite_train_whole_infer" ];then
         rm -rf ./data/reds*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/reds_lite.tar --no-check-certificate
         cd ./data/ && tar xf reds_lite.tar && cd ../
+    elif [ ${model_name} == "singan" ]; then
+        rm -rf ./data/SinGAN*
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/singan-official_images.zip --no-check-certificate
+        cd ./data/ && unzip -q singan-official_images.zip && cd ../
+        mkdir -p ./data/singan
+        mv ./data/SinGAN-official_images/Images/stone.png ./data/singan
     fi
 elif [ ${MODE} = "whole_infer" ];then
     if [ ${model_name} = "pix2pix" ]; then
@@ -145,6 +163,14 @@ elif [ ${MODE} = "whole_infer" ];then
         wget -nc  -P ./inference https://paddlegan.bj.bcebos.com/static_model/msvsr.tar --no-check-certificate
         cd ./inference && tar xf msvsr.tar && cd ../
         cd ./data/ && tar xf reds_lite.tar && cd ../
+    elif [ ${model_name} == "singan" ]; then
+        rm -rf ./data/SinGAN*
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/singan-official_images.zip --no-check-certificate
+        wget -nc -P ./inference https://paddlegan.bj.bcebos.com/datasets/singan.zip --no-check-certificate
+        cd ./data/ && unzip -q singan-official_images.zip && cd ../
+        cd ./inference/ && unzip -q singan.zip && cd ../
+        mkdir -p ./data/singan
+        mv ./data/SinGAN-official_images/Images/stone.png ./data/singan
     fi
     
 fi
