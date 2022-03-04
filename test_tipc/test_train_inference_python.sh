@@ -73,7 +73,7 @@ save_log_key=$(func_parser_key "${lines[48]}")
 infer_key1=$(func_parser_key "${lines[50]}")
 infer_value1=$(func_parser_value "${lines[50]}")
 
-LOG_PATH="./test_tipc/output"
+LOG_PATH="./test_tipc/output/${model_name}"
 mkdir -p ${LOG_PATH}
 status_log="${LOG_PATH}/results_python.log"
 
