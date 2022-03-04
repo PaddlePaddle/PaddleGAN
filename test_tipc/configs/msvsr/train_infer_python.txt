@@ -27,13 +27,13 @@ null:null
 ===========================infer_params===========================
 --output_dir:./output/
 load:null
-norm_export:tools/export_model.py -c configs/msvsr_reds.yaml  --inputs_size="1,2,3,180,320" --load 
+norm_export:tools/export_model.py -c configs/msvsr_reds.yaml  --inputs_size="1,2,3,180,320"  --model_name inference --load 
 quant_export:null 
 fpgm_export:null
 distill_export:null
 export1:null
 export2:null
-inference_dir:multistagevsrmodel_generator
+inference_dir:inference
 train_model:./inference/msvsr/multistagevsrmodel_generator
 infer_export:null
 infer_quant:False
@@ -49,3 +49,5 @@ null:null
 null:null
 --benchmark:True
 null:null
+===========================infer_benchmark_params==========================
+random_infer_input:[{float32,[2,3,180,320]}]
