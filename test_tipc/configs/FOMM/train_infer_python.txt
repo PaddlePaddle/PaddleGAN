@@ -4,7 +4,7 @@ python:python3.7
 gpu_list:0
 ##
 auto_cast:null
-epochs:lite_train_lite_infer=1|whole_train_whole_infer=100
+epochs:lite_train_lite_infer=1|lite_train_whole_infer=1|whole_train_whole_infer=100
 output_dir:./output/
 dataset.train.batch_size:lite_train_lite_infer=8|whole_train_whole_infer=8
 pretrained_model:null

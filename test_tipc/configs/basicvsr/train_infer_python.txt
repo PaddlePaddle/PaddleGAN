@@ -4,7 +4,7 @@ python:python3.7
 gpu_list:0
 ##
 auto_cast:null
-total_iters:lite_train_lite_infer=10|whole_train_whole_infer=200
+total_iters:lite_train_lite_infer=10|lite_train_whole_infer=10|whole_train_whole_infer=200
 output_dir:./output/
 dataset.train.batch_size:lite_train_lite_infer=1|whole_train_whole_infer=1
 pretrained_model:null
@@ -27,13 +27,13 @@ null:null
 ===========================infer_params===========================
 --output_dir:./output/
 load:null
-norm_export:tools/export_model.py -c configs/basicvsr_reds.yaml  --inputs_size="1,6,3,180,320" --load 
+norm_export:tools/export_model.py -c configs/basicvsr_reds.yaml  --inputs_size="1,6,3,180,320" --model_name inference --load 
 quant_export:null 
 fpgm_export:null
 distill_export:null
 export1:null
 export2:null
-inference_dir:basicvsrmodel_generator
+inference_dir:inference
 train_model:./inference/basicvsr/basicvsrmodel_generator
 infer_export:null
 infer_quant:False
@@ -55,3 +55,5 @@ fp_items:fp32
 total_iters:50
 --profiler_options:batch_range=[10,20];state=GPU;tracer_option=Default;profile_path=model.profile
 flags:null
+===========================infer_benchmark_params==========================
+random_infer_input:[{float32,[6,3,180,320]}]

@@ -214,7 +214,7 @@ class FirstOrderModel(BaseModel):
                                  kp_driving=kp_norm)
             return out['prediction']
 
-    def export_model(self, export_model=None, output_dir=None, inputs_size=[], export_serving_model=False):
+    def export_model(self, export_model=None, output_dir=None, inputs_size=[], export_serving_model=False, model_name=None):
 
         source = paddle.rand(shape=inputs_size[0], dtype='float32')
         driving = paddle.rand(shape=inputs_size[1], dtype='float32')
