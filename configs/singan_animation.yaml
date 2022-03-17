@@ -1,0 +1,79 @@
+total_iters: 100000
+output_dir: output_dir
+export_model: null
+
+model:
+  name: SinGANModel
+  generator:
+    name: SinGANGenerator
+    nfc_init: 32
+    min_nfc_init: 32
+    noise_zero_pad: False
+  discriminator:
+    name: SinGANDiscriminator
+    nfc_init: 32
+    min_nfc_init: 32
+  gan_criterion:
+    name: GANLoss
+    gan_mode: wgangp
+    loss_weight: 1.0
+  recon_criterion:
+    name: MSELoss
+    loss_weight: 10.0
+  gp_criterion:
+    name: GradientPenalty
+    loss_weight: 0.1
+  train_image: data/singan/stone.png
+  scale_factor: 0.75
+  min_size: 25
+  is_finetune: False
+
+dataset:
+  train:
+    name: EmptyDataset
+  test:
+    name: SingleDataset
+    dataroot: data/singan
+    num_workers: 0
+    batch_size: 1
+    preprocess:
+      - name: LoadImageFromFile
+        key: A
+      - name: Transforms
+        input_keys: [A]
+        pipeline:
+          - name: Transpose
+          - name: Normalize
+            mean: [127.5, 127.5, 127.5]
+            std: [127.5, 127.5, 127.5]
+
+lr_scheduler:
+  name: MultiStepDecay
+  learning_rate: 0.0005
+  milestones: [9600]
+  gamma: 0.1
+
+optimizer:
+  optimizer_G:
+    name: Adam
+    beta1: 0.5
+    beta2: 0.999
+  optimizer_D:
+    name: Adam
+    beta1: 0.5
+    beta2: 0.999
+
+log_config:
+  interval: 100
+  visiual_interval: 2000
+
+snapshot_config:
+  interval: 10000
+
+validate:
+  interval: -1
+  save_img: True
+  metrics:
+    fid: # metric name, can be arbitrary
+      name: FID
+      batch_size: 1

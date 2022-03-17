@@ -34,3 +34,4 @@ from .photopen_predictor import PhotoPenPredictor
 from .recurrent_vsr_predictor import (PPMSVSRPredictor, BasicVSRPredictor, \
                                      BasiVSRPlusPlusPredictor, IconVSRPredictor, \
                                      PPMSVSRLargePredictor)
+from .singan_predictor import SinGANPredictor

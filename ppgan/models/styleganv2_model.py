@@ -310,13 +310,16 @@ class StyleGAN2Model(BaseModel):
                      export_model=None,
                      output_dir=None,
                      inputs_size=[[1, 1, 512], [1, 1]],
-                     export_serving_model=False):
+                     export_serving_model=False,
+                     model_name=None):
         infer_generator = self.InferGenerator()
         infer_generator.set_generator(self.nets['gen'])
         style = paddle.rand(shape=inputs_size[0], dtype='float32')
         truncation = paddle.rand(shape=inputs_size[1], dtype='float32')
         if output_dir is None:
             output_dir = 'inference_model'
+        if model_name is None:
+            model_name = "stylegan2model_gen"
         paddle.jit.save(infer_generator,
-                        os.path.join(output_dir, "stylegan2model_gen"),
+                        os.path.join(output_dir, model_name),
                         input_spec=[style, truncation])
