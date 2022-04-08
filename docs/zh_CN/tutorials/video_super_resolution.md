@@ -118,6 +118,19 @@
 
   训练或测试其他视频超分模型，可以在``PaddleGAN/configs``文件夹下找到对应模型的配置文件，将命令中的配置文件改成该视频超分模型的配置文件即可。
 
+### 1.2.3 模型导出
+
+以msvsr模型为例，``inputs_size``为模型输入size，``model_name``为导出模型的命名，``model_path``为模型权重的路径.
+```
+python tools/export_model.py -c configs/msvsr_reds.yaml  --inputs_size="1,2,3,180,320"  --model_name inference --load model_path
+```
+
+### 1.2.4 模型推理
+以msvsr模型为例
+```
+python tools/inference.py --model_type msvsr -c configs/msvsr_reds.yaml --output_path output_dir
+```
+
 
 ## 1.3 实验结果展示
 实验数值结果是在 RGB 通道上进行评估。

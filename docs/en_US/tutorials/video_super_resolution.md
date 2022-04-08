@@ -119,6 +119,18 @@
 
   To train or test other VSR model, you can find the config file of the corresponding VSR model in the ``PaddleGAN/configs``, then change the config file in the command to the config file of corresponding VSR model.
 
+### 1.2.3 Model export
+
+Take the msvsr model as an example, ``inputs_size`` is the input size, ``model_name`` is the name of the exported model, and ``model_path`` is the path of the model weight.
+```
+python tools/export_model.py -c configs/msvsr_reds.yaml  --inputs_size="1,2,3,180,320"  --model_name inference --load model_path
+```
+
+### 1.2.4 Model inference
+Take the msvsr model as an example.
+```
+python tools/inference.py --model_type msvsr -c configs/msvsr_reds.yaml --output_path output_dir
+```
 
 ## 1.3 Results
 The experimental results are evaluated on RGB channel.
