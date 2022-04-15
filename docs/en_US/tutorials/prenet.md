@@ -1,7 +1,8 @@
 # PReNet
 
 ## 1 Introduction
-"Progressive Image Deraining Networks: A Better and Simpler Baseline" provides a better and simpler baseline deraining network by considering network architecture, input and output, and loss functions. Specifically, by repeatedly unfolding a shallow ResNet, progressive ResNet (PRN) is proposed to take advantage of recursive computation. A recurrent layer is further introduced to exploit the dependencies of deep features across stages, forming our progressive recurrent network (PReNet). 
+"Progressive Image Deraining Networks: A Better and Simpler Baseline" provides a better and simpler baseline deraining network by considering network architecture, input and output, and loss functions.
+
 <div align="center">
     <img src="https://github.com/simonsLiang/PReNet_paddle/blob/main/data/net.jpg" width=800">
 </div>
