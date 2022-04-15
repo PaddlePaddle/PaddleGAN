@@ -118,6 +118,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 * [StarGANv2](docs/en_US/tutorials/starganv2.md)
 * [MPR Net](./docs/en_US/tutorials/mpr_net.md)
 * [FaceEnhancement](./docs/en_US/tutorials/face_enhancement.md)
+* [PReNet](./docs/en_US/tutorials/prenet.md)
 
 
 ## Composite Application
