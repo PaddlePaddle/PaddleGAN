@@ -8,7 +8,7 @@
 
   The dataset(TrainH.zip) used by PReNet can be downloaded from [here](https://pan.baidu.com/s/1_vxCatOV3sOA6Vkx1l23eA?pwd=vitu),uncompress it and get two folders(RainTrainH、Rain100H).
   
-  The structure of dataset is as following::
+  The structure of dataset is as following:
 
   ```
     ├── data
