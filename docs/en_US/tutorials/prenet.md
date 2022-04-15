@@ -62,7 +62,7 @@ Output:
 
 
 ```
-@article{Dongwei2019PReNet,
+@article{dongwei2019progressive,
   title={Progressive Image Deraining Networks: A Better and Simpler Baseline},
   author={Dongwei Ren and Wangmeng Zuo and Qinghua Hu and Pengfei Zhu and Deyu Meng},
   booktitle={Computer Vision and Pattern Recognition (CVPR)},
