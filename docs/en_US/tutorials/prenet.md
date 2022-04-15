@@ -41,7 +41,7 @@
 ## 4 Model Download
 | 模型 | 数据集 | 下载地址 |
 |---|---|---|
-| PReNet  | RainH.zip | [RainH.zip](https://pan.baidu.com/s/1_vxCatOV3sOA6Vkx1l23eA?pwd=vitu)
+| PReNet(net_latest.pdparams)  | RainH.zip | [RainH.zip](https://pan.baidu.com/s/1_vxCatOV3sOA6Vkx1l23eA?pwd=vitu)
 
 
 
