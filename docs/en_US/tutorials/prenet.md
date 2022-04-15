@@ -60,11 +60,12 @@ Output:
 
 - 1. [Progressive Image Deraining Networks: A Better and Simpler Baseline](https://arxiv.org/pdf/1901.09221v3.pdf)
 
-  ```
-@inproceedings{Dongwei2019PReNet,
-title={Progressive Image Deraining Networks: A Better and Simpler Baseline},
-author={Dongwei Ren and Wangmeng Zuo and Qinghua Hu and Pengfei Zhu and Deyu Meng},
-booktitle={Computer Vision and Pattern Recognition (CVPR)},
-year={2019}
-}                                                                                                         
-  ```
+
+```
+@article{Dongwei2019PReNet,
+  title={Progressive Image Deraining Networks: A Better and Simpler Baseline},
+  author={Dongwei Ren and Wangmeng Zuo and Qinghua Hu and Pengfei Zhu and Deyu Meng},
+  booktitle={Computer Vision and Pattern Recognition (CVPR)},
+  year={2019}
+}
+```
