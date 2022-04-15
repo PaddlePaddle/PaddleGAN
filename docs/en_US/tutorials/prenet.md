@@ -36,7 +36,17 @@
 
 ## 3 Results
 
-![](https://user-images.githubusercontent.com/79366697/146308440-65259d70-d056-43d4-8cf5-a82530993910.jpg)
+Input:
+                                                                                             
+<div align="center">
+    <img src="https://github.com/simonsLiang/PReNet_paddle/blob/main/data/rain-001.png" width=300">
+</div>
+
+Output:
+
+<div align="center">
+    <img src="https://github.com/simonsLiang/PReNet_paddle/blob/main/data/derain-rain-001.png" width=300">
+</div>
 
 ## 4 Model Download
 | 模型 | 数据集 | 下载地址 |
