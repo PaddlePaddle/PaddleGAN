@@ -62,10 +62,10 @@ Output:
 
 
 ```
-@article{dongwei2019progressive,
-  title={Progressive Image Deraining Networks: A Better and Simpler Baseline},
-  author={Dongwei Ren and Wangmeng Zuo and Qinghua Hu and Pengfei Zhu and Deyu Meng},
-  booktitle={Computer Vision and Pattern Recognition (CVPR)},
-  year={2019}
-}
+@inproceedings{ren2019progressive,
+   title={Progressive Image Deraining Networks: A Better and Simpler Baseline},
+   author={Ren, Dongwei and Zuo, Wangmeng and Hu, Qinghua and Zhu, Pengfei and Meng, Deyu},
+   booktitle={IEEE Conference on Computer Vision and Pattern Recognition},
+   year={2019},
+ }
 ```
