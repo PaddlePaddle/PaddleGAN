@@ -20,7 +20,7 @@ dataset:
     gt_folder: data/DIV2K/DIV2K_train_HR_sub
     lq_folder: data/DIV2K/DIV2K_train_LR_bicubic/X4_sub
     num_workers: 4
-    batch_size: 64
+    batch_size: 16
     scale: 4
     preprocess:
       - name: LoadImageFromFile
