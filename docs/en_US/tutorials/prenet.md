@@ -6,20 +6,41 @@
 <div align="center">
     <img src="https://github.com/simonsLiang/PReNet_paddle/blob/main/data/net.jpg" width=800">
 </div>
-                                                                                             
+
 ## 2 How to use
 
 ### 2.1 Prepare dataset
 
   The dataset(RainH.zip) used by PReNet can be downloaded from [here](https://pan.baidu.com/s/1_vxCatOV3sOA6Vkx1l23eA?pwd=vitu),uncompress it and get two folders(RainTrainH、Rain100H).
-  
+
   The structure of dataset is as following:
 
-  ```
+```
     ├── data
         ├── RainTrainH
+            ├── rain
+                ├── 1.png
+                └── 2.png
+                    .
+                    .
+            └── norain
+                ├── 1.png
+                └── 2.png
+                    .
+                    .
         └── Rain100H
-  ```
+            ├── rain
+                ├── 001.png
+                └── 002.png
+                    .
+                    .
+            └── norain
+                ├── 001.png
+                └── 002.png
+                    .
+                    .
+```
+
 
 ### 2.2 Train/Test
 
@@ -37,7 +58,7 @@
 ## 3 Results
 
 Input:
-                                                                                             
+
 <div align="center">
     <img src="https://github.com/simonsLiang/PReNet_paddle/blob/main/data/rain-001.png" width=300">
 </div>
@@ -49,9 +70,9 @@ Output:
 </div>
 
 ## 4 Model Download
-| 模型 | 数据集 | 下载地址 |
-|---|---|---|
-| PReNet(net_latest.pdparams)  | RainH.zip | [BaiduYun](https://pan.baidu.com/s/1_vxCatOV3sOA6Vkx1l23eA?pwd=vitu)
+| model | dataset |
+|---|---|
+| [PReNet](https://paddlegan.bj.bcebos.com/models/PReNet.pdparams)  | [RainH.zip](https://pan.baidu.com/s/1_vxCatOV3sOA6Vkx1l23eA?pwd=vitu) |
 
 
 
@@ -60,5 +81,12 @@ Output:
 
 - 1. [Progressive Image Deraining Networks: A Better and Simpler Baseline](https://arxiv.org/pdf/1901.09221v3.pdf)
 
-  ```
-  ```
+
+```
+@inproceedings{ren2019progressive,
+   title={Progressive Image Deraining Networks: A Better and Simpler Baseline},
+   author={Ren, Dongwei and Zuo, Wangmeng and Hu, Qinghua and Zhu, Pengfei and Meng, Deyu},
+   booktitle={IEEE Conference on Computer Vision and Pattern Recognition},
+   year={2019},
+ }
+```

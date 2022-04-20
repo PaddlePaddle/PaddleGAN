@@ -39,3 +39,4 @@ from .generater_photopen import SPADEGenerator
 from .basicvsr_plus_plus import BasicVSRPlusPlus
 from .msvsr import MSVSR
 from .generator_singan import SinGANGenerator
+from .prenet import PReNet
