@@ -64,7 +64,7 @@ python -u tools/main.py --config-file configs/rcan_rssr_x4.yaml --load ${PATH_OF
 
 - RCANx4遥感影像超分效果
 
-<img src=../../imGs/RSSR.png></img>
+<img src=../../imgs/RSSR.png></img>
 
 - [RCAN遥感影像超分辨率重建 Ai studio 项目在线体验](https://aistudio.baidu.com/aistudio/projectdetail/3508912)
 
