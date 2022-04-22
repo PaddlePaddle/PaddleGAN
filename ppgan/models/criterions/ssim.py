@@ -15,10 +15,11 @@
 # code was heavily based on https://github.com/csdwren/PReNet
 # Users should be careful about adopting these functions in any commercial matters.
 
-import paddle.nn.functional as F
-import paddle
 import numpy as np
 from math import exp
+
+import paddle
+import paddle.nn.functional as F
 from .builder import CRITERIONS
 
 
