@@ -25,9 +25,9 @@ from ..utils.visual import tensor2img
 
 @MODELS.register()
 class PReNetModel(BaseSRModel):
-    """BasicVSR Model.
+    """PReNet Model.
 
-    Paper: BasicVSR: The Search for Essential Components in Video Super-Resolution and Beyond, CVPR, 2021
+    Paper: Progressive Image Deraining Networks: A Better and Simpler Baseline, IEEE,2019
     """
 
     def __init__(self, generator, pixel_criterion=None):
