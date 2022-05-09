@@ -31,8 +31,6 @@ def gaussian(window_size, sigma):
     return gauss / gauss.sum()
 
 
-f = paddle.create_parameter(shape=(5, 2, 3, 1), dtype='float32', is_bias=True)
-
 
 def create_window(window_size, channel):
     _1D_window = gaussian(window_size, 1.5).unsqueeze(1)
