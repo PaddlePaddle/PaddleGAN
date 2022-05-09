@@ -17,8 +17,8 @@ model:
 dataset:
   train:
     name: SRDataset
-    gt_folder: data/RainTrainH/norain
-    lq_folder: data/RainTrainH/rain
+    gt_folder: data/RainH/RainTrainH/norain
+    lq_folder: data/RainH/RainTrainH/rain
     num_workers: 4
     batch_size: 16
     scale: 1
@@ -43,8 +43,8 @@ dataset:
             keys: [image, image]
   test:
     name: SRDataset
-    gt_folder: data/Rain100H/norain
-    lq_folder: data/Rain100H/rain
+    gt_folder: data/RainH/Rain100H/norain
+    lq_folder: data/RainH/Rain100H/rain
     scale: 1
     preprocess:
       - name: LoadImageFromFile
