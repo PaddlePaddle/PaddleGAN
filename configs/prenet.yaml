@@ -1,0 +1,98 @@
+total_iters: 300000
+output_dir: output_dir
+find_unused_parameters: True
+checkpoints_dir: checkpoints
+use_dataset: True
+# tensor range for function tensor2img
+min_max:
+  (0., 1.)
+
+model:
+  name: PReNetModel
+  generator:
+    name: PReNet
+  pixel_criterion:
+    name: SSIM
+
+dataset:
+  train:
+    name: SRDataset
+    gt_folder: data/RainH/RainTrainH/norain
+    lq_folder: data/RainH/RainTrainH/rain
+    num_workers: 4
+    batch_size: 16
+    scale: 1
+    preprocess:
+      - name: LoadImageFromFile
+        key: lq
+      - name: LoadImageFromFile
+        key: gt
+      - name: Transforms
+        input_keys: [lq, gt]
+        pipeline:
+          - name: PairedRandomHorizontalFlip
+            keys: [image, image]
+          - name: PairedRandomVerticalFlip
+            keys: [image, image]
+          - name: PairedRandomTransposeHW
+            keys: [image, image]
+          - name: PairedRandomCrop
+            size: [100, 100]
+            keys: [image, image]
+          - name: PairedToTensor
+            keys: [image, image]
+  test:
+    name: SRDataset
+    gt_folder: data/RainH/Rain100H/norain
+    lq_folder: data/RainH/Rain100H/rain
+    scale: 1
+    preprocess:
+      - name: LoadImageFromFile
+        key: lq
+      - name: LoadImageFromFile
+        key: gt
+      - name: Transforms
+        input_keys: [lq, gt]
+        pipeline:
+          - name: PairedToTensor
+            keys: [image, image]
+
+
+lr_scheduler:
+  name: MultiStepDecay
+  learning_rate: 0.0013
+  milestones: [36000,60000,96000]
+  gamma: 0.2
+
+optimizer:
+  name: Adam
+  # add parameters of net_name to optim
+  # name should in self.nets
+  net_names:
+    - generator
+  beta1: 0.9
+  beta2: 0.99
+
+validate:
+  interval: 5000
+  save_img: false
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      name: PSNR
+      crop_border: 0
+      test_y_channel: True
+    ssim:
+      name: SSIM
+      crop_border: 0
+      test_y_channel: True
+
+log_config:
+  interval: 100
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 5000
+
+export_model:
+  - {name: 'generator', inputs_num: 1}
