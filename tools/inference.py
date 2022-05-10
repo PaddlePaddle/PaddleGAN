@@ -1,3 +1,9 @@
+import sys
+
+import cv2
+
+sys.path.append(".")
+
 import paddle
 import argparse
 import numpy as np
@@ -14,8 +20,9 @@ from ppgan.utils.filesystem import makedirs
 from ppgan.metrics import build_metric
 
 
+
 MODEL_CLASSES = ["pix2pix", "cyclegan", "wav2lip", "esrgan", \
-                 "edvr", "fom", "stylegan2", "basicvsr", "msvsr", "singan","prenet"]
+                 "edvr", "fom", "stylegan2", "basicvsr", "msvsr", "singan"]
 
 
 def parse_args():
@@ -274,6 +281,32 @@ def main():
             real_img = paddle.to_tensor(data['A'])
             for metric in metrics.values():
                 metric.update(prediction, real_img)
+        elif model_type == "GPEN":
+            lq = data[0].numpy()
+            input_handles[0].copy_from_cpu(lq)
+            predictor.run()
+            prediction = output_handle.copy_to_cpu()
+            target = data[1].numpy()
+
+            metric_file = os.path.join(args.output_path, model_type,
+                                       "metric.txt")
+            for metric in metrics.values():
+                metric.update(prediction, target)
+
+            lq = paddle.to_tensor(lq)
+            target = paddle.to_tensor(target)
+            prediction = paddle.to_tensor(prediction)
+
+            lq = lq.transpose([0, 2, 3, 1])
+            target = target.transpose([0, 2, 3, 1])
+            prediction = prediction.transpose([0, 2, 3, 1])
+            sample_result = paddle.concat((lq[0], prediction[0], target[0]), 1)
+            sample = cv2.cvtColor((sample_result.numpy() + 1) / 2 * 255,
+                                  cv2.COLOR_RGB2BGR)
+            file_name = os.path.join(args.output_path, model_type,
+                                     "{}.png".format(i))
+            cv2.imwrite(file_name, sample)
+
         elif model_type in ["basicvsr", "msvsr"]:
             lq = data['lq'].numpy()
             input_handles[0].copy_from_cpu(lq)
@@ -313,23 +346,6 @@ def main():
             metric_file = os.path.join(args.output_path, "singan/metric.txt")
             for metric in metrics.values():
                 metric.update(prediction, data['A'])
-
-        elif model_type == "prenet":
-            lq = data['lq'].numpy()
-            gt = data['gt'].numpy()
-            input_handles[0].copy_from_cpu(lq)
-            predictor.run()
-            prediction = output_handle.copy_to_cpu()
-            prediction = paddle.to_tensor(prediction)
-            gt = paddle.to_tensor(gt)
-            image_numpy = tensor2img(prediction, min_max)
-            gt_img = tensor2img(gt, min_max)
-            save_image(
-                image_numpy,
-                os.path.join(args.output_path, "prenet/{}.png".format(i)))
-            metric_file = os.path.join(args.output_path, "prenet/metric.txt")
-            for metric in metrics.values():
-                metric.update(image_numpy, gt_img)
 
     if metrics:
         log_file = open(metric_file, 'a')

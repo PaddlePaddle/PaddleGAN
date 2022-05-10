@@ -1,0 +1,75 @@
+total_iters: 200000
+output_dir: output_dir
+
+model:
+  name: GPENModel
+  generator:
+    name: GPEN
+    size: 256
+    style_dim: 512
+    n_mlp: 8
+    channel_multiplier: 1
+    narrow: 0.5
+  discriminator:
+    name: StyleGANv2Discriminator
+    size: 256
+    channel_multiplier: 1
+    narrow: 0.5
+
+
+export_model:
+  - {name: 'g_ema', inputs_num: 1}
+
+dataset:
+  train:
+    name: GPENDataset
+    dataroot: ../data/train/
+    num_workers: 0
+    batch_size: 2
+    size: 256
+
+  test:
+    name: GPENDataset
+    dataroot: ../data/test_imgs/
+    num_workers: 0
+    batch_size: 1
+    size: 256
+    amount: 100
+
+
+lr_scheduler:
+  name: CosineAnnealingRestartLR
+  learning_rate: 0.002
+  periods: [500000, 500000, 500000, 500000]
+  restart_weights: [1, 1, 1, 1]
+  eta_min: 0.002
+
+
+optimizer:
+  optimG:
+    name: Adam
+    net_names:
+      - netG
+    beta1: 0.9
+    beta2: 0.99
+  optimD:
+    name: Adam
+    net_names:
+      - netD
+    beta1: 0.9
+    beta2: 0.99
+
+log_config:
+  interval: 100
+  visiual_interval: 500
+
+snapshot_config:
+  interval: 5000
+
+validate:
+  interval: 5000
+  save_img: false
+  metrics:
+    fid:
+        name: FID
+        batch_size: 1

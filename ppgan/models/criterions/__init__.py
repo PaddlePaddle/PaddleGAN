@@ -5,7 +5,6 @@ from .pixel_loss import L1Loss, MSELoss, CharbonnierLoss, \
                         CalcContentLoss, CalcStyleLoss, EdgeLoss
 from .photopen_perceptual_loss import PhotoPenPerceptualLoss
 from .gradient_penalty import GradientPenalty
+from .IDLoss.id_loss import IDLoss
 
 from .builder import build_criterion
-
-from .ssim import SSIM
