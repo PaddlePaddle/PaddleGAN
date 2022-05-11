@@ -60,10 +60,10 @@ GPEN模型训练集是经典的FFHQ人脸数据集,共70000张1024 x 1024高分�
 
 **模型参数文件及训练日志下载地址：**
 
-链接：https://pan.baidu.com/s/1MORzH2C58xlAXrMI5MyJow    提取码：pyda 
+链接：https://pan.baidu.com/s/1Ll7WupdW1TZq2S3C_T6stQ  提取码：bkbt
 
 
-从链接中下载模型参数,并放到项目根目录下的data/gpen/weights文件夹下，具体文件结构如下所示：
+从链接中下载模型参数和测试图片,并放到项目根目录下的data/文件夹下，具体文件结构如下所示：
 
 **文件结构**
 
@@ -73,6 +73,7 @@ data/gpen/weights
     |-- model_ir_se50_2.pdparams #计算id_loss需要加载的facenet的模型参数文件
     |-- weight_pretrain.pdparams #256分辨率的包含生成器和判别器的模型参数文件，其中只有生成器的参数是训练好的参数，参                                  #数文件的格式与3.1训练过程中保存的参数文件格式相同。3.2、3.3.1、4.1也需要用到该参数文件
     |-- g_ema.pdparams           #256分辨率的仅包含生成器模型参数文件，与3.3.1中生成的参数文件格式相同，在3.3.2中用到
+data/gpen/lite_data
 ```
 
 
