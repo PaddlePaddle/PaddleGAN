@@ -82,14 +82,7 @@ class GPENModel(BaseModel):
     """
 
     def __init__(self, generator, discriminator=None, direction='a2b'):
-        """Initialize the pix2pix class.
 
-        Args:
-            generator (dict): config of generator.
-            discriminator (dict): config of discriminator.
-            pixel_criterion (dict): config of pixel criterion.
-            gan_criterion (dict): config of gan criterion.
-        """
         super(GPENModel, self).__init__()
 
         self.direction = direction
@@ -110,19 +103,11 @@ class GPENModel(BaseModel):
         self.current_iter = 0
 
     def setup_input(self, input):
-        """Unpack input data from the dataloader and perform necessary pre-processing steps.
-
-        Args:
-            input (dict): include the data itself and its metadata information.
-
-        The option 'direction' can be used to swap images in domain A and domain B.
-        """
 
         self.degraded_img = paddle.to_tensor(input[0])
         self.real_img = paddle.to_tensor(input[1])
 
     def forward(self, test_mode=False, regularize=False):
-        """Run forward pass; called by both functions <optimize_parameters> and <test>."""
         if test_mode:
             self.fake_img, _ = self.nets['g_ema'](self.degraded_img)  # G(A)
         else:

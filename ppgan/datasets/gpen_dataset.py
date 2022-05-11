@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import glob
 import logging
 import os
@@ -387,17 +388,14 @@ class GPENDataset(Dataset):
                             interpolation=cv2.INTER_AREA)
 
         # BFR degradation
-        # We adopt the degradation of GFPGAN for simplicity, which however differs from our implementation in the paper.
-        # Data degradation plays a key role in BFR. Please replace it with your own methods.
         img_gt = img_gt.astype(np.float32) / 255.
         img_gt, img_lq = self.degrader.degrade_process(img_gt)
 
         img_gt = (paddle.to_tensor(img_gt) - 0.5) / 0.5
         img_lq = (paddle.to_tensor(img_lq) - 0.5) / 0.5
-        # print(img_gt.shape)
 
-        img_gt = img_gt.transpose([2, 0, 1]).flip(0)  # BGR->RGB
-        img_lq = img_lq.transpose([2, 0, 1]).flip(0)  # BGR->RGB
+        img_gt = img_gt.transpose([2, 0, 1]).flip(0)
+        img_lq = img_lq.transpose([2, 0, 1]).flip(0)
 
         return np.array(img_lq).astype('float32'), np.array(img_gt).astype(
             'float32')
