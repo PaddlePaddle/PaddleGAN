@@ -16,9 +16,7 @@ from collections import namedtuple
 import paddle
 import paddle.nn as nn
 
-
 class Flatten(nn.Layer):
-
     def forward(self, input):
         return paddle.reshape(input, [input.shape[0], -1])
 
@@ -34,8 +32,7 @@ class Bottleneck(namedtuple('Block', ['in_channel', 'depth', 'stride'])):
 
 
 def get_block(in_channel, depth, num_units, stride=2):
-    return [Bottleneck(in_channel, depth, stride)
-            ] + [Bottleneck(depth, depth, 1) for i in range(num_units - 1)]
+    return [Bottleneck(in_channel, depth, stride)] + [Bottleneck(depth, depth, 1) for i in range(num_units - 1)]
 
 
 def get_blocks(num_layers):
@@ -61,28 +58,17 @@ def get_blocks(num_layers):
             get_block(in_channel=256, depth=512, num_units=3)
         ]
     else:
-        raise ValueError(
-            "Invalid number of layers: {}. Must be one of [50, 100, 152]".
-            format(num_layers))
+        raise ValueError("Invalid number of layers: {}. Must be one of [50, 100, 152]".format(num_layers))
     return blocks
 
 
 class SEModule(nn.Layer):
-
     def __init__(self, channels, reduction):
         super(SEModule, self).__init__()
         self.avg_pool = nn.AdaptiveAvgPool2D(1)
-        self.fc1 = nn.Conv2D(channels,
-                             channels // reduction,
-                             kernel_size=1,
-                             padding=0,
-                             bias_attr=False)
+        self.fc1 = nn.Conv2D(channels, channels // reduction, kernel_size=1, padding=0, bias_attr=False)
         self.relu = nn.ReLU()
-        self.fc2 = nn.Conv2D(channels // reduction,
-                             channels,
-                             kernel_size=1,
-                             padding=0,
-                             bias_attr=False)
+        self.fc2 = nn.Conv2D(channels // reduction, channels, kernel_size=1, padding=0, bias_attr=False)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
@@ -96,7 +82,6 @@ class SEModule(nn.Layer):
 
 
 class bottleneck_IR(nn.Layer):
-
     def __init__(self, in_channel, depth, stride):
         super(bottleneck_IR, self).__init__()
         if in_channel == depth:
@@ -104,13 +89,13 @@ class bottleneck_IR(nn.Layer):
         else:
             self.shortcut_layer = nn.Sequential(
                 nn.Conv2D(in_channel, depth, (1, 1), stride, bias_attr=False),
-                nn.BatchNorm2D(depth))
+                nn.BatchNorm2D(depth)
+            )
         self.res_layer = nn.Sequential(
             nn.BatchNorm2D(in_channel),
-            nn.Conv2D(in_channel, depth, (3, 3), (1, 1), 1, bias_attr=False),
-            nn.PReLU(depth),
-            nn.Conv2D(depth, depth, (3, 3), stride, 1, bias_attr=False),
-            nn.BatchNorm2D(depth))
+            nn.Conv2D(in_channel, depth, (3, 3), (1, 1), 1, bias_attr=False), nn.PReLU(depth),
+            nn.Conv2D(depth, depth, (3, 3), stride, 1, bias_attr=False), nn.BatchNorm2D(depth)
+        )
 
     def forward(self, x):
         shortcut = self.shortcut_layer(x)
@@ -119,7 +104,6 @@ class bottleneck_IR(nn.Layer):
 
 
 class bottleneck_IR_SE(nn.Layer):
-
     def __init__(self, in_channel, depth, stride):
         super(bottleneck_IR_SE, self).__init__()
         if in_channel == depth:
@@ -127,13 +111,16 @@ class bottleneck_IR_SE(nn.Layer):
         else:
             self.shortcut_layer = nn.Sequential(
                 nn.Conv2D(in_channel, depth, (1, 1), stride, bias_attr=False),
-                nn.BatchNorm2D(depth))
+                nn.BatchNorm2D(depth)
+            )
         self.res_layer = nn.Sequential(
             nn.BatchNorm2D(in_channel),
             nn.Conv2D(in_channel, depth, (3, 3), (1, 1), 1, bias_attr=False),
             nn.PReLU(depth),
             nn.Conv2D(depth, depth, (3, 3), stride, 1, bias_attr=False),
-            nn.BatchNorm2D(depth), SEModule(depth, 16))
+            nn.BatchNorm2D(depth),
+            SEModule(depth, 16)
+        )
 
     def forward(self, x):
         shortcut = self.shortcut_layer(x)

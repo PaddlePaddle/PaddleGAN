@@ -1,4 +1,4 @@
-English | [Chinese](../../zh_CN/tutorials/gpen.md)
+English | [Chinese](../../zh_CN/tutorials/gpen.md) 
 
 ## GPEN Blind Face Restoration Model
 
@@ -60,7 +60,7 @@ Since the original FFHQ dataset is too large, you can also download the 256-reso
 
 **Model parameter file and training log download address:**
 
-link：https://pan.baidu.com/s/1MORzH2C58xlAXrMI5MyJow    code：pyda
+link：https://pan.baidu.com/s/1MORzH2C58xlAXrMI5MyJow    code：pyda 
 
 
 Download the model parameters from the link and put them in the data/gpen/weights folder in the project root directory. The specific file structure is as follows:
@@ -68,9 +68,9 @@ Download the model parameters from the link and put them in the data/gpen/weight
 
 ```
 data/gpen/weights
-    |-- model_ir_se50_2.pdparams
-    |-- weight_pretrain.pdparams  
-    |-- g_ema.pdparams  
+    |-- model_ir_se50_2.pdparams 
+    |-- weight_pretrain.pdparams                                 
+    |-- g_ema.pdparams         
 ```
 
 

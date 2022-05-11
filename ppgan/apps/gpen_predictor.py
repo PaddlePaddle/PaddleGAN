@@ -17,7 +17,6 @@ import random
 import numpy as np
 import paddle
 import sys
-
 sys.path.append(".")
 from .base_predictor import BasePredictor
 from ppgan.datasets.gpen_dataset import GFPGAN_degradation
@@ -40,7 +39,6 @@ model_cfgs = {
     }
 }
 
-
 def psnr(pred, gt):
     pred = paddle.clip(pred, min=0, max=1)
     gt = paddle.clip(gt, min=0, max=1)
@@ -49,7 +47,6 @@ def psnr(pred, gt):
     if rmse == 0:
         return 100
     return 20 * math.log10(1.0 / rmse)
-
 
 def data_loader(path, size=256):
     degrader = GFPGAN_degradation()
@@ -67,12 +64,10 @@ def data_loader(path, size=256):
     img_gt = img_gt.transpose([2, 0, 1]).flip(0).unsqueeze(0)
     img_lq = img_lq.transpose([2, 0, 1]).flip(0).unsqueeze(0)
 
-    return np.array(img_lq).astype('float32'), np.array(img_gt).astype(
-        'float32')
+    return np.array(img_lq).astype('float32'), np.array(img_gt).astype('float32')
 
 
 class GPENPredictor(BasePredictor):
-
     def __init__(self,
                  output_path='output_dir',
                  weight_path=None,
@@ -103,8 +98,7 @@ class GPENPredictor(BasePredictor):
             checkpoint = paddle.load(weight_path)
 
         warnings.filterwarnings("always")
-        self.generator = GPEN(size, style_dim, n_mlp, channel_multiplier,
-                              narrow)
+        self.generator = GPEN(size, style_dim, n_mlp, channel_multiplier, narrow)
         self.generator.set_state_dict(checkpoint)
         self.generator.eval()
 
@@ -130,10 +124,8 @@ class GPENPredictor(BasePredictor):
         input_tensor = input_tensor.transpose([0, 2, 3, 1])
         target_tensor = target_tensor.transpose([0, 2, 3, 1])
         output = output.transpose([0, 2, 3, 1])
-        sample_result = paddle.concat(
-            (input_tensor[0], output[0], target_tensor[0]), 1)
-        sample = cv2.cvtColor((sample_result.numpy() + 1) / 2 * 255,
-                              cv2.COLOR_RGB2BGR)
+        sample_result = paddle.concat((input_tensor[0], output[0], target_tensor[0]), 1)
+        sample = cv2.cvtColor((sample_result.numpy() + 1) / 2 * 255, cv2.COLOR_RGB2BGR)
         file_name = self.output_path + '/gpen_predict.png'
         cv2.imwrite(file_name, sample)
         print(f"result saved in : {file_name}")

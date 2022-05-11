@@ -60,7 +60,7 @@ GPEN模型训练集是经典的FFHQ人脸数据集,共70000张1024 x 1024高分�
 
 **模型参数文件及训练日志下载地址：**
 
-链接：https://pan.baidu.com/s/1MORzH2C58xlAXrMI5MyJow    提取码：pyda
+链接：https://pan.baidu.com/s/1MORzH2C58xlAXrMI5MyJow    提取码：pyda 
 
 
 从链接中下载模型参数,并放到项目根目录下的data/gpen/weights文件夹下，具体文件结构如下所示：

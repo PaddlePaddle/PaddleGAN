@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import sys
-
 sys.path.append(".")
 import argparse
 import paddle
@@ -82,12 +81,12 @@ if __name__ == "__main__":
         paddle.set_device('cpu')
 
     predictor = GPENPredictor(output_path=args.output_path,
-                              weight_path=args.weight_path,
-                              model_type=args.model_type,
-                              seed=args.seed,
-                              size=args.size,
-                              style_dim=args.style_dim,
-                              n_mlp=args.n_mlp,
-                              narrow=args.narrow,
-                              channel_multiplier=args.channel_multiplier)
+                                    weight_path=args.weight_path,
+                                    model_type=args.model_type,
+                                    seed=args.seed,
+                                    size=args.size,
+                                    style_dim=args.style_dim,
+                                    n_mlp=args.n_mlp,
+                                    narrow=args.narrow,
+                                    channel_multiplier=args.channel_multiplier)
     predictor.run(args.test_img)

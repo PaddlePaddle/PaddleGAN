@@ -28,7 +28,6 @@ class EqualConv2D(nn.Layer):
     """This convolutional layer class stabilizes the learning rate changes of its parameters.
     Equalizing learning rate keeps the weights in the network at a similar scale during training.
     """
-
     def __init__(self,
                  in_channel,
                  out_channel,
@@ -75,7 +74,6 @@ class EqualLinear(nn.Layer):
     """This linear layer class stabilizes the learning rate changes of its parameters.
     Equalizing learning rate keeps the weights in the network at a similar scale during training.
     """
-
     def __init__(self,
                  in_dim,
                  out_dim,
@@ -118,12 +116,10 @@ class EqualLinear(nn.Layer):
             f"{self.__class__.__name__}({self.weight.shape[0]}, {self.weight.shape[1]})"
         )
 
-
 class EqualLinear_gpen(nn.Layer):
     """This linear layer class stabilizes the learning rate changes of its parameters.
     Equalizing learning rate keeps the weights in the network at a similar scale during training.
     """
-
     def __init__(self,
                  in_dim,
                  out_dim,
@@ -134,7 +130,7 @@ class EqualLinear_gpen(nn.Layer):
         super().__init__()
 
         self.weight = self.create_parameter(
-            (out_dim, in_dim), default_initializer=nn.initializer.Normal())
+            (out_dim,in_dim), default_initializer=nn.initializer.Normal())
         self.weight.set_value((self.weight / lr_mul))
 
         if bias:
@@ -155,7 +151,8 @@ class EqualLinear_gpen(nn.Layer):
             out = fused_leaky_relu(out, self.bias * self.lr_mul)
 
         else:
-            out = F.linear(input, (self.weight * self.scale).t(),
+            out = F.linear(input,
+                           (self.weight * self.scale).t(),
                            bias=self.bias * self.lr_mul)
 
         return out

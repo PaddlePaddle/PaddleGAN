@@ -18,30 +18,25 @@ from .model_irse import Backbone
 from paddle.vision.transforms import Resize
 from ..builder import CRITERIONS
 
-
 @CRITERIONS.register()
 class IDLoss(paddle.nn.Layer):
-
     def __init__(self, base_dir='./'):
         super(IDLoss, self).__init__()
         print('Loading ResNet ArcFace')
-        self.facenet = Backbone(input_size=112,
-                                num_layers=50,
-                                drop_ratio=0.6,
-                                mode='ir_se')  ##需要改一下loss里的文件
+        self.facenet = Backbone(input_size=112, num_layers=50, drop_ratio=0.6, mode='ir_se')  ##需要改一下loss里的文件 
 
-        facenet_weights_path = os.path.join(base_dir, 'data/gpen/weights',
-                                            'model_ir_se50.pdparams')
+        facenet_weights_path = os.path.join(base_dir, 'data/gpen/weights', 'model_ir_se50.pdparams')
         self.facenet.load_dict(paddle.load(facenet_weights_path))
 
         self.face_pool = paddle.nn.AdaptiveAvgPool2D((112, 112))
         self.facenet.eval()
+        
 
     def extract_feats(self, x):
         _, _, h, w = x.shape
-        assert h == w
-        ss = h // 256
-        x = x[:, :, 35 * ss:-33 * ss, 32 * ss:-36 * ss]
+        assert h==w
+        ss = h//256
+        x = x[:, :, 35*ss:-33*ss, 32*ss:-36*ss]
         transform = Resize(size=(112, 112))
 
         for num in range(x.shape[0]):

@@ -35,20 +35,15 @@ def d_logistic_loss(real_pred, fake_pred):
 
 
 def d_r1_loss(real_pred, real_img):
-    grad_real, = autograd.grad(outputs=real_pred.sum(),
-                               inputs=real_img,
-                               create_graph=True)
-    grad_penalty = grad_real.pow(2).reshape([grad_real.shape[0],
-                                             -1]).sum(1).mean()
+    grad_real, = autograd.grad(
+        outputs=real_pred.sum(), inputs=real_img, create_graph=True
+    )
+    grad_penalty = grad_real.pow(2).reshape([grad_real.shape[0], -1]).sum(1).mean()
 
     return grad_penalty
 
 
-def g_nonsaturating_loss(fake_pred,
-                         loss_funcs=None,
-                         fake_img=None,
-                         real_img=None,
-                         input_img=None):
+def g_nonsaturating_loss(fake_pred, loss_funcs=None, fake_img=None, real_img=None, input_img=None):
     smooth_l1_loss, id_loss = loss_funcs
 
     loss = F.softplus(-fake_pred).mean()
@@ -61,14 +56,14 @@ def g_nonsaturating_loss(fake_pred,
 
 def g_path_regularize(fake_img, latents, mean_path_length, decay=0.01):
     noise = paddle.randn(fake_img.shape) / math.sqrt(
-        fake_img.shape[2] * fake_img.shape[3])
-    grad, = autograd.grad(outputs=(fake_img * noise).sum(),
-                          inputs=latents,
-                          create_graph=True)
+        fake_img.shape[2] * fake_img.shape[3]
+    )
+    grad, = autograd.grad(
+        outputs=(fake_img * noise).sum(), inputs=latents, create_graph=True
+    )
     path_lengths = paddle.sqrt(grad.pow(2).sum(2).mean(1))
 
-    path_mean = mean_path_length + decay * (path_lengths.mean() -
-                                            mean_path_length)
+    path_mean = mean_path_length + decay * (path_lengths.mean() - mean_path_length)
 
     path_penalty = (path_lengths - path_mean).pow(2).mean()
 
@@ -80,8 +75,10 @@ class GPENModel(BaseModel):
     """ This class implements the gpen model.
 
     """
-
-    def __init__(self, generator, discriminator=None, direction='a2b'):
+    def __init__(self,
+                 generator,
+                 discriminator=None,
+                 direction='a2b'):
 
         super(GPENModel, self).__init__()
 
@@ -94,7 +91,7 @@ class GPENModel(BaseModel):
         if discriminator:
             self.nets['netD'] = build_discriminator(discriminator)
 
-        self.accum = 0.5**(32 / (10 * 1000))
+        self.accum = 0.5 ** (32 / (10 * 1000))
         self.mean_path_length = 0
 
         self.gan_criterions = []
@@ -107,15 +104,16 @@ class GPENModel(BaseModel):
         self.degraded_img = paddle.to_tensor(input[0])
         self.real_img = paddle.to_tensor(input[1])
 
+
     def forward(self, test_mode=False, regularize=False):
         if test_mode:
             self.fake_img, _ = self.nets['g_ema'](self.degraded_img)  # G(A)
         else:
             if regularize:
-                self.fake_img, self.latents = self.nets['netG'](
-                    self.degraded_img, return_latents=True)
+                self.fake_img, self.latents = self.nets['netG'](self.degraded_img, return_latents=True)
             else:
                 self.fake_img, _ = self.nets['netG'](self.degraded_img)
+
 
     def backward_D(self, regularize=False):
         """Calculate GAN loss for the discriminator"""
@@ -136,14 +134,13 @@ class GPENModel(BaseModel):
 
         if regularize:
             path_loss, self.mean_path_length, path_lengths = g_path_regularize(
-                self.fake_img, self.latents, self.mean_path_length)
+                self.fake_img, self.latents, self.mean_path_length
+            )
             weighted_path_loss = 2 * 4 * path_loss
             weighted_path_loss.backward()
         else:
             fake_pred = self.nets['netD'](self.fake_img)
-            self.loss_G = g_nonsaturating_loss(fake_pred, self.gan_criterions,
-                                               self.fake_img, self.real_img,
-                                               self.degraded_img)
+            self.loss_G = g_nonsaturating_loss(fake_pred, self.gan_criterions, self.fake_img, self.real_img, self.degraded_img)
             self.loss_G.backward()
             self.losses['G_loss'] = self.loss_G
 

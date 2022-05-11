@@ -28,7 +28,6 @@ from ...modules.upfirdn2d import Upfirdn2dBlur
 
 
 class ConvLayer(nn.Sequential):
-
     def __init__(
         self,
         in_channel,
@@ -73,7 +72,6 @@ class ConvLayer(nn.Sequential):
 
 
 class ResBlock(nn.Layer):
-
     def __init__(self, in_channel, out_channel, blur_kernel=[1, 3, 3, 1]):
         super().__init__()
 
@@ -114,7 +112,6 @@ def var(x, axis=None, unbiased=True, keepdim=False, name=None):
 
 @DISCRIMINATORS.register()
 class StyleGANv2Discriminator(nn.Layer):
-
     def __init__(self, size, channel_multiplier=2, blur_kernel=[1, 3, 3, 1]):
         super().__init__()
 
@@ -175,15 +172,9 @@ class StyleGANv2Discriminator(nn.Layer):
 
         return out
 
-
 @DISCRIMINATORS.register()
 class GPENDiscriminator(nn.Layer):
-
-    def __init__(self,
-                 size,
-                 channel_multiplier=1,
-                 narrow=0.5,
-                 blur_kernel=[1, 3, 3, 1]):
+    def __init__(self, size, channel_multiplier=1, narrow=0.5, blur_kernel=[1, 3, 3, 1]):
         super().__init__()
 
         channels = {

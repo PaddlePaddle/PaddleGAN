@@ -11,7 +11,7 @@ model:
     channel_multiplier: 1
     narrow: 0.5
   discriminator:
-    name: StyleGANv2Discriminator
+    name: GPENDiscriminator
     size: 256
     channel_multiplier: 1
     narrow: 0.5
