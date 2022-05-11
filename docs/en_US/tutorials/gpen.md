@@ -1,4 +1,4 @@
-English | [Chinese](../../zh_CH/tutorials/gpen.md)
+English | [Chinese](../../zh_CN/tutorials/gpen.md)
 
 ## GPEN Blind Face Restoration Model
 

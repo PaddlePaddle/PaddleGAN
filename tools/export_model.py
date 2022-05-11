@@ -16,6 +16,8 @@ import os
 import sys
 import argparse
 
+sys.path.append(".")
+
 import ppgan
 from ppgan.utils.config import get_config
 from ppgan.utils.setup import setup
@@ -76,7 +78,7 @@ def main(args, cfg):
     for net_name, net in model.nets.items():
         if net_name in state_dicts:
             net.set_state_dict(state_dicts[net_name])
-    model.export_model(cfg.export_model, args.output_dir, inputs_size, 
+    model.export_model(cfg.export_model, args.output_dir, inputs_size,
                        args.export_serving_model, args.model_name)
 
 
