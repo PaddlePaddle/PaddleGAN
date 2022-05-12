@@ -88,6 +88,8 @@ data/gpen/lite_data
  python tools/main.py -c configs/gpen_256_ffhq.yaml
  ```
 
+请修改configs/gpen_256_ffhq.yaml配置文件中dataset的dataroot参数为你的数据集路径。
+
 
 
 ### 3.2 模型评估
