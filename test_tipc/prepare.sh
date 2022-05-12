@@ -110,6 +110,10 @@ elif [ ${MODE} = "lite_train_whole_infer" ];then
         rm -rf ./data/ffhq*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/ffhq.tar --no-check-certificate
         cd ./data/ && tar xf ffhq.tar && cd ../
+	elif [ ${model_name} == "GPEN" ]; then
+        rm -rf ./data/ffhq*
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/ffhq.tar --no-check-certificate
+        cd ./data/ && tar xf ffhq.tar && cd ../
     elif [ ${model_name} == "basicvsr" ]; then
         rm -rf ./data/reds*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/reds_lite.tar --no-check-certificate

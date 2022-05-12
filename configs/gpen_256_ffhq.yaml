@@ -23,14 +23,14 @@ export_model:
 dataset:
   train:
     name: GPENDataset
-    dataroot: ../data/train/
+    dataroot: data/ffhq/images256x256/
     num_workers: 0
     batch_size: 2
     size: 256
 
   test:
     name: GPENDataset
-    dataroot: ../data/test_imgs/
+    dataroot: data/ffhq/images256x256/
     num_workers: 0
     batch_size: 1
     size: 256

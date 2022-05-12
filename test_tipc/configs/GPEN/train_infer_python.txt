@@ -4,12 +4,12 @@ python:python3.7
 gpu_list:0
 ##
 auto_cast:null
-total_iters:lite_train_lite_infer=50|whole_train_whole_infer=100000
+total_iters:lite_train_lite_infer=10
 output_dir:./output/
-snapshot_config.interval:lite_train_lite_infer=50|whole_train_whole_infer=10000
+snapshot_config.interval:lite_train_lite_infer=10
 pretrained_model:null
 train_model_name:gpen*/*checkpoint.pdparams
-train_infer_img_dir:./data/ffhq/images256x256/
+train_infer_img_dir:null
 null:null
 ##
 trainer:norm_train

@@ -25,7 +25,6 @@ from .builder import DATASETS
 import math
 import random
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -57,7 +56,11 @@ def random_generate_gaussian_noise(img, sigma_range=(0, 10), gray_prob=0):
     return generate_gaussian_noise(img, sigma, gray_noise)
 
 
-def random_add_gaussian_noise(img, sigma_range=(0, 1.0), gray_prob=0, clip=True, rounds=False):
+def random_add_gaussian_noise(img,
+                              sigma_range=(0, 1.0),
+                              gray_prob=0,
+                              clip=True,
+                              rounds=False):
     noise = random_generate_gaussian_noise(img, sigma_range, gray_prob)
     out = img + noise
     if clip and rounds:
@@ -135,12 +138,21 @@ def random_mixed_kernels(kernel_list,
     """
     kernel_type = random.choices(kernel_list, kernel_prob)[0]
     if kernel_type == 'iso':
-        kernel = random_bivariate_Gaussian(
-            kernel_size, sigma_x_range, sigma_y_range, rotation_range, noise_range=noise_range, isotropic=True)
+        kernel = random_bivariate_Gaussian(kernel_size,
+                                           sigma_x_range,
+                                           sigma_y_range,
+                                           rotation_range,
+                                           noise_range=noise_range,
+                                           isotropic=True)
     elif kernel_type == 'aniso':
-        kernel = random_bivariate_Gaussian(
-            kernel_size, sigma_x_range, sigma_y_range, rotation_range, noise_range=noise_range, isotropic=False)
+        kernel = random_bivariate_Gaussian(kernel_size,
+                                           sigma_x_range,
+                                           sigma_y_range,
+                                           rotation_range,
+                                           noise_range=noise_range,
+                                           isotropic=False)
     return kernel
+
 
 def random_bivariate_Gaussian(kernel_size,
                               sigma_x_range,
@@ -175,17 +187,29 @@ def random_bivariate_Gaussian(kernel_size,
         sigma_y = sigma_x
         rotation = 0
 
-    kernel = bivariate_Gaussian(kernel_size, sigma_x, sigma_y, rotation, isotropic=isotropic)
+    kernel = bivariate_Gaussian(kernel_size,
+                                sigma_x,
+                                sigma_y,
+                                rotation,
+                                isotropic=isotropic)
 
     # add multiplicative noise
     if noise_range is not None:
         assert noise_range[0] < noise_range[1], 'Wrong noise range.'
-        noise = np.random.uniform(noise_range[0], noise_range[1], size=kernel.shape)
+        noise = np.random.uniform(noise_range[0],
+                                  noise_range[1],
+                                  size=kernel.shape)
         kernel = kernel * noise
     kernel = kernel / np.sum(kernel)
     return kernel
 
-def bivariate_Gaussian(kernel_size, sig_x, sig_y, theta, grid=None, isotropic=True):
+
+def bivariate_Gaussian(kernel_size,
+                       sig_x,
+                       sig_y,
+                       theta,
+                       grid=None,
+                       isotropic=True):
     """Generate a bivariate isotropic or anisotropic Gaussian kernel.
 
     In the isotropic mode, only `sig_x` is used. `sig_y` and `theta` is ignored.
@@ -212,6 +236,7 @@ def bivariate_Gaussian(kernel_size, sig_x, sig_y, theta, grid=None, isotropic=Tr
     kernel = kernel / np.sum(kernel)
     return kernel
 
+
 def sigma_matrix2(sig_x, sig_y, theta):
     """Calculate the rotated sigma matrix (two dimensional matrix).
 
@@ -224,7 +249,8 @@ def sigma_matrix2(sig_x, sig_y, theta):
         ndarray: Rotated sigma matrix.
     """
     d_matrix = np.array([[sig_x**2, 0], [0, sig_y**2]])
-    u_matrix = np.array([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
+    u_matrix = np.array([[np.cos(theta), -np.sin(theta)],
+                         [np.sin(theta), np.cos(theta)]])
     return np.dot(u_matrix, np.dot(d_matrix, u_matrix.T))
 
 
@@ -241,8 +267,9 @@ def mesh_grid(kernel_size):
     """
     ax = np.arange(-kernel_size // 2 + 1., kernel_size // 2 + 1.)
     xx, yy = np.meshgrid(ax, ax)
-    xy = np.hstack((xx.reshape((kernel_size * kernel_size, 1)), yy.reshape(kernel_size * kernel_size,
-                                                                           1))).reshape(kernel_size, kernel_size, 2)
+    xy = np.hstack((xx.reshape((kernel_size * kernel_size, 1)),
+                    yy.reshape(kernel_size * kernel_size,
+                               1))).reshape(kernel_size, kernel_size, 2)
     return xy, xx, yy
 
 
@@ -263,6 +290,7 @@ def pdf2(sigma_matrix, grid):
 
 
 class GFPGAN_degradation(object):
+
     def __init__(self):
         self.kernel_list = ['iso', 'aniso']
         self.kernel_prob = [0.5, 0.5]
@@ -284,7 +312,8 @@ class GFPGAN_degradation(object):
 
         # random color jitter
         if np.random.uniform() < self.color_jitter_prob:
-            jitter_val = np.random.uniform(-self.shift, self.shift, 3).astype(np.float32)
+            jitter_val = np.random.uniform(-self.shift, self.shift,
+                                           3).astype(np.float32)
             img_gt = img_gt + jitter_val
             img_gt = np.clip(img_gt, 0, 1)
 
@@ -295,17 +324,18 @@ class GFPGAN_degradation(object):
 
         # ------------------------ generate lq image ------------------------ #
         # blur
-        kernel = random_mixed_kernels(
-            self.kernel_list,
-            self.kernel_prob,
-            self.blur_kernel_size,
-            self.blur_sigma,
-            self.blur_sigma, [-math.pi, math.pi],
-            noise_range=None)
+        kernel = random_mixed_kernels(self.kernel_list,
+                                      self.kernel_prob,
+                                      self.blur_kernel_size,
+                                      self.blur_sigma,
+                                      self.blur_sigma, [-math.pi, math.pi],
+                                      noise_range=None)
         img_lq = cv2.filter2D(img_gt, -1, kernel)
         # downsample
-        scale = np.random.uniform(self.downsample_range[0], self.downsample_range[1])
-        img_lq = cv2.resize(img_lq, (int(w // scale), int(h // scale)), interpolation=cv2.INTER_LINEAR)
+        scale = np.random.uniform(self.downsample_range[0],
+                                  self.downsample_range[1])
+        img_lq = cv2.resize(img_lq, (int(w // scale), int(h // scale)),
+                            interpolation=cv2.INTER_LINEAR)
 
         # noise
         if self.noise_range is not None:
@@ -328,13 +358,16 @@ class GPENDataset(Dataset):
     """
     coco2017 dataset for LapStyle model
     """
-    def __init__(self, dataroot, size=256,amount=-1):
+
+    def __init__(self, dataroot, size=256, amount=-1):
         super(GPENDataset, self).__init__()
         self.size = size
-        self.HQ_imgs = sorted(glob.glob(os.path.join(dataroot, '*/*.png')))[:amount]
+        self.HQ_imgs = sorted(glob.glob(os.path.join(dataroot,
+                                                     '*/*.*g')))[:amount]
         self.length = len(self.HQ_imgs)
         if self.length == 0:
-            self.HQ_imgs = sorted(glob.glob(os.path.join(dataroot, '*.png')))[:amount]
+            self.HQ_imgs = sorted(glob.glob(os.path.join(dataroot,
+                                                         '*.*g')))[:amount]
             self.length = len(self.HQ_imgs)
         print(self.length)
         self.degrader = GFPGAN_degradation()
@@ -351,7 +384,8 @@ class GPENDataset(Dataset):
             ci_path: str
         """
         img_gt = cv2.imread(self.HQ_imgs[index], cv2.IMREAD_COLOR)
-        img_gt = cv2.resize(img_gt, (self.size, self.size), interpolation=cv2.INTER_AREA)
+        img_gt = cv2.resize(img_gt, (self.size, self.size),
+                            interpolation=cv2.INTER_AREA)
 
         # BFR degradation
         img_gt = img_gt.astype(np.float32) / 255.
@@ -363,5 +397,5 @@ class GPENDataset(Dataset):
         img_gt = img_gt.transpose([2, 0, 1]).flip(0)
         img_lq = img_lq.transpose([2, 0, 1]).flip(0)
 
-        return np.array(img_lq).astype('float32'),np.array(img_gt).astype('float32')
-
+        return np.array(img_lq).astype('float32'), np.array(img_gt).astype(
+            'float32')
