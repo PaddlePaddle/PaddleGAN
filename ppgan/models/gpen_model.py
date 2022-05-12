@@ -158,9 +158,8 @@ class GPENModel(BaseModel):
         self.backward_D(regularize=False)
         optimizers['optimD'].step()
 
-        d_regularize = self.current_iter % 16 == 0
+        d_regularize = self.current_iter % 24 == 0
         if d_regularize:
-            self.forward(test_mode=False)
             optimizers['optimD'].clear_grad()
             self.backward_D(regularize=True)
             optimizers['optimD'].step()
