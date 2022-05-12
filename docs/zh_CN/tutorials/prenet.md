@@ -15,24 +15,24 @@ Progressive Image Deraining Networks: A Better and Simpler Baseline提出一种�
   数据集文件结构如下:
 
   ```
-    ├── data
+    ├── RainH
         ├── RainTrainH
-            ├── rain
-                ├── 1.png
-                └── 2.png
-                    .
-                    .
-            └── norain
-                ├── 1.png
-                └── 2.png
-                    .
-                    .
+        |    ├── rain
+        |    |    ├── 1.png
+        |    |    └── 2.png
+        |    |        .
+        |    |        .
+        |    └── norain
+        |        ├── 1.png
+        |        └── 2.png
+        |            .
+        |            .
         └── Rain100H
             ├── rain
-                ├── 001.png
-                └── 002.png
-                    .
-                    .
+            |    ├── 001.png
+            |    └── 002.png
+            |        .
+            |        .
             └── norain
                 ├── 001.png
                 └── 002.png
@@ -53,8 +53,16 @@ Progressive Image Deraining Networks: A Better and Simpler Baseline提出一种�
      python tools/main.py --config-file configs/prenet.yaml --evaluate-only --load ${PATH_OF_WEIGHT}
   ```
 
-## 3 预测结果
+## 3 实验结果展示
+实验数值结果是在 RGB 通道上进行评估，并在评估之前裁剪每个边界的尺度像素。
 
+度量指标为 PSNR / SSIM.
+
+| 模型 | Rain100H | 
+|---|---|
+| PReNet  | 29.5037 / 0.899 | 
+
+可视化展示：
 输入：
 
 <div align="center">

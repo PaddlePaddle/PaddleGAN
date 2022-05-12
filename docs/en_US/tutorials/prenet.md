@@ -16,30 +16,30 @@
   The structure of dataset is as following:
 
 ```
-    ├── data
+    ├── RainH
         ├── RainTrainH
-            ├── rain
-                ├── 1.png
-                └── 2.png
-                    .
-                    .
-            └── norain
-                ├── 1.png
-                └── 2.png
-                    .
-                    .
+        |    ├── rain
+        |    |    ├── 1.png
+        |    |    └── 2.png
+        |    |        .
+        |    |        .
+        |    └── norain
+        |        ├── 1.png
+        |        └── 2.png
+        |            .
+        |            .
         └── Rain100H
             ├── rain
-                ├── 001.png
-                └── 002.png
-                    .
-                    .
+            |    ├── 001.png
+            |    └── 002.png
+            |        .
+            |        .
             └── norain
                 ├── 001.png
                 └── 002.png
                     .
                     .
-```
+  ```
 
 
 ### 2.2 Train/Test
@@ -56,6 +56,14 @@
   ```
 
 ## 3 Results
+Evaluated on RGB channels, scale pixels in each border are cropped before evaluation.
+
+The metrics are PSNR / SSIM.
+
+| Method | Rain100H | 
+|---|---|
+| PReNet  | 29.5037 / 0.899 | 
+
 
 Input:
 
