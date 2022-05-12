@@ -22,6 +22,7 @@ import numpy as np
 
 from PIL import Image
 
+import paddle
 import paddle.vision.transforms as T
 import paddle.vision.transforms.functional as F
 
@@ -42,10 +43,12 @@ TRANSFORMS.register(T.RandomVerticalFlip)
 TRANSFORMS.register(T.Normalize)
 TRANSFORMS.register(T.Transpose)
 TRANSFORMS.register(T.Grayscale)
+TRANSFORMS.register(T.ToTensor)
 
 
 @PREPROCESS.register()
 class Transforms():
+
     def __init__(self, pipeline, input_keys, output_keys=None):
         self.input_keys = input_keys
         self.output_keys = output_keys
@@ -81,6 +84,7 @@ class Transforms():
 
 @PREPROCESS.register()
 class SplitPairedImage:
+
     def __init__(self, key, paired_keys=['A', 'B']):
         self.key = key
         self.paired_keys = paired_keys
@@ -103,6 +107,7 @@ class SplitPairedImage:
 
 @TRANSFORMS.register()
 class PairedRandomCrop(T.RandomCrop):
+
     def __init__(self, size, keys=None):
         super().__init__(size, keys=keys)
 
@@ -123,7 +128,18 @@ class PairedRandomCrop(T.RandomCrop):
 
 
 @TRANSFORMS.register()
+class PairedToTensor(T.ToTensor):
+
+    def __init__(self, data_format='CHW', keys=None):
+        super().__init__(data_format, keys=keys)
+
+    def _apply_image(self, img):
+        return F.to_tensor(img)
+
+
+@TRANSFORMS.register()
 class PairedRandomHorizontalFlip(T.RandomHorizontalFlip):
+
     def __init__(self, prob=0.5, keys=None):
         super().__init__(prob, keys=keys)
 
@@ -143,6 +159,7 @@ class PairedRandomHorizontalFlip(T.RandomHorizontalFlip):
 
 @TRANSFORMS.register()
 class PairedRandomVerticalFlip(T.RandomHorizontalFlip):
+
     def __init__(self, prob=0.5, keys=None):
         super().__init__(prob, keys=keys)
 
@@ -176,6 +193,7 @@ class PairedRandomTransposeHW(T.BaseTransform):
         prob (float): The propability to transpose the images.
         keys (list[str]): The images to be transposed.
     """
+
     def __init__(self, prob=0.5, keys=None):
         self.keys = keys
         self.prob = prob
@@ -220,6 +238,7 @@ class TransposeSequence(T.Transpose):
             fake_img_seq = transform(fake_img_seq)
 
     """
+
     def _apply_image(self, img):
         if isinstance(img, list):
             imgs = []
@@ -277,6 +296,7 @@ class NormalizeSequence(T.Normalize):
             fake_img_seq = normalize_seq(fake_img_seq)
 
     """
+
     def _apply_image(self, img):
         if isinstance(img, list):
             imgs = [
@@ -302,6 +322,7 @@ class SRPairedRandomCrop(T.BaseTransform):
         scale (int): model upscale factor.
         gt_patch_size (int): cropped gt patch size.
     """
+
     def __init__(self, scale, gt_patch_size, scale_list=False, keys=None):
         self.gt_patch_size = gt_patch_size
         self.scale = scale
@@ -368,6 +389,7 @@ class SRNoise(T.BaseTransform):
         noise_path (str): directory of noise image.
         size (int): cropped noise patch size.
     """
+
     def __init__(self, noise_path, size, keys=None):
         self.noise_path = noise_path
         self.noise_imgs = sorted(glob.glob(noise_path + '*.png'))
@@ -396,6 +418,7 @@ class RandomResizedCropProb(T.RandomResizedCrop):
         prob (float): probabilty of using random-resized cropping.
         size (int): cropped size.
     """
+
     def __init__(self, prob, size, scale, ratio, interpolation, keys=None):
         super().__init__(size, scale, ratio, interpolation)
         self.prob = prob
@@ -409,6 +432,7 @@ class RandomResizedCropProb(T.RandomResizedCrop):
 
 @TRANSFORMS.register()
 class Add(T.BaseTransform):
+
     def __init__(self, value, keys=None):
         """Initialize Add Transform
 
@@ -430,6 +454,7 @@ class Add(T.BaseTransform):
 
 @TRANSFORMS.register()
 class ResizeToScale(T.BaseTransform):
+
     def __init__(self,
                  size: int,
                  scale: int,
@@ -480,6 +505,7 @@ class ResizeToScale(T.BaseTransform):
 
 @TRANSFORMS.register()
 class PairedColorJitter(T.BaseTransform):
+
     def __init__(self,
                  brightness=0,
                  contrast=0,
@@ -545,6 +571,7 @@ class MirrorVideoSequence:
     Args:
         keys (list[str]): The frame lists to be extended.
     """
+
     def __init__(self, keys=None):
         self.keys = keys
 

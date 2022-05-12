@@ -35,3 +35,4 @@ from .mpr_model import MPRModel
 from .photopen_model import PhotoPenModel
 from .msvsr_model import MultiStageVSRModel
 from .singan_model import SinGANModel
+from .prenet_model import PReNetModel
