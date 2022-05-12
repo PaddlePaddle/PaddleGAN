@@ -1,5 +1,7 @@
 total_iters: 200000
 output_dir: output_dir
+find_unused_parameters: True
+
 
 model:
   name: GPENModel
