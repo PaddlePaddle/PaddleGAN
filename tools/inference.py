@@ -313,6 +313,22 @@ def main():
             metric_file = os.path.join(args.output_path, "singan/metric.txt")
             for metric in metrics.values():
                 metric.update(prediction, data['A'])
+         elif model_type == "prenet":
+            lq = data['lq'].numpy()
+            gt = data['gt'].numpy()
+            input_handles[0].copy_from_cpu(lq)
+            predictor.run()
+            prediction = output_handle.copy_to_cpu()
+            prediction = paddle.to_tensor(prediction)
+            gt = paddle.to_tensor(gt)
+            image_numpy = tensor2img(prediction, min_max)
+            gt_img = tensor2img(gt, min_max)
+            save_image(
+                image_numpy,
+                os.path.join(args.output_path, "prenet/{}.png".format(i)))
+            metric_file = os.path.join(args.output_path, "prenet/metric.txt")
+            for metric in metrics.values():
+                metric.update(image_numpy, gt_img)
 
         elif model_type == "prenet":
             lq = data['lq'].numpy()
