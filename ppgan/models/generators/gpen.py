@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+# code was heavily based on code was heavily based on https://github.com/yangxy/GPEN
+
+
 import itertools
 import paddle.nn as nn
 import math

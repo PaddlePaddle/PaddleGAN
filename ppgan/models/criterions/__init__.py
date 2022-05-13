@@ -7,5 +7,5 @@ from .photopen_perceptual_loss import PhotoPenPerceptualLoss
 from .gradient_penalty import GradientPenalty
 from .IDLoss.id_loss import IDLoss
 
-
+from .ssim import SSIM
 from .builder import build_criterion

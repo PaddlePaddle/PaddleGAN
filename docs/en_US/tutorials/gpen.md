@@ -7,7 +7,7 @@ English | [Chinese](../../zh_CN/tutorials/gpen.md)
 
 The GPEN model is a blind face restoration model. The author embeds the decoder of StyleGAN V2 proposed by the previous model as the decoder of GPEN; reconstructs a simple encoder with DNN to provide input for the decoder. In this way, while retaining the excellent performance of the StyleGAN V2 decoder, the function of the model is changed from image style conversion to blind face restoration. The overall structure of the model is shown in the following figure:
 
-![img](../../imgs/gpen_1.jpg)
+![img](https://user-images.githubusercontent.com/23252220/168281766-a0972bd3-243e-4fc7-baa5-e458ef0946ce.jpg)
 
 For a more detailed introduction to the model, and refer to the repo, you can view the following AI Studio project [link]([GPEN Blind Face Repair Model Reproduction - Paddle AI Studio (baidu.com)](https://aistudio.baidu.com/ The latest version of aistudio/projectdetail/3936241?contributionType=1)).
 
@@ -30,7 +30,7 @@ The GPEN model training set is the classic FFHQ face data set, with a total of 7
 
 Since the original FFHQ dataset is too large, you can also download the 256-resolution FFHQ dataset from the following link:
 
-[Flickr-Faces-HQ Dataset (FFHQ) 256x256 - 飞桨AI Studio (baidu.com)](https://aistudio.baidu.com/aistudio/datasetdetail/111879)
+https://paddlegan.bj.bcebos.com/datasets/images256x256.tar
 
 
 
@@ -38,7 +38,7 @@ Since the original FFHQ dataset is too large, you can also download the 256-reso
 
 ```
 |-- data/GPEN
-	|-- train
+	|-- ffhq/images256x256/
 		|-- 00000
 			|-- 00000.png
 			|-- 00001.png
@@ -54,23 +54,24 @@ Since the original FFHQ dataset is too large, you can also download the 256-reso
 		|-- 2000张png图片
 ```
 
+Please modify the dataroot parameters of dataset train and test in the configs/gpen_256_ffhq.yaml configuration file to your training set and test set path.
+
 
 
 ### 2.2 Model preparation
 
 **Model parameter file and training log download address:**
 
-link：https://pan.baidu.com/s/1Ll7WupdW1TZq2S3C_T6stQ  code：bkbt
+link：https://paddlegan.bj.bcebos.com/models/gpen.zip
 
 
-Download the model parameters from the link and put them in the data/gpen/weights folder in the project root directory. The specific file structure is as follows:
+Download the model parameters and test images from the link and put them in the data/ folder in the project root directory. The specific file structure is as follows:
 
 
 ```
 data/gpen/weights
-    |-- model_ir_se50_2.pdparams
+    |-- model_ir_se50.pdparams
     |-- weight_pretrain.pdparams  
-    |-- g_ema.pdparams
 data/gpen/lite_data
 ```
 
@@ -85,6 +86,10 @@ Enter the following code in the console to start training：
  ```shell
  python tools/main.py -c configs/gpen_256_ffhq.yaml
  ```
+
+The model only supports single-card training.
+
+Model training needs to use paddle2.3 and above, and wait for paddle to implement the second-order operator related functions of elementwise_pow. The paddle2.2.2 version can run normally, but the model cannot be successfully trained because some loss functions will calculate the wrong gradient. . If an error is reported during training, training is not supported for the time being. You can skip the training part and directly use the provided model parameters for testing. Model evaluation and testing can use paddle2.2.2 and above.
 
 
 
@@ -123,8 +128,9 @@ python applications/tools/gpen.py --test_img data/gpen/lite_data/15006.png --see
 The following are the sample images and the corresponding inpainted images, from left to right, the degraded image, the generated image, and the original clear image:
 
 <p align='center'>
-<img src="../../imgs/gpen_2.png" height="256px" width='768px' >
+<img src="https://user-images.githubusercontent.com/23252220/168281788-39c08e86-2dc3-487f-987d-93489934c14c.png" height="256px" width='768px' >
 An example output is as follows:
+
 
 ```
 result saved in : output_dir/gpen_predict.png
@@ -178,18 +184,15 @@ bash test_tipc/test_train_inference_python.sh ./test_tipc/configs/GPEN/train_inf
 
 
 
-## 5. LICENSE
+## 5、References
 
-This project is released under the [Apache 2.0 license](https://github.com/PaddlePaddle/models/blob/release/2.2/community/repo_template/LICENSE) license.
+```
+@misc{2021GAN,
+      title={GAN Prior Embedded Network for Blind Face Restoration in the Wild},
+      author={ Yang, T.  and  Ren, P.  and  Xie, X.  and  Zhang, L. },
+      year={2021},
+      archivePrefix={CVPR},
+      primaryClass={cs.CV}
+}
+```
 
-
-
-## 7、参考文献与链接
-
-Paper address: https://paperswithcode.com/paper/gan-prior-embedded-network-for-blind-face
-
-Reference repo Github: https://github.com/yangxy/GPEN
-
-Paper Reproduction Guide - CV Direction: https://github.com/PaddlePaddle/models/blob/release%2F2.2/tutorials/article-implementation/ArticleReproduction_CV.md
-
-readme documentation template: https://github.com/PaddlePaddle/models/blob/release/2.2/community/repo_template/README.md

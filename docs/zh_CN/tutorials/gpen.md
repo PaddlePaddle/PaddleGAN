@@ -7,7 +7,7 @@
 
 GPEN模型是一个盲人脸修复模型。作者将前人提出的 StyleGAN V2 的解码器嵌入模型，作为GPEN的解码器；用DNN重新构建了一种简单的编码器，为解码器提供输入。这样模型在保留了 StyleGAN V2 解码器优秀的性能的基础上，将模型的功能由图像风格转换变为了盲人脸修复。模型的总体结构如下图所示：
 
-![img](../../imgs/gpen_1.jpg)
+![img](https://user-images.githubusercontent.com/23252220/168281766-a0972bd3-243e-4fc7-baa5-e458ef0946ce.jpg)
 
 对模型更详细的介绍，和参考repo可查看以下AI Studio项目[链接]([GPEN盲人脸修复模型复现 - 飞桨AI Studio (baidu.com)](https://aistudio.baidu.com/aistudio/projectdetail/3936241?contributionType=1))的最新版本。
 
@@ -30,15 +30,15 @@ GPEN模型训练集是经典的FFHQ人脸数据集,共70000张1024 x 1024高分�
 
 由于FFHQ原数据集过大，也可以从以下链接下载256分辨率的FFHQ数据集：
 
-[Flickr-Faces-HQ Dataset (FFHQ) 256x256 - 飞桨AI Studio (baidu.com)](https://aistudio.baidu.com/aistudio/datasetdetail/111879)
+https://paddlegan.bj.bcebos.com/datasets/images256x256.tar
 
 
 
-**下载后，文件组织形式如下**
+**下载后，文件参考组织形式如下**
 
 ```
 |-- data/GPEN
-	|-- train
+	|-- ffhq/images256x256/
 		|-- 00000
 			|-- 00000.png
 			|-- 00001.png
@@ -54,13 +54,15 @@ GPEN模型训练集是经典的FFHQ人脸数据集,共70000张1024 x 1024高分�
 		|-- 2000张png图片
 ```
 
+请修改configs/gpen_256_ffhq.yaml配置文件中dataset的train和test的dataroot参数为你的训练集和测试集路径。
+
 
 
 ### 2.2 模型准备
 
 **模型参数文件及训练日志下载地址：**
 
-链接：https://pan.baidu.com/s/1Ll7WupdW1TZq2S3C_T6stQ  提取码：bkbt
+链接：https://paddlegan.bj.bcebos.com/models/gpen.zip
 
 
 从链接中下载模型参数和测试图片,并放到项目根目录下的data/文件夹下，具体文件结构如下所示：
@@ -70,9 +72,8 @@ GPEN模型训练集是经典的FFHQ人脸数据集,共70000张1024 x 1024高分�
 
 ```
 data/gpen/weights
-    |-- model_ir_se50_2.pdparams #计算id_loss需要加载的facenet的模型参数文件
+    |-- model_ir_se50.pdparams #计算id_loss需要加载的facenet的模型参数文件
     |-- weight_pretrain.pdparams #256分辨率的包含生成器和判别器的模型参数文件，其中只有生成器的参数是训练好的参数，参                                  #数文件的格式与3.1训练过程中保存的参数文件格式相同。3.2、3.3.1、4.1也需要用到该参数文件
-    |-- g_ema.pdparams           #256分辨率的仅包含生成器模型参数文件，与3.3.1中生成的参数文件格式相同，在3.3.2中用到
 data/gpen/lite_data
 ```
 
@@ -88,7 +89,9 @@ data/gpen/lite_data
  python tools/main.py -c configs/gpen_256_ffhq.yaml
  ```
 
-请修改configs/gpen_256_ffhq.yaml配置文件中dataset的dataroot参数为你的数据集路径。
+模型只支持单卡训练。
+
+模型训练需使用paddle2.3及以上版本，且需等paddle实现elementwise_pow 的二阶算子相关功能，使用paddle2.2.2版本能正常运行，但因部分损失函数会求出错误梯度，导致模型无法训练成功。如训练时报错则暂不支持进行训练，可跳过训练部分，直接使用提供的模型参数进行测试。模型评估和测试使用paddle2.2.2及以上版本即可。
 
 
 
@@ -127,7 +130,8 @@ python applications/tools/gpen.py --test_img data/gpen/lite_data/15006.png --see
 以下是样例图片和对应的修复图像，从左到右依次是退化图像、生成的图像和原始清晰图像：
 
 <p align='center'>
-<img src="../../imgs/gpen_2.png" height="256px" width='768px' >
+<img src="https://user-images.githubusercontent.com/23252220/168281788-39c08e86-2dc3-487f-987d-93489934c14c.png" height="256px" width='768px' >
+
 
 
 
@@ -186,18 +190,15 @@ bash test_tipc/test_train_inference_python.sh ./test_tipc/configs/GPEN/train_inf
 
 
 
-## 5. LICENSE
+## 5、参考文献
 
-本项目的发布受[Apache 2.0 license](https://github.com/PaddlePaddle/models/blob/release/2.2/community/repo_template/LICENSE)许可认证。
+```
+@misc{2021GAN,
+      title={GAN Prior Embedded Network for Blind Face Restoration in the Wild},
+      author={ Yang, T.  and  Ren, P.  and  Xie, X.  and  Zhang, L. },
+      year={2021},
+      archivePrefix={CVPR},
+      primaryClass={cs.CV}
+}
+```
 
-
-
-## 7、参考文献与链接
-
-论文地址：https://paperswithcode.com/paper/gan-prior-embedded-network-for-blind-face
-
-参考repo Github：https://github.com/yangxy/GPEN
-
-论文复现指南-CV方向：https://github.com/PaddlePaddle/models/blob/release%2F2.2/tutorials/article-implementation/ArticleReproduction_CV.md
-
-readme文档模板：https://github.com/PaddlePaddle/models/blob/release/2.2/community/repo_template/README.md

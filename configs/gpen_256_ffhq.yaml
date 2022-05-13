@@ -27,7 +27,7 @@ dataset:
     name: GPENDataset
     dataroot: data/ffhq/images256x256/
     num_workers: 0
-    batch_size: 2
+    batch_size: 2 #1gpus
     size: 256
 
   test:
