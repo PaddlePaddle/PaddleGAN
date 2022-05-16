@@ -3,6 +3,6 @@ from .transforms import (PairedRandomCrop, PairedRandomHorizontalFlip,
                          PairedRandomVerticalFlip, PairedRandomTransposeHW,
                          SRPairedRandomCrop, SplitPairedImage, SRNoise,
                          NormalizeSequence, MirrorVideoSequence,
-                         TransposeSequence)
+                         TransposeSequence, PairedToTensor)
 
 from .builder import build_preprocess

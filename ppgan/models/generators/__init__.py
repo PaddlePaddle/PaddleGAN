@@ -40,3 +40,4 @@ from .basicvsr_plus_plus import BasicVSRPlusPlus
 from .msvsr import MSVSR
 from .generator_singan import SinGANGenerator
 from .rcan import RCAN
+from .prenet import PReNet

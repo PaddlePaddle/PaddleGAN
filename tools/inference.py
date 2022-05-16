@@ -15,7 +15,7 @@ from ppgan.metrics import build_metric
 
 
 MODEL_CLASSES = ["pix2pix", "cyclegan", "wav2lip", "esrgan", \
-                 "edvr", "fom", "stylegan2", "basicvsr", "msvsr", "singan"]
+                 "edvr", "fom", "stylegan2", "basicvsr", "msvsr", "singan","prenet"]
 
 
 def parse_args():
@@ -56,63 +56,55 @@ def parse_args():
     parser.add_argument('--seed',
                         type=int,
                         default=None,
-                        help='fix random numbers by setting seed\".'
-    )
+                        help='fix random numbers by setting seed\".')
     # for tensorRT
-    parser.add_argument(
-        "--run_mode",
-        default="fluid",
-        type=str,
-        choices=["fluid", "trt_fp32", "trt_fp16"],
-        help="mode of running(fluid/trt_fp32/trt_fp16)")
-    parser.add_argument(
-        "--trt_min_shape",
-        default=1,
-        type=int,
-        help="trt_min_shape for tensorRT")
-    parser.add_argument(
-        "--trt_max_shape",
-        default=1280,
-        type=int,
-        help="trt_max_shape for tensorRT")
-    parser.add_argument(
-        "--trt_opt_shape",
-        default=640,
-        type=int,
-        help="trt_opt_shape for tensorRT")
-    parser.add_argument(
-        "--min_subgraph_size",
-        default=3,
-        type=int,
-        help="trt_opt_shape for tensorRT")
-    parser.add_argument(
-        "--batch_size",
-        default=1,
-        type=int,
-        help="batch_size for tensorRT")
-    parser.add_argument(
-        "--use_dynamic_shape",
-        dest="use_dynamic_shape",
-        action="store_true",
-        help="use_dynamic_shape for tensorRT")
-    parser.add_argument(
-        "--trt_calib_mode",
-        dest="trt_calib_mode",
-        action="store_true",
-        help="trt_calib_mode for tensorRT")
+    parser.add_argument("--run_mode",
+                        default="fluid",
+                        type=str,
+                        choices=["fluid", "trt_fp32", "trt_fp16"],
+                        help="mode of running(fluid/trt_fp32/trt_fp16)")
+    parser.add_argument("--trt_min_shape",
+                        default=1,
+                        type=int,
+                        help="trt_min_shape for tensorRT")
+    parser.add_argument("--trt_max_shape",
+                        default=1280,
+                        type=int,
+                        help="trt_max_shape for tensorRT")
+    parser.add_argument("--trt_opt_shape",
+                        default=640,
+                        type=int,
+                        help="trt_opt_shape for tensorRT")
+    parser.add_argument("--min_subgraph_size",
+                        default=3,
+                        type=int,
+                        help="trt_opt_shape for tensorRT")
+    parser.add_argument("--batch_size",
+                        default=1,
+                        type=int,
+                        help="batch_size for tensorRT")
+    parser.add_argument("--use_dynamic_shape",
+                        dest="use_dynamic_shape",
+                        action="store_true",
+                        help="use_dynamic_shape for tensorRT")
+    parser.add_argument("--trt_calib_mode",
+                        dest="trt_calib_mode",
+                        action="store_true",
+                        help="trt_calib_mode for tensorRT")
     args = parser.parse_args()
     return args
 
 
-def create_predictor(model_path, device="gpu",
-                   run_mode='fluid',
-                   batch_size=1,
-                   min_subgraph_size=3,
-                   use_dynamic_shape=False,
-                   trt_min_shape=1,
-                   trt_max_shape=1280,
-                   trt_opt_shape=640,
-                   trt_calib_mode=False):
+def create_predictor(model_path,
+                     device="gpu",
+                     run_mode='fluid',
+                     batch_size=1,
+                     min_subgraph_size=3,
+                     use_dynamic_shape=False,
+                     trt_min_shape=1,
+                     trt_max_shape=1280,
+                     trt_opt_shape=640,
+                     trt_calib_mode=False):
     config = paddle.inference.Config(model_path + ".pdmodel",
                                      model_path + ".pdiparams")
     if device == "gpu":
@@ -123,20 +115,19 @@ def create_predictor(model_path, device="gpu",
         config.enable_xpu(100)
     else:
         config.disable_gpu()
-    
+
     precision_map = {
         'trt_int8': paddle.inference.Config.Precision.Int8,
         'trt_fp32': paddle.inference.Config.Precision.Float32,
         'trt_fp16': paddle.inference.Config.Precision.Half
     }
     if run_mode in precision_map.keys():
-        config.enable_tensorrt_engine(
-            workspace_size=1 << 25,
-            max_batch_size=batch_size,
-            min_subgraph_size=min_subgraph_size,
-            precision_mode=precision_map[run_mode],
-            use_static=False,
-            use_calib_mode=trt_calib_mode)
+        config.enable_tensorrt_engine(workspace_size=1 << 25,
+                                      max_batch_size=batch_size,
+                                      min_subgraph_size=min_subgraph_size,
+                                      precision_mode=precision_map[run_mode],
+                                      use_static=False,
+                                      use_calib_mode=trt_calib_mode)
 
         if use_dynamic_shape:
             min_input_shape = {
@@ -155,6 +146,7 @@ def create_predictor(model_path, device="gpu",
     predictor = paddle.inference.create_predictor(config)
     return predictor
 
+
 def setup_metrics(cfg):
     metrics = OrderedDict()
     if isinstance(list(cfg.values())[0], dict):
@@ -166,22 +158,18 @@ def setup_metrics(cfg):
 
     return metrics
 
+
 def main():
     args = parse_args()
     if args.seed:
         paddle.seed(args.seed)
         random.seed(args.seed)
-        np.random.seed(args.seed)    
+        np.random.seed(args.seed)
     cfg = get_config(args.config_file, args.opt)
-    predictor = create_predictor(args.model_path, 
-                                 args.device, 
-                                 args.run_mode,
-                                 args.batch_size,
-                                 args.min_subgraph_size,
-                                 args.use_dynamic_shape,
-                                 args.trt_min_shape,
-                                 args.trt_max_shape,
-                                 args.trt_opt_shape,
+    predictor = create_predictor(args.model_path, args.device, args.run_mode,
+                                 args.batch_size, args.min_subgraph_size,
+                                 args.use_dynamic_shape, args.trt_min_shape,
+                                 args.trt_max_shape, args.trt_opt_shape,
                                  args.trt_calib_mode)
     input_handles = [
         predictor.get_input_handle(name)
@@ -218,7 +206,9 @@ def main():
             prediction = output_handle.copy_to_cpu()
             prediction = paddle.to_tensor(prediction)
             image_numpy = tensor2img(prediction[0], min_max)
-            save_image(image_numpy, os.path.join(args.output_path, "pix2pix/{}.png".format(i)))
+            save_image(
+                image_numpy,
+                os.path.join(args.output_path, "pix2pix/{}.png".format(i)))
             metric_file = os.path.join(args.output_path, "pix2pix/metric.txt")
             real_B = paddle.to_tensor(data['A'])
             for metric in metrics.values():
@@ -231,7 +221,9 @@ def main():
             prediction = output_handle.copy_to_cpu()
             prediction = paddle.to_tensor(prediction)
             image_numpy = tensor2img(prediction[0], min_max)
-            save_image(image_numpy, os.path.join(args.output_path, "cyclegan/{}.png".format(i)))
+            save_image(
+                image_numpy,
+                os.path.join(args.output_path, "cyclegan/{}.png".format(i)))
             metric_file = os.path.join(args.output_path, "cyclegan/metric.txt")
             real_B = paddle.to_tensor(data['B'])
             for metric in metrics.values():
@@ -275,7 +267,9 @@ def main():
             prediction = output_handle.copy_to_cpu()
             prediction = paddle.to_tensor(prediction)
             image_numpy = tensor2img(prediction[0], min_max)
-            save_image(image_numpy, os.path.join(args.output_path, "stylegan2/{}.png".format(i)))
+            save_image(
+                image_numpy,
+                os.path.join(args.output_path, "stylegan2/{}.png".format(i)))
             metric_file = os.path.join(args.output_path, "stylegan2/metric.txt")
             real_img = paddle.to_tensor(data['A'])
             for metric in metrics.values():
@@ -285,7 +279,8 @@ def main():
             input_handles[0].copy_from_cpu(lq)
             predictor.run()
             if len(predictor.get_output_names()) > 1:
-                output_handle = predictor.get_output_handle(predictor.get_output_names()[-1])
+                output_handle = predictor.get_output_handle(
+                    predictor.get_output_names()[-1])
             prediction = output_handle.copy_to_cpu()
             prediction = paddle.to_tensor(prediction)
             _, t, _, _, _ = prediction.shape
@@ -295,13 +290,16 @@ def main():
             for ti in range(t):
                 out_tensor = prediction[0, ti]
                 gt_tensor = data['gt'][0, ti]
-                out_img.append(tensor2img(out_tensor, (0.,1.)))
-                gt_img.append(tensor2img(gt_tensor, (0.,1.)))
-                
-            image_numpy = tensor2img(prediction[0], min_max)
-            save_image(image_numpy, os.path.join(args.output_path, model_type, "{}.png".format(i)))
+                out_img.append(tensor2img(out_tensor, (0., 1.)))
+                gt_img.append(tensor2img(gt_tensor, (0., 1.)))
 
-            metric_file = os.path.join(args.output_path, model_type, "metric.txt")
+            image_numpy = tensor2img(prediction[0], min_max)
+            save_image(
+                image_numpy,
+                os.path.join(args.output_path, model_type, "{}.png".format(i)))
+
+            metric_file = os.path.join(args.output_path, model_type,
+                                       "metric.txt")
             for metric in metrics.values():
                 metric.update(out_img, gt_img, is_seq=True)
         elif model_type == "singan":
@@ -309,18 +307,54 @@ def main():
             prediction = output_handle.copy_to_cpu()
             prediction = paddle.to_tensor(prediction)
             image_numpy = tensor2img(prediction, min_max)
-            save_image(image_numpy, os.path.join(args.output_path, "singan/{}.png".format(i)))
+            save_image(
+                image_numpy,
+                os.path.join(args.output_path, "singan/{}.png".format(i)))
             metric_file = os.path.join(args.output_path, "singan/metric.txt")
             for metric in metrics.values():
                 metric.update(prediction, data['A'])
+         elif model_type == "prenet":
+            lq = data['lq'].numpy()
+            gt = data['gt'].numpy()
+            input_handles[0].copy_from_cpu(lq)
+            predictor.run()
+            prediction = output_handle.copy_to_cpu()
+            prediction = paddle.to_tensor(prediction)
+            gt = paddle.to_tensor(gt)
+            image_numpy = tensor2img(prediction, min_max)
+            gt_img = tensor2img(gt, min_max)
+            save_image(
+                image_numpy,
+                os.path.join(args.output_path, "prenet/{}.png".format(i)))
+            metric_file = os.path.join(args.output_path, "prenet/metric.txt")
+            for metric in metrics.values():
+                metric.update(image_numpy, gt_img)
+
+        elif model_type == "prenet":
+            lq = data['lq'].numpy()
+            gt = data['gt'].numpy()
+            input_handles[0].copy_from_cpu(lq)
+            predictor.run()
+            prediction = output_handle.copy_to_cpu()
+            prediction = paddle.to_tensor(prediction)
+            gt = paddle.to_tensor(gt)
+            image_numpy = tensor2img(prediction, min_max)
+            gt_img = tensor2img(gt, min_max)
+            save_image(
+                image_numpy,
+                os.path.join(args.output_path, "prenet/{}.png".format(i)))
+            metric_file = os.path.join(args.output_path, "prenet/metric.txt")
+            for metric in metrics.values():
+                metric.update(image_numpy, gt_img)
 
     if metrics:
         log_file = open(metric_file, 'a')
         for metric_name, metric in metrics.items():
-            loss_string = "Metric {}: {:.4f}".format(
-                    metric_name, metric.accumulate())
+            loss_string = "Metric {}: {:.4f}".format(metric_name,
+                                                     metric.accumulate())
             print(loss_string, file=log_file)
         log_file.close()
+
 
 if __name__ == '__main__':
     main()

@@ -34,7 +34,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
   <div align='center'>
     <img src='https://user-images.githubusercontent.com/48054808/144848981-00c6ad21-0702-4381-9544-becb227ed9f0.gif' width='300'/>
   </div>
-  
+
 - 😍 **Boy or Girl？：[StyleGAN V2 Face Editing](./docs/en_US/tutorials/styleganv2editing.md)-Changing genders！** 😍
   - **[Online Toturials](https://aistudio.baidu.com/aistudio/projectdetail/2565277?contributionType=1)**
   <div align='center'>
@@ -118,6 +118,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 * [StarGANv2](docs/en_US/tutorials/starganv2.md)
 * [MPR Net](./docs/en_US/tutorials/mpr_net.md)
 * [FaceEnhancement](./docs/en_US/tutorials/face_enhancement.md)
+* [PReNet](./docs/en_US/tutorials/prenet.md)
 
 
 ## Composite Application
