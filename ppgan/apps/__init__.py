@@ -35,3 +35,4 @@ from .recurrent_vsr_predictor import (PPMSVSRPredictor, BasicVSRPredictor, \
                                      BasiVSRPlusPlusPredictor, IconVSRPredictor, \
                                      PPMSVSRLargePredictor)
 from .singan_predictor import SinGANPredictor
+from .gpen_predictor import GPENPredictor

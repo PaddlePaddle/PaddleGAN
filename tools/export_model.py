@@ -15,6 +15,8 @@
 import os
 import sys
 import argparse
+sys.path.append(".")
+
 
 import ppgan
 from ppgan.utils.config import get_config
