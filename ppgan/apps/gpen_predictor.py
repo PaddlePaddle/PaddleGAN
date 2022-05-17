@@ -29,7 +29,7 @@ import cv2
 import warnings
 
 model_cfgs = {
-    'ffhq-config-f': {
+    'gpen-ffhq-256': {
         'model_urls':
         'https://paddlegan.bj.bcebos.com/models/gpen-ffhq-256-generator.pdparams',
         'size': 256,

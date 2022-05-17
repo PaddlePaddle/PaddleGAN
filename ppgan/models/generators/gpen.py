@@ -17,9 +17,9 @@
 import itertools
 import paddle.nn as nn
 import math
-from ppgan.models.builder import GENERATORS
+from ppgan.models.generators.builder import GENERATORS
 from ppgan.modules.equalized import EqualLinear_gpen as EqualLinear
-from ppgan.models.generators import StyleGANv2Generator
+from ppgan.models.generators.generator_gpen import StyleGANv2Generator
 from ppgan.models.discriminators.discriminator_styleganv2 import ConvLayer
 
 

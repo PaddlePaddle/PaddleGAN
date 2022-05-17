@@ -119,10 +119,10 @@ python tools/extract_weight.py data/gpen/weights/weight_pretrain.pdparams --net-
 
 #### 3.3.2 Process a single image
 
-After extracting the weights of the generator, enter the following command to test the images under the --test_img path. Modifying the --seed parameter can generate different degraded images to show richer effects. You can modify the path after --test_img to any image you want to test.
+After extracting the weights of the generator, enter the following command to test the images under the --test_img path. Modifying the --seed parameter can generate different degraded images to show richer effects. You can modify the path after --test_img to any image you want to test. If no weight is provided after the --weight_path parameter, the trained model weights will be automatically downloaded for testing.
 
 ```bash
-python applications/tools/gpen.py --test_img data/gpen/lite_data/15006.png --seed=100 --weight_path data/gpen/weights/g_ema.pdparams
+python applications/tools/gpen.py --test_img data/gpen/lite_data/15006.png --seed=100 --weight_path data/gpen/weights/g_ema.pdparams --model_type gpen-ffhq-256
 ```
 
 The following are the sample images and the corresponding inpainted images, from left to right, the degraded image, the generated image, and the original clear image:
@@ -176,6 +176,10 @@ Note: Since the operation of degrading high-definition pictures has a certain de
 To invoke the `lite_train_lite_infer` mode of the foot test base training prediction function, run:
 
 ```shell
+# Corrected format of sh file
+sed -i 's/\r//' test_tipc/prepare.sh
+sed -i 's/\r//' test_tipc/test_train_inference_python.sh
+sed -i 's/\r//' test_tipc/common_func.sh
 # prepare data
 bash test_tipc/prepare.sh ./test_tipc/configs/GPEN/train_infer_python.txt 'lite_train_lite_infer'
 # run the test

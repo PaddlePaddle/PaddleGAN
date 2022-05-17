@@ -121,10 +121,10 @@ python tools/extract_weight.py data/gpen/weights/weight_pretrain.pdparams --net-
 
 #### 3.3.2 对单张图像进行处理
 
-提取完生成器的权重后，输入以下命令可对--test_img路径下图片进行测试。修改--seed参数，可生成不同的退化图像，展示出更丰富的效果。可修改--test_img后的路径为你想测试的任意图片。
+提取完生成器的权重后，输入以下命令可对--test_img路径下图片进行测试。修改--seed参数，可生成不同的退化图像，展示出更丰富的效果。可修改--test_img后的路径为你想测试的任意图片。如--weight_path参数后不提供权重，则会自动下载训练好的模型权重进行测试。
 
 ```bash
-python applications/tools/gpen.py --test_img data/gpen/lite_data/15006.png --seed=100 --weight_path data/gpen/weights/g_ema.pdparams
+python applications/tools/gpen.py --test_img data/gpen/lite_data/15006.png --seed=100 --weight_path data/gpen/weights/g_ema.pdparams --model_type gpen-ffhq-256
 ```
 
 以下是样例图片和对应的修复图像，从左到右依次是退化图像、生成的图像和原始清晰图像：
@@ -180,6 +180,10 @@ Metric fid: 187.0158
 测试基本训练预测功能的`lite_train_lite_infer`模式，运行：
 
 ```shell
+# 修正脚本文件格式
+sed -i 's/\r//' test_tipc/prepare.sh
+sed -i 's/\r//' test_tipc/test_train_inference_python.sh
+sed -i 's/\r//' test_tipc/common_func.sh
 # 准备数据
 bash test_tipc/prepare.sh ./test_tipc/configs/GPEN/train_infer_python.txt 'lite_train_lite_infer'
 # 运行测试
