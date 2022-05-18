@@ -54,9 +54,6 @@ if [ ${MODE} = "lite_train_lite_infer" ];then
         rm -rf ./data/ffhq*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/ffhq.tar --no-check-certificate
         cd ./data/ && tar xf ffhq.tar && cd ../ ;;
-	GPEN)
-        rm -rf ./data/ffhq*
-        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/ffhq.tar --no-check-certificate
         cd ./data/ && tar xf ffhq.tar && cd ../ ;;
     FOMM)
         rm -rf ./data/fom_lite*
@@ -107,10 +104,6 @@ elif [ ${MODE} = "lite_train_whole_infer" ];then
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/fom_lite.tar  --no-check-certificate --no-check-certificate
         cd ./data/ && tar xf fom_lite.tar && cd ../
     elif [ ${model_name} == "StyleGANv2" ]; then
-        rm -rf ./data/ffhq*
-        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/ffhq.tar --no-check-certificate
-        cd ./data/ && tar xf ffhq.tar && cd ../
-	elif [ ${model_name} == "GPEN" ]; then
         rm -rf ./data/ffhq*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/ffhq.tar --no-check-certificate
         cd ./data/ && tar xf ffhq.tar && cd ../

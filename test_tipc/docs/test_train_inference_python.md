@@ -15,7 +15,8 @@ Linux端基础训练预测功能测试的主程序为`test_train_inference_pytho
 | FOMM |FOMM | 生成  | 支持 | 多机多卡  | | |
 | BasicVSR |BasicVSR | 超分  | 支持 | 多机多卡  | | |
 |PP-MSVSR|PP-MSVSR | 超分|
-|SinGAN|SinGAN | 生成|支持|
+|edvr|edvr | 超分|支持|
+|esrgan|esrgan | 超分|支持|
 
 - 预测相关：预测功能汇总如下，
 
