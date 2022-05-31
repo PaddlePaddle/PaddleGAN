@@ -54,7 +54,6 @@ if [ ${MODE} = "lite_train_lite_infer" ];then
         rm -rf ./data/ffhq*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/ffhq.tar --no-check-certificate
         cd ./data/ && tar xf ffhq.tar && cd ../ ;;
-        cd ./data/ && tar xf ffhq.tar && cd ../ ;;
     FOMM)
         rm -rf ./data/fom_lite*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/fom_lite.tar  --no-check-certificate --no-check-certificate
