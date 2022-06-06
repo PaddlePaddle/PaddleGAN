@@ -2,7 +2,6 @@
 # Users should be careful about adopting these functions in any commercial matters.
 # https://github.com/clovaai/stargan-v2#license
 
-from paddle.fluid.layers.nn import soft_relu
 from .base_model import BaseModel
 
 from paddle import nn

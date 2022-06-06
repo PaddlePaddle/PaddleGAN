@@ -103,8 +103,7 @@ class Wav2LipModelHq(BaseModel):
         self.l1_loss = self.recon_loss(self.g, self.y)
 
         if self.disc_wt > 0.:
-            if isinstance(self.nets['netDH'], paddle.DataParallel
-                          ):  #paddle.fluid.dygraph.parallel.DataParallel)
+            if isinstance(self.nets['netDH'], paddle.DataParallel):
                 self.perceptual_loss = self.nets[
                     'netDH']._layers.perceptual_forward(self.g)
             else:
@@ -175,8 +174,7 @@ class Wav2LipModelHq(BaseModel):
             self.eval_recon_losses.append(l1loss.numpy().item())
 
             if self.disc_wt > 0.:
-                if isinstance(self.nets['netDH'], paddle.DataParallel
-                              ):  #paddle.fluid.dygraph.parallel.DataParallel)
+                if isinstance(self.nets['netDH'], paddle.DataParallel):
                     perceptual_loss = self.nets[
                         'netDH']._layers.perceptual_forward(
                             self.g).numpy().item()
