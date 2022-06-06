@@ -251,7 +251,7 @@ class Transform:
         theta_part_a = theta[:, :, :, :2]
         theta_part_b = theta[:, :, :, 2:]
 
-        transformed = paddle.fluid.layers.matmul(
+        transformed = paddle.matmul(
             *broadcast(theta_part_a, coordinates)) + theta_part_b  #M*p + m0
         transformed = transformed.squeeze(-1)
         if self.tps:

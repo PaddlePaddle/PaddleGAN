@@ -5,7 +5,6 @@ import cv2
 import imageio
 import time
 from tqdm import tqdm
-import paddle.fluid as fluid
 import os
 from functools import reduce
 import paddle
@@ -99,11 +98,11 @@ def main():
         driving_paths = [driving_path]
 
     # 创建 config
-    kp_detector_config = paddle_infer.Config(os.path.join(
-        args.model_path, "kp_detector.pdmodel"),
+    kp_detector_config = paddle_infer.Config(
+        os.path.join(args.model_path, "kp_detector.pdmodel"),
         os.path.join(args.model_path, "kp_detector.pdiparams"))
-    generator_config = paddle_infer.Config(os.path.join(
-        args.model_path, "generator.pdmodel"),
+    generator_config = paddle_infer.Config(
+        os.path.join(args.model_path, "generator.pdmodel"),
         os.path.join(args.model_path, "generator.pdiparams"))
     if args.device == "gpu":
         kp_detector_config.enable_use_gpu(100, 0)
@@ -194,11 +193,12 @@ def main():
             generator_output_handle = generator_predictor.get_output_handle(
                 generator_output_names[0])
             output_data = generator_output_handle.copy_to_cpu()
-            loss = paddle.abs(paddle.to_tensor(output_data) -
-                              paddle.to_tensor(driving_video[i])).mean().cpu().numpy()
+            loss = paddle.abs(
+                paddle.to_tensor(output_data) -
+                paddle.to_tensor(driving_video[i])).mean().cpu().numpy()
             test_loss.append(loss)
             output_data = np.transpose(output_data, [0, 2, 3, 1])[0] * 255.0
-            
+
             #Todo：add blazeface static model
             #frame = source_img.copy()
             #frame[left:right, up:bottom] = cv2.resize(output_data.astype(np.uint8), (bottom - up, right - left), cv2.INTER_AREA)
@@ -210,8 +210,7 @@ def main():
                         fps=fps)
     metric_file = os.path.join(args.output_path, "metric.txt")
     log_file = open(metric_file, 'a')
-    loss_string = "Metric {}: {:.4f}".format(
-                  "l1 loss", np.mean(test_loss))
+    loss_string = "Metric {}: {:.4f}".format("l1 loss", np.mean(test_loss))
     log_file.close()
 
 

@@ -468,7 +468,8 @@ class AntiAliasInterpolation2d(nn.Layer):
         inv_scale = 1 / self.scale
         int_inv_scale = int(inv_scale)
         assert (inv_scale == int_inv_scale)
-        #out = out[:, :, ::int_inv_scale, ::int_inv_scale]
+        # lite: fluid resize_nearest
+        # out = paddle.fluid.layers.resize_nearest(out, scale=self.scale)
+        out = out[:, :, ::int_inv_scale, ::int_inv_scale]
         # patch end
-        out = paddle.fluid.layers.resize_nearest(out, scale=self.scale)
         return out
