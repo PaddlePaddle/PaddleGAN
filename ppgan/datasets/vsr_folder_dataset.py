@@ -56,7 +56,7 @@ class VSRFolderDataset(BaseDataset):
     def prepare_data_infos(self):
 
         sequences = sorted(glob.glob(os.path.join(self.lq_folder, '*')))
-        cur_step = os.path.sep
+        sep = os.path.sep
 
         data_infos = []
         for sequence in sequences:
@@ -68,7 +68,7 @@ class VSRFolderDataset(BaseDataset):
             data_infos.append(
                 dict(lq_path=self.lq_folder,
                      gt_path=self.gt_folder,
-                     key=sequence.replace(f'{self.lq_folder}' + cur_step, ''),
+                     key=sequence.replace(f'{self.lq_folder}' + sep, ''),
                      num_frames=num_frames,
                      sequence_length=sequence_length))
         return data_infos
