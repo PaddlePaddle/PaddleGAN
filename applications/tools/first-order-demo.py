@@ -51,7 +51,12 @@ parser.add_argument("--best_frame",
                     type=int,
                     default=None,
                     help="Set frame to start from.")
-parser.add_argument("--cpu", dest="cpu", action="store_true", help="cpu mode.")
+
+# for device
+group = parser.add_mutually_exclusive_group()
+group.add_argument("--cpu", dest="cpu", action="store_true", help="cpu mode.")
+group.add_argument("--xpu", dest="xpu", action="store_true", help="xpu mode.")
+
 parser.add_argument("--ratio",
                     dest="ratio",
                     type=float,
@@ -78,26 +83,35 @@ parser.add_argument("--batch_size",
                     type=int,
                     default=1,
                     help="Batch size for fom model")
-parser.add_argument(
-    "--face_enhancement",
-    dest="face_enhancement",
-    action="store_true",
-    help="use face enhance for face")
-parser.add_argument(
-    "--mobile_net",
-    dest="mobile_net",
-    action="store_true",
-    help="use mobile_net for fom")
+parser.add_argument("--face_enhancement",
+                    dest="face_enhancement",
+                    action="store_true",
+                    help="use face enhance for face")
+parser.add_argument("--mobile_net",
+                    dest="mobile_net",
+                    action="store_true",
+                    help="use mobile_net for fom")
 parser.set_defaults(relative=False)
 parser.set_defaults(adapt_scale=False)
 parser.set_defaults(face_enhancement=False)
 parser.set_defaults(mobile_net=False)
+
+parser.add_argument(
+    "--slice_size",
+    dest="slice_size",
+    type=int,
+    default=0,
+    help=
+    "slice driving video to smaller parts to bypass XPU's 4G byte tensor restriction"
+)
 
 if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.cpu:
         paddle.set_device('cpu')
+    if args.xpu:
+        paddle.set_device('xpu')
     predictor = FirstOrderPredictor(output=args.output,
                                     filename=args.filename,
                                     weight_path=args.weight_path,
@@ -112,6 +126,6 @@ if __name__ == "__main__":
                                     image_size=args.image_size,
                                     batch_size=args.batch_size,
                                     face_enhancement=args.face_enhancement,
-                                    mobile_net=args.mobile_net)
+                                    mobile_net=args.mobile_net,
+                                    slice_size=args.slice_size)
     predictor.run(args.source_image, args.driving_video)
-
