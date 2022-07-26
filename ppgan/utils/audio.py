@@ -22,11 +22,6 @@ def save_wav(wav, path, sr):
     wavfile.write(path, sr, wav.astype(np.int16))
 
 
-def save_wavenet_wav(wav, path, sr):
-    librosa = try_import('librosa')
-    librosa.output.write_wav(path, wav, sr=sr)
-
-
 def preemphasis(wav, k, preemphasize=True):
     if preemphasize:
         return signal.lfilter([1, -k], [1], wav)
