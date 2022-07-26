@@ -5,7 +5,7 @@ scipy>=1.1.0
 opencv-python
 imageio==2.9.0
 imageio-ffmpeg
-librosa==0.8.1
+librosa>=0.8.1
 numba==0.53.1
 easydict
 munch
