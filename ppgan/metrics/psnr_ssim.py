@@ -285,12 +285,21 @@ def bgr2ycbcr(img, y_only=False):
     """
     img_type = img.dtype
 
+    if img_type != np.uint8:
+        img *= 255.
+
     if y_only:
         out_img = np.dot(img, [24.966, 128.553, 65.481]) + 16.0
     else:
         out_img = np.matmul(
             img, [[24.966, 112.0, -18.214], [128.553, -74.203, -93.786],
                   [65.481, -37.797, 112.0]]) + [16, 128, 128]
+
+    if img_type != np.uint8:
+        out_img /= 255.
+    else:
+        out_img = out_img.round()
+
     return out_img
 
 
@@ -322,11 +331,11 @@ def rgb2ycbcr(img, y_only=False):
         img *= 255.
 
     if y_only:
-        out_img = np.dot(img, [65.481, 128.553, 24.966]) / 255. + 16.0
+        out_img = np.dot(img, [65.481, 128.553, 24.966]) + 16.0
     else:
         out_img = np.matmul(
-            img, [[24.966, 112.0, -18.214], [128.553, -74.203, -93.786],
-                  [65.481, -37.797, 112.0]]) + [16, 128, 128]
+            img, [[65.481, -37.797, 112.0], [128.553, -74.203, -93.786],
+                  [24.966, 112.0, -18.214]]) + [16, 128, 128]
 
     if img_type != np.uint8:
         out_img /= 255.
