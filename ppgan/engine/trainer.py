@@ -125,8 +125,7 @@ class Trainer:
         if self.enable_wandb:
             if "wandb" in cfg:
                 wandb_config = cfg.wandb
-            wandb_config['config'] = cfg
-            self.wandb_logger = WandbLogger(**wandb_config)
+            self.wandb_logger = WandbLogger(config=cfg, **wandb_config)
             loggers.append(self.wandb_logger)
         
         self.loggers = Loggers(loggers)
@@ -296,7 +295,8 @@ class Trainer:
             for metric_name, metric in self.metrics.items():
                 self.logger.info("Metric {}: {:.4f}".format(
                     metric_name, metric.accumulate()))
-            self.loggers.log_metrics(self.metrics, prefix="test")
+            if self.local_rank == 0:
+                self.loggers.log_metrics(self.metrics, prefix="test")
 
     def print_log(self):
         losses = self.model.get_current_losses()
@@ -311,7 +311,8 @@ class Trainer:
 
         message += f'lr: {self.current_learning_rate:.3e} '
 
-        self.loggers.log_metrics(losses, step=self.current_iter)
+        if self.local_rank == 0:
+            self.loggers.log_metrics(losses, step=self.current_iter)
 
         for k, v in losses.items():
             message += '%s: %.3f ' % (k, v)
@@ -366,14 +367,15 @@ class Trainer:
         if image_num is None:
             image_num = 1
         
-        self.loggers.log_images(
-            visual_results,
-            image_num,
-            min_max,
-            results_dir,
-            dataformats="HWC" if image_num == 1 else "NCHW",
-            step=step if step else self.current_iter
-        )
+        if self.local_rank == 0:
+            self.loggers.log_images(
+                visual_results,
+                image_num,
+                min_max,
+                results_dir,
+                dataformats="HWC" if image_num == 1 else "NCHW",
+                step=step if step else self.current_iter
+            )
 
         for label, image in visual_results.items():
             image_numpy = tensor2img(image, min_max, image_num)

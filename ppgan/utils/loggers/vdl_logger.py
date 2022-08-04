@@ -1,3 +1,4 @@
+import paddle
 from visualdl import LogWriter
 
 from ..visual import tensor2img
@@ -10,11 +11,14 @@ class VDLLogger(BaseLogger):
         self.vdl_writer = LogWriter(logdir=save_dir)
 
     def log_metrics(self, metrics, prefix=None, step=None):
-        if not prefix:
-            prefix = ""
-        updated_metrics = {prefix + "/" + k: v for k, v in metrics.items()}
+        if prefix:
+            updated_metrics = {
+                prefix.lower() + "/" + k: v.item() for k, v in metrics.items() if isinstance(v, paddle.Tensor)
+            }
+        else:
+            updated_metrics = {k: v.item() for k, v in metrics.items()}
         for k, v in updated_metrics.items():
-            self.vdl_writer.add_scalar(k, v, step)
+            self.vdl_writer.add_scalar(tag=k, value=v, step=step)
     
     def log_model(self, file_path, aliases=None, metadata=None):
         pass
