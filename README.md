@@ -23,6 +23,10 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 ## 🚀 Recent Updates
 
+- 🪄**Support for Training Visualizing with [Weights & Biases](https://docs.wandb.ai/)**🐝 
+  - **[Tutorial](./docs/en_US/get_started.md)**
+  ![Wandb Dashboard](./docs/imgs/wandb_dashboard.png)
+
 - 👶 **Young or Old？：[StyleGAN V2 Face Editing](./docs/en_US/tutorials/styleganv2editing.md)-Time Machine！** 👨‍🦳
   - **[Online Toturials](https://aistudio.baidu.com/aistudio/projectdetail/3251280?channelType=0&channel=0)**
   <div align='center'>
