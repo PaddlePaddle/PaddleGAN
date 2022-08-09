@@ -32,6 +32,7 @@ from ..utils.profiler import add_profiler_step
 
 
 class IterLoader:
+
     def __init__(self, dataloader):
         self._dataloader = dataloader
         self.iter_loader = iter(self._dataloader)
@@ -79,6 +80,7 @@ class Trainer:
     #                     |                                    ||
     #         save checkpoint (model.nets)                     \/
     """
+
     def __init__(self, cfg):
         # base config
         self.logger = logging.getLogger(__name__)
@@ -181,6 +183,22 @@ class Trainer:
 
         iter_loader = IterLoader(self.train_dataloader)
 
+        # use amp
+        if self.cfg.amp:
+            self.logger.info('use AMP to train. AMP level = {}'.format(
+                self.cfg.amp_level))
+            assert self.cfg.model.name == 'MultiStageVSRModel', "AMP only support msvsr model"
+            scaler = paddle.amp.GradScaler(init_loss_scaling=1024)
+            # need to decorate model and optim if amp_level == 'O2'
+            if self.cfg.amp_level == 'O2':
+                # msvsr has only one generator and one optimizer
+                self.model.nets['generator'], self.optimizers[
+                    'optim'] = paddle.amp.decorate(
+                        models=self.model.nets['generator'],
+                        optimizers=self.optimizers['optim'],
+                        level='O2',
+                        save_dtype='float32')
+
         # set model.is_train = True
         self.model.setup_train_mode(is_train=True)
         while self.current_iter < (self.total_iters + 1):
@@ -195,7 +213,12 @@ class Trainer:
             # unpack data from dataset and apply preprocessing
             # data input should be dict
             self.model.setup_input(data)
-            self.model.train_iter(self.optimizers)
+
+            if self.cfg.amp:
+                self.model.train_iter_amp(self.optimizers, scaler,
+                                          self.cfg.amp_level)  # amp train
+            else:
+                self.model.train_iter(self.optimizers)  # norm train
 
             batch_cost_averager.record(
                 time.time() - step_start_time,
