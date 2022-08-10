@@ -1,5 +1,4 @@
 import paddle
-from visualdl import LogWriter
 
 from ..visual import tensor2img
 from .base_logger import BaseLogger
@@ -8,6 +7,13 @@ from .base_logger import BaseLogger
 class VDLLogger(BaseLogger):
     def __init__(self, save_dir):
         super().__init__(save_dir)
+        try:
+            from visualdl import LogWriter
+        except ModuleNotFoundError:
+            raise ModuleNotFoundError(
+                "Please install visualdl using `pip install visualdl`"
+                )
+
         self.vdl_writer = LogWriter(logdir=save_dir)
 
     def log_metrics(self, metrics, prefix=None, step=None):
