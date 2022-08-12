@@ -41,8 +41,8 @@ def parse_args():
         "--device",
         default="gpu",
         type=str,
-        choices=["cpu", "gpu", "xpu"],
-        help="The device to select to train the model, is must be cpu/gpu/xpu.")
+        choices=["cpu", "gpu", "xpu", "npu"],
+        help="The device to select to train the model, is must be cpu/gpu/xpu/npu.")
     parser.add_argument('-c',
                         '--config-file',
                         metavar="FILE",
@@ -117,6 +117,8 @@ def create_predictor(model_path,
         config.disable_gpu()
     elif device == "xpu":
         config.enable_xpu(100)
+    elif device == "npu":
+        config.enable_npu()
     else:
         config.disable_gpu()
 
