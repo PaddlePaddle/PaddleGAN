@@ -13,7 +13,7 @@ train_infer_img_dir:null
 null:null
 ##
 trainer:norm_train
-norm_train:tools/main.py -c configs/stylegan_v2_256_ffhq.yaml --seed 123 -o dataset.train.num_workers=0 log_config.interval=1 snapshot_config.interval=10
+norm_train:tools/main.py -c configs/stylegan_v2_256_ffhq.yaml --seed 123 -o log_config.interval=1 snapshot_config.interval=10
 pact_train:null
 fpgm_train:null
 distill_train:null
