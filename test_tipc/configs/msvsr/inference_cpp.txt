@@ -1,0 +1,12 @@
+===========================cpp_infer_params===========================
+model_name:msvsr
+inference:./deploy/cpp_infer/build/vsr
+--infer_model_path:./inference/msvsr/multistagevsrmodel_generator.pdmodel
+--infer_param_path:./inference/msvsr/multistagevsrmodel_generator.pdiparams
+--video_path:./data/low_res.mp4
+--output_dir:./test_tipc/output/msvsr
+--frame_num:2
+--device:GPU
+--gpu_id:1
+--use_mkldnn:True
+--cpu_threads:1
