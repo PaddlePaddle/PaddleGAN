@@ -2,7 +2,7 @@
 FILENAME=$1
 
 # MODE be one of ['lite_train_lite_infer' 'lite_train_whole_infer' 'whole_train_whole_infer',
-#                 'whole_infer']
+#                 'whole_infer', 'benchmark_train', 'cpp_infer']
 
 MODE=$2
 
@@ -31,13 +31,6 @@ model_name=$(func_parser_value "${lines[1]}")
 
 trainer_list=$(func_parser_value "${lines[14]}")
 
-if [ ${MODE} = "benchmark_train" ];then
-    pip install -v -e .
-    MODE="lite_train_lite_infer"
-fi
-
-# MODE be one of ['lite_train_lite_infer' 'lite_train_whole_infer' 'whole_train_whole_infer',
-#                 'whole_infer
 
 if [ ${MODE} = "lite_train_lite_infer" ];then
 
@@ -172,5 +165,16 @@ elif [ ${MODE} = "whole_infer" ];then
         mkdir -p ./data/singan
         mv ./data/SinGAN-official_images/Images/stone.png ./data/singan
     fi
-
+elif [ ${MODE} = "benchmark_train" ];then
+    if [ ${model_name} == "msvsr" ]; then
+        rm -rf ./data/reds*
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/reds_lite.tar --no-check-certificate
+        cd ./data/ && tar xf reds_lite.tar && cd ../
+    fi
+elif [ ${MODE} = "cpp_infer" ]; then
+    if [ ${model_name} == "msvsr" ]; then
+        rm -rf ./inference/msvsr*
+        wget -nc  -P ./inference https://paddlegan.bj.bcebos.com/static_model/msvsr.tar --no-check-certificate
+        cd ./inference && tar xf msvsr.tar && cd ../
+    fi
 fi
