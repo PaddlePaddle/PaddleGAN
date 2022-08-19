@@ -30,6 +30,7 @@ class MultiStageVSRModel(BaseSRModel):
     Paper:
         PP-MSVSR: Multi-Stage Video Super-Resolution, 2021
     """
+
     def __init__(self, generator, fix_iter, pixel_criterion=None):
         """Initialize the PP-MSVSR class.
 
@@ -93,6 +94,48 @@ class MultiStageVSRModel(BaseSRModel):
 
         self.loss.backward()
         optims['optim'].step()
+
+        self.current_iter += 1
+
+    # amp train with brute force implementation, maybe decorator can simplify this
+    def train_iter_amp(self, optims=None, scaler=None, amp_level='O1'):
+        optims['optim'].clear_grad()
+        if self.fix_iter:
+            if self.current_iter == 1:
+                print('Train MSVSR with fixed spynet for', self.fix_iter,
+                      'iters.')
+                for name, param in self.nets['generator'].named_parameters():
+                    if 'spynet' in name:
+                        param.trainable = False
+            elif self.current_iter >= self.fix_iter + 1 and self.flag:
+                print('Train all the parameters.')
+                for name, param in self.nets['generator'].named_parameters():
+                    param.trainable = True
+                    if 'spynet' in name:
+                        param.optimize_attr['learning_rate'] = 0.25
+                self.flag = False
+                for net in self.nets.values():
+                    net.find_unused_parameters = False
+
+        # put loss computation in amp context
+        with paddle.amp.auto_cast(enable=True, level=amp_level):
+            output = self.nets['generator'](self.lq)
+            if isinstance(output, (list, tuple)):
+                out_stage2, output = output
+                loss_pix_stage2 = self.pixel_criterion(out_stage2, self.gt)
+                self.losses['loss_pix_stage2'] = loss_pix_stage2
+            self.visual_items['output'] = output[:, 0, :, :, :]
+            # pixel loss
+            loss_pix = self.pixel_criterion(output, self.gt)
+            self.losses['loss_pix'] = loss_pix
+
+            self.loss = sum(_value for _key, _value in self.losses.items()
+                            if 'loss_pix' in _key)
+        scaled_loss = scaler.scale(self.loss)
+        self.losses['loss'] = scaled_loss
+
+        scaled_loss.backward()
+        scaler.minimize(optims['optim'], scaled_loss)
 
         self.current_iter += 1
 

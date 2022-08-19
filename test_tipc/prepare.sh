@@ -172,5 +172,10 @@ elif [ ${MODE} = "whole_infer" ];then
         mkdir -p ./data/singan
         mv ./data/SinGAN-official_images/Images/stone.png ./data/singan
     fi
-
+elif [ ${MODE} = "benchmark_train" ];then
+    if [ ${model_name} = "msvsr" ]; then
+        rm -rf ./data/reds*
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/reds_lite.tar --no-check-certificate
+        cd ./data/ && tar xf reds_lite.tar && cd ../
+    fi
 fi
