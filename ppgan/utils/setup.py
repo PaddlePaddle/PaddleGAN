@@ -19,6 +19,7 @@ import numpy as np
 import random
 from .logger import setup_logger
 
+
 def setup(args, cfg):
     if args.evaluate_only:
         cfg.is_train = False
@@ -44,10 +45,13 @@ def setup(args, cfg):
         paddle.set_device('gpu')
     else:
         paddle.set_device('cpu')
-    
+
     if args.seed:
         paddle.seed(args.seed)
         random.seed(args.seed)
-        np.random.seed(args.seed)    
+        np.random.seed(args.seed)
         paddle.framework.random._manual_program_seed(args.seed)
-    
+
+    # add amp and amp_level args into cfg
+    cfg['amp'] = args.amp
+    cfg['amp_level'] = args.amp_level

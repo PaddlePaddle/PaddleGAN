@@ -9,7 +9,7 @@
 
 ```shell
 # 运行格式：bash test_tipc/prepare.sh  train_benchmark.txt  mode
-bash test_tipc/prepare.sh test_tipc/configs/basicvsr/train_benchmark.txt benchmark_train
+bash test_tipc/prepare.sh test_tipc/configs/msvsr/train_infer_python.txt benchmark_train
 ```
 
 ## 1.2 功能测试
@@ -17,13 +17,13 @@ bash test_tipc/prepare.sh test_tipc/configs/basicvsr/train_benchmark.txt benchma
 
 ```shell
 # 运行格式：bash test_tipc/benchmark_train.sh train_benchmark.txt mode
-bash test_tipc/benchmark_train.sh test_tipc/configs/basicvsr/train_infer_python.txt benchmark_train
+bash test_tipc/benchmark_train.sh test_tipc/configs/msvsr/train_infer_python.txt benchmark_train
 ```
 
 `test_tipc/benchmark_train.sh`支持根据传入的第三个参数实现只运行某一个训练配置，如下：
 ```shell
 # 运行格式：bash test_tipc/benchmark_train.sh train_benchmark.txt mode
-bash test_tipc/benchmark_train.sh test_tipc/configs/basicvsr/train_infer_python.txt benchmark_train  dynamic_bs4_fp32_DP_N1C1
+bash test_tipc/benchmark_train.sh test_tipc/configs/msvsr/train_infer_python.txt benchmark_train  dynamic_bs4_fp32_DP_N1C1
 ```
 dynamic_bs4_fp32_DP_N1C1为test_tipc/benchmark_train.sh传入的参数，格式如下：
 `${modeltype}_${batch_size}_${fp_item}_${run_mode}_${device_num}`
@@ -42,11 +42,11 @@ dynamic_bs4_fp32_DP_N1C1为test_tipc/benchmark_train.sh传入的参数，格式�
 ```
 train_log/
 ├── index
-│   ├── PaddleGAN_basicvsr_bs4_fp32_SingleP_DP_N1C1_speed
-│   └── PaddleGAN_basicvsr_bs4_fp32_SingleP_DP_N1C4_speed
+│   ├── PaddleGAN_msvsr_bs4_fp32_SingleP_DP_N1C1_speed
+│   └── PaddleGAN_msvsr_bs4_fp32_SingleP_DP_N1C4_speed
 ├── profiling_log
-│   └── PaddleGAN_basicvsr_bs4_fp32_SingleP_DP_N1C1_profiling
+│   └── PaddleGAN_msvsr_bs4_fp32_SingleP_DP_N1C1_profiling
 └── train_log
-    ├── PaddleGAN_basicvsr_bs4_fp32_SingleP_DP_N1C1_log
-    └── PaddleGAN_basicvsr_bs4_fp32_MultiP_DP_N1C4_log
+    ├── PaddleGAN_msvsr_bs4_fp32_SingleP_DP_N1C1_log
+    └── PaddleGAN_msvsr_bs4_fp32_MultiP_DP_N1C4_log
 ```

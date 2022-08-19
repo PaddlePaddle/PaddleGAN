@@ -45,9 +45,9 @@ def parse_args():
                         default=False,
                         help='skip validation during training')
     # config options
-    parser.add_argument("-o", 
-                        "--opt", 
-                        nargs='+', 
+    parser.add_argument("-o",
+                        "--opt",
+                        nargs='+',
                         help="set configuration options")
 
     #for inference
@@ -60,19 +60,31 @@ def parse_args():
                         help="path to reference images")
     parser.add_argument("--model_path", default=None, help="model for loading")
 
-    # for profiler                
-    parser.add_argument('-p',
-                        '--profiler_options',
-                        type=str,
-                        default=None,
-                        help='The option of profiler, which should be in format \"key1=value1;key2=value2;key3=value3\".'
+    # for profiler
+    parser.add_argument(
+        '-p',
+        '--profiler_options',
+        type=str,
+        default=None,
+        help=
+        'The option of profiler, which should be in format \"key1=value1;key2=value2;key3=value3\".'
     )
     # fix random numbers by setting seed
     parser.add_argument('--seed',
                         type=int,
                         default=None,
-                        help='fix random numbers by setting seed\".'
-    )
+                        help='fix random numbers by setting seed\".')
+
+    # add for amp training
+    parser.add_argument('--amp',
+                        action='store_true',
+                        default=False,
+                        help='whether to enable amp training')
+    parser.add_argument('--amp_level',
+                        type=str,
+                        default='O1',
+                        choices=['O1', 'O2'],
+                        help='level of amp training; O2 represent pure fp16')
     args = parser.parse_args()
 
     return args
