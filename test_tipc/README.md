@@ -57,9 +57,8 @@ test_tipc/
 
 ### 测试流程
 使用本工具，可以测试不同功能的支持情况，以及预测结果是否对齐，测试流程如下：
-<div align="center">
-    <img src="docs/test.png" width="800">
-</div>
+
+![img](https://user-images.githubusercontent.com/79366697/185377097-a0f852a8-2d78-45ae-84ba-ae71b799d738.png)
 
 1. 运行prepare.sh准备测试所需数据和模型；
 2. 运行要测试的功能对应的测试脚本`test_*.sh`，产出log，由log可以看到不同配置是否运行成功；
@@ -72,4 +71,4 @@ test_tipc/
 <a name="more"></a>
 #### 更多教程
 各功能测试中涉及混合精度、裁剪、量化等训练相关，及mkldnn、Tensorrt等多种预测相关参数配置，请点击下方相应链接了解更多细节和使用教程：  
-[test_train_inference_python 使用](docs/test_train_inference_python.md)  
+- [test_train_inference_python 使用](docs/test_train_inference_python.md): 测试基于Python的模型训练、评估、推理等基本功能
