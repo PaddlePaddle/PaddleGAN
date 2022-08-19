@@ -71,4 +71,5 @@ test_tipc/
 <a name="more"></a>
 #### 更多教程
 各功能测试中涉及混合精度、裁剪、量化等训练相关，及mkldnn、Tensorrt等多种预测相关参数配置，请点击下方相应链接了解更多细节和使用教程：  
-- [test_train_inference_python 使用](docs/test_train_inference_python.md): 测试基于Python的模型训练、评估、推理等基本功能
+- [test_train_inference_python 使用](docs/test_train_inference_python.md)  测试基于Python的模型训练、推理等基本功能。
+- [test_inference_cpp 使用](docs/test_inference_cpp.md) 测试基于C++的模型推理功能。
