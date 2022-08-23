@@ -13,7 +13,7 @@ train_infer_img_dir:./data/firstorder_vox_256/test
 null:null
 ##
 trainer:norm_train
-norm_train:tools/main.py -c configs/firstorder_vox_256.yaml --seed 123 -o dataset.train.num_workers=0 log_config.interval=1 snapshot_config.interval=1 dataset.train.num_repeats=1 dataset.train.id_sampling=False
+norm_train:tools/main.py -c configs/firstorder_vox_256.yaml --seed 123 -o log_config.interval=1 snapshot_config.interval=1 dataset.train.num_repeats=1 dataset.train.id_sampling=False
 pact_train:null
 fpgm_train:null
 distill_train:null
@@ -54,6 +54,6 @@ batch_size:16
 fp_items:fp32
 epoch:15
 --profiler_options:batch_range=[10,20];state=GPU;tracer_option=Default;profile_path=model.profile
-flags:null
+flags:FLAGS_cudnn_exhaustive_search=1
 ===========================infer_benchmark_params==========================
 random_infer_input:[{float32,[3,256,256]}]

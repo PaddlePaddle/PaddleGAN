@@ -54,6 +54,6 @@ batch_size:2|4
 fp_items:fp32
 total_iters:50
 --profiler_options:batch_range=[10,20];state=GPU;tracer_option=Default;profile_path=model.profile
-flags:null
+flags:FLAGS_cudnn_exhaustive_search=1
 ===========================infer_benchmark_params==========================
 random_infer_input:[{float32,[6,3,180,320]}]
