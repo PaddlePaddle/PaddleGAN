@@ -132,7 +132,7 @@ class MultiStageVSRModel(BaseSRModel):
             self.loss = sum(_value for _key, _value in self.losses.items()
                             if 'loss_pix' in _key)
         scaled_loss = scaler.scale(self.loss)
-        self.losses['loss'] = scaled_loss
+        self.losses['loss'] = self.loss
 
         scaled_loss.backward()
         scaler.minimize(optims['optim'], scaled_loss)
