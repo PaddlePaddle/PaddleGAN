@@ -100,11 +100,10 @@ for _flag in ${flags_list[*]}; do
 done
 
 # set log_name
-BENCHMARK_ROOT=./ # self-test only
 repo_name=$(get_repo_name )
-SAVE_LOG=${BENCHMARK_LOG_DIR:-$(pwd)}   # */benchmark_log
-mkdir -p "${SAVE_LOG}/benchmark_log/"
-status_log="${SAVE_LOG}/benchmark_log/results.log"
+SAVE_LOG="${BENCHMARK_LOG_DIR:-$(pwd)}/benchmark_log" # */benchmark_log
+mkdir -p "${SAVE_LOG}"
+status_log="${SAVE_LOG}/results.log"
 
 # The number of lines in which train params can be replaced.
 line_python=3

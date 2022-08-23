@@ -28,9 +28,11 @@ function func_parser_value(){
 IFS=$'\n'
 # The training params
 model_name=$(func_parser_value "${lines[1]}")
-
 trainer_list=$(func_parser_value "${lines[14]}")
 
+if [ ${MODE} = "benchmark_train" ];then
+    MODE="lite_train_lite_infer"
+fi
 
 if [ ${MODE} = "lite_train_lite_infer" ];then
 
@@ -164,12 +166,6 @@ elif [ ${MODE} = "whole_infer" ];then
         cd ./inference/ && unzip -q singan.zip && cd ../
         mkdir -p ./data/singan
         mv ./data/SinGAN-official_images/Images/stone.png ./data/singan
-    fi
-elif [ ${MODE} = "benchmark_train" ];then
-    if [ ${model_name} == "msvsr" ]; then
-        rm -rf ./data/reds*
-        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/reds_lite.tar --no-check-certificate
-        cd ./data/ && tar xf reds_lite.tar && cd ../
     fi
 elif [ ${MODE} = "cpp_infer" ]; then
     if [ ${model_name} == "msvsr" ]; then
