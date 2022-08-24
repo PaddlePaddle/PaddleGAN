@@ -13,7 +13,7 @@ train_infer_img_dir:null
 null:null
 ##
 trainer:norm_train
-norm_train:tools/main.py -c configs/esrgan_psnr_x4_div2k.yaml --seed 123 -o log_config.interval=5
+norm_train:tools/main.py -c configs/esrgan_psnr_x4_div2k.yaml --seed 123 -o log_config.interval=5 dataset.train.num_workers=0
 pact_train:null
 fpgm_train:null
 distill_train:null
@@ -29,4 +29,4 @@ batch_size:32|64
 fp_items:fp32
 total_iters:100
 --profiler_options:batch_range=[10,20];state=GPU;tracer_option=Default;profile_path=model.profile
-flags:null
+flags:FLAGS_cudnn_exhaustive_search=1
