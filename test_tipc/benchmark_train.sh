@@ -101,9 +101,9 @@ done
 
 # set log_name
 repo_name=$(get_repo_name )
-SAVE_LOG="${BENCHMARK_LOG_DIR:-$(pwd)}/benchmark_log" # */benchmark_log
-mkdir -p "${SAVE_LOG}"
-status_log="${SAVE_LOG}/results.log"
+SAVE_LOG=${BENCHMARK_LOG_DIR:-$(pwd)}   # */benchmark_log
+mkdir -p "${SAVE_LOG}/benchmark_log/"
+status_log="${SAVE_LOG}/benchmark_log/results.log"
 
 # The number of lines in which train params can be replaced.
 line_python=3
