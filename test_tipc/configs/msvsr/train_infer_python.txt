@@ -13,7 +13,7 @@ train_infer_img_dir:./data/msvsr_reds/test
 null:null
 ##
 trainer:norm_train
-norm_train:tools/main.py -c configs/msvsr_reds.yaml --seed 123 -o log_config.interval=2 snapshot_config.interval=50 dataset.train.dataset.num_frames=15
+norm_train:tools/main.py -c configs/msvsr_reds.yaml --seed 123 -o log_config.interval=1 snapshot_config.interval=50 dataset.train.dataset.num_frames=15
 pact_train:null
 fpgm_train:null
 distill_train:null
@@ -54,6 +54,6 @@ batch_size:4
 fp_items:fp32
 total_iters:60
 --profiler_options:batch_range=[10,20];state=GPU;tracer_option=Default;profile_path=model.profile
-flags:null
+flags:FLAGS_cudnn_exhaustive_search=1
 ===========================infer_benchmark_params==========================
 random_infer_input:[{float32,[2,3,180,320]}]
