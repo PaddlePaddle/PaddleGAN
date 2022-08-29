@@ -13,7 +13,7 @@ train_infer_img_dir:./data/msvsr_reds/test
 null:null
 ##
 trainer:norm_train
-norm_train:tools/main.py -c configs/msvsr_reds.yaml --seed 123 -o log_config.interval=1 snapshot_config.interval=50 dataset.train.dataset.num_frames=15
+norm_train:tools/main.py -c configs/msvsr_reds.yaml --seed 123 -o log_config.interval=1 snapshot_config.interval=5 dataset.train.dataset.num_frames=15
 pact_train:null
 fpgm_train:null
 distill_train:null
