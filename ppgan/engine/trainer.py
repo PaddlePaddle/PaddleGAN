@@ -103,6 +103,9 @@ class Trainer:
 
         # build model
         self.model = build_model(cfg.model)
+        # multiple gpus prepare
+        if ParallelEnv().nranks > 1:
+            self.distributed_data_parallel()
 
         # build metrics
         self.metrics = None
@@ -138,10 +141,6 @@ class Trainer:
 
         # setup amp train
         self.scaler = self.setup_amp_train() if self.cfg.amp else None
-
-        # multiple gpus prepare
-        if ParallelEnv().nranks > 1:
-            self.distributed_data_parallel()
 
         self.epochs = cfg.get('epochs', None)
         if self.epochs:
