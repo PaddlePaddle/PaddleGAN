@@ -103,9 +103,6 @@ class Trainer:
 
         # build model
         self.model = build_model(cfg.model)
-        # multiple gpus prepare
-        if ParallelEnv().nranks > 1:
-            self.distributed_data_parallel()
 
         # build metrics
         self.metrics = None
@@ -120,10 +117,6 @@ class Trainer:
         if self.enable_visualdl:
             import visualdl
             self.vdl_logger = visualdl.LogWriter(logdir=cfg.output_dir)
-
-        # evaluate only
-        if not cfg.is_train:
-            return
 
         # build train dataloader
         self.train_dataloader = build_dataloader(cfg.dataset.train)
@@ -141,6 +134,14 @@ class Trainer:
 
         # setup amp train
         self.scaler = self.setup_amp_train() if self.cfg.amp else None
+
+        # multiple gpus prepare
+        if ParallelEnv().nranks > 1:
+            self.distributed_data_parallel()
+
+        # evaluate only
+        if not cfg.is_train:
+            return
 
         self.epochs = cfg.get('epochs', None)
         if self.epochs:
