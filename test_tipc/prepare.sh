@@ -31,6 +31,7 @@ model_name=$(func_parser_value "${lines[1]}")
 trainer_list=$(func_parser_value "${lines[14]}")
 
 if [ ${MODE} = "benchmark_train" ];then
+    pip install -r requirements.txt
     MODE="lite_train_lite_infer"
 fi
 
