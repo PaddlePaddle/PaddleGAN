@@ -97,7 +97,7 @@ class MultiStageVSRModel(BaseSRModel):
 
         self.current_iter += 1
 
-    # amp train with brute force implementation, maybe decorator can simplify this
+    # amp train with brute force implementation
     def train_iter_amp(self, optims=None, scaler=None, amp_level='O1'):
         optims['optim'].clear_grad()
         if self.fix_iter:
@@ -131,9 +131,9 @@ class MultiStageVSRModel(BaseSRModel):
 
             self.loss = sum(_value for _key, _value in self.losses.items()
                             if 'loss_pix' in _key)
-        scaled_loss = scaler.scale(self.loss)
-        self.losses['loss'] = self.loss
+            self.losses['loss'] = self.loss
 
+        scaled_loss = scaler.scale(self.loss)
         scaled_loss.backward()
         scaler.minimize(optims['optim'], scaled_loss)
 

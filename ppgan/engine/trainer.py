@@ -103,9 +103,6 @@ class Trainer:
 
         # build model
         self.model = build_model(cfg.model)
-        # multiple gpus prepare
-        if ParallelEnv().nranks > 1:
-            self.distributed_data_parallel()
 
         # build metrics
         self.metrics = None
@@ -121,10 +118,6 @@ class Trainer:
             import visualdl
             self.vdl_logger = visualdl.LogWriter(logdir=cfg.output_dir)
 
-        # evaluate only
-        if not cfg.is_train:
-            return
-
         # build train dataloader
         self.train_dataloader = build_dataloader(cfg.dataset.train)
         self.iters_per_epoch = len(self.train_dataloader)
@@ -138,6 +131,17 @@ class Trainer:
         # build optimizers
         self.optimizers = self.model.setup_optimizers(self.lr_schedulers,
                                                       cfg.optimizer)
+
+        # setup amp train
+        self.scaler = self.setup_amp_train() if self.cfg.amp else None
+
+        # multiple gpus prepare
+        if ParallelEnv().nranks > 1:
+            self.distributed_data_parallel()
+
+        # evaluate only
+        if not cfg.is_train:
+            return
 
         self.epochs = cfg.get('epochs', None)
         if self.epochs:
@@ -158,6 +162,26 @@ class Trainer:
         self.best_metric = {}
         self.model.set_total_iter(self.total_iters)
         self.profiler_options = cfg.profiler_options
+
+    def setup_amp_train(self):
+        """ decerate model, optimizer and return a GradScaler """
+
+        self.logger.info('use AMP to train. AMP level = {}'.format(
+            self.cfg.amp_level))
+        scaler = paddle.amp.GradScaler(init_loss_scaling=1024)
+        # need to decorate model and optim if amp_level == 'O2'
+        if self.cfg.amp_level == 'O2':
+            nets, optimizers = list(self.model.nets.values()), list(
+                self.optimizers.values())
+            nets, optimizers = paddle.amp.decorate(models=nets,
+                                                   optimizers=optimizers,
+                                                   level='O2',
+                                                   save_dtype='float32')
+            for i, (k, _) in enumerate(self.model.nets.items()):
+                self.model.nets[k] = nets[i]
+            for i, (k, _) in enumerate(self.optimizers.items()):
+                self.optimizers[k] = optimizers[i]
+        return scaler
 
     def distributed_data_parallel(self):
         paddle.distributed.init_parallel_env()
@@ -183,22 +207,6 @@ class Trainer:
 
         iter_loader = IterLoader(self.train_dataloader)
 
-        # use amp
-        if self.cfg.amp:
-            self.logger.info('use AMP to train. AMP level = {}'.format(
-                self.cfg.amp_level))
-            assert self.cfg.model.name == 'MultiStageVSRModel', "AMP only support msvsr model"
-            scaler = paddle.amp.GradScaler(init_loss_scaling=1024)
-            # need to decorate model and optim if amp_level == 'O2'
-            if self.cfg.amp_level == 'O2':
-                # msvsr has only one generator and one optimizer
-                self.model.nets['generator'], self.optimizers[
-                    'optim'] = paddle.amp.decorate(
-                        models=self.model.nets['generator'],
-                        optimizers=self.optimizers['optim'],
-                        level='O2',
-                        save_dtype='float32')
-
         # set model.is_train = True
         self.model.setup_train_mode(is_train=True)
         while self.current_iter < (self.total_iters + 1):
@@ -215,7 +223,7 @@ class Trainer:
             self.model.setup_input(data)
 
             if self.cfg.amp:
-                self.model.train_iter_amp(self.optimizers, scaler,
+                self.model.train_iter_amp(self.optimizers, self.scaler,
                                           self.cfg.amp_level)  # amp train
             else:
                 self.model.train_iter(self.optimizers)  # norm train

@@ -271,7 +271,7 @@ else
                     set_export_weight="${save_log}/${train_model_name}"
                     set_export_weight_path=$( echo ${set_export_weight})
                     set_save_infer_key="${save_infer_key} ${save_infer_path}"
-                    export_cmd="${python} ${run_export}  ${set_export_weight_path} ${set_save_infer_key}"
+                    export_cmd="${python} ${run_export}  ${set_export_weight_path} ${set_save_infer_key} > ${save_log}_export.log 2>&1"
                     eval "$export_cmd"
                     status_check $? "${export_cmd}" "${status_log}"
 

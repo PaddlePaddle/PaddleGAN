@@ -27,6 +27,7 @@ class EDVRModel(BaseSRModel):
 
     Paper: EDVR: Video Restoration with Enhanced Deformable Convolutional Networks.
     """
+
     def __init__(self, generator, tsa_iter, pixel_criterion=None):
         """Initialize the EDVR class.
 
@@ -74,8 +75,37 @@ class EDVRModel(BaseSRModel):
         optims['optim'].step()
         self.current_iter += 1
 
+    # amp train with brute force implementation
+    def train_iter_amp(self, optims=None, scaler=None, amp_level='O1'):
+        optims['optim'].clear_grad()
+        if self.tsa_iter:
+            if self.current_iter == 1:
+                print('Only train TSA module for', self.tsa_iter, 'iters.')
+                for name, param in self.nets['generator'].named_parameters():
+                    if 'TSAModule' not in name:
+                        param.trainable = False
+            elif self.current_iter == self.tsa_iter + 1:
+                print('Train all the parameters.')
+                for param in self.nets['generator'].parameters():
+                    param.trainable = True
+
+        # put loss computation in amp context
+        with paddle.amp.auto_cast(enable=True, level=amp_level):
+            self.output = self.nets['generator'](self.lq)
+            self.visual_items['output'] = self.output
+            # pixel loss
+            loss_pixel = self.pixel_criterion(self.output, self.gt)
+            self.losses['loss_pixel'] = loss_pixel
+
+        scaled_loss = scaler.scale(loss_pixel)
+        scaled_loss.backward()
+        scaler.minimize(optims['optim'], scaled_loss)
+
+        self.current_iter += 1
+
 
 def init_edvr_weight(net):
+
     def reset_func(m):
         if hasattr(m, 'weight') and (not isinstance(
                 m, (nn.BatchNorm, nn.BatchNorm2D))) and (
