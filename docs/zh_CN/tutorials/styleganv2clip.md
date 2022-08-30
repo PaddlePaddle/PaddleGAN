@@ -35,42 +35,29 @@ pip install dlib-bin
 
 从 'face' 到 'boy face' 编辑得到的图像:
 
-<div align="center">
-    <img src="../../imgs/stylegan2clip-sample-boy.png" width="640"/>
-</div>
+![stylegan2clip-sample-boy](https://user-images.githubusercontent.com/29187613/187344690-6709fba5-6e21-4bc0-83d1-5996947c99a4.png)
+
 
 从'face' 到 'happy face' 编辑得到的图像:
 
-<div align="center">
-    <img src="../../imgs/stylegan2clip-sample-happy.png" width="640"/>
-</div>
+![stylegan2clip-sample-happy](https://user-images.githubusercontent.com/29187613/187344681-6509f01b-0d9e-4dea-8a97-ee9ca75d152e.png)
 
 从'face' 到 'angry face' 编辑得到的图像:
 
-<div align="center">
-    <img src="../../imgs/stylegan2clip-sample-angry.png" width="640"/>
-</div>
-
+![stylegan2clip-sample-angry](https://user-images.githubusercontent.com/29187613/187344686-ff5047ab-5499-420d-ad02-e0908ac71bf7.png)
 
 从'face' 到 'face with long hair' 编辑得到的图像:
 
-<div align="center">
-    <img src="../../imgs/stylegan2clip-sample-long-hair.png" width="640"/>
-</div>
+![stylegan2clip-sample-long-hair](https://user-images.githubusercontent.com/29187613/187344684-4e452631-52b0-47cf-966e-3216c0392815.png)
 
 
 从'face' 到 'face with curl hair' (卷发) 编辑得到的图像:
 
-<div align="center">
-    <img src="../../imgs/stylegan2clip-sample-curl-hair.png" width="640"/>
-</div>
+![stylegan2clip-sample-curl-hair](https://user-images.githubusercontent.com/29187613/187344677-c9a3aa9f-1f3c-41b3-a1f0-fcd48a9c627b.png)
 
 从'head with black hair'（黑发） 到 'head with gold hair'（金发）编辑得到的图像:
 
-<div align="center">
-    <img src="../../imgs/stylegan2clip-sample-gold-hair.png" width="640"/>
-</div>
-
+![stylegan2clip-sample-gold-hair](https://user-images.githubusercontent.com/29187613/187344678-5220e8b2-b1c9-4f2f-8655-621b6272c457.png)
 
 
 ## 3. 使用方法
@@ -80,6 +67,7 @@ pip install dlib-bin
 具体可以参考[Puzer/stylegan-encoder](https://github.com/Puzer/stylegan-encoder/blob/master/Learn_direction_in_latent_space.ipynb)中的做法。
 
 当前提供与`stylegan2`对应`ffhq-config-f`数据集上的权重参数：
+
 direction: https://paddlegan.bj.bcebos.com/models/stylegan2-ffhq-config-f-styleclip-global-directions.pdparams
 
 stats: https://paddlegan.bj.bcebos.com/models/stylegan2-ffhq-config-f-styleclip-stats.pdparams

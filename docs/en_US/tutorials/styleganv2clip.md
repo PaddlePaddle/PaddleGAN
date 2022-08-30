@@ -70,46 +70,42 @@ with
 
 edit from 'face' to 'boy face':
 
-<div align="center">
-    <img src="../../imgs/stylegan2clip-sample-boy.png" width="640"/>
-</div>
+![stylegan2clip-sample-boy](https://user-images.githubusercontent.com/29187613/187344690-6709fba5-6e21-4bc0-83d1-5996947c99a4.png)
+
 
 edit from 'face' to 'happy face':
 
-<div align="center">
-    <img src="../../imgs/stylegan2clip-sample-happy.png" width="640"/>
-</div>
+![stylegan2clip-sample-happy](https://user-images.githubusercontent.com/29187613/187344681-6509f01b-0d9e-4dea-8a97-ee9ca75d152e.png)
+
 
 edit from 'face' to 'angry face':
 
-<div align="center">
-    <img src="../../imgs/stylegan2clip-sample-angry.png" width="640"/>
-</div>
-
+![stylegan2clip-sample-angry](https://user-images.githubusercontent.com/29187613/187344686-ff5047ab-5499-420d-ad02-e0908ac71bf7.png)
 
 edit from 'face' to 'face with long hair':
 
-<div align="center">
-    <img src="../../imgs/stylegan2clip-sample-long-hair.png" width="640"/>
-</div>
+![stylegan2clip-sample-long-hair](https://user-images.githubusercontent.com/29187613/187344684-4e452631-52b0-47cf-966e-3216c0392815.png)
+
 
 
 edit from 'face' to 'face with curly hair':
 
-<div align="center">
-    <img src="../../imgs/stylegan2clip-sample-curl-hair.png" width="640"/>
-</div>
+![stylegan2clip-sample-curl-hair](https://user-images.githubusercontent.com/29187613/187344677-c9a3aa9f-1f3c-41b3-a1f0-fcd48a9c627b.png)
+
 
 edit from 'head with black hair' to 'head with gold hair':
 
-<div align="center">
-    <img src="../../imgs/stylegan2clip-sample-gold-hair.png" width="640"/>
-</div>
-
+![stylegan2clip-sample-gold-hair](https://user-images.githubusercontent.com/29187613/187344678-5220e8b2-b1c9-4f2f-8655-621b6272c457.png)
 
 ## Make Attribute Direction Vector
 
 For details, please refer to [Puzer/stylegan-encoder](https://github.com/Puzer/stylegan-encoder/blob/master/Learn_direction_in_latent_space.ipynb)
+
+Currently pretrained weight for `stylegan2` & `ffhq-config-f` dataset is provided：
+
+direction: https://paddlegan.bj.bcebos.com/models/stylegan2-ffhq-config-f-styleclip-global-directions.pdparams
+
+stats: https://paddlegan.bj.bcebos.com/models/stylegan2-ffhq-config-f-styleclip-stats.pdparams
 
 ## Training
 
