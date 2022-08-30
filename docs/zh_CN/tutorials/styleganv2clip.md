@@ -79,6 +79,11 @@ pip install dlib-bin
 
 具体可以参考[Puzer/stylegan-encoder](https://github.com/Puzer/stylegan-encoder/blob/master/Learn_direction_in_latent_space.ipynb)中的做法。
 
+当前提供与`stylegan2`对应`ffhq-config-f`数据集上的权重参数：
+direction: https://paddlegan.bj.bcebos.com/models/stylegan2-ffhq-config-f-styleclip-global-directions.pdparams
+
+stats: https://paddlegan.bj.bcebos.com/models/stylegan2-ffhq-config-f-styleclip-stats.pdparams
+
 ### 训练
 
 在StyleCLIP论文中作者研究了 3 种结合 StyleGAN 和 CLIP 的方法：
