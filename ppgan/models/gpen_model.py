@@ -21,7 +21,7 @@ from .generators.builder import build_generator
 from .discriminators.builder import build_discriminator
 from ..modules.init import init_weights
 
-from .criterions.IDLoss.id_loss import IDLoss
+from .criterions.id_loss import IDLoss
 from paddle.nn import functional as F
 from paddle import autograd
 import math
