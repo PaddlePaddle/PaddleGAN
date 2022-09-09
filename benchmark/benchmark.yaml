@@ -1,5 +1,5 @@
 StyleGANv2:
-  dataset_web: https://paddlegan.bj.bcebos.com/datasets/ffhq.tar
+  dataset_web: https://paddlegan.bj.bcebos.com/datasets/ffhq_256.tar
   config: configs/stylegan_v2_256_ffhq.yaml
   fp_item: fp32
   bs_item: 8
@@ -15,7 +15,7 @@ FOMM:
   log_interval: 1
 
 esrgan:
-  dataset_web: https://paddlegan.bj.bcebos.com/datasets/DIV2KandSet14.tar
+  dataset_web: https://paddlegan.bj.bcebos.com/datasets/DIV2KandSet14paddle.tar
   config: configs/esrgan_psnr_x4_div2k.yaml
   fp_item: fp32
   bs_item: 32
