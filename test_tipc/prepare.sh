@@ -49,7 +49,7 @@ if [ ${MODE} = "lite_train_lite_infer" ];then
     StyleGANv2)
         rm -rf ./data/ffhq*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/ffhq_256.tar --no-check-certificate
-        cd ./data/ && tar xf ffhq.tar && cd ../ ;;
+        cd ./data/ && tar xf ffhq_256.tar && cd ../ ;;
     FOMM)
         rm -rf ./data/fom_lite*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/fom_lite.tar  --no-check-certificate --no-check-certificate
@@ -61,7 +61,7 @@ if [ ${MODE} = "lite_train_lite_infer" ];then
     esrgan)
         rm -rf ./data/DIV2K*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/DIV2KandSet14paddle.tar --no-check-certificate
-        cd ./data/ && tar xf DIV2KandSet14.tar && cd ../ ;;
+        cd ./data/ && tar xf DIV2KandSet14paddle.tar && cd ../ ;;
     singan)
         rm -rf ./data/singan*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/singan-official_images.zip --no-check-certificate
@@ -101,7 +101,7 @@ elif [ ${MODE} = "lite_train_whole_infer" ];then
     elif [ ${model_name} == "StyleGANv2" ]; then
         rm -rf ./data/ffhq*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/ffhq_256.tar --no-check-certificate
-        cd ./data/ && tar xf ffhq.tar && cd ../
+        cd ./data/ && tar xf ffhq_256.tar && cd ../
     elif [ ${model_name} == "basicvsr" ]; then
         rm -rf ./data/reds*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/reds_lite.tar --no-check-certificate
@@ -144,7 +144,7 @@ elif [ ${MODE} = "whole_infer" ];then
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/ffhq_256.tar --no-check-certificate
         wget -nc  -P ./inference https://paddlegan.bj.bcebos.com/static_model/stylegan2_1024.tar --no-check-certificate
         cd ./inference && tar xf stylegan2_1024.tar && cd ../
-        cd ./data/ && tar xf ffhq.tar && cd ../
+        cd ./data/ && tar xf ffhq_256.tar && cd ../
     elif [ ${model_name} == "basicvsr" ]; then
         rm -rf ./data/reds*
         rm -rf ./inference/basic*
