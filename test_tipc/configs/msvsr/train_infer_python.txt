@@ -1,7 +1,7 @@
 ===========================train_params===========================
 model_name:msvsr
 python:python3.7
-gpu_list:0
+gpu_list:4
 ##
 auto_cast:null
 total_iters:lite_train_lite_infer=10|lite_train_whole_infer=10|whole_train_whole_infer=200
