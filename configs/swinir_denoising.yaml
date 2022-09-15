@@ -1,0 +1,82 @@
+total_iters: 6400000
+output_dir: output_dir
+
+model:
+  name: SwinIRModel
+  generator:
+    name: SwinIR
+    upscale: 1
+    img_size: 128
+    window_size: 8
+    depths: [6, 6, 6, 6, 6, 6]
+    embed_dim: 180
+    num_heads: [6, 6, 6, 6, 6, 6]
+    mlp_ratio: 2
+  char_criterion:
+    name: CharbonnierLoss
+    eps: 0.000000001
+    reduction: mean
+
+dataset:
+  train:
+    name: SwinIRDataset
+    num_workers: 8
+    batch_size: 2 # 1GPU
+    opt:
+      phase: train
+      n_channels: 3
+      H_size: 128
+      sigma: 15
+      sigma_test: 15
+      dataroot_H: data/trainsets/trainH
+  test:
+    name: SwinIRDataset
+    num_workers: 1
+    batch_size: 1
+    opt:
+      phase: test
+      n_channels: 3
+      H_size: 128
+      sigma: 15
+      sigma_test: 15
+      dataroot_H: data/trainsets/trainH
+
+export_model:
+  - {name: 'generator', inputs_num: 1}
+
+lr_scheduler:
+  name: MultiStepDecay
+  learning_rate: 5e-5 # num_gpu * 5e-5
+  milestones: [3200000, 4800000, 5600000, 6000000, 6400000]
+  gamma: 0.5
+
+validate:
+  interval: 5000
+  save_img: True
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      name: PSNR
+      crop_border: 4
+      test_y_channel: True
+    ssim:
+      name: SSIM
+      crop_border: 4
+      test_y_channel: True
+
+optimizer:
+  name: Adam
+  # add parameters of net_name to optim
+  # name should in self.nets
+  net_names:
+    - generator
+  beta1: 0.9
+  beta2: 0.999
+  epsilon: 1e-8
+
+log_config:
+  interval: 10
+  visiual_interval: 5000
+
+snapshot_config:
+  interval: 5000

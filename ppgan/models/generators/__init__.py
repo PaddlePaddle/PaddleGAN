@@ -42,3 +42,4 @@ from .generator_singan import SinGANGenerator
 from .rcan import RCAN
 from .prenet import PReNet
 from .gpen import GPEN
+from .swinir import SwinIR
