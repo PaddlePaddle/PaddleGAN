@@ -107,6 +107,12 @@ def main():
     if args.device == "gpu":
         kp_detector_config.enable_use_gpu(100, 0)
         generator_config.enable_use_gpu(100, 0)
+    elif args.device == "xpu":
+        kp_detector_config.enable_xpu(100)
+        generator_config.enable_xpu(100)
+    elif args.device == "npu":
+        kp_detector_config.enable_npu()
+        generator_config.enable_npu()
     else:
         kp_detector_config.set_mkldnn_cache_capacity(10)
         kp_detector_config.enable_mkldnn()
