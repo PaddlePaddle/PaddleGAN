@@ -73,7 +73,7 @@ save_log_key=$(func_parser_key "${lines[48]}")
 infer_key1=$(func_parser_key "${lines[50]}")
 infer_value1=$(func_parser_value "${lines[50]}")
 
-LOG_PATH="./test_tipc/output/${model_name}"
+LOG_PATH="./test_tipc/output/${model_name}/${MODE}"
 mkdir -p ${LOG_PATH}
 status_log="${LOG_PATH}/results_python.log"
 
@@ -248,10 +248,12 @@ else
                     cmd="${python} -m paddle.distributed.launch --ips=${ips} --gpus=${gpu} ${run_train} ${set_use_gpu} ${set_save_model} ${set_train_params1} ${set_pretrain} ${set_epoch} ${set_batchsize} ${set_amp_config} ${set_amp_level}"
                 fi
                 # run train
-                eval "unset CUDA_VISIBLE_DEVICES"
                 export FLAGS_cudnn_deterministic=True
                 eval $cmd
                 echo $cmd
+                log_name=${train_model_name/checkpoint.pdparams/.txt}
+                train_log_path=$( echo "${save_log}/${log_name}")
+                eval "cat ${train_log_path} >> ${save_log}.log"
                 status_check $? "${cmd}" "${status_log}"
 
                 set_eval_pretrain=$(func_set_params "${pretrain_model_key}" "${save_log}/${train_model_name}")
