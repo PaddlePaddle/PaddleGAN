@@ -108,8 +108,8 @@ def main():
         kp_detector_config.enable_use_gpu(100, 0)
         generator_config.enable_use_gpu(100, 0)
     elif args.device == "xpu":
-        kp_detector_config.enable_xpu(100)
-        generator_config.enable_xpu(100)
+        kp_detector_config.enable_xpu()
+        generator_config.enable_xpu()
     elif args.device == "npu":
         kp_detector_config.enable_npu()
         generator_config.enable_npu()

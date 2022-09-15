@@ -45,6 +45,8 @@ def setup(args, cfg):
         paddle.set_device('gpu')
     elif paddle.is_compiled_with_npu():
         paddle.set_device('npu')
+    elif paddle.is_compiled_with_xpu():
+        paddle.set_device('xpu')
     else:
         paddle.set_device('cpu')
 

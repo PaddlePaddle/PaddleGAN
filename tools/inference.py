@@ -118,7 +118,7 @@ def create_predictor(model_path,
     elif device == "npu":
         config.enable_npu()
     elif device == "xpu":
-        config.enable_xpu(100)
+        config.enable_xpu()
     else:
         config.disable_gpu()
 
