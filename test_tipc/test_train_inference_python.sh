@@ -108,7 +108,7 @@ function func_inference(){
                             eval $command
                             last_status=${PIPESTATUS[0]}
                             eval "cat ${_save_log_path}"
-                            status_check $last_status "${command}" "${status_log}"
+                            status_check $last_status "${command}" "${status_log}" "${model_name}" "${_save_log_path}"
                         done
                     done
                 done
@@ -138,7 +138,7 @@ function func_inference(){
                         eval $command
                         last_status=${PIPESTATUS[0]}
                         eval "cat ${_save_log_path}"
-                        status_check $last_status "${command}" "${status_log}"
+                        status_check $last_status "${command}" "${status_log}" "${model_name}" "${_save_log_path}"
 
                     done
                 done
@@ -168,12 +168,13 @@ if [ ${MODE} = "whole_infer" ]; then
             save_infer_dir=$(dirname $infer_model)
             set_export_weight=$(func_set_params "${export_weight}" "${infer_model}")
             set_save_infer_key="${save_infer_key} ${save_infer_dir}"
-            export_cmd="${python} ${infer_run_exports[Count]} ${set_export_weight} ${set_save_infer_key}"
+            export_log_path="${LOG_PATH}_export_${Count}.log"
+            export_cmd="${python} ${infer_run_exports[Count]} ${set_export_weight} ${set_save_infer_key} > ${export_log_path} 2>&1"
             echo ${infer_run_exports[Count]}
             echo  $export_cmd
             eval $export_cmd
             status_export=$?
-            status_check $status_export "${export_cmd}" "${status_log}"
+            status_check $status_export "${export_cmd}" "${status_log}" "${model_name}" "${export_log_path}"
         else
             save_infer_dir=${infer_model}
         fi
@@ -254,7 +255,7 @@ else
                 log_name=${train_model_name/checkpoint.pdparams/.txt}
                 train_log_path=$( echo "${save_log}/${log_name}")
                 eval "cat ${train_log_path} >> ${save_log}.log"
-                status_check $? "${cmd}" "${status_log}"
+                status_check $? "${cmd}" "${status_log}" "${model_name}" "${save_log}.log"
 
                 set_eval_pretrain=$(func_set_params "${pretrain_model_key}" "${save_log}/${train_model_name}")
                 # save norm trained models to set pretrain for pact training and fpgm training
@@ -262,9 +263,10 @@ else
                 # run eval
                 if [ ${eval_py} != "null" ]; then
                     set_eval_params1=$(func_set_params "${eval_key1}" "${eval_value1}")
-                    eval_cmd="${python} ${eval_py} ${set_eval_pretrain} ${set_use_gpu} ${set_eval_params1}"
+                    eval_log_path="${LOG_PATH}/${trainer}_gpus_${gpu}_autocast_${autocast}_nodes_${nodes}_eval.log"
+                    eval_cmd="${python} ${eval_py} ${set_eval_pretrain} ${set_use_gpu} ${set_eval_params1} > ${eval_log_path} 2>&1"
                     eval $eval_cmd
-                    status_check $? "${eval_cmd}" "${status_log}"
+                    status_check $? "${eval_cmd}" "${status_log}" "${model_name}" "${eval_log_path}"
                 fi
                 # run export model
                 if [ ${run_export} != "null" ]; then
@@ -273,9 +275,10 @@ else
                     set_export_weight="${save_log}/${train_model_name}"
                     set_export_weight_path=$( echo ${set_export_weight})
                     set_save_infer_key="${save_infer_key} ${save_infer_path}"
-                    export_cmd="${python} ${run_export}  ${set_export_weight_path} ${set_save_infer_key} > ${save_log}_export.log 2>&1"
+                    export_log_path="${LOG_PATH}/${trainer}_gpus_${gpu}_autocast_${autocast}_nodes_${nodes}_export.log"
+                    export_cmd="${python} ${run_export}  ${set_export_weight_path} ${set_save_infer_key} > ${export_log_path} 2>&1"
                     eval "$export_cmd"
-                    status_check $? "${export_cmd}" "${status_log}"
+                    status_check $? "${export_cmd}" "${status_log}" "${model_name}" "${export_log_path}"
 
                     #run inference
                     eval $env

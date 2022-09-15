@@ -8,7 +8,7 @@ total_iters:lite_train_lite_infer=100
 output_dir:./output/
 dataset.train.batch_size:lite_train_lite_infer=4
 pretrained_model:null
-train_model_name:basicvsr_reds*/*checkpoint.pdparams
+train_model_name:edvr_m_wo_tsa*/*checkpoint.pdparams
 train_infer_img_dir:./data/basicvsr_reds/test
 null:null
 ##
