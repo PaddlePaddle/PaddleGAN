@@ -1,18 +1,16 @@
 # code was heavily based on https://github.com/cszn/KAIR
-# Users should be careful about adopting these functions in any commercial matters.
+# MIT License
+# Copyright (c) 2019 Kai Zhang
 
 import os
 import random
 import numpy as np
 import cv2
+
 import paddle
-from PIL import Image, ImageEnhance
-import numpy as np
-import random
-import numbers
 from paddle.io import Dataset
+
 from .builder import DATASETS
-from paddle.vision.transforms.functional import to_tensor, adjust_brightness, adjust_saturation, rotate, hflip, hflip, vflip, center_crop
 
 
 def is_image_file(filename):
@@ -60,8 +58,6 @@ def imread_uint(path, n_channels=3):
 
 
 def augment_img(img, mode=0):
-    '''Kai Zhang (github: https://github.com/cszn)
-    '''
     if mode == 0:
         return img
     elif mode == 1:
@@ -100,13 +96,11 @@ def single2tensor3(img):
 
 @DATASETS.register()
 class SwinIRDataset(Dataset):
-    """
-    # -----------------------------------------
-    # Get L/H for denosing on AWGN with fixed sigma.
-    # Only dataroot_H is needed.
-    # -----------------------------------------
-    # e.g., DnCNN
-    # -----------------------------------------
+    """ Get L/H for denosing on AWGN with fixed sigma.
+    Ref:
+        DnCNN: Beyond a Gaussian Denoiser: Residual Learning of Deep CNN for Image Denoising
+    Args:
+        opt (dict): A dictionary defining dataset-related parameters.
     """
 
     def __init__(self, opt=None):
@@ -136,11 +130,7 @@ class SwinIRDataset(Dataset):
         L_path = H_path
 
         if self.opt['phase'] == 'train':
-            """
-            # --------------------------------
             # get L/H patch pairs
-            # --------------------------------
-            """
             H, W, _ = img_H.shape
 
             # --------------------------------
@@ -166,11 +156,7 @@ class SwinIRDataset(Dataset):
             img_L = img_L + noise
 
         else:
-            """
-            # --------------------------------
             # get L/H image pairs
-            # --------------------------------
-            """
             img_H = uint2single(img_H)
             img_L = np.copy(img_H)
 

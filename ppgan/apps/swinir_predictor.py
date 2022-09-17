@@ -12,21 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import cv2
+from glob import glob
+from natsort import natsorted
+import numpy as np
 import os
 import random
-from natsort import natsorted
-from glob import glob
-import numpy as np
-import cv2
-from PIL import Image
+from tqdm import tqdm
+
 import paddle
-from .base_predictor import BasePredictor
+
 from ppgan.models.generators import SwinIR
 from ppgan.utils.download import get_path_from_url
-from ppgan.utils.visual import make_grid, tensor2img, save_image
-from ppgan.datasets.mpr_dataset import to_tensor
-from paddle.vision.transforms import Pad
-from tqdm import tqdm
+from .base_predictor import BasePredictor
 
 model_cfgs = {
     'Denoising': {
@@ -49,9 +47,9 @@ class SwinIRPredictor(BasePredictor):
                  output_path='output_dir',
                  weight_path=None,
                  seed=None,
-                 task=None,
                  window_size=8):
         self.output_path = output_path
+        task = 'Denoising'
         self.task = task
         self.window_size = window_size
 
@@ -60,10 +58,13 @@ class SwinIRPredictor(BasePredictor):
                 weight_path = get_path_from_url(model_cfgs[task]['model_urls'])
                 checkpoint = paddle.load(weight_path)
             else:
-                raise ValueError(
-                    'Predictor need a weight path or a pretrained model type')
+                raise ValueError('Predictor need a task to define!')
         else:
-            checkpoint = paddle.load(weight_path)
+            if os.path.islink(weight_path):
+                weight_path = get_path_from_url(weight_path)
+                checkpoint = paddle.load(weight_path)
+            else:
+                checkpoint = paddle.load(weight_path)
 
         self.generator = SwinIR(upscale=model_cfgs[task]['upscale'],
                                 img_size=model_cfgs[task]['img_size'],

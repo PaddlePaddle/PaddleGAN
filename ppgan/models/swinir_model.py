@@ -20,8 +20,7 @@ from .builder import MODELS
 from .base_model import BaseModel
 from .generators.builder import build_generator
 from .criterions.builder import build_criterion
-from ..modules.init import reset_parameters, init_weights
-from ..utils.visual import tensor2img
+from ppgan.utils.visual import tensor2img
 
 
 @MODELS.register()
@@ -42,7 +41,6 @@ class SwinIRModel(BaseModel):
         self.current_iter = 1
 
         self.nets['generator'] = build_generator(generator)
-        # init_weights(self.nets['generator'])
 
         if char_criterion:
             self.char_criterion = build_criterion(char_criterion)

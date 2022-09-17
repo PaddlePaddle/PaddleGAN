@@ -1,18 +1,17 @@
-# -----------------------------------------------------------------------------------
-# SwinIR: Image Restoration Using Swin Transformer, https://arxiv.org/abs/2108.10257
-# Originally Written by Ze Liu, Modified by Jingyun Liang.
 # code was heavily based on https://github.com/cszn/KAIR
-# -----------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2019 Kai Zhang
 """
 Droppath, reimplement from https://github.com/yueatsprograms/Stochastic_Depth
 """
 from itertools import repeat
 import collections.abc
 import math
+import numpy as np
+
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
-import numpy as np
 
 from .builder import GENERATORS
 
@@ -85,16 +84,6 @@ class Identity(nn.Layer):
 
 
 class Mlp(nn.Layer):
-    """ MLP module
-    Impl using nn.Linear and activation is GELU, dropout is applied.
-    Ops: fc -> act -> dropout -> fc -> dropout
-    Attributes:
-        fc1: nn.Linear
-        fc2: nn.Linear
-        act: GELU
-        dropout1: dropout after fc1
-        dropout2: dropout after fc2
-    """
 
     def __init__(self, in_features, hidden_features, dropout):
         super(Mlp, self).__init__()
@@ -131,14 +120,14 @@ class Mlp(nn.Layer):
 class WindowAttention(nn.Layer):
     """Window based multihead attention, with relative position bias.
     Both shifted window and non-shifted window are supported.
-    Attributes:
-        dim: int, input dimension (channels)
-        window_size: int, height and width of the window
-        num_heads: int, number of attention heads
-        qkv_bias: bool, if True, enable learnable bias to q,k,v, default: True
-        qk_scale: float, override default qk scale head_dim**-0.5 if set, default: None
-        attention_dropout: float, dropout of attention
-        dropout: float, dropout for output
+    Args:
+        dim (int): input dimension (channels)
+        window_size (int): height and width of the window
+        num_heads (int): number of attention heads
+        qkv_bias (bool): if True, enable learnable bias to q,k,v, default: True
+        qk_scale (float): override default qk scale head_dim**-0.5 if set, default: None
+        attention_dropout (float): dropout of attention
+        dropout (float): dropout for output
     """
 
     def __init__(self,
@@ -259,13 +248,9 @@ class WindowAttention(nn.Layer):
     def flops(self, N):
         # calculate flops for 1 window with token length of N
         flops = 0
-        # qkv = self.qkv(x)
         flops += N * self.dim * 3 * self.dim
-        # attn = (q @ k.transpose(-2, -1))
         flops += self.num_heads * N * (self.dim // self.num_heads) * N
-        #  x = (attn @ v)
         flops += self.num_heads * N * N * (self.dim // self.num_heads)
-        # x = self.proj(x)
         flops += N * self.dim * self.dim
         return flops
 
@@ -359,10 +344,6 @@ class SwinTransformerBlock(nn.Layer):
                        hidden_features=int(dim * mlp_ratio),
                        dropout=dropout)
 
-        # if self.shift_size > 0:
-        #     attn_mask = self.calculate_mask(self.input_resolution)
-        # else:
-        #     attn_mask = None
         attn_mask = self.calculate_mask(self.input_resolution)
 
         self.register_buffer("attn_mask", attn_mask)
@@ -384,8 +365,6 @@ class SwinTransformerBlock(nn.Layer):
                 for w in w_slices:
                     img_mask[:, h, w, :] = cnt
                     cnt += 1
-
-            # img_mask = paddle.Tensor(img_mask)
 
             mask_windows = windows_partition(
                 img_mask, self.window_size)  # nW, window_size, window_size, 1
@@ -428,7 +407,6 @@ class SwinTransformerBlock(nn.Layer):
         else:
             attn_windows = self.attn(x_windows,
                                      mask=self.calculate_mask(x_size))
-        # attn_windows = self.attn(x_windows, mask=self.attn_mask)
 
         # merge windows
         attn_windows = attn_windows.reshape(
@@ -475,8 +453,8 @@ class PatchMerging(nn.Layer):
     Merge multiple patch into one path and keep the out dim.
     Spefically, merge adjacent 2x2 patches(dim=C) into 1 patch.
     The concat dim 4*C is rescaled to 2*C
-    Attributes:
-        input_resolution: tuple of ints, the size of input
+    Args:
+        input_resolution (tuple | ints): the size of input
         dim: dimension of single patch
         reduction: nn.Linear which maps 4C to 2C dim
         norm: nn.LayerNorm, applied after linear layer.
@@ -890,12 +868,10 @@ class SwinIR(nn.Layer):
         self.upsampler = upsampler
         self.window_size = window_size
 
-        #####################################################################################################
-        ################################### 1, shallow feature extraction ###################################
+        # 1. shallow feature extraction
         self.conv_first = nn.Conv2D(num_in_ch, embed_dim, 3, 1, 1)
 
-        #####################################################################################################
-        ################################### 2, deep feature extraction ######################################
+        # 2. deep feature extraction
         self.num_layers = len(depths)
         self.embed_dim = embed_dim
         self.ape = ape
@@ -975,8 +951,7 @@ class SwinIR(nn.Layer):
                 nn.LeakyReLU(negative_slope=0.2),
                 nn.Conv2D(embed_dim // 4, embed_dim, 3, 1, 1))
 
-        #####################################################################################################
-        ################################ 3, high quality image reconstruction ################################
+        # 3, high quality image reconstruction ################################
         if self.upsampler == 'pixelshuffle':
             # for classical SR
             self.conv_before_upsample = nn.Sequential(
@@ -1034,7 +1009,6 @@ class SwinIR(nn.Layer):
         H, W = x.shape[2:]
         x = self.check_image_size(x)
 
-        # self.mean = self.mean.type_as(x)
         x = (x - self.mean) * self.img_range
 
         if self.upsampler == 'pixelshuffle':
@@ -1102,7 +1076,3 @@ if __name__ == '__main__':
                    upsampler='pixelshuffledirect')
     print(model)
     print(height, width, model.flops() / 1e9)
-
-    x = paddle.randn((1, 3, height, width))
-    x = model(x)
-    print(x.shape)

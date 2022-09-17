@@ -1,4 +1,4 @@
-#  Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
+#  Copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -12,13 +12,14 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
-import paddle
 import os
 import sys
+import argparse
+
+import paddle
+from ppgan.apps import SwinIRPredictor
 
 sys.path.insert(0, os.getcwd())
-from ppgan.apps import SwinIRPredictor
-import argparse
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -43,12 +44,6 @@ if __name__ == "__main__":
                         type=str,
                         help='Single image or images directory.')
 
-    parser.add_argument('--task',
-                        required=True,
-                        type=str,
-                        help='Task to run',
-                        choices=['Deblurring', 'Denoising', 'Deraining'])
-
     parser.add_argument("--cpu",
                         dest="cpu",
                         action="store_true",
@@ -61,6 +56,5 @@ if __name__ == "__main__":
 
     predictor = SwinIRPredictor(output_path=args.output_path,
                                 weight_path=args.weight_path,
-                                seed=args.seed,
-                                task=args.task)
+                                seed=args.seed)
     predictor.run(images_path=args.images_path)
