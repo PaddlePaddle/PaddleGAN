@@ -60,7 +60,7 @@ class SwinIRPredictor(BasePredictor):
             else:
                 raise ValueError('Predictor need a task to define!')
         else:
-            if os.path.islink(weight_path):
+            if weight_path.startswith("http"):  # os.path.islink dosen't work!
                 weight_path = get_path_from_url(weight_path)
                 checkpoint = paddle.load(weight_path)
             else:
