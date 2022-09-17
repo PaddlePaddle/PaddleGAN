@@ -2,9 +2,6 @@ total_iters: 800000
 output_dir: /home/aistudio/
 find_unused_parameters: True
 
-resume_state: ~
-ignore_resume_networks: ["network_identity"]
-
 log_config:
     interval: 1
     visiual_interval: 1
@@ -29,7 +26,7 @@ validate:
         LPIPS:
             name: LPIPSMetric
 model:
-    name: GPFGANModel
+    name: GFPGANModel
     network_g:
         name: GFPGANv1
         out_size: 512

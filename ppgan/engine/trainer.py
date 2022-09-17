@@ -85,7 +85,6 @@ class Trainer:
         self.cfg = cfg
         self.output_dir = cfg.output_dir
         self.max_eval_steps = cfg.model.get('max_eval_steps', None)
-        self.ignore_net = self.cfg.get('ignore_resume_networks', None)
 
         self.local_rank = ParallelEnv().local_rank
         self.world_size = ParallelEnv().nranks
@@ -186,8 +185,6 @@ class Trainer:
         paddle.distributed.init_parallel_env()
         find_unused_parameters = self.cfg.get('find_unused_parameters', False)
         for net_name, net in self.model.nets.items():
-            if self.ignore_net != None:
-                if net_name in self.ignore_net: continue
             self.model.nets[net_name] = paddle.DataParallel(
                 net, find_unused_parameters=find_unused_parameters)
 
@@ -212,7 +209,6 @@ class Trainer:
         self.model.setup_train_mode(is_train=True)
         while self.current_iter < (self.total_iters + 1):
             self.current_epoch = iter_loader.epoch
-            self.model.current_iter = self.current_iter
             self.inner_iter = self.current_iter % self.iters_per_epoch
 
             add_profiler_step(self.profiler_options)
@@ -466,11 +462,9 @@ class Trainer:
 
         for opt_name, opt in self.model.optimizers.items():
             opt.set_state_dict(state_dicts[opt_name])
-            self.logger.info(
-                'Loaded pretrained weight for optimizers {}'.format(opt_name))
 
-    def load(self, weight_path, is_test=False):
-        state_dicts = paddle.load(weight_path)
+    def load(self, weight_path):
+        state_dicts = load(weight_path)
 
         def is_dict_in_dict_weight(state_dict):
             if isinstance(state_dict, dict) and len(state_dict) > 0:
@@ -482,12 +476,7 @@ class Trainer:
             else:
                 return False
 
-        if is_test:
-            for k, v in state_dicts.items():
-                self.model.nets[k].set_state_dict(state_dicts[k])
-                self.logger.info(
-                    'Loaded pretrained weight for net {}'.format(k))
-        elif is_dict_in_dict_weight(state_dicts):
+        if is_dict_in_dict_weight(state_dicts):
             for net_name, net in self.model.nets.items():
                 if net_name in state_dicts:
                     net.set_state_dict(state_dicts[net_name])

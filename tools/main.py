@@ -36,8 +36,8 @@ def main(args, cfg):
         trainer.resume(args.resume)
     # evaluate or finute, only load generator weights
     elif args.load:
-        # print(args.evaluate_only)
-        trainer.load(args.load, args.evaluate_only)
+        trainer.load(args.load)
+
     if args.evaluate_only:
         trainer.test()
         return
