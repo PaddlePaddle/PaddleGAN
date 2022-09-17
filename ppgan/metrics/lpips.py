@@ -74,19 +74,18 @@ class LPIPSMetric(paddle.metric.Metric):
             gts = [gts]
 
         for pred, gt in zip(preds, gts):
-            pred, gt = pred.astype(np.float32) / 255., gt.astype(
-                np.float32) / 255.
-            pred = paddle.vision.transforms.normalize(pred.transpose([2, 0, 1]),
-                                                      self.mean, self.std)
-            gt = paddle.vision.transforms.normalize(gt.transpose([2, 0, 1]),
-                                                    self.mean, self.std)
+            # pred, gt = pred.astype(np.float32) / 255., gt.astype(
+            #     np.float32) / 255.
+            # pred = paddle.vision.transforms.normalize(pred,
+            #                                           self.mean, self.std)
+            # gt = paddle.vision.transforms.normalize(gt,
+            #                                         self.mean, self.std)
 
             with paddle.no_grad():
-                value = self.loss_fn(
-                    paddle.to_tensor(pred).unsqueeze(0),
-                    paddle.to_tensor(gt).unsqueeze(0))
-
-                self.results.append(value.item())
+                value = self.loss_fn(paddle.to_tensor(pred),
+                                     paddle.to_tensor(gt))
+                for v in value:
+                    self.results.append(v.item())
 
     def accumulate(self):
         if paddle.distributed.get_world_size() > 1:
