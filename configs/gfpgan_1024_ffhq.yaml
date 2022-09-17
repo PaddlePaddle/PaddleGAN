@@ -6,8 +6,8 @@ resume_state: ~
 ignore_resume_networks: ["network_identity"]
 
 log_config:
-    interval: 1000
-    visiual_interval: 1000
+    interval: 1
+    visiual_interval: 1
 
 snapshot_config:
     interval: 30000
@@ -36,7 +36,7 @@ model:
         num_style_feat: 512
         channel_multiplier: 1
         resample_kernel: [1, 3, 3, 1]
-        decoder_load_path: /home/aistudio/work/paddle-gan-develop/gfpgan_pretrain_model/StyleGAN2_512_Cmul1_FFHQ_B12G4_scratch_800k.pdparams
+        decoder_load_path: gfpgan_pretrain_model/StyleGAN2_512_Cmul1_FFHQ_B12G4_scratch_800k.pdparams
         fix_decoder: true
         num_mlp: 8
         lr_mlp: 0.01
@@ -66,16 +66,16 @@ model:
 
     # path
     path:
-        image_visual: /home/aistudio/work/paddle-gan-develop/gfpgan_train_outdir
+        image_visual: gfpgan_train_outdir
         # pretrain_network_g: /home/aistudio/work/gfpgan_train/iter_60000_gfpgan.pdparams
         pretrain_network_g: ~
         param_key_g: params_ema
         strict_load_g: ~
         pretrain_network_d: ~
-        pretrain_network_d_left_eye: /home/aistudio/work/paddle-gan-develop/gfpgan_pretrain_model/FacialComponentDiscriminator.pdparams
-        pretrain_network_d_right_eye: /home/aistudio/work/paddle-gan-develop/gfpgan_pretrain_model/FacialComponentDiscriminator.pdparams
-        pretrain_network_d_mouth: /home/aistudio/work/paddle-gan-develop/gfpgan_pretrain_model/FacialComponentDiscriminator.pdparams
-        pretrain_network_identity: /home/aistudio/work/paddle-gan-develop/gfpgan_pretrain_model/arcface_resnet18.pdparams
+        pretrain_network_d_left_eye: gfpgan_pretrain_model/FacialComponentDiscriminator.pdparams
+        pretrain_network_d_right_eye: gfpgan_pretrain_model/FacialComponentDiscriminator.pdparams
+        pretrain_network_d_mouth: gfpgan_pretrain_model/FacialComponentDiscriminator.pdparams
+        pretrain_network_identity: gfpgan_pretrain_model/arcface_resnet18.pdparams
         # resume
 
 
@@ -170,21 +170,21 @@ dataset:
         # gt_gray: True
 
         crop_components: true
-        component_path: /home/aistudio/work/paddle-gan-develop/gfpgan_pretrain_model/FFHQ_eye_mouth_landmarks_512.pdparams
+        component_path: gfpgan_pretrain_model/FFHQ_eye_mouth_landmarks_512.pdparams
         eye_enlarge_ratio: 1.4
 
         # data loader
         use_shuffle: true
         num_workers: 4
-        batch_size: 3
+        batch_size: 1
         prefetch_mode: ~
 
     test:
         # Please modify accordingly to use your own validation
         # Or comment the val block if do not need validation during training
         name: PairedImageDataset
-        # dataroot_lq: /home/aistudio/work/paddle-gan-develop/convert_module/input
-        # dataroot_gt: /home/aistudio/work/paddle-gan-develop/convert_module/gt_folder
+        # dataroot_lq: convert_module/input
+        # dataroot_gt: convert_module/gt_folder
         dataroot_lq: /home/aistudio/data/lq
         dataroot_gt: /home/aistudio/data/gt
         io_backend:

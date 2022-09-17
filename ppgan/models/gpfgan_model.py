@@ -22,7 +22,6 @@ from .discriminators.builder import build_discriminator
 from .criterions.builder import build_criterion
 from ..modules.init import init_weights
 from collections import OrderedDict
-from .criterions.IDLoss.id_loss import IDLoss
 from paddle.nn import functional as F
 from paddle import autograd
 from ppgan.utils.visual import *

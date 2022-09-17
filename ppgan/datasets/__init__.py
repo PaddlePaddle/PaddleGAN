@@ -31,3 +31,5 @@ from .vsr_folder_dataset import VSRFolderDataset
 from .photopen_dataset import PhotoPenDataset
 from .empty_dataset import EmptyDataset
 from .gpen_dataset import GPENDataset
+from .gpfgan_datasets import FFHQDegradationDataset
+from .paired_image_datasets import PairedImageDataset
