@@ -27,6 +27,7 @@ from paddle import autograd
 from ppgan.utils.visual import *
 from ..solver import build_lr_scheduler, build_optimizer
 from ppgan.models.generators.gfpganv1_arch_paddle import FacialComponentDiscriminator
+from ppgan.utils.download import get_path_from_url
 import math
 import sys
 
@@ -52,7 +53,8 @@ class GFPGANModel(BaseModel):
         self.nets['net_g_ema'].eval()
         pretrain_network_g = self.opt['path'].get('pretrain_network_g', None)
         if pretrain_network_g != None:
-            t_weight = paddle.load(pretrain_network_g)
+            t_weight = get_path_from_url(pretrain_network_g)
+            t_weight = paddle.load(t_weight)
             if 'net_g' in t_weight:
                 self.nets['net_g'].set_state_dict(t_weight['net_g'])
                 self.nets['net_g_ema'].set_state_dict(t_weight['net_g_ema'])
@@ -78,10 +80,12 @@ class GFPGANModel(BaseModel):
             self.nets['net_d_mouth'] = FacialComponentDiscriminator()
             load_path = self.opt['path'].get('pretrain_network_d_left_eye')
             if load_path is not None:
-                load_val = paddle.load(load_path)
+                load_val = get_path_from_url(load_path)
+                load_val = paddle.load(load_val)
                 self.nets['net_d_left_eye'].set_state_dict(load_val)
                 self.nets['net_d_right_eye'].set_state_dict(load_val)
                 self.nets['net_d_mouth'].set_state_dict(load_val)
+                del load_val
             self.nets['net_d_left_eye'].train()
             self.nets['net_d_right_eye'].train()
             self.nets['net_d_mouth'].train()
@@ -116,8 +120,10 @@ class GFPGANModel(BaseModel):
                 self.opt['network_identity'])
             load_path = self.opt['path'].get('pretrain_network_identity')
             if load_path is not None:
-                load_val = paddle.load(load_path)
+                load_val = get_path_from_url(load_path)
+                load_val = paddle.load(load_val)
                 self.network_identity.set_state_dict(load_val)
+                del load_val
             self.network_identity.eval()
             for param in self.network_identity.parameters():
                 param.stop_gradient = True

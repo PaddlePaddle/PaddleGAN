@@ -20,6 +20,7 @@ import numpy as np
 
 from ppgan.models.discriminators.builder import DISCRIMINATORS
 from ppgan.models.generators.builder import GENERATORS
+from ppgan.utils.download import get_path_from_url
 
 
 class StyleGAN2Generator(nn.Layer):
@@ -535,7 +536,7 @@ class GFPGANv1(nn.Layer):
             narrow=narrow,
             sft_half=sft_half)
         if decoder_load_path:
-            print('load_finish')
+            decoder_load_path = get_path_from_url(decoder_load_path)
             self.stylegan_decoder.set_state_dict(paddle.load(decoder_load_path))
 
         if fix_decoder:

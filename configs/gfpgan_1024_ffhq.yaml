@@ -3,8 +3,8 @@ output_dir: output/
 find_unused_parameters: True
 
 log_config:
-    interval: 1
-    visiual_interval: 1
+    interval: 100
+    visiual_interval: 100
 
 snapshot_config:
     interval: 30000
