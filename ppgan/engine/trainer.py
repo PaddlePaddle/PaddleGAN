@@ -145,11 +145,11 @@ class Trainer:
 
         self.epochs = cfg.get('epochs', None)
         if self.epochs:
-            self.total_iters = self.epochs * self.iters_per_epoch
+            self.total_iters =1 # self.epochs * self.iters_per_epoch
             self.by_epoch = True
         else:
             self.by_epoch = False
-            self.total_iters = cfg.total_iters
+            self.total_iters =1 # cfg.total_iters
 
         if self.by_epoch:
             self.weight_interval *= self.iters_per_epoch
