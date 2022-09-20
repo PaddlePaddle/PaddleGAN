@@ -1,0 +1,3 @@
+./log_v6_o2_nan
+['add', 'add_raw', 'cast', 'check_finite_and_unscale', 'concat', 'conv2d', 'divide', 'equal', 'flip', 'full', 'leaky_relu', 'mean', 'multiply', 'pool2d', 'pow', 'relu', 'reshape', 'scale', 'sigmoid', 'slice', 'split', 'sqrt', 'stack', 'subtract', 'tanh', 'tile', 'transpose']
+========= additional ops ============

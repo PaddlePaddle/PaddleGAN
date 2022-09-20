@@ -12,7 +12,7 @@ def get_fp16_op(filepath):
     for line in lines:
         op = ''
         if 'API kernel key' in line and 'float16' in line:
-            op = line.split(' ')[4]
+            op = line.split(' ')[5]
         if 'Dynamic mode PrepareImpl' in line:
             kernel = line.split('kernel key: ')[1].split(' | kernel: ')[0]
             if 'float16' in kernel:
@@ -25,7 +25,7 @@ def get_fp16_op(filepath):
                 op_dict[op] = 1
     
     print(sorted(fp16_op))
-    print(op_dict)
+    #print(op_dict)
     return fp16_op
 
 

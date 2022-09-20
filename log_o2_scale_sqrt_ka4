@@ -1,0 +1,93 @@
+LAUNCH WARNNING args host is override by env 10.127.17.146
+LAUNCH WARNNING args job_id is override by env job-0bb6323e5a07ea59
+LAUNCH INFO 2022-09-20 16:52:23,989 args reset by env PADDLE_TRAINER_ENDPOINTS
+['10.127.17.146:60001']
+LAUNCH INFO 2022-09-20 16:52:23,989 args reset by env DISTRIBUTED_TRAINER_ENDPOINTS
+['10.127.17.146:60001', '10.127.17.146:60002', '10.127.17.146:60003', '10.127.17.146:60004', '10.127.17.146:60005', '10.127.17.146:60006', '10.127.17.146:60007', '10.127.17.146:60008']
+LAUNCH WARNING 2022-09-20 16:52:23,989 Host ip reset to 10.127.17.146
+LAUNCH INFO 2022-09-20 16:52:23,997 -----------  Configuration  ----------------------
+LAUNCH INFO 2022-09-20 16:52:23,997 devices: 0,1,2,3
+LAUNCH INFO 2022-09-20 16:52:23,997 elastic_level: -1
+LAUNCH INFO 2022-09-20 16:52:23,997 elastic_timeout: 30
+LAUNCH INFO 2022-09-20 16:52:23,997 gloo_port: 6767
+LAUNCH INFO 2022-09-20 16:52:23,997 host: 10.127.17.146
+LAUNCH INFO 2022-09-20 16:52:23,997 ips: None
+LAUNCH INFO 2022-09-20 16:52:23,997 job_id: job-0bb6323e5a07ea59
+LAUNCH INFO 2022-09-20 16:52:23,997 legacy: False
+LAUNCH INFO 2022-09-20 16:52:23,997 log_dir: log
+LAUNCH INFO 2022-09-20 16:52:23,997 log_level: INFO
+LAUNCH INFO 2022-09-20 16:52:23,997 master: 10.127.17.146:60001
+LAUNCH INFO 2022-09-20 16:52:23,997 max_restart: 3
+LAUNCH INFO 2022-09-20 16:52:23,997 nnodes: 1
+LAUNCH INFO 2022-09-20 16:52:23,997 nproc_per_node: None
+LAUNCH INFO 2022-09-20 16:52:23,997 rank: -1
+LAUNCH INFO 2022-09-20 16:52:23,997 run_mode: collective
+LAUNCH INFO 2022-09-20 16:52:23,997 server_num: None
+LAUNCH INFO 2022-09-20 16:52:23,997 servers: 
+LAUNCH INFO 2022-09-20 16:52:23,997 start_port: 6070
+LAUNCH INFO 2022-09-20 16:52:23,997 trainer_num: None
+LAUNCH INFO 2022-09-20 16:52:23,998 trainers: 
+LAUNCH INFO 2022-09-20 16:52:23,998 training_script: tools/main.py
+LAUNCH INFO 2022-09-20 16:52:23,998 training_script_args: ['--config-file', 'configs/msvsr_reds.yaml', '--amp', '--amp_level', 'O2']
+LAUNCH INFO 2022-09-20 16:52:23,998 with_gloo: 1
+LAUNCH INFO 2022-09-20 16:52:23,998 --------------------------------------------------
+LAUNCH INFO 2022-09-20 16:52:23,998 Job: job-0bb6323e5a07ea59, mode collective, replicas 1[1:1], elastic False
+LAUNCH INFO 2022-09-20 16:52:24,004 Run Pod: zjmqqo, replicas 4, status ready
+LAUNCH INFO 2022-09-20 16:52:24,039 Watching Pod: zjmqqo, replicas 4, status running
+[09/20 16:52:26] ppgan INFO: Configs: {'total_iters': 150000, 'output_dir': 'output_dir/msvsr_reds-2022-09-20-16-52', 'find_unused_parameters': True, 'checkpoints_dir': 'checkpoints', 'use_dataset': True, 'min_max': (0.0, 1.0), 'model': {'name': 'MultiStageVSRModel', 'fix_iter': 2500, 'generator': {'name': 'MSVSR', 'mid_channels': 32, 'num_init_blocks': 2, 'num_blocks': 3, 'num_reconstruction_blocks': 2, 'only_last': True, 'use_tiny_spynet': True, 'deform_groups': 4, 'stage1_groups': 8, 'auxiliary_loss': True, 'use_refine_align': True, 'aux_reconstruction_blocks': 1, 'use_local_connnect': True}, 'pixel_criterion': {'name': 'CharbonnierLoss', 'reduction': 'mean'}}, 'dataset': {'train': {'name': 'RepeatDataset', 'times': 1000, 'num_workers': 6, 'batch_size': 2, 'dataset': {'name': 'VSRREDSMultipleGTDataset', 'lq_folder': '/root/paddlejob/workspace/work/niuliling/data/REDS/train_sharp_bicubic/X4', 'gt_folder': '/root/paddlejob/workspace/work/niuliling/data/REDS/train_sharp/X4', 'ann_file': '/root/paddlejob/workspace/work/niuliling/data/REDS/meta_info_REDS_GT.txt', 'num_frames': 20, 'preprocess': [{'name': 'GetNeighboringFramesIdx', 'interval_list': [1]}, {'name': 'ReadImageSequence', 'key': 'lq'}, {'name': 'ReadImageSequence', 'key': 'gt'}, {'name': 'Transforms', 'input_keys': ['lq', 'gt'], 'pipeline': [{'name': 'SRPairedRandomCrop', 'gt_patch_size': 256, 'scale': 4, 'keys': ['image', 'image']}, {'name': 'PairedRandomHorizontalFlip', 'keys': ['image', 'image']}, {'name': 'PairedRandomVerticalFlip', 'keys': ['image', 'image']}, {'name': 'PairedRandomTransposeHW', 'keys': ['image', 'image']}, {'name': 'TransposeSequence', 'keys': ['image', 'image']}, {'name': 'NormalizeSequence', 'mean': [0.0, 0.0, 0.0], 'std': [255.0, 255.0, 255.0], 'keys': ['image', 'image']}]}]}}, 'test': {'name': 'VSRREDSMultipleGTDataset', 'lq_folder': '/root/paddlejob/workspace/work/niuliling/data/REDS/REDS4_test_sharp_bicubic/X4', 'gt_folder': '/root/paddlejob/workspace/work/niuliling/data/REDS/REDS4_test_sharp/X4', 'ann_file': '/root/paddlejob/workspace/work/niuliling/data/REDS/meta_info_REDS_GT.txt', 'num_frames': 100, 'test_mode': True, 'preprocess': [{'name': 'GetNeighboringFramesIdx', 'interval_list': [1]}, {'name': 'ReadImageSequence', 'key': 'lq'}, {'name': 'ReadImageSequence', 'key': 'gt'}, {'name': 'Transforms', 'input_keys': ['lq', 'gt'], 'pipeline': [{'name': 'TransposeSequence', 'keys': ['image', 'image']}, {'name': 'NormalizeSequence', 'mean': [0.0, 0.0, 0.0], 'std': [255.0, 255.0, 255.0], 'keys': ['image', 'image']}]}]}}, 'lr_scheduler': {'name': 'CosineAnnealingRestartLR', 'learning_rate': 0.0002, 'periods': [150000], 'restart_weights': [1], 'eta_min': 1e-07}, 'optimizer': {'name': 'Adam', 'net_names': ['generator'], 'beta1': 0.9, 'beta2': 0.99}, 'validate': {'interval': 5000, 'save_img': False, 'metrics': {'psnr': {'name': 'PSNR', 'crop_border': 0, 'test_y_channel': False}, 'ssim': {'name': 'SSIM', 'crop_border': 0, 'test_y_channel': False}}}, 'log_config': {'interval': 10, 'visiual_interval': 5000}, 'snapshot_config': {'interval': 5000}, 'export_model': [{'name': 'generator', 'inputs_num': 1}], 'is_train': True, 'profiler_options': None, 'timestamp': '-2022-09-20-16-52'}
+W0920 16:52:26.118543 21200 gpu_resources.cc:61] Please NOTE: device: 0, GPU Compute Capability: 7.0, Driver API Version: 10.2, Runtime API Version: 10.2
+W0920 16:52:26.123175 21200 gpu_resources.cc:91] device: 0, cuDNN Version: 7.6.
+[09/20 16:52:27] ppgan INFO: Found /root/.cache/ppgan/modified_spynet_tiny.pdparams
+[09/20 16:52:28] ppgan.engine.trainer INFO: use AMP to train. AMP level = O2
+I0920 16:52:28.360395 21200 tcp_utils.cc:181] The server starts to listen on IP_ANY:42918
+I0920 16:52:28.360553 21200 tcp_utils.cc:130] Successfully connected to 10.127.17.146:42918
+NCCL version 2.7.8+cuda10.2
+Train MSVSR with fixed spynet for 2500 iters.
+[09/20 16:52:50] ppgan.engine.trainer INFO: Iter: 10/150000 lr: 2.000e-04 loss_pix_stage2: 0.038 loss_pix: 0.037 loss: 0.074 batch_cost: 1.75626 sec reader_cost: 0.26157 sec ips: 1.13878 images/s eta: 3 days, 1:10:22
+[09/20 16:53:01] ppgan.engine.trainer INFO: Iter: 20/150000 lr: 2.000e-04 loss_pix_stage2: 0.049 loss_pix: 0.049 loss: 0.098 batch_cost: 1.11780 sec reader_cost: 0.00325 sec ips: 1.78924 images/s eta: 1 day, 22:34:07
+[09/20 16:53:12] ppgan.engine.trainer INFO: Iter: 30/150000 lr: 2.000e-04 loss_pix_stage2: 0.032 loss_pix: 0.033 loss: 0.065 batch_cost: 1.12154 sec reader_cost: 0.00217 sec ips: 1.78326 images/s eta: 1 day, 22:43:18
+[09/20 16:53:23] ppgan.engine.trainer INFO: Iter: 40/150000 lr: 2.000e-04 loss_pix_stage2: 0.032 loss_pix: 0.032 loss: 0.064 batch_cost: 1.13601 sec reader_cost: 0.00212 sec ips: 1.76055 images/s eta: 1 day, 23:19:15
+[09/20 16:53:35] ppgan.engine.trainer INFO: Iter: 50/150000 lr: 2.000e-04 loss_pix_stage2: 0.035 loss_pix: 0.036 loss: 0.071 batch_cost: 1.11628 sec reader_cost: 0.00136 sec ips: 1.79166 images/s eta: 1 day, 22:29:46
+[09/20 16:53:46] ppgan.engine.trainer INFO: Iter: 60/150000 lr: 2.000e-04 loss_pix_stage2: 0.038 loss_pix: 0.038 loss: 0.076 batch_cost: 1.10764 sec reader_cost: 0.00182 sec ips: 1.80564 images/s eta: 1 day, 22:07:59
+[09/20 16:53:57] ppgan.engine.trainer INFO: Iter: 70/150000 lr: 2.000e-04 loss_pix_stage2: 0.048 loss_pix: 0.048 loss: 0.096 batch_cost: 1.10353 sec reader_cost: 0.00160 sec ips: 1.81236 images/s eta: 1 day, 21:57:32
+[09/20 16:54:08] ppgan.engine.trainer INFO: Iter: 80/150000 lr: 2.000e-04 loss_pix_stage2: 0.020 loss_pix: 0.021 loss: 0.041 batch_cost: 1.10738 sec reader_cost: 0.00136 sec ips: 1.80607 images/s eta: 1 day, 22:06:58
+[09/20 16:54:19] ppgan.engine.trainer INFO: Iter: 90/150000 lr: 2.000e-04 loss_pix_stage2: 0.030 loss_pix: 0.030 loss: 0.061 batch_cost: 1.10240 sec reader_cost: 0.00206 sec ips: 1.81422 images/s eta: 1 day, 21:54:21
+[09/20 16:54:30] ppgan.engine.trainer INFO: Iter: 100/150000 lr: 2.000e-04 loss_pix_stage2: 0.044 loss_pix: 0.044 loss: 0.087 batch_cost: 1.11131 sec reader_cost: 0.00138 sec ips: 1.79968 images/s eta: 1 day, 22:16:25
+[09/20 16:54:42] ppgan.engine.trainer INFO: Iter: 110/150000 lr: 2.000e-04 loss_pix_stage2: 0.027 loss_pix: 0.027 loss: 0.054 batch_cost: 1.19847 sec reader_cost: 0.00187 sec ips: 1.66879 images/s eta: 2 days, 1:53:59
+[09/20 16:54:53] ppgan.engine.trainer INFO: Iter: 120/150000 lr: 2.000e-04 loss_pix_stage2: 0.040 loss_pix: 0.039 loss: 0.079 batch_cost: 1.11533 sec reader_cost: 0.00164 sec ips: 1.79319 images/s eta: 1 day, 22:26:05
+[09/20 16:55:04] ppgan.engine.trainer INFO: Iter: 130/150000 lr: 2.000e-04 loss_pix_stage2: 0.036 loss_pix: 0.035 loss: 0.072 batch_cost: 1.13146 sec reader_cost: 0.00137 sec ips: 1.76762 images/s eta: 1 day, 23:06:12
+[09/20 16:55:16] ppgan.engine.trainer INFO: Iter: 140/150000 lr: 2.000e-04 loss_pix_stage2: 0.050 loss_pix: 0.049 loss: 0.098 batch_cost: 1.11885 sec reader_cost: 0.00193 sec ips: 1.78755 images/s eta: 1 day, 22:34:31
+[09/20 16:55:27] ppgan.engine.trainer INFO: Iter: 150/150000 lr: 2.000e-04 loss_pix_stage2: 0.014 loss_pix: 0.014 loss: 0.028 batch_cost: 1.11837 sec reader_cost: 0.00158 sec ips: 1.78832 images/s eta: 1 day, 22:33:07
+[09/20 16:55:38] ppgan.engine.trainer INFO: Iter: 160/150000 lr: 2.000e-04 loss_pix_stage2: 0.024 loss_pix: 0.023 loss: 0.047 batch_cost: 1.11713 sec reader_cost: 0.00138 sec ips: 1.79031 images/s eta: 1 day, 22:29:50
+[09/20 16:55:49] ppgan.engine.trainer INFO: Iter: 170/150000 lr: 2.000e-04 loss_pix_stage2: 0.044 loss_pix: 0.043 loss: 0.087 batch_cost: 1.11094 sec reader_cost: 0.00167 sec ips: 1.80027 images/s eta: 1 day, 22:14:12
+[09/20 16:56:00] ppgan.engine.trainer INFO: Iter: 180/150000 lr: 2.000e-04 loss_pix_stage2: 0.024 loss_pix: 0.023 loss: 0.047 batch_cost: 1.11712 sec reader_cost: 0.00138 sec ips: 1.79031 images/s eta: 1 day, 22:29:27
+[09/20 16:56:11] ppgan.engine.trainer INFO: Iter: 190/150000 lr: 2.000e-04 loss_pix_stage2: 0.030 loss_pix: 0.029 loss: 0.059 batch_cost: 1.11028 sec reader_cost: 0.00184 sec ips: 1.80135 images/s eta: 1 day, 22:12:10
+[09/20 16:56:22] ppgan.engine.trainer INFO: Iter: 200/150000 lr: 2.000e-04 loss_pix_stage2: 0.045 loss_pix: 0.044 loss: 0.089 batch_cost: 1.11435 sec reader_cost: 0.00143 sec ips: 1.79476 images/s eta: 1 day, 22:22:10
+[09/20 16:56:34] ppgan.engine.trainer INFO: Iter: 210/150000 lr: 2.000e-04 loss_pix_stage2: 0.067 loss_pix: 0.065 loss: 0.132 batch_cost: 1.11582 sec reader_cost: 0.00138 sec ips: 1.79240 images/s eta: 1 day, 22:25:38
+[09/20 16:56:45] ppgan.engine.trainer INFO: Iter: 220/150000 lr: 2.000e-04 loss_pix_stage2: 0.051 loss_pix: 0.050 loss: 0.101 batch_cost: 1.10912 sec reader_cost: 0.00195 sec ips: 1.80324 images/s eta: 1 day, 22:08:43
+[09/20 16:56:56] ppgan.engine.trainer INFO: Iter: 230/150000 lr: 2.000e-04 loss_pix_stage2: 0.039 loss_pix: 0.039 loss: 0.078 batch_cost: 1.14380 sec reader_cost: 0.00159 sec ips: 1.74856 images/s eta: 1 day, 23:35:06
+[09/20 16:57:07] ppgan.engine.trainer INFO: Iter: 240/150000 lr: 2.000e-04 loss_pix_stage2: 0.020 loss_pix: 0.020 loss: 0.040 batch_cost: 1.10363 sec reader_cost: 0.00138 sec ips: 1.81220 images/s eta: 1 day, 21:54:40
+[09/20 16:57:18] ppgan.engine.trainer INFO: Iter: 250/150000 lr: 2.000e-04 loss_pix_stage2: 0.024 loss_pix: 0.024 loss: 0.048 batch_cost: 1.11681 sec reader_cost: 0.00165 sec ips: 1.79081 images/s eta: 1 day, 22:27:22
+[09/20 16:57:30] ppgan.engine.trainer INFO: Iter: 260/150000 lr: 2.000e-04 loss_pix_stage2: 0.023 loss_pix: 0.023 loss: 0.046 batch_cost: 1.12009 sec reader_cost: 0.00139 sec ips: 1.78557 images/s eta: 1 day, 22:35:22
+[09/20 16:57:41] ppgan.engine.trainer INFO: Iter: 270/150000 lr: 2.000e-04 loss_pix_stage2: 0.029 loss_pix: 0.029 loss: 0.057 batch_cost: 1.11622 sec reader_cost: 0.00193 sec ips: 1.79176 images/s eta: 1 day, 22:25:32
+[09/20 16:57:52] ppgan.engine.trainer INFO: Iter: 280/150000 lr: 2.000e-04 loss_pix_stage2: 0.039 loss_pix: 0.039 loss: 0.079 batch_cost: 1.12137 sec reader_cost: 0.00184 sec ips: 1.78354 images/s eta: 1 day, 22:38:11
+[09/20 16:58:03] ppgan.engine.trainer INFO: Iter: 290/150000 lr: 2.000e-04 loss_pix_stage2: 0.027 loss_pix: 0.027 loss: 0.054 batch_cost: 1.10729 sec reader_cost: 0.00139 sec ips: 1.80622 images/s eta: 1 day, 22:02:51
+[09/20 16:58:14] ppgan.engine.trainer INFO: Iter: 300/150000 lr: 2.000e-04 loss_pix_stage2: 0.007 loss_pix: 0.007 loss: 0.014 batch_cost: 1.10956 sec reader_cost: 0.00197 sec ips: 1.80252 images/s eta: 1 day, 22:08:20
+[09/20 16:58:25] ppgan.engine.trainer INFO: Iter: 310/150000 lr: 2.000e-04 loss_pix_stage2: 0.020 loss_pix: 0.020 loss: 0.039 batch_cost: 1.11498 sec reader_cost: 0.00142 sec ips: 1.79376 images/s eta: 1 day, 22:21:41
+[09/20 16:58:37] ppgan.engine.trainer INFO: Iter: 320/150000 lr: 2.000e-04 loss_pix_stage2: 0.040 loss_pix: 0.040 loss: 0.081 batch_cost: 1.14622 sec reader_cost: 0.00140 sec ips: 1.74487 images/s eta: 1 day, 23:39:25
+[09/20 16:58:48] ppgan.engine.trainer INFO: Iter: 330/150000 lr: 2.000e-04 loss_pix_stage2: 0.029 loss_pix: 0.029 loss: 0.059 batch_cost: 1.13950 sec reader_cost: 0.00255 sec ips: 1.75516 images/s eta: 1 day, 23:22:28
+[09/20 16:58:59] ppgan.engine.trainer INFO: Iter: 340/150000 lr: 2.000e-04 loss_pix_stage2: 0.017 loss_pix: 0.017 loss: 0.034 batch_cost: 1.11678 sec reader_cost: 0.00140 sec ips: 1.79087 images/s eta: 1 day, 22:25:36
+[09/20 16:59:10] ppgan.engine.trainer INFO: Iter: 350/150000 lr: 2.000e-04 loss_pix_stage2: 0.033 loss_pix: 0.033 loss: 0.066 batch_cost: 1.11171 sec reader_cost: 0.00185 sec ips: 1.79904 images/s eta: 1 day, 22:12:46
+[09/20 16:59:22] ppgan.engine.trainer INFO: Iter: 360/150000 lr: 2.000e-04 loss_pix_stage2: 0.035 loss_pix: 0.035 loss: 0.069 batch_cost: 1.12218 sec reader_cost: 0.00143 sec ips: 1.78225 images/s eta: 1 day, 22:38:42
+[09/20 16:59:33] ppgan.engine.trainer INFO: Iter: 370/150000 lr: 2.000e-04 loss_pix_stage2: 0.029 loss_pix: 0.029 loss: 0.057 batch_cost: 1.10927 sec reader_cost: 0.00296 sec ips: 1.80299 images/s eta: 1 day, 22:06:20
+[09/20 16:59:44] ppgan.engine.trainer INFO: Iter: 380/150000 lr: 2.000e-04 loss_pix_stage2: 0.029 loss_pix: 0.029 loss: 0.057 batch_cost: 1.11414 sec reader_cost: 0.00303 sec ips: 1.79510 images/s eta: 1 day, 22:18:18
+[09/20 16:59:55] ppgan.engine.trainer INFO: Iter: 390/150000 lr: 2.000e-04 loss_pix_stage2: 0.047 loss_pix: 0.047 loss: 0.095 batch_cost: 1.11707 sec reader_cost: 0.00331 sec ips: 1.79040 images/s eta: 1 day, 22:25:24
+[09/20 17:00:06] ppgan.engine.trainer INFO: Iter: 400/150000 lr: 2.000e-04 loss_pix_stage2: 0.024 loss_pix: 0.024 loss: 0.048 batch_cost: 1.10534 sec reader_cost: 0.00194 sec ips: 1.80940 images/s eta: 1 day, 21:55:58
+[09/20 17:00:17] ppgan.engine.trainer INFO: Iter: 410/150000 lr: 2.000e-04 loss_pix_stage2: 0.022 loss_pix: 0.022 loss: 0.043 batch_cost: 1.11497 sec reader_cost: 0.00159 sec ips: 1.79376 images/s eta: 1 day, 22:19:49
+[09/20 17:00:28] ppgan.engine.trainer INFO: Iter: 420/150000 lr: 2.000e-04 loss_pix_stage2: 0.040 loss_pix: 0.040 loss: 0.080 batch_cost: 1.12135 sec reader_cost: 0.00169 sec ips: 1.78356 images/s eta: 1 day, 22:35:32
+[09/20 17:00:40] ppgan.engine.trainer INFO: Iter: 430/150000 lr: 2.000e-04 loss_pix_stage2: 0.038 loss_pix: 0.038 loss: 0.076 batch_cost: 1.10786 sec reader_cost: 0.00139 sec ips: 1.80529 images/s eta: 1 day, 22:01:42
+[09/20 17:00:51] ppgan.engine.trainer INFO: Iter: 440/150000 lr: 2.000e-04 loss_pix_stage2: 0.031 loss_pix: 0.031 loss: 0.063 batch_cost: 1.11349 sec reader_cost: 0.00218 sec ips: 1.79615 images/s eta: 1 day, 22:15:34
+[09/20 17:01:02] ppgan.engine.trainer INFO: Iter: 450/150000 lr: 2.000e-04 loss_pix_stage2: 0.040 loss_pix: 0.040 loss: 0.080 batch_cost: 1.12663 sec reader_cost: 0.00139 sec ips: 1.77520 images/s eta: 1 day, 22:48:07
+[09/20 17:01:14] ppgan.engine.trainer INFO: Iter: 460/150000 lr: 2.000e-04 loss_pix_stage2: 0.026 loss_pix: 0.026 loss: 0.053 batch_cost: 1.24915 sec reader_cost: 0.00139 sec ips: 1.60109 images/s eta: 2 days, 3:53:17
+[09/20 17:01:27] ppgan.engine.trainer INFO: Iter: 470/150000 lr: 2.000e-04 loss_pix_stage2: 0.040 loss_pix: 0.040 loss: 0.079 batch_cost: 1.21386 sec reader_cost: 0.00249 sec ips: 1.64763 images/s eta: 2 days, 2:25:08
+[09/20 17:01:39] ppgan.engine.trainer INFO: Iter: 480/150000 lr: 2.000e-04 loss_pix_stage2: 0.043 loss_pix: 0.043 loss: 0.087 batch_cost: 1.26830 sec reader_cost: 0.00141 sec ips: 1.57691 images/s eta: 2 days, 4:40:36
