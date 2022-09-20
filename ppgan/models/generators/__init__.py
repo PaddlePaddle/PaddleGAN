@@ -41,5 +41,6 @@ from .msvsr import MSVSR
 from .generator_singan import SinGANGenerator
 from .rcan import RCAN
 from .prenet import PReNet
+from .gpen import GPEN
 from .gfpganv1_clean_arch import GFPGANv1Clean
 from .gfpganv1_arch_paddle import GFPGANv1, StyleGAN2DiscriminatorGFPGAN
