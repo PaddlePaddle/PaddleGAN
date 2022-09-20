@@ -36,9 +36,9 @@ dataset:
     batch_size: 2  #8 gpus
     dataset:
       name: VSRREDSMultipleGTDataset
-      lq_folder: ./root/paddlejob/workspace/work/niuliling/data/REDS/train_sharp_bicubic/X4
-      gt_folder: ./root/paddlejob/workspace/work/niuliling/data/REDS/train_sharp/X4
-      ann_file: ./root/paddlejob/workspace/work/niuliling/data/REDS/meta_info_REDS_GT.txt
+      lq_folder: /root/paddlejob/workspace/work/niuliling/data/REDS/train_sharp_bicubic/X4
+      gt_folder: /root/paddlejob/workspace/work/niuliling/data/REDS/train_sharp/X4
+      ann_file: /root/paddlejob/workspace/work/niuliling/data/REDS/meta_info_REDS_GT.txt
       num_frames: 20
       preprocess:
         - name: GetNeighboringFramesIdx
@@ -69,9 +69,9 @@ dataset:
 
   test:
     name: VSRREDSMultipleGTDataset
-    lq_folder: data/REDS/REDS4_test_sharp_bicubic/X4
-    gt_folder: data/REDS/REDS4_test_sharp/X4
-    ann_file: data/REDS/meta_info_REDS_GT.txt
+    lq_folder: /root/paddlejob/workspace/work/niuliling/data/REDS/REDS4_test_sharp_bicubic/X4
+    gt_folder: /root/paddlejob/workspace/work/niuliling/data/REDS/REDS4_test_sharp/X4
+    ann_file: /root/paddlejob/workspace/work/niuliling/data/REDS/meta_info_REDS_GT.txt
     num_frames: 100
     test_mode: True
     preprocess:
