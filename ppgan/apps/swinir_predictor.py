@@ -138,9 +138,7 @@ class SwinIRPredictor(BasePredictor):
 
             img_L = self.uint2single(img_L)
 
-            # --------------------------------
             # HWC to CHW, numpy to tensor
-            # --------------------------------
             img_L = self.single2tensor3(img_L)
             img_L = img_L.unsqueeze(0)
             with paddle.no_grad():

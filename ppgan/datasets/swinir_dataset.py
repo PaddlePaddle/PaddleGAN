@@ -120,9 +120,7 @@ class SwinIRDataset(Dataset):
         return len(self.paths_H)
 
     def __getitem__(self, index):
-        # ------------------------------------
         # get H image
-        # ------------------------------------
         H_path = self.paths_H[index]
 
         img_H = imread_uint(H_path, self.n_channels)
@@ -133,25 +131,19 @@ class SwinIRDataset(Dataset):
             # get L/H patch pairs
             H, W, _ = img_H.shape
 
-            # --------------------------------
             # randomly crop the patch
-            # --------------------------------
             rnd_h = random.randint(0, max(0, H - self.patch_size))
             rnd_w = random.randint(0, max(0, W - self.patch_size))
             patch_H = img_H[rnd_h:rnd_h + self.patch_size,
                             rnd_w:rnd_w + self.patch_size, :]
 
-            # --------------------------------
             # augmentation - flip, rotate
-            # --------------------------------
             mode = random.randint(0, 7)
             patch_H = augment_img(patch_H, mode=mode)
             img_H = uint2tensor3(patch_H)
             img_L = img_H.clone()
 
-            # --------------------------------
             # add noise
-            # --------------------------------
             noise = paddle.randn(img_L.shape) * self.sigma / 255.0
             img_L = img_L + noise
 
@@ -160,15 +152,11 @@ class SwinIRDataset(Dataset):
             img_H = uint2single(img_H)
             img_L = np.copy(img_H)
 
-            # --------------------------------
             # add noise
-            # --------------------------------
             np.random.seed(seed=0)
             img_L += np.random.normal(0, self.sigma_test / 255.0, img_L.shape)
 
-            # --------------------------------
             # HWC to CHW, numpy to tensor
-            # --------------------------------
             img_L = single2tensor3(img_L)
             img_H = single2tensor3(img_H)
 
