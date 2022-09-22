@@ -71,11 +71,17 @@ the params is a dict(one type in python),and could be load by paddlepaddle. It c
 
 Enter the following code in the console to start training：
 
- ```shell
+ ```bash
  python tools/main.py -c configs/gfpgan_1024_ffhq.yaml
  ```
 
-The model only supports single-card training.
+The model supports single-card training and multi-card training.So you can use this bash to train
+
+ ```bash
+!CUDA_VISIBLE_DEVICES=0,1,2,3
+!python -m paddle.distributed.launch tools/main.py \
+        --config-file configs/gpfgan_1024_ffhq.yaml
+ ```
 
 Model training needs to use paddle2.3 and above, and wait for paddle to implement the second-order operator related functions of elementwise_pow. The paddle2.2.2 version can run normally, but the model cannot be successfully trained because some loss functions will calculate the wrong gradient. . If an error is reported during training, training is not supported for the time being. You can skip the training part and directly use the provided model parameters for testing. Model evaluation and testing can use paddle2.2.2 and above.
 
