@@ -4,7 +4,7 @@ python:python3.7
 gpu_list:0
 ##
 auto_cast:null
-total_iters:lite_train_lite_infer=1|lite_train_whole_infer=10|whole_train_whole_infer=800
+total_iters:lite_train_lite_infer=10|lite_train_whole_infer=10|whole_train_whole_infer=800
 output_dir:./output/
 dataset.train.batch_size:lite_train_lite_infer=3|whole_train_whole_infer=3
 pretrained_model:null
@@ -13,7 +13,7 @@ train_infer_img_dir:null
 null:null
 ##
 trainer:norm_train
-norm_train:tools/main.py -c configs/gfpgan_1024_ffhq.yaml --seed 123 -o log_config.interval=1 snapshot_config.interval=1
+norm_train:tools/main.py -c configs/gfpgan_1024_ffhq.yaml --seed 123 -o log_config.interval=1 snapshot_config.interval=10
 pact_train:null
 fpgm_train:null
 distill_train:null

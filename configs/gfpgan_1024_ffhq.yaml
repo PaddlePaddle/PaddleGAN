@@ -134,7 +134,7 @@ dataset:
     train:
         name: FFHQDegradationDataset
         # dataroot_gt: datasets/ffhq/ffhq_512.lmdb
-        dataroot_gt: /home/aistudio/data/train
+        dataroot_gt: data/gfpgan_data/train
         io_backend:
             # type: lmdb
             type: disk
@@ -180,8 +180,8 @@ dataset:
         name: PairedImageDataset
         # dataroot_lq: convert_module/input
         # dataroot_gt: convert_module/gt_folder
-        dataroot_lq: /home/aistudio/data/lq
-        dataroot_gt: /home/aistudio/data/gt
+        dataroot_lq: data/gfpgan_data/lq
+        dataroot_gt: data/gfpgan_data/gt
         io_backend:
             type: disk
         mean: [0.5, 0.5, 0.5]
