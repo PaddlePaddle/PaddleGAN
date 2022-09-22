@@ -70,7 +70,7 @@ if [ ${MODE} = "lite_train_lite_infer" ];then
         mv ./data/SinGAN-official_images/Images/stone.png ./data/singan ;;
     GFPGAN)
         rm -rf ./data/gfpgan*
-        wget -nc -P ./data/ https://gfpgan-1305919540.cos.ap-beijing.myqcloud.com/gfpgan_tipc_data.zip --no-check-certificate
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/gfpgan_tipc_data.zip --no-check-certificate
         mkdir -p ./data/gfpgan_data
         cd ./data/ && unzip -q gfpgan_tipc_data.zip -d gfpgan_data/ && cd ../ ;;
     esac
