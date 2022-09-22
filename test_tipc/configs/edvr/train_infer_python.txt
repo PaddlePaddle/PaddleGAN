@@ -13,7 +13,7 @@ train_infer_img_dir:./data/basicvsr_reds/test
 null:null
 ##
 trainer:norm_train
-norm_train:tools/main.py -c configs/edvr_m_wo_tsa.yaml --seed 123 -o log_config.interval=5
+norm_train:tools/main.py -c configs/edvr_m_wo_tsa.yaml --seed 123 -o log_config.interval=5 snapshot_config.interval=25
 pact_train:null
 fpgm_train:null
 distill_train:null
@@ -24,6 +24,31 @@ null:null
 eval:null
 null:null
 ##
+===========================infer_params===========================
+--output_dir:./output/
+load:null
+norm_export:tools/export_model.py -c configs/edvr_m_wo_tsa.yaml  --inputs_size="1,5,3,180,320" --model_name inference --load
+quant_export:null
+fpgm_export:null
+distill_export:null
+export1:null
+export2:null
+inference_dir:inference
+train_model:./inference/edvr/edvrmodel_generator
+infer_export:null
+infer_quant:False
+inference:tools/inference.py --model_type edvr -c configs/edvr_m_wo_tsa.yaml --seed 123 -o dataset.test.num_frames=5 --output_path test_tipc/output/
+--device:gpu
+null:null
+null:null
+null:null
+null:null
+null:null
+--model_path:
+null:null
+null:null
+--benchmark:True
+null:null
 ===========================train_benchmark_params==========================
 batch_size:64
 fp_items:fp32
