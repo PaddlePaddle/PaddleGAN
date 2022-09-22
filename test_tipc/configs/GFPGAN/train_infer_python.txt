@@ -4,9 +4,9 @@ python:python3.7
 gpu_list:0
 ##
 auto_cast:null
-total_iters:lite_train_lite_infer=10|lite_train_whole_infer=10|whole_train_whole_infer=800
+total_iters:lite_train_lite_infer=10
 output_dir:./output/
-dataset.train.batch_size:lite_train_lite_infer=3|whole_train_whole_infer=3
+dataset.train.batch_size:lite_train_lite_infer=3
 pretrained_model:null
 train_model_name:gfpgan_1024_ffhq*/*checkpoint.pdparams
 train_infer_img_dir:null
