@@ -183,11 +183,10 @@ To invoke the `lite_train_lite_infer` mode of the foot test base training predic
 ## 5、References
 
 ```
-@misc{2021GAN,
-      title={GAN Prior Embedded Network for Blind Face Restoration in the Wild},
-      author={ Yang, T.  and  Ren, P.  and  Xie, X.  and  Zhang, L. },
-      year={2021},
-      archivePrefix={CVPR},
-      primaryClass={cs.CV}
+@InProceedings{wang2021gfpgan,
+    author = {Xintao Wang and Yu Li and Honglun Zhang and Ying Shan},
+    title = {Towards Real-World Blind Face Restoration with Generative Facial Prior},
+    booktitle={The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+    year = {2021}
 }
 ```
