@@ -1,15 +1,29 @@
+#   Copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import cv2
 import math
 import numpy as np
 from collections import OrderedDict
 import os
+
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
 from paddle.vision.models import vgg
-import random
-import yaml
+
 from .builder import CRITERIONS
+from ppgan.utils.download import get_path_from_url
 
 VGG_PRETRAIN_PATH = os.path.join(os.getcwd(), 'pretrain', 'vgg19' + '.pdparams')
 NAMES = {
@@ -61,9 +75,6 @@ def insert_bn(names):
             position = name.replace('conv', '')
             names_bn.append('bn' + position)
     return names_bn
-
-
-from ppgan.utils.download import get_path_from_url
 
 
 class VGGFeatureExtractor(nn.Layer):
@@ -119,7 +130,6 @@ class VGGFeatureExtractor(nn.Layer):
         else:
             vgg_net = getattr(vgg, vgg_type)(pretrained=True)
         features = vgg_net.features[:max_idx + 1]
-        # modified_net = OrderedDict()
         self.vgg_layers = nn.Sequential()
         for k, v in zip(self.names, features):
             if 'pool' in k:
@@ -128,12 +138,8 @@ class VGGFeatureExtractor(nn.Layer):
                 else:
                     self.vgg_layers.add_sublayer(
                         k, nn.MaxPool2D(kernel_size=2, stride=pooling_stride))
-                    # modified_net[k] = nn.MaxPool2D(kernel_size=2, stride=pooling_stride)
             else:
                 self.vgg_layers.add_sublayer(k, v)
-                # modified_net[k] = v
-            # print(self.vgg_layers[k])
-        # self.vgg_layers = nn.Sequential(modified_net)
 
         if not requires_grad:
             self.vgg_layers.eval()
@@ -147,7 +153,6 @@ class VGGFeatureExtractor(nn.Layer):
             self.register_buffer(
                 'mean',
                 paddle.to_tensor([0.485, 0.456, 0.406]).reshape([1, 3, 1, 1]))
-            # the std is for image with range [-1, 1]
             self.register_buffer(
                 'std',
                 paddle.to_tensor([0.229, 0.224, 0.225]).reshape([1, 3, 1, 1]))
@@ -169,17 +174,9 @@ class VGGFeatureExtractor(nn.Layer):
 
         for name, module in self.vgg_layers.named_children():
             x = module(x)
-            # if rep!=None:rep.add(x,save=True,name=name)
             if name in self.layer_name_list:
                 output[name] = x.clone()
-        # print(x.mean())
         return output
-
-        # for key, layer in self.vgg_layers._modules.items():
-        #     x = layer(x)
-        #     if key in self.layer_name_list:
-        #         output[key] = x.clone()
-        # return output
 
 
 @CRITERIONS.register()
@@ -243,7 +240,6 @@ class GFPGANPerceptualLoss(nn.Layer):
         """
         x_features = self.vgg(x, rep)
         gt_features = self.vgg(gt.detach())
-        # rep.add(x_features,save=True)
         if self.perceptual_weight > 0:
             percep_loss = 0
             for k in x_features.keys():
@@ -388,7 +384,6 @@ class GFPGANGANLoss(nn.Layer):
         Returns:
             Tensor: GAN loss value.
         """
-        # print('input',input.mean().numpy().astype(np.float32))
         target_label = self.get_target_label(input, target_is_real)
         if self.gan_type == 'hinge':
             if is_disc:  # for discriminators in hinge-gan

@@ -10,7 +10,7 @@ GFP-GAN that leverages rich and diverse priors encapsulated in a pretrained face
 
 GFP-GAN is comprised of a degradation removal
 module (U-Net) and a pretrained face GAN (such as StyleGAN2) as prior. They are bridged by a latent code
-mapping and several Channel-Split Spatial Feature Transform (CS-SFT) layers. 
+mapping and several Channel-Split Spatial Feature Transform (CS-SFT) layers.
 
 By dealing with features, it achieving realistic results while preserving high fidelity.
 
@@ -39,10 +39,10 @@ The result of experiments of recovering of GFPGAN as following:
 
 ### 2.1 Dataset Preparation
 
-The GFPGAN model training set is the classic FFHQ face data set, 
-with a total of 70,000 high-resolution 1024 x 1024 high-resolution face pictures, 
+The GFPGAN model training set is the classic FFHQ face data set,
+with a total of 70,000 high-resolution 1024 x 1024 high-resolution face pictures,
 and the test set is the CELEBA-HQ data set, with a total of 2,000 high-resolution face pictures. The generation way is the same as that during training.
-For details, please refer to **Dataset URL:** [FFHQ](https://github.com/NVlabs/ffhq-dataset), [CELEBA-HQ](https://github.com/tkarras/progressive_growing_of_gans). 
+For details, please refer to **Dataset URL:** [FFHQ](https://github.com/NVlabs/ffhq-dataset), [CELEBA-HQ](https://github.com/tkarras/progressive_growing_of_gans).
 The specific download links are given below:
 
 **Original dataset download address:**
@@ -124,15 +124,15 @@ import cv2
 import numpy as np
 import sys
 from ppgan.faceutils.face_enhancement.gfpgan_enhance import gfp_FaceEnhancement
-# 图片路径可以用自己的
+# you can use your path
 img_path='test/2.png'
 img = cv2.imread(img_path, cv2.IMREAD_COLOR)
-# 这是原来的模糊图片
+# this is origin picture
 cv2.imwrite('test/outlq.png',img)
 img=np.array(img).astype('float32')
 faceenhancer = gfp_FaceEnhancement()
 img = faceenhancer.enhance_from_image(img)
-# 这是生成的清晰图片
+# the result of prediction
 cv2.imwrite('test/out_gfpgan.png',img)
 ```
 

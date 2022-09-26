@@ -12,24 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import math
+import sys
 import paddle
+from paddle.nn import functional as F
+from paddle import autograd
 
 from .base_model import BaseModel
-
 from .builder import MODELS
 from .generators.builder import build_generator
 from .discriminators.builder import build_discriminator
 from .criterions.builder import build_criterion
 from ..modules.init import init_weights
 from collections import OrderedDict
-from paddle.nn import functional as F
-from paddle import autograd
-from ppgan.utils.visual import *
 from ..solver import build_lr_scheduler, build_optimizer
+from ppgan.utils.visual import *
 from ppgan.models.generators.gfpganv1_arch_paddle import FacialComponentDiscriminator
 from ppgan.utils.download import get_path_from_url
-import math
-import sys
 
 
 @MODELS.register()
@@ -178,11 +177,8 @@ class GFPGANModel(BaseModel):
 
         # get roi-align regions
         if self.use_facial_disc:
-            # # print('arrive self.losses')
             self.get_roi_regions(eye_out_size=80, mouth_out_size=120)
-        # # print('arrive self.losses')
         l_g_total = 0
-        # self.losses = OrderedDict()
         if (self.current_iter % self.net_d_iters == 0
                 and self.current_iter > self.net_d_init_iters):
             # pixel loss
@@ -278,7 +274,6 @@ class GFPGANModel(BaseModel):
                 out_gray = self.gray_resize_for_identity(self.output)
                 gt_gray = self.gray_resize_for_identity(self.gt)
 
-                # # print(gt_gray.shape)
                 identity_gt = self.network_identity(gt_gray).detach()
                 identity_out = self.network_identity(out_gray)
                 l_identity = self.cri_l1(identity_out,
@@ -288,7 +283,6 @@ class GFPGANModel(BaseModel):
 
             l_g_total.backward()
             self.optimizers['optim_g'].step()
-        # print('arrive ned_d params')
         # EMA
         self.accumulate(self.nets['net_g_ema'],
                         self.nets['net_g'],
@@ -364,7 +358,6 @@ class GFPGANModel(BaseModel):
             self.optimizers['optim_net_d_right_eye'].step()
             self.optimizers['optim_net_d_mouth'].step()
         # if self.current_iter%1000==0:
-        # print('model_current_iter',self.current_iter)
 
     def test_iter(self, metrics=None):
         self.nets['net_g_ema'].eval()
@@ -476,7 +469,6 @@ class GFPGANModel(BaseModel):
         rois_eyes = paddle.concat(rois_eyes, 0)
         rois_mouths = paddle.concat(rois_mouths, 0)
         # real images
-        # # print('gt_shape',self.gt.shape,rois_eyes.shape)
         num_eye = paddle.to_tensor(num_eye, dtype='int32')
         num_mouth = paddle.to_tensor(num_mouth, dtype='int32')
 
@@ -493,13 +485,11 @@ class GFPGANModel(BaseModel):
                                    output_size=mouth_out_size,
                                    aligned=False) * face_ratio
         # output
-        # # print('arrive self.losses finish 2 roi',self.mouths_gt)
         all_eyes = roi_align(self.output,
                              boxes=rois_eyes,
                              boxes_num=num_eye,
                              output_size=eye_out_size,
                              aligned=False) * face_ratio
-        # # print('arrive self.losses finish 3 roi',all_eyes)
         self.left_eyes = all_eyes[0::2, :, :, :]
         self.right_eyes = all_eyes[1::2, :, :, :]
         self.mouths = roi_align(self.output,
@@ -507,7 +497,6 @@ class GFPGANModel(BaseModel):
                                 boxes_num=num_mouth,
                                 output_size=mouth_out_size,
                                 aligned=False) * face_ratio
-        # # print('arrive self.losses finish 4 roi',self.mouths)
 
     def _gram_mat(self, x):
         """Calculate Gram matrix.

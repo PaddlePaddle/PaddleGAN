@@ -1,4 +1,4 @@
-#   Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
+#   Copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,18 +11,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-import paddle
-import paddle.nn as nn
 import math
 import cv2
 import numpy as np
+import sys
+
+import paddle
+import paddle.nn as nn
+
 from ppgan.utils.visual import *
 from ppgan.utils.download import get_path_from_url
 from ppgan.models.generators import GFPGANv1Clean
 from ppgan.models.generators import GFPGANv1
 from ppgan.faceutils.face_detection.detection.blazeface.utils import *
-import sys
 GFPGAN_weights = 'https://paddlegan.bj.bcebos.com/models/GFPGAN.pdparams'
 
 

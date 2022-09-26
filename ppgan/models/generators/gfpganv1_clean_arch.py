@@ -13,10 +13,11 @@
 # limitations under the License.
 import math
 import random
+
 import paddle
 from paddle import nn
 from paddle.nn import functional as F
-import paddle
+
 from ppgan.models.generators.stylegan2_clean_arch import StyleGAN2GeneratorClean
 from ppgan.models.generators.builder import GENERATORS
 
@@ -316,9 +317,6 @@ class GFPGANv1Clean(nn.Layer):
             conditions.append(shift.clone())
             if return_rgb:
                 out_rgbs.append(self.toRGB[i](feat))
-
-        # debug(conditions)
-        # debug(style_code)
 
         image, _ = self.stylegan_decoder(styles=[style_code],
                                          conditions=conditions,

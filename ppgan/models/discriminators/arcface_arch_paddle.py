@@ -1,6 +1,20 @@
+#   Copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
+
 from .builder import DISCRIMINATORS
 
 
@@ -207,8 +221,6 @@ class ResNetArcFace(nn.Layer):
     def __init__(self, block, layers, use_se=True, reprod_logger=None):
         if block == 'IRBlock':
             block = IRBlock
-        # print('arrive ResNetArcFace')
-        #self.reprod_logger=reprod_logger
         self.inplanes = 64
         self.use_se = use_se
         super(ResNetArcFace, self).__init__()
@@ -227,7 +239,6 @@ class ResNetArcFace(nn.Layer):
         self.apply(self._init_weights)
 
     def _init_weights(self, m):
-        # print(m.name)
         if isinstance(m, paddle.nn.Conv2D):
             nn.initializer.XavierNormal(m.weight)
         elif isinstance(m, paddle.nn.BatchNorm2D) or isinstance(
@@ -260,19 +271,12 @@ class ResNetArcFace(nn.Layer):
     def forward(self, x):
         x = self.conv1(x)
         x = self.bn1(x)
-        # print(x.shape)
-        #self.reprod_logger.add("bn1", x.numpy())
         x = self.prelu(x)
-        #self.reprod_logger.add("prelu", x.numpy())
         x = self.maxpool(x)
         x = self.layer1(x)
-        #self.reprod_logger.add("layer1", x.numpy())
         x = self.layer2(x)
-        #self.reprod_logger.add("layer2", x.numpy())
         x = self.layer3(x)
-        #self.reprod_logger.add("layer3", x.numpy())
         x = self.layer4(x)
-        #self.reprod_logger.add("layer4", x.numpy())
         x = self.bn4(x)
         x = self.dropout(x)
         x = x.reshape([x.shape[0], -1])

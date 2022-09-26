@@ -2,7 +2,6 @@
 # This implementation is licensed under the Apache License 2.0.
 # Copyright (c) mseitzer
 
-
 import os
 import fnmatch
 import numpy as np

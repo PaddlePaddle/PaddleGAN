@@ -596,7 +596,6 @@ class GFPGANv1(nn.Layer):
             return_rgb (bool): Whether return intermediate rgb images. Default: True.
             randomize_noise (bool): Randomize noise, used when 'noise' is False. Default: True.
         """
-        # paddle.save(self.stylegan_decoder.state_dict(), "StyleGAN2_512_Cmul1_FFHQ_B12G4_scratch_800k.pdparams")
         conditions = []
         unet_skips = []
         out_rgbs = []
@@ -735,7 +734,6 @@ class ConvUpLayer(nn.Layer):
         else:
             pass
             self.bias = None
-            # self.register_parameter('bias', None)
         if activate:
             if bias:
                 self.activation = FusedLeakyReLU(out_channels)
@@ -1310,7 +1308,6 @@ class EqualConv2d(nn.Layer):
         else:
             pass
             self.bias = None
-            # self.register_parameter('bias', None)
 
     def forward(self, x):
         out = F.conv2d(x,
