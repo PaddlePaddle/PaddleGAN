@@ -34,6 +34,9 @@ The result of experiments of recovering of GFPGAN as following:
 [09/15 13:16:13] ppgan.engine.trainer INFO: Metric fid: 36.8068
 [09/15 13:16:14] ppgan.engine.trainer INFO: Metric LPIPS: 0.3817
 ```
+Model | LPIPS | FID | PSNR
+--- |:---:|:---:|:---:|
+GFPGAN | 0.3817 | 36.8068 | 65.0461
 
 ## 2、Ready to work
 

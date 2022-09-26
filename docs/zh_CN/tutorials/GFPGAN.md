@@ -33,6 +33,9 @@ GFPGAN的回收实验结果如下:
 [09/15 13:16:13] ppgan.engine.trainer INFO: Metric fid: 36.8068
 [09/15 13:16:14] ppgan.engine.trainer INFO: Metric LPIPS: 0.3817
 ```
+Model | LPIPS | FID | PSNR
+--- |:---:|:---:|:---:|
+GFPGAN | 0.3817 | 36.8068 | 65.0461
 
 ## 2、准备工作
 
@@ -41,7 +44,7 @@ GFPGAN的回收实验结果如下:
 GFPGAN模型训练集是经典的FFHQ人脸数据集，
 总共有7万张高分辨率1024 x 1024的人脸图片，
 测试集为CELEBA-HQ数据集，共有2000张高分辨率人脸图片。生成方式与训练时相同。
-For details, please refer to **Dataset URL:** [FFHQ](https://github.com/NVlabs/ffhq-dataset), [CELEBA-HQ](https://github.com/tkarras/progressive_growing_of_gans). 
+For details, please refer to **Dataset URL:** [FFHQ](https://github.com/NVlabs/ffhq-dataset), [CELEBA-HQ](https://github.com/tkarras/progressive_growing_of_gans).
 The specific download links are given below:
 
 **原始数据集地址:**
