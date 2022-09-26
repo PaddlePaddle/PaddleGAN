@@ -118,29 +118,8 @@ class MultiStageVSRModel(BaseSRModel):
                     net.find_unused_parameters = False
 
         # put loss computation in amp context
-        #with paddle.amp.auto_cast(custom_black_list={'add', 'add_raw', 'cast', 'check_finite_and_unscale', 'concat', 'conv2d', 'divide', 'equal', 'flip', 'full', 'leaky_relu', 'mean', 'multiply', 'pool2d', 'pow', 'relu', 'reshape', 'scale', 'sigmoid', 'slice', 'split', 'sqrt', 'stack', 'subtract', 'tanh', 'tile', 'transpose'}, level=amp_level):
-        with paddle.amp.auto_cast(custom_black_list={
- #'transpose',
- #'subtract',
- #'relu',
- #'reshape',
- #'slice',
-# 'split',
- 'scale',
-# 'sigmoid',
-# 'check_finite_and_unscale',
-# 'divide',
-# 'flip',
-# 'mean',
-# 'multiply',
-# 'pool2d',
-# 'tile',
-# 'tanh',
-# 'stack',
-
- 'sqrt',
-# 'pow'
- }, level=amp_level):
+        with paddle.amp.auto_cast(enable=True, custom_black_list ={'scale', 'sqrt'}, level=amp_level):
+        #with paddle.amp.auto_cast(custom_black_list={'scale', 'sqrt'}, level=amp_level):
             output = self.nets['generator'](self.lq)
             if isinstance(output, (list, tuple)):
                 out_stage2, output = output
@@ -165,9 +144,11 @@ class MultiStageVSRModel(BaseSRModel):
         self.gt = self.gt.cpu()
         self.nets['generator'].eval()
         with paddle.no_grad():
-            output = self.nets['generator'](self.lq)
-            if isinstance(output, (list, tuple)):
-                out_stage1, output = output
+            #with paddle.amp.auto_cast(enable=True, level='O2'):
+            with paddle.amp.auto_cast(enable=True, custom_black_list ={'scale', 'sqrt'}, level='O2'):
+                output = self.nets['generator'](self.lq)
+                if isinstance(output, (list, tuple)):
+                    out_stage1, output = output
         self.nets['generator'].train()
 
         out_img = []
