@@ -53,8 +53,8 @@ The specific download links are given below:
         |-- 00999.png
         |-- ......
         |-- 69999.png
-	|-- lq
-		|-- 2000张jpg图片
+    |-- lq
+	|-- 2000张jpg图片
     |-- gt  
         |-- 2000张jpg图片
 ```
