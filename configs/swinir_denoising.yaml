@@ -39,7 +39,7 @@ dataset:
       H_size: 128
       sigma: 15
       sigma_test: 15
-      dataroot_H: data/trainsets/trainH
+      dataroot_H: data/trainsets/CBSD68
 
 export_model:
   - {name: 'generator', inputs_num: 1}
