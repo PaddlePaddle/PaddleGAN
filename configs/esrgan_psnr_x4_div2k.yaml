@@ -15,6 +15,9 @@ model:
   pixel_criterion:
     name: L1Loss
 
+export_model:
+  - {name: 'generator', inputs_num: 1}
+
 dataset:
   train:
     name: SRDataset
