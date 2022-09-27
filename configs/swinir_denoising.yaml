@@ -39,19 +39,19 @@ dataset:
       H_size: 128
       sigma: 15
       sigma_test: 15
-      dataroot_H: data/trainsets/CBSD68
+      dataroot_H: data/testsets/CBSD68
 
 export_model:
   - {name: 'generator', inputs_num: 1}
 
 lr_scheduler:
   name: MultiStepDecay
-  learning_rate: 5e-5 # num_gpu * 5e-5, Standard training uses 4 gpus
+  learning_rate: 5e-5 # num_gpu * 5e-5
   milestones: [3200000, 4800000, 5600000, 6000000, 6400000]
   gamma: 0.5
 
 validate:
-  interval: 5000
+  interval: 200
   save_img: True
 
   metrics:
@@ -79,4 +79,4 @@ log_config:
   visiual_interval: 5000
 
 snapshot_config:
-  interval: 5000
+  interval: 500
