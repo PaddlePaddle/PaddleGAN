@@ -1,5 +1,5 @@
 total_iters: 800000
-output_dir: output/
+output_dir: output
 find_unused_parameters: True
 
 log_config:
@@ -61,7 +61,6 @@ model:
         layers: [2, 2, 2, 2]
         use_se: False
 
-    # path
     path:
         image_visual: gfpgan_train_outdir
         pretrain_network_g: ~

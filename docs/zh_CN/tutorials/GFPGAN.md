@@ -21,18 +21,7 @@ GFP-GAN由降解去除物组成
 
 GFPGAN的回收实验结果如下:
 
-```
-[09/15 13:14:57] ppgan.engine.trainer INFO: Iter: 210000/800000 lr: 2.000e-03 l_g_pix: 0.012 l_p_8: 0.000 l_p_16: 0.000 l_p_32: 0.000 l_p_64: 0.000 l_p_128: 0.000 l_p_256: 0.000 l_p_512: 0.000 l_g_percep: 9.977 l_g_style: 1.725 l_g_gan: 0.301 l_g_gan_left_eye: 0.731 l_g_gan_right_eye: 0.848 l_g_gan_mouth: 0.898 l_g_comp_style_loss: 1.014 l_identity: 0.502 l_d: 0.517 real_score: 0.574 fake_score: -2.958 l_d_left_eye: 1.450 l_d_right_eye: 1.382 l_d_mouth: 1.266 l_d_r1: 4.474 batch_cost: 1.12074 sec reader_cost: 0.00216 sec ips: 2.67681 images/s eta: 7 days, 15:40:36
-[09/15 13:14:58] ppgan.engine.trainer INFO: Test iter: [0/252]
-[09/15 13:15:00] ppgan.engine.trainer INFO: Test iter: [4/252]
-[09/15 13:15:01] ppgan.engine.trainer INFO: Test iter: [8/252]
-[09/15 13:15:02] ppgan.engine.trainer INFO: Test iter: [12/252]
 
-[09/15 13:15:58] ppgan.engine.trainer INFO: Test iter: [248/252]
-[09/15 13:15:59] ppgan.engine.trainer INFO: Metric psnr: 65.0461
-[09/15 13:16:13] ppgan.engine.trainer INFO: Metric fid: 36.8068
-[09/15 13:16:14] ppgan.engine.trainer INFO: Metric LPIPS: 0.3817
-```
 Model | LPIPS | FID | PSNR
 --- |:---:|:---:|:---:|
 GFPGAN | 0.3817 | 36.8068 | 65.0461
@@ -53,8 +42,24 @@ The specific download links are given below:
 
 **CELEBA-HQ：** https://drive.google.com/drive/folders/0B4qLcYyJmiz0TXY1NG02bzZVRGs?resourcekey=0-arAVTUfW9KRhN-irJchVKQ&usp=sharing
 
+数据集结构如下
 
-请在configs/gfpgan_1024_ffhq. data中修改数据集train和test的dataroot参数。Yaml配置文件到您的训练集和测试集路径。
+```
+|-- data/GFPGAN
+    |-- train
+        |-- 00000.png
+        |-- 00001.png
+        |-- ......
+        |-- 00999.png
+        |-- ......
+        |-- 69999.png
+	|-- lq
+		|-- 2000张jpg图片
+    |-- gt  
+        |-- 2000张jpg图片
+```
+
+请在configs/gfpgan_ffhq1024. data中修改数据集train和test的dataroot参数。Yaml配置文件到您的训练集和测试集路径。
 
 ### 2.2 模型准备
 **模型参数文件和训练日志下载地址:**
@@ -71,7 +76,7 @@ params是一个dict(python中的一种类型)，可以通过paddlepaddle加载�
 在控制台中输入以下代码开始训练:
 
  ```bash
- python tools/main.py -c configs/gfpgan_1024_ffhq.yaml
+ python tools/main.py -c configs/gfpgan_ffhq1024.yaml
  ```
 
 该模型支持单卡训练和多卡训练。
@@ -80,7 +85,7 @@ params是一个dict(python中的一种类型)，可以通过paddlepaddle加载�
 ```bash
 !CUDA_VISIBLE_DEVICES=0,1,2,3
 !python -m paddle.distributed.launch tools/main.py \
-        --config-file configs/gpfgan_1024_ffhq.yaml
+        --config-file configs/gpfgan_ffhq1024.yaml
 ```
 
 模型训练需要使用paddle2.3及以上版本，等待paddle实现elementwise_pow的二阶算子相关函数。paddle2.2.2版本可以正常运行，但由于某些损失函数会计算出错误的梯度，无法成功训练模型。如果在培训过程中报错，则暂时不支持培训。您可以跳过训练部分，直接使用提供的模型参数进行测试。模型评估和测试可以使用paddle2.2.2及以上版本。
@@ -90,7 +95,7 @@ params是一个dict(python中的一种类型)，可以通过paddlepaddle加载�
 当评估模型时，在控制台中输入以下代码，使用上面提到的下载的模型参数:
 
  ```shell
-python tools/main.py -c configs/gfpgan_1024_ffhq.yaml --load GFPGAN.pdparams --evaluate-only
+python tools/main.py -c configs/gfpgan_ffhq1024.yaml --load GFPGAN.pdparams --evaluate-only
  ```
 
 当评估模型时，在控制台中输入以下代码，使用下载的模型。如果您想在您自己提供的模型上进行测试，请修改之后的路径 --load .
@@ -105,7 +110,7 @@ python tools/main.py -c configs/gfpgan_1024_ffhq.yaml --load GFPGAN.pdparams --e
 输入以下命令提取生成器的模型:
 
 ```bash
-python -u tools/export_model.py --config-file configs/gfpgan_1024_ffhq.yaml \
+python -u tools/export_model.py --config-file configs/gfpgan_ffhq1024.yaml \
     --load GFPGAN.pdparams \
     --inputs_size 1,3,512,512
 ```
@@ -146,7 +151,7 @@ cv2.imwrite('test/out_gfpgan.png',img)
 ### 4.1 导出推理模型
 
 ```bash
-python -u tools/export_model.py --config-file configs/gfpgan_1024_ffhq.yaml \
+python -u tools/export_model.py --config-file configs/gfpgan_ffhq1024.yaml \
     --load GFPGAN.pdparams \
     --inputs_size 1,3,512,512
 ```
@@ -157,7 +162,7 @@ python -u tools/export_model.py --config-file configs/gfpgan_1024_ffhq.yaml \
 %cd /home/aistudio/work/PaddleGAN
 # %env PYTHONPATH=.:$PYTHONPATH
 # %env CUDA_VISIBLE_DEVICES=0
-!python -u tools/inference.py --config-file configs/gfpgan_1024_ffhq.yaml \
+!python -u tools/inference.py --config-file configs/gfpgan_ffhq1024.yaml \
     --model_path GFPGAN.pdparams \
     --model_type gfpgan \
     --device gpu \

@@ -113,9 +113,11 @@ class ModulatedConv2d(nn.Layer):
         return out
 
     def __repr__(self):
-        return (
-            f'{self.__class__.__name__}(in_channels={self.in_channels}, out_channels={self.out_channels}, kernel_size={self.kernel_size}, demodulate={self.demodulate}, sample_mode={self.sample_mode})'
-        )
+        return (f'{self.__class__.__name__}(in_channels={self.in_channels}, \
+            out_channels={self.out_channels}, \
+            kernel_size={self.kernel_size}, \
+            demodulate={self.demodulate}, \
+            sample_mode={self.sample_mode})')
 
 
 class StyleConv(nn.Layer):

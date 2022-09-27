@@ -22,18 +22,6 @@ our model with Adam optimizer for a total of 210k iterations.
 
 The result of experiments of recovering of GFPGAN as following:
 
-```
-[09/15 13:14:57] ppgan.engine.trainer INFO: Iter: 210000/800000 lr: 2.000e-03 l_g_pix: 0.012 l_p_8: 0.000 l_p_16: 0.000 l_p_32: 0.000 l_p_64: 0.000 l_p_128: 0.000 l_p_256: 0.000 l_p_512: 0.000 l_g_percep: 9.977 l_g_style: 1.725 l_g_gan: 0.301 l_g_gan_left_eye: 0.731 l_g_gan_right_eye: 0.848 l_g_gan_mouth: 0.898 l_g_comp_style_loss: 1.014 l_identity: 0.502 l_d: 0.517 real_score: 0.574 fake_score: -2.958 l_d_left_eye: 1.450 l_d_right_eye: 1.382 l_d_mouth: 1.266 l_d_r1: 4.474 batch_cost: 1.12074 sec reader_cost: 0.00216 sec ips: 2.67681 images/s eta: 7 days, 15:40:36
-[09/15 13:14:58] ppgan.engine.trainer INFO: Test iter: [0/252]
-[09/15 13:15:00] ppgan.engine.trainer INFO: Test iter: [4/252]
-[09/15 13:15:01] ppgan.engine.trainer INFO: Test iter: [8/252]
-[09/15 13:15:02] ppgan.engine.trainer INFO: Test iter: [12/252]
-
-[09/15 13:15:58] ppgan.engine.trainer INFO: Test iter: [248/252]
-[09/15 13:15:59] ppgan.engine.trainer INFO: Metric psnr: 65.0461
-[09/15 13:16:13] ppgan.engine.trainer INFO: Metric fid: 36.8068
-[09/15 13:16:14] ppgan.engine.trainer INFO: Metric LPIPS: 0.3817
-```
 Model | LPIPS | FID | PSNR
 --- |:---:|:---:|:---:|
 GFPGAN | 0.3817 | 36.8068 | 65.0461
@@ -54,8 +42,25 @@ The specific download links are given below:
 
 **CELEBA-HQ：** https://drive.google.com/drive/folders/0B4qLcYyJmiz0TXY1NG02bzZVRGs?resourcekey=0-arAVTUfW9KRhN-irJchVKQ&usp=sharing
 
+The structure of data as following
 
-Please modify the dataroot parameters of dataset train and test in the configs/gfpgan_1024_ffhq.yaml configuration file to your training set and test set path.
+```
+|-- data/GFPGAN
+    |-- train
+        |-- 00000.png
+        |-- 00001.png
+        |-- ......
+        |-- 00999.png
+        |-- ......
+        |-- 69999.png
+	|-- lq
+		|-- 2000张jpg图片
+    |-- gt  
+        |-- 2000张jpg图片
+```
+
+
+Please modify the dataroot parameters of dataset train and test in the configs/gfpgan_ffhq1024.yaml configuration file to your training set and test set path.
 
 
 ### 2.2 Model preparation
@@ -75,7 +80,7 @@ the params is a dict(one type in python),and could be load by paddlepaddle. It c
 Enter the following code in the console to start training：
 
  ```bash
- python tools/main.py -c configs/gfpgan_1024_ffhq.yaml
+ python tools/main.py -c configs/gfpgan_ffhq1024.yaml
  ```
 
 The model supports single-card training and multi-card training.So you can use this bash to train
@@ -83,7 +88,7 @@ The model supports single-card training and multi-card training.So you can use t
  ```bash
 !CUDA_VISIBLE_DEVICES=0,1,2,3
 !python -m paddle.distributed.launch tools/main.py \
-        --config-file configs/gpfgan_1024_ffhq.yaml
+        --config-file configs/gpfgan_ffhq1024.yaml
  ```
 
 Model training needs to use paddle2.3 and above, and wait for paddle to implement the second-order operator related functions of elementwise_pow. The paddle2.2.2 version can run normally, but the model cannot be successfully trained because some loss functions will calculate the wrong gradient. . If an error is reported during training, training is not supported for the time being. You can skip the training part and directly use the provided model parameters for testing. Model evaluation and testing can use paddle2.2.2 and above.
@@ -95,7 +100,7 @@ Model training needs to use paddle2.3 and above, and wait for paddle to implemen
 When evaluating the model, enter the following code in the console, using the downloaded model parameters mentioned above:
 
  ```shell
-python tools/main.py -c configs/gfpgan_1024_ffhq.yaml --load GFPGAN.pdparams --evaluate-only
+python tools/main.py -c configs/gfpgan_ffhq1024.yaml --load GFPGAN.pdparams --evaluate-only
  ```
 
 If you want to test on your own provided model, please modify the path after --load .
@@ -110,7 +115,7 @@ After training, you need to use ``tools/export_model.py`` to extract the weights
 Enter the following command to extract the model of the generator:
 
 ```bash
-python -u tools/export_model.py --config-file configs/gfpgan_1024_ffhq.yaml \
+python -u tools/export_model.py --config-file configs/gfpgan_ffhq1024.yaml \
     --load GFPGAN.pdparams \
     --inputs_size 1,3,512,512
 ```
@@ -150,7 +155,7 @@ cv2.imwrite('test/out_gfpgan.png',img)
 ### 4.1 Export the inference model
 
 ```bash
-python -u tools/export_model.py --config-file configs/gfpgan_1024_ffhq.yaml \
+python -u tools/export_model.py --config-file configs/gfpgan_ffhq1024.yaml \
     --load GFPGAN.pdparams \
     --inputs_size 1,3,512,512
 ```
@@ -165,7 +170,7 @@ You can also modify the parameters after --load to the model parameter file you 
 %cd /home/aistudio/work/PaddleGAN
 # %env PYTHONPATH=.:$PYTHONPATH
 # %env CUDA_VISIBLE_DEVICES=0
-!python -u tools/inference.py --config-file configs/gfpgan_1024_ffhq.yaml \
+!python -u tools/inference.py --config-file configs/gfpgan_ffhq1024.yaml \
     --model_path GFPGAN.pdparams \
     --model_type gfpgan \
     --device gpu \
