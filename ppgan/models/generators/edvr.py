@@ -62,6 +62,7 @@ class ResidualBlockNoBN(nn.Layer):
         nf (int): Channel number of intermediate features.
             Default: 64.
     """
+
     def __init__(self, nf=64):
         super(ResidualBlockNoBN, self).__init__()
         self.nf = nf
@@ -100,6 +101,7 @@ class PredeblurResNetPyramid(nn.Layer):
         nf (int): Channel number of intermediate features. Default: 64.
         HR_in (bool): Whether the input has high resolution. Default: False.
     """
+
     def __init__(self, in_nf=3, nf=64, HR_in=False):
         super(PredeblurResNetPyramid, self).__init__()
         self.in_nf = in_nf
@@ -189,6 +191,7 @@ class TSAFusion(nn.Layer):
         nframes (int): Number of frames. Default: 5.
         center (int): The index of center frame. Default: 2.
     """
+
     def __init__(self, nf=64, nframes=5, center=2):
         super(TSAFusion, self).__init__()
         self.nf = nf
@@ -347,6 +350,7 @@ class DCNPack(nn.Layer):
     Ref:
         Delving Deep into Deformable Alignment in Video Super-Resolution.
     """
+
     def __init__(self,
                  num_filters=64,
                  kernel_size=3,
@@ -408,6 +412,7 @@ class PCDAlign(nn.Layer):
         nf (int): Channel number of middle features. Default: 64.
         groups (int): Deformable groups. Defaults: 8.
     """
+
     def __init__(self, nf=64, groups=8):
         super(PCDAlign, self).__init__()
         self.nf = nf
@@ -594,6 +599,7 @@ class EDVRNet(nn.Layer):
         with_tsa (bool): Whether has TSA module. Default: True.
         TSA_only (bool): Whether only use TSA module. Default: False.
     """
+
     def __init__(self,
                  in_nf=3,
                  out_nf=3,
@@ -750,13 +756,13 @@ class EDVRNet(nn.Layer):
             L1_fea[:, self.center, :, :, :], L2_fea[:, self.center, :, :, :],
             L3_fea[:, self.center, :, :, :]
         ]
-        aligned_fea = []
-        for i in range(N):
-            nbr_fea_l = [
+
+        aligned_fea = [
+            self.PCDModule([
                 L1_fea[:, i, :, :, :], L2_fea[:, i, :, :, :], L3_fea[:,
                                                                      i, :, :, :]
-            ]
-            aligned_fea.append(self.PCDModule(nbr_fea_l, ref_fea_l))
+            ], ref_fea_l) for i in range(N)
+        ]
 
         # TSA Fusion
         aligned_fea = paddle.stack(aligned_fea, axis=1)  # [B, N, C, H, W]

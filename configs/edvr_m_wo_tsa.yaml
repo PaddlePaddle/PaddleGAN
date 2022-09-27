@@ -25,6 +25,9 @@ model:
   pixel_criterion:
     name: CharbonnierLoss
 
+export_model:
+  - {name: 'generator', inputs_num: 1}
+
 dataset:
   train:
     name: RepeatDataset

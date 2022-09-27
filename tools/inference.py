@@ -256,7 +256,15 @@ def main():
             prediction = output_handle.copy_to_cpu()
             prediction = paddle.to_tensor(prediction[0])
             image_numpy = tensor2img(prediction, min_max)
-            save_image(image_numpy, "infer_output/esrgan/{}.png".format(i))
+            gt_numpy = tensor2img(data['gt'][0], min_max)
+            save_image(
+                image_numpy,
+                os.path.join(args.output_path, "esrgan/{}.png".format(i)))
+            metric_file = os.path.join(args.output_path, model_type,
+                                       "metric.txt")
+            for metric in metrics.values():
+                metric.update(image_numpy, gt_numpy)
+            break
         elif model_type == "edvr":
             lq = data['lq'].numpy()
             input_handles[0].copy_from_cpu(lq)
@@ -264,7 +272,14 @@ def main():
             prediction = output_handle.copy_to_cpu()
             prediction = paddle.to_tensor(prediction[0])
             image_numpy = tensor2img(prediction, min_max)
-            save_image(image_numpy, "infer_output/edvr/{}.png".format(i))
+            gt_numpy = tensor2img(data['gt'][0, 0], min_max)
+            save_image(image_numpy,
+                       os.path.join(args.output_path, "edvr/{}.png".format(i)))
+            metric_file = os.path.join(args.output_path, model_type,
+                                       "metric.txt")
+            for metric in metrics.values():
+                metric.update(image_numpy, gt_numpy)
+            break
         elif model_type == "stylegan2":
             noise = paddle.randn([1, 1, 512]).cpu().numpy()
             input_handles[0].copy_from_cpu(noise)
