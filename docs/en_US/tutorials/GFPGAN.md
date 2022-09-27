@@ -44,6 +44,7 @@ The specific download links are given below:
 
 The structure of data as following
 
+
 ```
 |-- data/GFPGAN
     |-- train
@@ -53,8 +54,8 @@ The structure of data as following
         |-- 00999.png
         |-- ......
         |-- 69999.png
-	|-- lq
-		|-- 2000张jpg图片
+    |-- lq
+	|-- 2000张jpg图片
     |-- gt  
         |-- 2000张jpg图片
 ```
