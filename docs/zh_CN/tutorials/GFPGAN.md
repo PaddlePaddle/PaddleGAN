@@ -59,7 +59,7 @@ The specific download links are given below:
         |-- 2000张jpg图片
 ```
 
-请在configs/gfpgan_ffhq1024. data中修改数据集train和test的dataroot参数。Yaml配置文件到您的训练集和测试集路径。
+将上述处理好的数据软链值data目录下
 
 ### 2.2 模型准备
 **模型参数文件和训练日志下载地址:**
