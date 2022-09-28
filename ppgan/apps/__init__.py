@@ -37,3 +37,4 @@ from .recurrent_vsr_predictor import (PPMSVSRPredictor, BasicVSRPredictor, \
                                      PPMSVSRLargePredictor)
 from .singan_predictor import SinGANPredictor
 from .gpen_predictor import GPENPredictor
+from .swinir_predictor import SwinIRPredictor

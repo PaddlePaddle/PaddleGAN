@@ -19,7 +19,7 @@ from ppgan.metrics import build_metric
 
 
 MODEL_CLASSES = ["pix2pix", "cyclegan", "wav2lip", "esrgan", \
-                 "edvr", "fom", "stylegan2", "basicvsr", "msvsr", "singan"]
+                 "edvr", "fom", "stylegan2", "basicvsr", "msvsr", "singan", "swinir"]
 
 
 def parse_args():
@@ -334,6 +334,63 @@ def main():
             metric_file = os.path.join(args.output_path, "singan/metric.txt")
             for metric in metrics.values():
                 metric.update(prediction, data['A'])
+        elif model_type == "swinir":
+            lq = data[1].numpy()
+            _, _, h_old, w_old = lq.shape
+            window_size = 8
+            tile = 128
+            tile_overlap = 32
+            # after feed data to model, shape of feature map is change
+            h_pad = (h_old // window_size + 1) * window_size - h_old
+            w_pad = (w_old // window_size + 1) * window_size - w_old
+            lq = np.concatenate([lq, np.flip(lq, 2)],
+                                axis=2)[:, :, :h_old + h_pad, :]
+            lq = np.concatenate([lq, np.flip(lq, 3)],
+                                axis=3)[:, :, :, :w_old + w_pad]
+            lq = lq.astype("float32")
+
+            b, c, h, w = lq.shape
+            tile = min(tile, h, w)
+            assert tile % window_size == 0, "tile size should be a multiple of window_size"
+            sf = 1  # scale
+            stride = tile - tile_overlap
+            h_idx_list = list(range(0, h - tile, stride)) + [h - tile]
+            w_idx_list = list(range(0, w - tile, stride)) + [w - tile]
+            E = np.zeros([b, c, h * sf, w * sf], dtype=np.float32)
+            W = np.zeros_like(E)
+
+            for h_idx in h_idx_list:
+                for w_idx in w_idx_list:
+                    in_patch = lq[..., h_idx:h_idx + tile, w_idx:w_idx + tile]
+                    input_handles[0].copy_from_cpu(in_patch)
+                    predictor.run()
+                    out_patch = output_handle.copy_to_cpu()
+                    out_patch_mask = np.ones_like(out_patch)
+
+                    E[..., h_idx * sf:(h_idx + tile) * sf,
+                      w_idx * sf:(w_idx + tile) * sf] += out_patch
+                    W[..., h_idx * sf:(h_idx + tile) * sf,
+                      w_idx * sf:(w_idx + tile) * sf] += out_patch_mask
+
+            output = np.true_divide(E, W)
+            prediction = output[..., :h_old * sf, :w_old * sf]
+
+            prediction = paddle.to_tensor(prediction)
+            target = tensor2img(data[0], (0., 1.))
+            prediction = tensor2img(prediction, (0., 1.))
+
+            metric_file = os.path.join(args.output_path, model_type,
+                                       "metric.txt")
+            for metric in metrics.values():
+                metric.update(prediction, target)
+
+            lq = tensor2img(data[1], (0., 1.))
+
+            sample_result = np.concatenate((lq, prediction, target), 1)
+            sample = cv2.cvtColor(sample_result, cv2.COLOR_RGB2BGR)
+            file_name = os.path.join(args.output_path, model_type,
+                                     "{}.png".format(i))
+            cv2.imwrite(file_name, sample)
 
     if metrics:
         log_file = open(metric_file, 'a')

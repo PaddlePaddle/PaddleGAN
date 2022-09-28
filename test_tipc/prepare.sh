@@ -62,6 +62,10 @@ if [ ${MODE} = "lite_train_lite_infer" ];then
         rm -rf ./data/DIV2K*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/DIV2KandSet14paddle.tar --no-check-certificate
         cd ./data/ && tar xf DIV2KandSet14paddle.tar && cd ../ ;;
+    swinir)
+        rm -rf ./data/*sets
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/swinir_data.zip --no-check-certificate
+        cd ./data/ && unzip -q swinir_data.zip && cd ../ ;;
     singan)
         rm -rf ./data/singan*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/singan-official_images.zip --no-check-certificate
