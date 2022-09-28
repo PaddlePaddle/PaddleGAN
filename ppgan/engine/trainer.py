@@ -32,7 +32,6 @@ from ..utils.profiler import add_profiler_step
 
 
 class IterLoader:
-
     def __init__(self, dataloader):
         self._dataloader = dataloader
         self.iter_loader = iter(self._dataloader)
@@ -80,7 +79,6 @@ class Trainer:
     #                     |                                    ||
     #         save checkpoint (model.nets)                     \/
     """
-
     def __init__(self, cfg):
         # base config
         self.logger = logging.getLogger(__name__)

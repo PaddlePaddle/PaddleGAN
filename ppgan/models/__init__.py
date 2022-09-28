@@ -38,3 +38,4 @@ from .singan_model import SinGANModel
 from .rcan_model import RCANModel
 from .prenet_model import PReNetModel
 from .gpen_model import GPENModel
+from .gfpgan_model import GFPGANModel
