@@ -61,7 +61,7 @@ The structure of data as following
 ```
 
 
-Please modify the dataroot parameters of dataset train and test in the configs/gfpgan_ffhq1024.yaml configuration file to your training set and test set path.
+The above processed data soft chain value data directory
 
 
 ### 2.2 Model preparation
