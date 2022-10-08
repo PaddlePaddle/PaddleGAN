@@ -1,31 +1,33 @@
-# GauGAN（加SimAM注意力的改进版）
+# AOT GAN
 
-## 1.简介：
+## 1. 简介
 
-本应用的模型出自论文《Semantic Image Synthesis with Spatially-Adaptive Normalization》，是一个像素风格迁移网络 Pix2PixHD，能够根据输入的语义分割标签生成照片风格的图片。为了解决模型归一化层导致标签语义信息丢失的问题，论文作者向 Pix2PixHD 的生成器网络中添加了 SPADE（Spatially-Adaptive Normalization）空间自适应归一化模块，通过两个卷积层保留了归一化时训练的缩放与偏置参数的空间维度，以增强生成图片的质量。
+本应用的 AOT GAN 模型出自论文《Aggregated Contextual Transformations for High-Resolution Image Inpainting》，其通过聚合不同膨胀率的空洞卷积学习到的图片特征，刷出了inpainting任务的新SOTA。模型推理效果如下：
 
-![](https://ai-studio-static-online.cdn.bcebos.com/4fc3036fdc18443a9dcdcddb960b5da1c689725bbfa84de2b92421a8640e0ee5)
+![](https://ai-studio-static-online.cdn.bcebos.com/c3b71d7f28ce4906aa7cccb10ed09ae5e317513b6dbd471aa5cca8144a7fd593)
 
-此模型在 GauGAN 的 SPADE 模块上添加了无参的 SimAM 注意力模块，增强了生成图片的立体质感。
+**论文:** [Aggregated Contextual Transformations for High-Resolution Image Inpainting](https://paperswithcode.com/paper/aggregated-contextual-transformations-for)
 
-![](https://ai-studio-static-online.cdn.bcebos.com/94731023eab94b1b97b9ca80bd3b30830c918cf162d046bd88540dda450295a3)
+**参考repo:** [https://github.com/megvii-research/NAFNet](https://github.com/megvii-research/NAFNet)
 
 ## 2.快速体验
 
-预训练模型可以从如下地址下载: （https://paddlegan.bj.bcebos.com/models/photopen.pdparams）
+预训练模型权重文件 g.pdparams 可以从如下地址下载: （https://aistudio.baidu.com/aistudio/datasetdetail/165081）
 
-输入一张png格式的语义标签图片给模型，输出一张按标签语义生成的照片风格的图片。预测代码如下：
+输入一张 512x512 尺寸的图片和擦除 mask 给模型，输出一张补全（inpainting）的图片。预测代码如下：
 
 ```
-python applications/tools/photopen.py \
-  --semantic_label_path test/sem.png \
-  --weight_path test/n_g.pdparams \
-  --output_path test/pic.jpg \
-  --config-file configs/photopen.yaml
+python applications/tools/aotgan.py \
+	--input_image_path test/aotgan/armani1.jpg \
+	--input_mask_path test/aotgan/armani1.png \
+	--weight_path test/aotgan/g.pdparams \
+	--output_path output_dir/armani_pred.jpg \
+	--config-file configs/aotgan.yaml
 ```
 
 **参数说明:**
-* semantic_label_path：输入的语义标签路径，为png图片文件
+* input_image_path：输入图片路径
+* input_mask_path：输入擦除 mask 路径
 * weight_path：训练完成的模型权重存储路径，为 statedict 格式（.pdparams）的 Paddle 模型行权重文件
 * output_path：预测生成图片的存储路径
 * config-file：存储参数设定的yaml文件存储路径，与训练过程使用同一个yaml文件，预测参数由 predict 下字段设定
@@ -34,19 +36,22 @@ python applications/tools/photopen.py \
 
 **数据准备:**
 
+* 训练用的图片解压到项目路径下的 dataset/train_img 文件夹内，可包含多层目录，dataloader会递归读取每层目录下的图片。训练用的mask图片解压到项目路径下的 dataset/train_mask 文件夹内。
+* 验证用的图片和mask图片相应的放到项目路径下的 dataset/val_img 文件夹和 dataset/val_mask 文件夹内。
+
 数据集目录结构如下：
 
 ```
-└─coco_stuff
+└─dataset
     ├─train_img
-    └─train_inst
+    ├─train_mask
+    ├─val_img
+    └─val_mask
 ```
-
-coco_stuff 是数据集根目录可任意改变，其下的 train_img 子目录存放训练用的风景图片（一般jpg格式），train_inst 子目录下存放与风景图片文件名一一对应、尺寸相同的语义标签图片（一般png格式）。
 
 ### 3.1 gpu 单卡训练
 
-`python -u tools/main.py --config-file configs/photopen.yaml`
+`python -u tools/main.py --config-file configs/aotgan.yaml`
 
 * config-file：训练使用的超参设置 yamal 文件的存储路径
 
@@ -56,49 +61,29 @@ coco_stuff 是数据集根目录可任意改变，其下的 train_img 子目录�
 !python -m paddle.distributed.launch \
     tools/main.py \
     --config-file configs/photopen.yaml \
-    -o model.generator.norm_G=spectralspadesyncbatch3x3 \
-       model.batchSize=4 \
-       dataset.train.batch_size=4
+    -o dataset.train.batch_size=6
 ```
 
 * config-file：训练使用的超参设置 yamal 文件的存储路径
-* model.generator.norm_G：设置使用 syncbatch 归一化，使多个 GPU 中的数据一起进行归一化
-* model.batchSize：设置模型的 batch size，一般为 GPU 个数的整倍数
-* dataset.train.batch_size：设置数据读取的 batch size，要和模型的 batch size 一致
+* -o dataset.train.batch_size=6：-o 设置参数覆盖 yaml 文件中的值，这里调整了 batch_size 参数
 
 ### 3.3 继续训练
 
-`python -u tools/main.py --config-file configs/photopen.yaml --resume output_dir\photopen-2021-09-30-15-59\iter_3_checkpoint.pdparams`
+```
+python -u tools/main.py \
+	--config-file configs/aotgan.yaml \
+	--resume  output_dir/aotgan-2022-10-08-18-00/iter_200_checkpoint.pdparams
+```
 
 * config-file：训练使用的超参设置 yamal 文件的存储路径
 * resume：指定读取的 checkpoint 路径
 
-## 4.模型效果展示
-
-![](https://ai-studio-static-online.cdn.bcebos.com/72a4a6ede506436ebaa6fb6982aa899607a80e20a54f4b138fb7ae9673e12e6e)
-
-## 5.参考
-
-```
-@inproceedings{park2019SPADE,
-  title={Semantic Image Synthesis with Spatially-Adaptive Normalization},
-  author={Park, Taesung and Liu, Ming-Yu and Wang, Ting-Chun and Zhu, Jun-Yan},
-  booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
-  year={2019}
+## 4. 参考链接与文献
+@inproceedings{yan2021agg,
+  author = {Zeng, Yanhong and Fu, Jianlong and Chao, Hongyang and Guo, Baining},
+  title = {Aggregated Contextual Transformations for High-Resolution Image Inpainting},
+  booktitle = {Arxiv},
+  pages={-},
+  year = {2020}
 }
 
-@InProceedings{pmlr-v139-yang21o,
-    title = 	 {SimAM: A Simple, Parameter-Free Attention Module for Convolutional Neural Networks},
-    author =       {Yang, Lingxiao and Zhang, Ru-Yuan and Li, Lida and Xie, Xiaohua},
-    booktitle = 	 {Proceedings of the 38th International Conference on Machine Learning},
-    pages = 	 {11863--11874},
-    year = 	 {2021},
-    editor = 	 {Meila, Marina and Zhang, Tong},
-    volume = 	 {139},
-    series = 	 {Proceedings of Machine Learning Research},
-    month = 	 {18--24 Jul},
-    publisher =    {PMLR},
-    pdf = 	 {http://proceedings.mlr.press/v139/yang21o/yang21o.pdf},
-    url = 	 {http://proceedings.mlr.press/v139/yang21o.html}
-}
-```
