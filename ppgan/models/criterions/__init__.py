@@ -10,3 +10,4 @@ from .builder import build_criterion
 
 from .ssim import SSIM
 from .id_loss import IDLoss
+from .aotgan_perceptual_loss import AOTGANCriterionLoss

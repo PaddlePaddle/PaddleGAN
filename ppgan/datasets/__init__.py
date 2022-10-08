@@ -32,3 +32,4 @@ from .photopen_dataset import PhotoPenDataset
 from .empty_dataset import EmptyDataset
 from .gpen_dataset import GPENDataset
 from .swinir_dataset import SwinIRDataset
+from .aotgan_dataset import AOTGANDataset
