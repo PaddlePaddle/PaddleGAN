@@ -24,10 +24,12 @@ dataset:
   train:
     name: AOTGANDataset
     dataset_path: test/aotgan
+    batch_size: 1
     img_size: 512
   test:
     name: AOTGANDataset_test
     dataset_path: test/aotgan
+    batch_size: 1
     img_size: 512
 
 lr_scheduler: # abundoned
