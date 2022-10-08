@@ -33,12 +33,10 @@ dataset:
     img_size: 512
 
 lr_scheduler: # abundoned
-  name: LinearDecay
+  name: MultiStepDecay
   learning_rate: 0.0001
-  start_epoch: 100
-  decay_epochs: 100
-  # will get from real dataset
-  iters_per_epoch: 1
+  milestones: [50000000, 50000001]
+  gamma: .99999
 
 optimizer:
   lr: 0.0001
