@@ -61,6 +61,7 @@ class AOTGANDataset(Dataset):
         # 训练阶段分别应用至图片和mask的数据增强
         if istrain:
             self.img_trans = Compose([
+                Resize(img_size),
                 RandomResizedCrop(img_size),
                 RandomHorizontalFlip(),
                 ColorJitter(0.05, 0.05, 0.05, 0.05),
