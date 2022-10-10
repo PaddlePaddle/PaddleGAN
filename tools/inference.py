@@ -334,6 +334,15 @@ def main():
             metric_file = os.path.join(args.output_path, "singan/metric.txt")
             for metric in metrics.values():
                 metric.update(prediction, data['A'])
+        elif model_type == 'gfpgan':
+            input_handles[0].copy_from_cpu(data['lq'].numpy())
+            predictor.run()
+            prediction = output_handle.copy_to_cpu()
+            prediction = paddle.to_tensor(prediction)
+            image_numpy = tensor2img(prediction, min_max)
+            save_image(
+                image_numpy,
+                os.path.join(args.output_path, "gfpgan/{}.png".format(i)))
         elif model_type == "swinir":
             lq = data[1].numpy()
             _, _, h_old, w_old = lq.shape

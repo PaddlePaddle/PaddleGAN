@@ -72,6 +72,11 @@ if [ ${MODE} = "lite_train_lite_infer" ];then
         cd ./data/ && unzip -q singan-official_images.zip && cd ../
         mkdir -p ./data/singan
         mv ./data/SinGAN-official_images/Images/stone.png ./data/singan ;;
+    GFPGAN)
+        rm -rf ./data/gfpgan*
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/gfpgan_tipc_data.zip --no-check-certificate
+        mkdir -p ./data/gfpgan_data
+        cd ./data/ && unzip -q gfpgan_tipc_data.zip -d gfpgan_data/ && cd ../ ;;
     esac
 elif [ ${MODE} = "whole_train_whole_infer" ];then
     if [ ${model_name} == "Pix2pix" ]; then
