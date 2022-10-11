@@ -18,8 +18,8 @@
 
 ```
 python applications/tools/aotgan.py \
-	--input_image_path test/aotgan/armani1.jpg \
-	--input_mask_path test/aotgan/armani1.png \
+	--input_image_path data/aotgan/armani1.jpg \
+	--input_mask_path data/aotgan/armani1.png \
 	--weight_path test/aotgan/g.pdparams \
 	--output_path output_dir/armani_pred.jpg \
 	--config-file configs/aotgan.yaml
@@ -36,18 +36,20 @@ python applications/tools/aotgan.py \
 
 **数据准备:**
 
-* 训练用的图片解压到项目路径下的 dataset/train_img 文件夹内，可包含多层目录，dataloader会递归读取每层目录下的图片。训练用的mask图片解压到项目路径下的 dataset/train_mask 文件夹内。
-* 验证用的图片和mask图片相应的放到项目路径下的 dataset/val_img 文件夹和 dataset/val_mask 文件夹内。
+* 训练用的图片解压到项目路径下的 data/train_img 文件夹内，可包含多层目录，dataloader会递归读取每层目录下的图片。训练用的mask图片解压到项目路径下的 data/train_mask 文件夹内。
+* 验证用的图片和mask图片相应的放到项目路径下的 data/val_img 文件夹和 data/val_mask 文件夹内。
 
 数据集目录结构如下：
 
 ```
-└─dataset
+└─data
     ├─train_img
     ├─train_mask
     ├─val_img
     └─val_mask
 ```
+
+* 训练预训练模型的权重使用了 Place365Standard 数据集的训练集图片，以及 NVIDIA Irregular Mask Dataset 数据集的测试集掩码图片。Place365Standard 的训练集为 160万张长或宽最小为 512 像素的图片。NVIDIA Irregular Mask Dataset 的测试集为 12000 张尺寸为 512 x 512 的不规则掩码图片。数据集下载链接：[Place365Standard](http://places2.csail.mit.edu/download.html)、[NVIDIA Irregular Mask Dataset](https://nv-adlr.github.io/publication/partialconv-inpainting)
 
 ### 3.1 gpu 单卡训练
 
@@ -78,6 +80,9 @@ python -u tools/main.py \
 * config-file：训练使用的超参设置 yamal 文件的存储路径
 * resume：指定读取的 checkpoint 路径
 
+预训练模型指标为：在Places365模型的验证集上，使用擦除率(20-30%)的 mask 达到 PSNR=26.04001, SSIM=0.89011。
+
+
 ## 4. 参考链接与文献
 @inproceedings{yan2021agg,
   author = {Zeng, Yanhong and Fu, Jianlong and Chao, Hongyang and Guo, Baining},
@@ -86,4 +91,3 @@ python -u tools/main.py \
   pages={-},
   year = {2020}
 }
-

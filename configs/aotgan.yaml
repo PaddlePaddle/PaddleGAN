@@ -1,4 +1,4 @@
-total_iters: 1
+total_iters: 1000000
 output_dir: output_dir
 checkpoints_dir: checkpoints
 
@@ -23,20 +23,20 @@ model:
 dataset:
   train:
     name: AOTGANDataset
-    dataset_path: test/aotgan
+    dataset_path: data/aotgan
     batch_size: 1
     img_size: 512
   test:
     name: AOTGANDataset_test
-    dataset_path: test/aotgan
+    dataset_path: data/aotgan
     batch_size: 1
     img_size: 512
 
 lr_scheduler: # abundoned
   name: MultiStepDecay
   learning_rate: 0.0001
-  milestones: [50000000, 50000001]
-  gamma: .99999
+  milestones: [990000]
+  gamma: 0.1
 
 optimizer:
   lr: 0.0001
@@ -54,11 +54,11 @@ optimizer:
     beta2: 0.999
 
 log_config:
-  interval: 1
-  visiual_interval: 1
+  interval: 100
+  visiual_interval: 100
 
 snapshot_config:
-  interval: 1
+  interval: 1000
 
 predict:
   name: AOTGANGenerator

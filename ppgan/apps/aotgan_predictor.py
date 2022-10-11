@@ -1,4 +1,4 @@
-# Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
+# Copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ class AOTGANPredictor(BasePredictor):
                  weight_path,
                  gen_cfg):
 
-        # 初始化模型
+        # initialize model
         gen = InpaintGenerator(
                  gen_cfg.rates,
                  gen_cfg.block_num,
@@ -58,18 +58,18 @@ class AOTGANPredictor(BasePredictor):
         img = np.array(img)
         mask = np.array(mask)
 
-        # 图片数据归一化到(-1, +1)区间，形状为[n, c, h, w], 取值为[1, 3, 512, 512]
-        # mask图片数据归一化为0、1二值。0代表原图片像素，1代表缺失像素。形状为[n, c, h, w], 取值为[1, 1, 512, 512]
+        # normalize image data to (-1, +1)，image tensor shape:[n=1, c=3, h=512, w=512]
         img = (img.astype('float32') / 255.) * 2. - 1.
         img = np.transpose(img, (2, 0, 1))
-        mask = np.expand_dims(mask.astype('float32') / 255., 0)
         img = paddle.to_tensor(np.expand_dims(img, 0))
+        # mask tensor shape:[n=1, c=3, h=512, w=512], value 0 denotes known pixels and 1 denotes missing regions
+        mask = np.expand_dims(mask.astype('float32') / 255., 0)
         mask = paddle.to_tensor(np.expand_dims(mask, 0))
 
-        # 预测
-        img_masked = (img * (1 - mask)) + mask # 将掩码叠加到图片上
-        pred_img = self.gen(img_masked, mask) # 用加掩码后的图片和掩码生成预测图片
-        comp_img = (1 - mask) * img + mask * pred_img # 使用原图片和预测图片合成最终的推理结果图片
+        # predict
+        img_masked = (img * (1 - mask)) + mask # put the mask onto the image
+        pred_img = self.gen(img_masked, mask) # predict by masked image
+        comp_img = (1 - mask) * img + mask * pred_img # compound the inpainted image
         img_save = ((comp_img.numpy()[0].transpose((1,2,0)) + 1.) / 2. * 255).astype('uint8')
 
         pic = cv2.cvtColor(img_save,cv2.COLOR_BGR2RGB)

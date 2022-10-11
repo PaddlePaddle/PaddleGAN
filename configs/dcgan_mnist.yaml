@@ -51,8 +51,8 @@ dataset:
 
 lr_scheduler:
   name: LinearDecay
-  learning_rate: 0.0001
-  start_epoch: 99999
+  learning_rate: 0.0002
+  start_epoch: 100
   decay_epochs: 100
   # will get from real dataset
   iters_per_epoch: 1

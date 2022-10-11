@@ -24,7 +24,6 @@ from .discriminators.builder import build_discriminator
 
 from ..modules.init import init_weights
 from ..solver import build_optimizer
-# from ppgan.utils.aotgan import Dict
 
 # 对叠加在图片上的mask边缘进行高斯模糊处理
 def gaussian_blur(input, kernel_size, sigma):
@@ -90,11 +89,6 @@ class AOTGANModel(BaseModel):
                 ):
 
         super(AOTGANModel, self).__init__()
-
-#         opt = {
-#              'adversal_weight': adversal_weight,
-#             }
-#         self.opt = Dict(opt)
 
         # define nets
         self.nets['net_gen'] = build_generator(generator)
