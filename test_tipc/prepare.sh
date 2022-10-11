@@ -66,6 +66,10 @@ if [ ${MODE} = "lite_train_lite_infer" ];then
         rm -rf ./data/*sets
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/swinir_data.zip --no-check-certificate
         cd ./data/ && unzip -q swinir_data.zip && cd ../ ;;
+    invdn) #TODO
+        rm -rf ./data/SIDD_*
+        wget -nc -P ./data/ https://TODO --no-check-certificate
+        cd ./data/ && unzip -q SIDD_mini.zip && cd ../ ;;
     singan)
         rm -rf ./data/singan*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/singan-official_images.zip --no-check-certificate

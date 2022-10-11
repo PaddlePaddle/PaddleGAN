@@ -38,3 +38,4 @@ from .recurrent_vsr_predictor import (PPMSVSRPredictor, BasicVSRPredictor, \
 from .singan_predictor import SinGANPredictor
 from .gpen_predictor import GPENPredictor
 from .swinir_predictor import SwinIRPredictor
+from .invdn_predictor import InvDNPredictor

@@ -19,7 +19,7 @@ from ppgan.metrics import build_metric
 
 
 MODEL_CLASSES = ["pix2pix", "cyclegan", "wav2lip", "esrgan", \
-                 "edvr", "fom", "stylegan2", "basicvsr", "msvsr", "singan", "swinir"]
+                 "edvr", "fom", "stylegan2", "basicvsr", "msvsr", "singan", "swinir", "invdn"]
 
 
 def parse_args():
@@ -391,6 +391,21 @@ def main():
             file_name = os.path.join(args.output_path, model_type,
                                      "{}.png".format(i))
             cv2.imwrite(file_name, sample)
+        elif model_type == "invdn":
+            noisy = data[0].numpy()
+            input_handles[0].copy_from_cpu(noisy)
+            predictor.run()
+            prediction = output_handle.copy_to_cpu()  #TODO
+            prediction = paddle.to_tensor(prediction[0])
+            image_numpy = tensor2img(prediction, min_max)
+            gt_numpy = tensor2img(data[1], min_max)
+            save_image(image_numpy,
+                       os.path.join(args.output_path, "invdn/{}.png".format(i)))
+            metric_file = os.path.join(args.output_path, model_type,
+                                       "metric.txt")
+            for metric in metrics.values():
+                metric.update(image_numpy, gt_numpy)
+            break
 
     if metrics:
         log_file = open(metric_file, 'a')
