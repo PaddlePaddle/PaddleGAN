@@ -8,11 +8,11 @@ Official code：[https://github.com/Yang-Liu1082/InvDN](https://github.com/Yang-
 
 Paper：[https://arxiv.org/abs/2104.10546](https://arxiv.org/abs/2104.10546)
 
-## 1、简介
+## 1、Introduction
 
 InvDN uses invertible network to divide noise image into low resolution clean image and high frequency latent representation, which contains noise information and content information. Since the invertible network is information lossless, if we can separate the noise information in the high-frequency representation, then we can reconstruct the clean picture with the original resolution together with the clean picture with the low resolution. However, it is difficult to remove the noise in the high-frequency information. In this paper, the high-frequency latent representation with noise is directly replaced by another representation sampled from the prior distribution in the process of reduction, and then the low-resolution clean image is reconstructed back to the original resolution clean image. The network implemented in this paper is lightweight.
 
-![](../../imgs/invdn.png)
+![invdn](https://user-images.githubusercontent.com/51016595/195344773-9ea17ef5-9edd-4310-bfff-36049bbcefde.png)
 
 
 ## 2 How to use
