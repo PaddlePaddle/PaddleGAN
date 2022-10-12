@@ -395,7 +395,7 @@ def main():
             noisy = data[0].numpy()
             input_handles[0].copy_from_cpu(noisy)
             predictor.run()
-            prediction = output_handle.copy_to_cpu()  #TODO
+            prediction = output_handle.copy_to_cpu()
             prediction = paddle.to_tensor(prediction[0])
             image_numpy = tensor2img(prediction, min_max)
             gt_numpy = tensor2img(data[1], min_max)

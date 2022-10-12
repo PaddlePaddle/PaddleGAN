@@ -28,8 +28,8 @@ from .base_predictor import BasePredictor
 
 model_cfgs = {
     'Denoising': {
-        # 'model_urls': 'https://paddlegan.bj.bcebos.com/models/SwinIR_Denoising.pdparams',
-        'model_urls': 'TODO',
+        'model_urls':
+        'https://paddlegan.bj.bcebos.com/models/InvDN_Denoising.pdparams',
         'channel_in': 3,
         'channel_out': 3,
         'block_num': [8, 8],
@@ -62,7 +62,7 @@ class InvDNPredictor(BasePredictor):
                                block_num=model_cfgs[task]['block_num'],
                                scale=model_cfgs[task]['scale'])
 
-        checkpoint = checkpoint['generator']  #TODO
+        checkpoint = checkpoint['generator']
         self.generator.set_state_dict(checkpoint)
         self.generator.eval()
 
@@ -106,7 +106,46 @@ class InvDNPredictor(BasePredictor):
         return paddle.Tensor(np.ascontiguousarray(
             img, dtype=np.float32)).transpose([2, 0, 1])
 
-    def run(self, images_path=None):
+    def gaussian_batch(self, dims):
+        return paddle.randn(tuple(dims))
+
+    def forward_x8(self, x, forward_function):
+        def _transform(v, op):
+            v2np = v.cpu().numpy()
+            if op == 'v':
+                tfnp = v2np[:, :, :, ::-1].copy()
+            elif op == 'h':
+                tfnp = v2np[:, :, ::-1, :].copy()
+            elif op == 't':
+                tfnp = v2np.transpose((0, 1, 3, 2)).copy()
+
+            ret = paddle.to_tensor(tfnp)
+            return ret
+
+        noise_list = [x]
+        for tf in 'v', 'h', 't':
+            noise_list.extend([_transform(t, tf) for t in noise_list])
+
+        gaussian_list = [self.gaussian_batch(aug.shape) for aug in noise_list]
+        sr_list = [
+            forward_function(aug, g_noise)[0]
+            for aug, g_noise in zip(noise_list, gaussian_list)
+        ]
+
+        for i in range(len(sr_list)):
+            if i > 3:
+                sr_list[i] = _transform(sr_list[i], 't')
+            if i % 4 > 1:
+                sr_list[i] = _transform(sr_list[i], 'h')
+            if (i % 4) % 2 == 1:
+                sr_list[i] = _transform(sr_list[i], 'v')
+
+        output_cat = paddle.stack(sr_list, axis=0)
+        output = output_cat.mean(axis=0)
+
+        return output
+
+    def run(self, images_path=None, disable_mc=False):
         os.makedirs(self.output_path, exist_ok=True)
         task_path = os.path.join(self.output_path, self.task)
         os.makedirs(task_path, exist_ok=True)
@@ -130,9 +169,15 @@ class InvDNPredictor(BasePredictor):
             img_noisy = self.single2tensor3(img_noisy)
             img_noisy = img_noisy.unsqueeze(0)
             with paddle.no_grad():
-                noise = paddle.randn(tuple(img_noisy.shape))
-                output, _ = self.generator(img_noisy, noise)
-                output = output[:, :3, :, :]
+
+                # Monte Carlo Self Ensemble
+                if not disable_mc:
+                    output = self.forward_x8(img_noisy, self.generator.forward)
+                    output = output[:, :3, :, :]
+                else:
+                    noise = paddle.randn(tuple(img_noisy.shape))
+                    output, _ = self.generator(img_noisy, noise)
+                    output = output[:, :3, :, :]
 
             restored = paddle.clip(output, 0, 1)
 

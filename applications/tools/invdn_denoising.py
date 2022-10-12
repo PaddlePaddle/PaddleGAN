@@ -49,6 +49,13 @@ if __name__ == "__main__":
                         action="store_true",
                         help="cpu mode.")
 
+    parser.add_argument(
+        "--disable_mc",
+        action="store_true",
+        help=
+        "Disable the Monte Carlo Self Ensemble in the paper to boost the speed during test. Performance may degrade."
+    )
+
     args = parser.parse_args()
 
     if args.cpu:
@@ -57,4 +64,4 @@ if __name__ == "__main__":
     predictor = InvDNPredictor(output_path=args.output_path,
                                weight_path=args.weight_path,
                                seed=args.seed)
-    predictor.run(images_path=args.images_path)
+    predictor.run(images_path=args.images_path, disable_mc=args.disable_mc)
