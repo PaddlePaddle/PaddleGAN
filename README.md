@@ -123,7 +123,6 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 * [AOT-GAN](./docs/en_US/tutorials/aotgan.md)
 
 
-
 ## Composite Application
 
 * [Video restore](./docs/en_US/tutorials/video_restore.md)

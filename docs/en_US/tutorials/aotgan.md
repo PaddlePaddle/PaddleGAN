@@ -10,7 +10,7 @@ for context reasoning.
 
 **Paper:** [Aggregated Contextual Transformations for High-Resolution Image Inpainting](https://paperswithcode.com/paper/aggregated-contextual-transformations-for)
 
-**official repo:** [https://github.com/megvii-research/NAFNet](https://github.com/megvii-research/NAFNet)
+**Official Repo:** [https://github.com/megvii-research/NAFNet](https://github.com/megvii-research/NAFNet)
 
 
 ## 2 How to use 
