@@ -12,7 +12,7 @@
 
 ## 2.快速体验
 
-预训练模型权重文件 g.pdparams 可以从如下地址下载: （https://aistudio.baidu.com/aistudio/datasetdetail/165081）
+预训练模型权重文件 g.pdparams 可以从如下地址下载: （https://paddlegan.bj.bcebos.com/models/AotGan_g.pdparams）
 
 输入一张 512x512 尺寸的图片和擦除 mask 给模型，输出一张补全（inpainting）的图片。预测代码如下：
 
@@ -31,6 +31,8 @@ python applications/tools/aotgan.py \
 * weight_path：训练完成的模型权重存储路径，为 statedict 格式（.pdparams）的 Paddle 模型行权重文件
 * output_path：预测生成图片的存储路径
 * config-file：存储参数设定的yaml文件存储路径，与训练过程使用同一个yaml文件，预测参数由 predict 下字段设定
+
+AI Studio 快速体验项目：（https://aistudio.baidu.com/aistudio/datasetdetail/165081）
 
 ## 3.训练
 
