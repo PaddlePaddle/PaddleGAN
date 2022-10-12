@@ -60,7 +60,8 @@ class InvDNPredictor(BasePredictor):
         self.generator = InvDN(channel_in=model_cfgs[task]['channel_in'],
                                channel_out=model_cfgs[task]['channel_out'],
                                block_num=model_cfgs[task]['block_num'],
-                               scale=model_cfgs[task]['scale'])
+                               scale=model_cfgs[task]['scale'],
+                               down_num=model_cfgs[task]['down_num'])
 
         checkpoint = checkpoint['generator']
         self.generator.set_state_dict(checkpoint)
@@ -106,10 +107,7 @@ class InvDNPredictor(BasePredictor):
         return paddle.Tensor(np.ascontiguousarray(
             img, dtype=np.float32)).transpose([2, 0, 1])
 
-    def gaussian_batch(self, dims):
-        return paddle.randn(tuple(dims))
-
-    def forward_x8(self, x, forward_function):
+    def forward_x8(self, x, forward_function, noise_channel):
         def _transform(v, op):
             v2np = v.cpu().numpy()
             if op == 'v':
@@ -126,7 +124,11 @@ class InvDNPredictor(BasePredictor):
         for tf in 'v', 'h', 't':
             noise_list.extend([_transform(t, tf) for t in noise_list])
 
-        gaussian_list = [self.gaussian_batch(aug.shape) for aug in noise_list]
+        gaussian_list = [
+            paddle.randn(
+                (aug.shape[0], noise_channel, aug.shape[2], aug.shape[3]))
+            for aug in noise_list
+        ]
         sr_list = [
             forward_function(aug, g_noise)[0]
             for aug, g_noise in zip(noise_list, gaussian_list)
@@ -171,11 +173,15 @@ class InvDNPredictor(BasePredictor):
             with paddle.no_grad():
 
                 # Monte Carlo Self Ensemble
+                noise_channel = 3 * 4**(self.generator.down_num) - 3
                 if not disable_mc:
-                    output = self.forward_x8(img_noisy, self.generator.forward)
+                    output = self.forward_x8(img_noisy, self.generator.forward,
+                                             noise_channel)
                     output = output[:, :3, :, :]
                 else:
-                    noise = paddle.randn(tuple(img_noisy.shape))
+                    noise = paddle.randn(
+                        (img_noisy.shape[0], noise_channel, img_noisy.shape[2],
+                         img_noisy.shape[3]))
                     output, _ = self.generator(img_noisy, noise)
                     output = output[:, :3, :, :]
 

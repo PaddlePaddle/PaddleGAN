@@ -149,7 +149,12 @@ class HaarDownsampling(nn.Layer):
 
 @GENERATORS.register()
 class InvDN(nn.Layer):
-    def __init__(self, channel_in=3, channel_out=3, block_num=[8, 8], scale=4):
+    def __init__(self,
+                 channel_in=3,
+                 channel_out=3,
+                 block_num=[8, 8],
+                 scale=4,
+                 down_num=2):
         super(InvDN, self).__init__()
 
         operations = []
@@ -158,9 +163,10 @@ class InvDN(nn.Layer):
 
         subnet_constructor = constructor
 
-        down_num = int(math.log(scale, 2))
+        self.down_num = int(math.log(scale, 2))
+        assert self.down_num == down_num
 
-        for i in range(down_num):
+        for i in range(self.down_num):
             b = HaarDownsampling(current_channel)
             operations.append(b)
             current_channel *= 4

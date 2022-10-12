@@ -219,9 +219,10 @@ class InvDNDataset(Dataset):
         img_Noisy = channel_convert(img_Noisy.shape[2], "RGB", [img_Noisy])[0]
 
         # get LQ image
-        LQ_path = self.paths_LQ[index]
-        resolution = None
-        img_LQ = read_img(self.LQ_env, LQ_path, resolution)
+        if self.paths_LQ:
+            LQ_path = self.paths_LQ[index]
+            resolution = None
+            img_LQ = read_img(self.LQ_env, LQ_path, resolution)
 
         if self.is_train:
             GT_size = self.opt["crop_size"]
@@ -267,7 +268,7 @@ class InvDNDataset(Dataset):
 
         if self.is_train:
             return img_Noisy, img_GT, img_LQ
-        return img_Noisy, img_GT, None
+        return img_Noisy, img_GT, img_GT
 
     def __len__(self):
         return len(self.paths_GT)  #32000 for train, 1280 for valid

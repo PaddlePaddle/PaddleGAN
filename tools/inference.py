@@ -393,9 +393,17 @@ def main():
             cv2.imwrite(file_name, sample)
         elif model_type == "invdn":
             noisy = data[0].numpy()
+            noise_channel = 3 * 4**(cfg.model.generator.down_num) - 3
             input_handles[0].copy_from_cpu(noisy)
+            input_handles[1].copy_from_cpu(
+                np.random.randn(noisy.shape[0], noise_channel, noisy.shape[2],
+                                noisy.shape[3]).astype(np.float32))
             predictor.run()
-            prediction = output_handle.copy_to_cpu()
+            output_handles = [
+                predictor.get_output_handle(name)
+                for name in predictor.get_output_names()
+            ]
+            prediction = output_handles[0].copy_to_cpu()
             prediction = paddle.to_tensor(prediction[0])
             image_numpy = tensor2img(prediction, min_max)
             gt_numpy = tensor2img(data[1], min_max)

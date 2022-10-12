@@ -9,6 +9,7 @@ model:
     channel_out: 3
     block_num: [8, 8]
     scale: 4
+    down_num: 2
 
 dataset:
   train:
