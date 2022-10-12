@@ -1,3 +1,17 @@
+#  Copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
@@ -131,6 +145,7 @@ class VGG19F(nn.Layer):
         y = (y - mean) / std
         return y
 
+# l1 loss
 class L1():
     def __init__(self,):
         self.calc = nn.L1Loss()
@@ -138,7 +153,7 @@ class L1():
     def __call__(self, x, y):
         return self.calc(x, y)
 
-# 计算原图片和生成图片通过vgg19模型各个层输出的激活特征图的L1 Loss
+# perceptual loss
 class Perceptual():
     def __init__(self, vgg, weights=[1.0, 1.0, 1.0, 1.0, 1.0]):
         super(Perceptual, self).__init__()
@@ -156,7 +171,7 @@ class Perceptual():
             content_loss += self.weights[i] * self.criterion(x_features[i][0], y_features[i][0]) # 此vgg19预训练模型无bn层，所以尝试不用rate
         return content_loss
 
-# 通过vgg19模型，计算原图片与生成图片风格相似性的Loss
+# style loss
 class Style():
     def __init__(self, vgg):
         super(Style, self).__init__()
@@ -184,6 +199,7 @@ class Style():
             style_loss += self.criterion(self.compute_gram(x_features[b][l]), self.compute_gram(y_features[b][l]))
         return style_loss
 
+# sum of weighted losses
 @CRITERIONS.register()
 class AOTGANCriterionLoss(nn.Layer):
     def __init__(self,
@@ -193,7 +209,6 @@ class AOTGANCriterionLoss(nn.Layer):
         self.model = VGG19F()
         weight_path = get_path_from_url(pretrained)
         vgg_weight = paddle.load(weight_path)
-#         vgg_weight = paddle.load(pretrained)
         self.model.set_state_dict(vgg_weight)
         print('PerceptualVGG loaded pretrained weight.')
         self.l1_loss = L1()

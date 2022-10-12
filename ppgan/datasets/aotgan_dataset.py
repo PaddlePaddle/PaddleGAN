@@ -1,4 +1,4 @@
-# Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
+# Copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ class AOTGANDataset(Dataset):
         super(AOTGANDataset, self).__init__()
 
         self.image_path = []
-        def get_all_sub_dirs(root_dir): # 递归读取全部子文件夹图片文件
+        def get_all_sub_dirs(root_dir): # read all image files including subdirectories
             file_list = []
             def get_sub_dirs(r_dir):
                 for root, dirs, files in os.walk(r_dir):
@@ -44,7 +44,7 @@ class AOTGANDataset(Dataset):
             get_sub_dirs(root_dir)
             return file_list
 
-        # 设置训练集、验证集数据（图片和mask）存放路径
+        # set data path
         if istrain:
             self.img_list = get_all_sub_dirs(os.path.join(dataset_path, 'train_img'))
             self.mask_dir = os.path.join(dataset_path, 'train_mask')
@@ -58,7 +58,7 @@ class AOTGANDataset(Dataset):
 
         self.istrain = istrain
 
-        # 训练阶段分别应用至图片和mask的数据增强
+        # augumentations
         if istrain:
             self.img_trans = Compose([
                 Resize(img_size),
@@ -80,8 +80,7 @@ class AOTGANDataset(Dataset):
 
         self.istrain = istrain
 
-    # 送入模型的RGB图片数据归一化到（-1，+1）区间,形状为[n, c, h, w]
-    # mask尺寸与图片一致，0对应原图片像素，1对应缺失像素
+    # feed data
     def __getitem__(self, idx):
         img = Image.open(self.img_list[idx])
         mask = Image.open(os.path.join(self.mask_dir, self.mask_list[np.random.randint(0, self.mask_list.shape[0])]))
@@ -112,7 +111,7 @@ class AOTGANDataset_test(Dataset):
         super(AOTGANDataset_test, self).__init__()
 
         self.image_path = []
-        def get_all_sub_dirs(root_dir): # 递归读取全部子文件夹图片文件
+        def get_all_sub_dirs(root_dir): # read all image files including subdirectories
             file_list = []
             def get_sub_dirs(r_dir):
                 for root, dirs, files in os.walk(r_dir):
@@ -126,7 +125,7 @@ class AOTGANDataset_test(Dataset):
             get_sub_dirs(root_dir)
             return file_list
 
-        # 设置训练集、验证集数据（图片和mask）存放路径
+        # set data path
         if istrain:
             self.img_list = get_all_sub_dirs(os.path.join(dataset_path, 'train_img'))
             self.mask_dir = os.path.join(dataset_path, 'train_mask')
@@ -140,7 +139,7 @@ class AOTGANDataset_test(Dataset):
 
         self.istrain = istrain
 
-        # 训练阶段分别应用至图片和mask的数据增强
+        # augumentations
         if istrain:
             self.img_trans = Compose([
                 RandomResizedCrop(img_size),
@@ -161,8 +160,7 @@ class AOTGANDataset_test(Dataset):
 
         self.istrain = istrain
 
-    # 送入模型的RGB图片数据归一化到（-1，+1）区间,形状为[n, c, h, w]
-    # mask尺寸与图片一致，0对应原图片像素，1对应缺失像素
+    # feed data
     def __getitem__(self, idx):
         img = Image.open(self.img_list[idx])
         mask = Image.open(os.path.join(self.mask_dir, self.mask_list[np.random.randint(0, self.mask_list.shape[0])]))

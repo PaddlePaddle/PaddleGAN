@@ -1,4 +1,4 @@
-#   Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
+#   Copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ from .discriminators.builder import build_discriminator
 from ..modules.init import init_weights
 from ..solver import build_optimizer
 
-# 对叠加在图片上的mask边缘进行高斯模糊处理
+# gaussion blur on mask
 def gaussian_blur(input, kernel_size, sigma):
     def get_gaussian_kernel(kernel_size: int, sigma: float) -> paddle.Tensor:
         def gauss_fcn(x, window_size, sigma):
@@ -45,7 +45,7 @@ def gaussian_blur(input, kernel_size, sigma):
     padding = [(k - 1) // 2 for k in kernel_size]
     return F.conv2d(input, kernel, padding=padding, stride=1, groups=c)
 
-# GAN Loss，采用最小二乘Loss
+# GAN Loss
 class Adversal():
     def __init__(self, ksize=71):
         self.ksize = ksize
@@ -61,7 +61,7 @@ class Adversal():
         _, _, h, w = g_fake.shape
         b, c, ht, wt = masks.shape
 
-        # 对齐判别器输出特征图与mask的尺寸
+        # align image shape with mask
         if h != ht or w != wt:
             g_fake = F.interpolate(g_fake, size=(ht, wt), mode='bilinear', align_corners=True)
             d_fake = F.interpolate(d_fake, size=(ht, wt), mode='bilinear', align_corners=True)

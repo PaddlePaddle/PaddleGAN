@@ -1,4 +1,4 @@
-#  Copyright (c) 2021 PaddlePaddle Authors. All Rights Reserve.
+#  Copyright (c) 2022 PaddlePaddle Authors. All Rights Reserve.
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ from paddle.nn.utils import spectral_norm
 
 from .builder import GENERATORS
 
-#  Aggregated Contextual Transformations模块，是构成模型的核心结构，负责提取多尺度特征
+#  Aggregated Contextual Transformations Block
 class AOTBlock(nn.Layer):
     def __init__(self, dim, rates):
         super(AOTBlock, self).__init__()
@@ -63,7 +63,7 @@ class UpConv(nn.Layer):
     def forward(self, x):
         return self.conv(F.interpolate(x, scale_factor=2, mode='bilinear', align_corners=True))
 
-# 生成器
+# generator
 @GENERATORS.register()
 class InpaintGenerator(nn.Layer):
     def __init__(self, rates, block_num):
