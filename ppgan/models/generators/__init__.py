@@ -44,4 +44,4 @@ from .prenet import PReNet
 from .gpen import GPEN
 from .swinir import SwinIR
 from .gfpganv1_clean_arch import GFPGANv1Clean
-from .gfpganv1_arch_paddle import GFPGANv1, StyleGAN2DiscriminatorGFPGAN
+from .gfpganv1_arch import GFPGANv1, StyleGAN2DiscriminatorGFPGAN
