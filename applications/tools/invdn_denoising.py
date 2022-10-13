@@ -16,10 +16,10 @@ import os
 import sys
 import argparse
 
+sys.path.insert(0, os.getcwd())
+
 import paddle
 from ppgan.apps import InvDNPredictor
-
-sys.path.insert(0, os.getcwd())
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
