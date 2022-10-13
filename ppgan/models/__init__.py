@@ -40,3 +40,4 @@ from .prenet_model import PReNetModel
 from .gpen_model import GPENModel
 from .swinir_model import SwinIRModel
 from .gfpgan_model import GFPGANModel
+from .invdn_model import InvDNModel
