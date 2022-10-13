@@ -27,7 +27,7 @@ from ..modules.init import init_weights
 from collections import OrderedDict
 from ..solver import build_lr_scheduler, build_optimizer
 from ppgan.utils.visual import *
-from ppgan.models.generators.gfpganv1_arch_paddle import FacialComponentDiscriminator
+from ppgan.models.generators.gfpganv1_arch import FacialComponentDiscriminator
 from ppgan.utils.download import get_path_from_url
 
 

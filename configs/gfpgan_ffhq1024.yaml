@@ -23,8 +23,6 @@ validate:
         fid:
             name: FID
             batch_size: 8
-        LPIPS:
-            name: LPIPSMetric
 model:
     name: GFPGANModel
     network_g:
