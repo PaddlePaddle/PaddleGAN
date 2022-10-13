@@ -77,4 +77,4 @@ class AOTGANPredictor(BasePredictor):
         if not os.path.exists(path):
             os.mkdir(path)
         cv2.imwrite(self.output_path, pic)
-        print('输出图片已保存在 '+self.output_path+' 。')
+        print('Predicted pictures are saved: '+self.output_path+' 。')
