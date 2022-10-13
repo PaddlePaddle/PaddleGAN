@@ -43,3 +43,6 @@ from .rcan import RCAN
 from .prenet import PReNet
 from .gpen import GPEN
 from .swinir import SwinIR
+from .gfpganv1_arch_paddle import GFPGANv1
+from .gfpganv1_clean_arch import GFPGANv1Clean
+from .gfpganv1_arch_paddle import GFPGANv1, StyleGAN2DiscriminatorGFPGAN
