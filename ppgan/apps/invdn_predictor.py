@@ -33,7 +33,8 @@ model_cfgs = {
         'channel_in': 3,
         'channel_out': 3,
         'block_num': [8, 8],
-        'scale': 4
+        'scale': 4,
+        'down_num': 2
     }
 }
 
@@ -173,7 +174,7 @@ class InvDNPredictor(BasePredictor):
             with paddle.no_grad():
 
                 # Monte Carlo Self Ensemble
-                noise_channel = 3 * 4**(self.generator.down_num) - 3
+                noise_channel = 3 * 4**(model_cfgs['Denoising']['down_num']) - 3
                 if not disable_mc:
                     output = self.forward_x8(img_noisy, self.generator.forward,
                                              noise_channel)

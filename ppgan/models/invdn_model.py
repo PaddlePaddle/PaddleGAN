@@ -40,6 +40,8 @@ class InvDNModel(BaseModel):
 
         self.nets['generator'] = build_generator(generator)
 
+        self.generator_cfg = generator
+
     def setup_input(self, input):
         self.noisy = input[0]
         self.gt = input[1]
@@ -48,7 +50,7 @@ class InvDNModel(BaseModel):
     def train_iter(self, optims=None):
         optims['optim'].clear_gradients()
 
-        noise_channel = 3 * 4**(self.nets['generator'].down_num) - 3
+        noise_channel = 3 * 4**(self.generator_cfg.down_num) - 3
         noise = paddle.randn((self.noisy.shape[0], noise_channel,
                               self.noisy.shape[2], self.noisy.shape[3]))
         output_hq, output_lq = self.nets['generator'](self.noisy, noise)
@@ -76,7 +78,7 @@ class InvDNModel(BaseModel):
         self.nets['generator'].eval()
         with paddle.no_grad():
 
-            noise_channel = 3 * 4**(self.nets['generator'].down_num) - 3
+            noise_channel = 3 * 4**(self.generator_cfg.down_num) - 3
             noise = paddle.randn((self.noisy.shape[0], noise_channel,
                                   self.noisy.shape[2], self.noisy.shape[3]))
             output_hq, _ = self.nets['generator'](self.noisy, noise)
@@ -107,7 +109,7 @@ class InvDNModel(BaseModel):
         new_model = self.nets['generator']
         new_model.eval()
 
-        noise_channel = 3 * 4**(self.nets['generator'].down_num) - 3
+        noise_channel = 3 * 4**(self.generator_cfg.down_num) - 3
         noise_shape = (shape[0], noise_channel, shape[2], shape[3])
         input_spec = [
             paddle.static.InputSpec(shape=shape, dtype="float32"),
