@@ -1,6 +1,7 @@
 total_iters: 1000000
 output_dir: output_dir
 checkpoints_dir: checkpoints
+epochs: 5
 
 model:
   name: AOTGANModel
@@ -65,3 +66,6 @@ predict:
   rates: [1, 2, 4, 8]
   block_num: 8
   img_size: 512
+
+export_model:
+  - {name: 'net_gen', inputs_num: 1}

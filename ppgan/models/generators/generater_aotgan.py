@@ -89,8 +89,7 @@ class InpaintGenerator(nn.Layer):
             nn.Conv2D(64, 3, 3, 1, 1)
         )
 
-    def forward(self, x, mask):
-        x = paddle.concat([x, mask], 1)
+    def forward(self, x):
         x = self.encoder(x)
         x = self.middle(x)
         x = self.decoder(x)

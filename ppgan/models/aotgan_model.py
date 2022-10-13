@@ -110,7 +110,8 @@ class AOTGANModel(BaseModel):
         self.img_paths = input['img_path']
 
     def forward(self):
-        self.pred_img = self.nets['net_gen'](self.img_masked, self.mask)
+        input_x = paddle.concat([self.img_masked, self.mask], 1)
+        self.pred_img = self.nets['net_gen'](input_x)
         self.comp_img = (1 - self.mask) * self.img + self.mask * self.pred_img
         self.visual_items['pred_img'] = self.pred_img
 
