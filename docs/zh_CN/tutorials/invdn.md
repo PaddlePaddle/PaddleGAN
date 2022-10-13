@@ -25,7 +25,7 @@ python applications/tools/invdn_denoising.py --images_path ${PATH_OF_IMAGE}
 ```
 其中`PATH_OF_IMAGE`为你需要去噪的图像路径，或图像所在文件夹的路径。
 
-- 注意，作者原代码中，测试时使用了蒙特卡洛自集成以提高性能，但是会拖慢速度。用户可以自由选择是否使用 `--disable_mc` 参数来关闭蒙特卡洛自集成以提高速度。（$test$ 时默认开启蒙特卡洛自集成，而 $train$ 和 $valid$ 时默认关闭蒙特卡洛自集成。）
+- 注意，作者原代码中，测试时使用了蒙特卡洛自集成（Monte Carlo self-ensemble）以提高性能，但是会拖慢速度。用户可以自由选择是否使用 `--disable_mc` 参数来关闭蒙特卡洛自集成以提高速度。（$test$ 时默认开启蒙特卡洛自集成，而 $train$ 和 $valid$ 时默认关闭蒙特卡洛自集成。）
 
 ### 2.2 数据准备
 
