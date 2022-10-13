@@ -39,3 +39,4 @@ from .rcan_model import RCANModel
 from .prenet_model import PReNetModel
 from .gpen_model import GPENModel
 from .swinir_model import SwinIRModel
+from .invdn_model import InvDNModel

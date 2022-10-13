@@ -43,3 +43,4 @@ from .rcan import RCAN
 from .prenet import PReNet
 from .gpen import GPEN
 from .swinir import SwinIR
+from .invdn import InvDN
