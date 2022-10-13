@@ -1,6 +1,7 @@
 ## GFPGAN Blind Face Restoration Model
 
 
+
 ## 1、Introduction
 
 GFP-GAN that leverages rich and diverse priors encapsulated in a pretrained face GAN for blind face restoration.
