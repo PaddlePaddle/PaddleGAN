@@ -20,7 +20,7 @@ from paddle.nn.utils import spectral_norm
 from ppgan.utils.download import get_path_from_url
 from .builder import CRITERIONS
 
-# 用于计算Perceptual Loss和Style Loss的vgg19模型（使用ImageNet预训练权重）
+# VGG19（ImageNet pretrained）
 class VGG19F(nn.Layer):
     def __init__(self):
         super(VGG19F, self).__init__()

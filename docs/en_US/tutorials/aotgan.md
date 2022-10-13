@@ -44,10 +44,11 @@ The pretained model uses 'Place365Standard' and 'NVIDIA Irregular Mask' as its t
   
 ```
 └─data
-    ├─train_img
-    ├─train_mask
-    ├─val_img
-    └─val_mask
+    └─aotgan
+        ├─train_img
+        ├─train_mask
+        ├─val_img
+        └─val_mask
 ```
 Train(Single Card):
 
@@ -66,8 +67,16 @@ Train(continue):
 ```
 python -u tools/main.py \
 	--config-file configs/aotgan.yaml \
-	--resume  output_dir/aotgan-2022-10-08-18-00/iter_200_checkpoint.pdparams
+	--resume  output_dir/[path_to_checkpoint]/iter_[iternumber]_checkpoint.pdparams
 ```
+
+# Results
+
+On Places365-Val Dataset
+
+|  mask   | PSNR  | SSIM  | download  |
+|  ----  | ----  | ----  | ----  |
+|  20-30%   | 26.04001  | 0.89011  | [download](https://paddlegan.bj.bcebos.com/models/AotGan_g.pdparams)  |
 
 # References
 
