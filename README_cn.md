@@ -138,7 +138,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   * 视频超分：[Video Super Resolution(VSR)](./docs/zh_CN/tutorials/video_super_resolution.md)
     * 包含模型：⭐ PP-MSVSR ⭐、EDVR、BasicVSR、BasicVSR++
 * 图像视频修复
-  * 图像去模糊去噪去雨：[MPR Net](./docs/zh_CN/tutorials/mpr_net.md)、[SwinIR](./docs/zh_CN/tutorials/swinir.md)
+  * 图像去模糊去噪去雨：[MPR Net](./docs/zh_CN/tutorials/mpr_net.md)、[SwinIR](./docs/zh_CN/tutorials/swinir.md)、[InvDN](./docs/zh_CN/tutorials/invdn.md)
   * 视频去模糊：[EDVR](./docs/zh_CN/tutorials/video_super_resolution.md)
   * 图像去雨：[PReNet](./docs/zh_CN/tutorials/prenet.md)
   * 图像补全：[AOT-GAN](./docs/zh_CN/tutorials/aotgan.md)
