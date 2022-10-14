@@ -19,7 +19,7 @@ from ppgan.metrics import build_metric
 
 
 MODEL_CLASSES = ["pix2pix", "cyclegan", "wav2lip", "esrgan", \
-                 "edvr", "fom", "stylegan2", "basicvsr", "msvsr", "singan", "swinir"]
+                 "edvr", "fom", "stylegan2", "basicvsr", "msvsr", "singan", "swinir", "invdn", "aotgan"]
 
 
 def parse_args():
@@ -334,6 +334,15 @@ def main():
             metric_file = os.path.join(args.output_path, "singan/metric.txt")
             for metric in metrics.values():
                 metric.update(prediction, data['A'])
+        elif model_type == 'gfpgan':
+            input_handles[0].copy_from_cpu(data['lq'].numpy())
+            predictor.run()
+            prediction = output_handle.copy_to_cpu()
+            prediction = paddle.to_tensor(prediction)
+            image_numpy = tensor2img(prediction, min_max)
+            save_image(
+                image_numpy,
+                os.path.join(args.output_path, "gfpgan/{}.png".format(i)))
         elif model_type == "swinir":
             lq = data[1].numpy()
             _, _, h_old, w_old = lq.shape
@@ -391,6 +400,39 @@ def main():
             file_name = os.path.join(args.output_path, model_type,
                                      "{}.png".format(i))
             cv2.imwrite(file_name, sample)
+        elif model_type == "invdn":
+            noisy = data[0].numpy()
+            noise_channel = 3 * 4**(cfg.model.generator.down_num) - 3
+            input_handles[0].copy_from_cpu(noisy)
+            input_handles[1].copy_from_cpu(
+                np.random.randn(noisy.shape[0], noise_channel, noisy.shape[2],
+                                noisy.shape[3]).astype(np.float32))
+            predictor.run()
+            output_handles = [
+                predictor.get_output_handle(name)
+                for name in predictor.get_output_names()
+            ]
+            prediction = output_handles[0].copy_to_cpu()
+            prediction = paddle.to_tensor(prediction[0])
+            image_numpy = tensor2img(prediction, min_max)
+            gt_numpy = tensor2img(data[1], min_max)
+            save_image(image_numpy,
+                       os.path.join(args.output_path, "invdn/{}.png".format(i)))
+            metric_file = os.path.join(args.output_path, model_type,
+                                       "metric.txt")
+            for metric in metrics.values():
+                metric.update(image_numpy, gt_numpy)
+            break
+        elif model_type == 'aotgan':
+            input_data = paddle.concat((data['img'], data['mask']), axis=1).numpy()
+            input_handles[0].copy_from_cpu(input_data)
+            predictor.run()
+            prediction = output_handle.copy_to_cpu()
+            prediction = paddle.to_tensor(prediction)
+            image_numpy = tensor2img(prediction, min_max)
+            save_image(
+                image_numpy,
+                os.path.join(args.output_path, "aotgan/{}.png".format(i)))
 
     if metrics:
         log_file = open(metric_file, 'a')
