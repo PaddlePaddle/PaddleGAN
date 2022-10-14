@@ -1,5 +1,8 @@
 total_iters: 150000
 output_dir: output_dir
+# tensor range for function tensor2img
+min_max:
+  (0., 1.)
 
 model:
   name: InvDNModel
