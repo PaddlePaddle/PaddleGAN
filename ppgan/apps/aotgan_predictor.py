@@ -68,7 +68,8 @@ class AOTGANPredictor(BasePredictor):
 
         # predict
         img_masked = (img * (1 - mask)) + mask # put the mask onto the image
-        pred_img = self.gen(img_masked, mask) # predict by masked image
+        input_data = paddle.concat((img_masked, mask), axis=1) # concatenate
+        pred_img = self.gen(input_data) # predict by masked image
         comp_img = (1 - mask) * img + mask * pred_img # compound the inpainted image
         img_save = ((comp_img.numpy()[0].transpose((1,2,0)) + 1.) / 2. * 255).astype('uint8')
 
