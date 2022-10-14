@@ -61,7 +61,8 @@ optimizer:
     - generator
   beta1: 0.9
   beta2: 0.99
-  epsilon: 1e-8 #TODO GRADIENT_CLIPPING
+  epsilon: 1e-8
+  clip_grad_norm: 10
 
 log_config:
   interval: 100

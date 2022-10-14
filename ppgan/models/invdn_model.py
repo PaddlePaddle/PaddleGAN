@@ -21,6 +21,7 @@ from .base_model import BaseModel
 from .generators.builder import build_generator
 from .criterions.builder import build_criterion
 from ppgan.utils.visual import tensor2img
+from ..solver import build_lr_scheduler, build_optimizer
 
 
 @MODELS.register()
@@ -70,6 +71,30 @@ class InvDNModel(BaseModel):
         l_total.backward()
         optims['optim'].step()
         self.losses['loss'] = l_total.numpy()
+
+    def setup_optimizers(self, lr, cfg):
+        if cfg.get('name', None):
+            cfg_ = cfg.copy()
+            net_names = cfg_.pop('net_names')
+            parameters = []
+            for net_name in net_names:
+                parameters += self.nets[net_name].parameters()
+
+            cfg_['grad_clip'] = nn.ClipGradByNorm(cfg_['clip_grad_norm'])
+            cfg_.pop('clip_grad_norm')
+
+            self.optimizers['optim'] = build_optimizer(cfg_, lr, parameters)
+        else:
+            for opt_name, opt_cfg in cfg.items():
+                cfg_ = opt_cfg.copy()
+                net_names = cfg_.pop('net_names')
+                parameters = []
+                for net_name in net_names:
+                    parameters += self.nets[net_name].parameters()
+                self.optimizers[opt_name] = build_optimizer(
+                    cfg_, lr, parameters)
+
+        return self.optimizers
 
     def forward(self):
         pass
