@@ -66,12 +66,21 @@ if [ ${MODE} = "lite_train_lite_infer" ];then
         rm -rf ./data/*sets
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/swinir_data.zip --no-check-certificate
         cd ./data/ && unzip -q swinir_data.zip && cd ../ ;;
+    invdn)
+        rm -rf ./data/SIDD_*
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/SIDD_mini.zip --no-check-certificate
+        cd ./data/ && unzip -q SIDD_mini.zip && cd ../ ;;
     singan)
         rm -rf ./data/singan*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/singan-official_images.zip --no-check-certificate
         cd ./data/ && unzip -q singan-official_images.zip && cd ../
         mkdir -p ./data/singan
         mv ./data/SinGAN-official_images/Images/stone.png ./data/singan ;;
+    GFPGAN)
+        rm -rf ./data/gfpgan*
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/gfpgan_tipc_data.zip --no-check-certificate
+        mkdir -p ./data/gfpgan_data
+        cd ./data/ && unzip -q gfpgan_tipc_data.zip -d gfpgan_data/ && cd ../ ;;
     aotgan)
         rm -rf ./data/aotgan*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/aotgan.zip --no-check-certificate

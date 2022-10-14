@@ -25,4 +25,5 @@ from .discriminator_firstorder import FirstOrderDiscriminator
 from .discriminator_lapstyle import LapStyleDiscriminator
 from .discriminator_photopen import MultiscaleDiscriminator
 from .discriminator_singan import SinGANDiscriminator
+from .arcface_arch_paddle import ResNetArcFace
 from .discriminator_aotgan import Discriminator
