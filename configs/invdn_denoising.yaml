@@ -1,0 +1,75 @@
+total_iters: 150000
+output_dir: output_dir
+# tensor range for function tensor2img
+min_max:
+  (0., 1.)
+
+model:
+  name: InvDNModel
+  generator:
+    name: InvDN
+    channel_in: 3
+    channel_out: 3
+    block_num: [8, 8]
+    scale: 4
+    down_num: 2
+
+dataset:
+  train:
+    name: InvDNDataset
+    num_workers: 10
+    batch_size: 14 # 4 GPUs
+    opt:
+      phase: train
+      scale: 4
+      crop_size: 144
+      train_dir: data/SIDD_Medium_Srgb_Patches_512/train/
+  test:
+    name: InvDNDataset
+    num_workers: 1
+    batch_size: 1
+    opt:
+      phase: test
+      scale: 4
+      val_dir: data/SIDD_Valid_Srgb_Patches_256/valid/
+
+export_model:
+  - {name: 'generator', inputs_num: 1}
+
+lr_scheduler:
+  name: MultiStepDecay
+  learning_rate: 8e-4 # num_gpu * 2e-4
+  milestones: [25000, 50000, 75000, 100000, 125000, 135000, 145000]
+  gamma: 0.5
+
+validate:
+  interval: 500
+  save_img: True
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      name: PSNR
+      crop_border: 4
+      test_y_channel: True
+    ssim:
+      name: SSIM
+      crop_border: 4
+      test_y_channel: True
+
+optimizer:
+  name: Adam
+  # add parameters of net_name to optim
+  # name should in self.nets
+  net_names:
+    - generator
+  beta1: 0.9
+  beta2: 0.99
+  epsilon: 1e-8
+  clip_grad_norm: 10
+
+log_config:
+  interval: 100
+  visiual_interval: 5000
+
+snapshot_config:
+  interval: 500

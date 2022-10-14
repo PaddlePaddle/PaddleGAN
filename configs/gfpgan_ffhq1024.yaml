@@ -1,0 +1,205 @@
+total_iters: 800000
+output_dir: output
+find_unused_parameters: True
+
+log_config:
+    interval: 100
+    visiual_interval: 100
+
+snapshot_config:
+    interval: 30000
+
+enable_visualdl: False
+
+validate:
+    interval: 5000
+    save_img: True
+
+    metrics:
+        psnr:
+            name: PSNR
+            crop_border: 0
+            test_y_channel: false
+        fid:
+            name: FID
+            batch_size: 8
+model:
+    name: GFPGANModel
+    network_g:
+        name: GFPGANv1
+        out_size: 512
+        num_style_feat: 512
+        channel_multiplier: 1
+        resample_kernel: [1, 3, 3, 1]
+        decoder_load_path: https://paddlegan.bj.bcebos.com/models/StyleGAN2_FFHQ512_Cmul1.pdparams
+        fix_decoder: true
+        num_mlp: 8
+        lr_mlp: 0.01
+        input_is_latent: true
+        different_w: true
+        narrow: 1
+        sft_half: true
+    network_d:
+        name: StyleGAN2DiscriminatorGFPGAN
+        out_size: 512
+        channel_multiplier: 1
+        resample_kernel: [1, 3, 3, 1]
+    network_d_left_eye:
+        type: FacialComponentDiscriminator
+
+    network_d_right_eye:
+        type: FacialComponentDiscriminator
+
+    network_d_mouth:
+        type: FacialComponentDiscriminator
+
+    network_identity:
+        name: ResNetArcFace
+        block: IRBlock
+        layers: [2, 2, 2, 2]
+        use_se: False
+
+    path:
+        image_visual: gfpgan_train_outdir
+        pretrain_network_g: ~
+        param_key_g: params_ema
+        strict_load_g: ~
+        pretrain_network_d: ~
+        pretrain_network_d_left_eye: https://paddlegan.bj.bcebos.com/models/Facial_component_discriminator.pdparams
+        pretrain_network_d_right_eye: https://paddlegan.bj.bcebos.com/models/Facial_component_discriminator.pdparams
+        pretrain_network_d_mouth: https://paddlegan.bj.bcebos.com/models/Facial_component_discriminator.pdparams
+        pretrain_network_identity: https://paddlegan.bj.bcebos.com/models/arcface_resnet18.pdparams
+
+
+    # losses
+    # pixel loss
+    pixel_opt:
+        name: GFPGANL1Loss
+        loss_weight: !!float 1e-1
+        reduction: mean
+    # L1 loss used in pyramid loss, component style loss and identity loss
+    L1_opt:
+        name: GFPGANL1Loss
+        loss_weight: 1
+        reduction: mean
+
+    # image pyramid loss
+    pyramid_loss_weight: 1
+    remove_pyramid_loss: 50000
+    # perceptual loss (content and style losses)
+    perceptual_opt:
+        name: GFPGANPerceptualLoss
+        layer_weights:
+            # before relu
+            "conv1_2": 0.1
+            "conv2_2": 0.1
+            "conv3_4": 1
+            "conv4_4": 1
+            "conv5_4": 1
+        vgg_type: vgg19
+        use_input_norm: true
+        perceptual_weight: !!float 1
+        style_weight: 50
+        range_norm: true
+        criterion: l1
+    # gan loss
+    gan_opt:
+        name: GFPGANGANLoss
+        gan_type: wgan_softplus
+        loss_weight: !!float 1e-1
+    # r1 regularization for discriminator
+    r1_reg_weight: 10
+    # facial component loss
+    gan_component_opt:
+        name: GFPGANGANLoss
+        gan_type: vanilla
+        real_label_val: 1.0
+        fake_label_val: 0.0
+        loss_weight: !!float 1
+    comp_style_weight: 200
+    # identity loss
+    identity_weight: 10
+
+    net_d_iters: 1
+    net_d_init_iters: 0
+    net_d_reg_every: 16
+
+export_model:
+    - { name: "net_g_ema", inputs_num: 1 }
+
+dataset:
+    train:
+        name: FFHQDegradationDataset
+        dataroot_gt: data/gfpgan_data/train
+        io_backend:
+            type: disk
+
+        use_hflip: true
+        mean: [0.5, 0.5, 0.5]
+        std: [0.5, 0.5, 0.5]
+        out_size: 512
+
+        blur_kernel_size: 41
+        kernel_list: ["iso", "aniso"]
+        kernel_prob: [0.5, 0.5]
+        blur_sigma: [0.1, 10]
+        downsample_range: [0.8, 8]
+        noise_range: [0, 20]
+        jpeg_range: [60, 100]
+
+        # color jitter and gray
+        color_jitter_prob: 0.3
+        color_jitter_shift: 20
+        color_jitter_pt_prob: 0.3
+        gray_prob: 0.01
+
+        # If you do not want colorization, please set
+        # color_jitter_prob: ~
+        # color_jitter_pt_prob: ~
+        # gray_prob: 0.01
+        # gt_gray: True
+
+        crop_components: true
+        component_path: https://paddlegan.bj.bcebos.com/models/FFHQ_eye_mouth_landmarks_512.pdparams
+        eye_enlarge_ratio: 1.4
+
+        # data loader
+        use_shuffle: true
+        num_workers: 4
+        batch_size: 1
+        prefetch_mode: ~
+
+    test:
+        # Please modify accordingly to use your own validation
+        # Or comment the val block if do not need validation during training
+        name: PairedImageDataset
+        dataroot_lq: data/gfpgan_data/lq
+        dataroot_gt: data/gfpgan_data/gt
+        io_backend:
+            type: disk
+        mean: [0.5, 0.5, 0.5]
+        std: [0.5, 0.5, 0.5]
+        scale: 1
+        num_workers: 4
+        batch_size: 8
+        phase: val
+
+lr_scheduler:
+    name: MultiStepDecay
+    learning_rate: 0.002
+    milestones: [600000, 700000]
+    gamma: 0.5
+
+optimizer:
+    optim_g:
+        name: Adam
+        beta1: 0
+        beta2: 0.99
+    optim_d:
+        name: Adam
+        beta1: 0
+        beta2: 0.99
+    optim_component:
+        name: Adam
+        beta1: 0.9
+        beta2: 0.99
