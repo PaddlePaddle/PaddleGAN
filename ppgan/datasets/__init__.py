@@ -35,3 +35,4 @@ from .swinir_dataset import SwinIRDataset
 from .gfpgan_datasets import FFHQDegradationDataset
 from .paired_image_datasets import PairedImageDataset
 from .invdn_dataset import InvDNDataset
+from .aotgan_dataset import AOTGANDataset

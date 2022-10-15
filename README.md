@@ -121,6 +121,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 * [PReNet](./docs/en_US/tutorials/prenet.md)
 * [SwinIR](./docs/en_US/tutorials/swinir.md)
 * [InvDN](./docs/en_US/tutorials/invdn.md)
+* [AOT-GAN](./docs/en_US/tutorials/aotgan.md)
 
 
 ## Composite Application
