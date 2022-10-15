@@ -1,0 +1,71 @@
+total_iters: 1000000
+output_dir: output_dir
+checkpoints_dir: checkpoints
+epochs: 5
+
+model:
+  name: AOTGANModel
+  generator:
+    name: InpaintGenerator
+    rates: [1, 2, 4, 8]
+    block_num: 8
+  discriminator:
+    name: Discriminator
+    inc: 3
+  criterion:
+    name: AOTGANCriterionLoss
+    pretrained: https://paddlegan.bj.bcebos.com/models/vgg19feats.pdparams
+  l1_weight: 1
+  perceptual_weight: 1
+  style_weight: 250
+  adversal_weight: 0.01
+  img_size: 512
+
+dataset:
+  train:
+    name: AOTGANDataset
+    dataset_path: data/aotgan
+    batch_size: 8 # Multi-Card:4
+    img_size: 512
+  test:
+    name: AOTGANDataset_test
+    dataset_path: data/aotgan
+    batch_size: 1
+    img_size: 512
+
+lr_scheduler: # abundoned
+  name: MultiStepDecay
+  learning_rate: 0.0001
+  milestones: [990000]
+  gamma: 0.1
+
+optimizer:
+  lr: 0.0001
+  optimG:
+    name: Adam
+    net_names:
+      - net_gen
+    beta1: 0.5
+    beta2: 0.999
+  optimD:
+    name: Adam
+    net_names:
+      - net_des
+    beta1: 0.5
+    beta2: 0.999
+
+log_config:
+  interval: 100
+  visiual_interval: 100
+
+snapshot_config:
+  interval: 1000
+
+predict:
+  name: AOTGANGenerator
+  rates: [1, 2, 4, 8]
+  block_num: 8
+  img_size: 512
+
+export_model:
+  - {name: 'net_gen', inputs_num: 1}

@@ -81,6 +81,10 @@ if [ ${MODE} = "lite_train_lite_infer" ];then
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/gfpgan_tipc_data.zip --no-check-certificate
         mkdir -p ./data/gfpgan_data
         cd ./data/ && unzip -q gfpgan_tipc_data.zip -d gfpgan_data/ && cd ../ ;;
+    aotgan)
+        rm -rf ./data/aotgan*
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/aotgan.zip --no-check-certificate
+        cd ./data/ && unzip -q aotgan.zip && cd ../ ;;
     esac
 elif [ ${MODE} = "whole_train_whole_infer" ];then
     if [ ${model_name} == "Pix2pix" ]; then

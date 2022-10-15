@@ -20,7 +20,7 @@ from ppgan.metrics import build_metric
 
 MODEL_CLASSES = ["pix2pix", "cyclegan", "wav2lip", "esrgan", \
                  "edvr", "fom", "stylegan2", "basicvsr", "msvsr", \
-                 "singan", "swinir", "invdn", "nafnet"]
+                 "singan", "swinir", "invdn",  "aotgan", "nafnet"]
 
 
 def parse_args():
@@ -424,6 +424,7 @@ def main():
             for metric in metrics.values():
                 metric.update(image_numpy, gt_numpy)
             break
+
         elif model_type == "nafnet":
             lq = data[1].numpy()
             input_handles[0].copy_from_cpu(lq)
@@ -445,6 +446,17 @@ def main():
             file_name = os.path.join(args.output_path, model_type,
                                      "{}.png".format(i))
             cv2.imwrite(file_name, sample)
+        elif model_type == 'aotgan':
+            input_data = paddle.concat((data['img'], data['mask']),
+                                       axis=1).numpy()
+            input_handles[0].copy_from_cpu(input_data)
+            predictor.run()
+            prediction = output_handle.copy_to_cpu()
+            prediction = paddle.to_tensor(prediction)
+            image_numpy = tensor2img(prediction, min_max)
+            save_image(
+                image_numpy,
+                os.path.join(args.output_path, "aotgan/{}.png".format(i)))
 
     if metrics:
         log_file = open(metric_file, 'a')
