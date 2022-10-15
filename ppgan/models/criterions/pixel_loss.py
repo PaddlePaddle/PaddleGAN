@@ -31,6 +31,7 @@ class L1Loss():
         loss_weight (float): Loss weight for L1 loss. Default: 1.0.
 
     """
+
     def __init__(self, reduction='mean', loss_weight=1.0):
         # when loss weight less than zero return None
         if loss_weight <= 0:
@@ -59,6 +60,7 @@ class CharbonnierLoss():
         eps (float): Default: 1e-12.
 
     """
+
     def __init__(self, eps=1e-12, reduction='sum'):
         self.eps = eps
         self.reduction = reduction
@@ -90,6 +92,7 @@ class MSELoss():
         loss_weight (float): Loss weight for MSE loss. Default: 1.0.
 
     """
+
     def __init__(self, reduction='mean', loss_weight=1.0):
         # when loss weight less than zero return None
         if loss_weight <= 0:
@@ -119,6 +122,7 @@ class BCEWithLogitsLoss():
             Supported choices are 'none' | 'mean' | 'sum'. Default: 'mean'.
         loss_weight (float): Loss weight for MSE loss. Default: 1.0.
     """
+
     def __init__(self, reduction='mean', loss_weight=1.0):
         # when loss weight less than zero return None
         if loss_weight <= 0:
@@ -161,6 +165,7 @@ def calc_emd_loss(pred, target):
 class CalcStyleEmdLoss():
     """Calc Style Emd Loss.
     """
+
     def __init__(self):
         super(CalcStyleEmdLoss, self).__init__()
 
@@ -183,6 +188,7 @@ class CalcStyleEmdLoss():
 class CalcContentReltLoss():
     """Calc Content Relt Loss.
     """
+
     def __init__(self):
         super(CalcContentReltLoss, self).__init__()
 
@@ -207,6 +213,7 @@ class CalcContentReltLoss():
 class CalcContentLoss():
     """Calc Content Loss.
     """
+
     def __init__(self):
         self.mse_loss = nn.MSELoss()
 
@@ -229,6 +236,7 @@ class CalcContentLoss():
 class CalcStyleLoss():
     """Calc Style Loss.
     """
+
     def __init__(self):
         self.mse_loss = nn.MSELoss()
 
@@ -247,6 +255,7 @@ class CalcStyleLoss():
 
 @CRITERIONS.register()
 class EdgeLoss():
+
     def __init__(self):
         k = paddle.to_tensor([[.05, .25, .4, .25, .05]])
         self.kernel = paddle.matmul(k.t(), k).unsqueeze(0).tile([3, 1, 1, 1])
@@ -271,3 +280,27 @@ class EdgeLoss():
         y.stop_gradient = True
         loss = self.loss(self.laplacian_kernel(x), self.laplacian_kernel(y))
         return loss
+
+
+@CRITERIONS.register()
+class PSNRLoss(nn.Layer):
+
+    def __init__(self, loss_weight=1.0, reduction='mean', toY=False):
+        super(PSNRLoss, self).__init__()
+        assert reduction == 'mean'
+        self.loss_weight = loss_weight
+        self.scale = 10 / np.log(10)
+        self.toY = toY
+        self.coef = paddle.to_tensor(np.array([65.481, 128.553,
+                                               24.966])).reshape([1, 3, 1, 1])
+
+    def forward(self, pred, target):
+        if self.toY:
+            pred = (pred * self.coef).sum(axis=1).unsqueeze(axis=1) + 16.
+            target = (target * self.coef).sum(axis=1).unsqueeze(axis=1) + 16.
+
+            pred, target = pred / 255., target / 255.
+            pass
+
+        return self.loss_weight * self.scale * paddle.log((
+            (pred - target)**2).mean(axis=[1, 2, 3]) + 1e-8).mean()
