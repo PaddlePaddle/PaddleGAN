@@ -4,7 +4,7 @@ python:python3.7
 gpu_list:0
 ##
 auto_cast:null
-total_iters:lite_train_lite_infer=100
+total_iters:lite_train_lite_infer=500
 output_dir:./output/
 dataset.train.batch_size:lite_train_lite_infer=2
 pretrained_model:null
