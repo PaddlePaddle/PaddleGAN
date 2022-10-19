@@ -39,4 +39,5 @@ from .singan_predictor import SinGANPredictor
 from .gpen_predictor import GPENPredictor
 from .swinir_predictor import SwinIRPredictor
 from .invdn_predictor import InvDNPredictor
+from .nafnet_predictor import NAFNetPredictor
 from .aotgan_predictor import AOTGANPredictor

@@ -35,4 +35,5 @@ from .swinir_dataset import SwinIRDataset
 from .gfpgan_datasets import FFHQDegradationDataset
 from .paired_image_datasets import PairedImageDataset
 from .invdn_dataset import InvDNDataset
+from .nafnet_dataset import NAFNetTrain, NAFNetVal, NAFNetTest
 from .aotgan_dataset import AOTGANDataset

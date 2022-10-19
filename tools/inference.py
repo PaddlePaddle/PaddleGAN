@@ -19,7 +19,8 @@ from ppgan.metrics import build_metric
 
 
 MODEL_CLASSES = ["pix2pix", "cyclegan", "wav2lip", "esrgan", \
-                 "edvr", "fom", "stylegan2", "basicvsr", "msvsr", "singan", "swinir", "invdn", "aotgan"]
+                 "edvr", "fom", "stylegan2", "basicvsr", "msvsr", \
+                 "singan", "swinir", "invdn",  "aotgan", "nafnet"]
 
 
 def parse_args():
@@ -423,8 +424,31 @@ def main():
             for metric in metrics.values():
                 metric.update(image_numpy, gt_numpy)
             break
+
+        elif model_type == "nafnet":
+            lq = data[1].numpy()
+            input_handles[0].copy_from_cpu(lq)
+            predictor.run()
+            prediction = output_handle.copy_to_cpu()
+            prediction = paddle.to_tensor(prediction)
+            target = tensor2img(data[0], (0., 1.))
+            prediction = tensor2img(prediction, (0., 1.))
+
+            metric_file = os.path.join(args.output_path, model_type,
+                                       "metric.txt")
+            for metric in metrics.values():
+                metric.update(prediction, target)
+
+            lq = tensor2img(data[1], (0., 1.))
+
+            sample_result = np.concatenate((lq, prediction, target), 1)
+            sample = cv2.cvtColor(sample_result, cv2.COLOR_RGB2BGR)
+            file_name = os.path.join(args.output_path, model_type,
+                                     "{}.png".format(i))
+            cv2.imwrite(file_name, sample)
         elif model_type == 'aotgan':
-            input_data = paddle.concat((data['img'], data['mask']), axis=1).numpy()
+            input_data = paddle.concat((data['img'], data['mask']),
+                                       axis=1).numpy()
             input_handles[0].copy_from_cpu(input_data)
             predictor.run()
             prediction = output_handle.copy_to_cpu()

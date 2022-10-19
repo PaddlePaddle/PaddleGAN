@@ -70,6 +70,13 @@ if [ ${MODE} = "lite_train_lite_infer" ];then
         rm -rf ./data/SIDD_*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/SIDD_mini.zip --no-check-certificate
         cd ./data/ && unzip -q SIDD_mini.zip && cd ../ ;;
+    nafnet)
+        rm -rf ./data/SIDD*
+        wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/SIDD_mini.zip --no-check-certificate
+        cd ./data/ && unzip -q SIDD_mini.zip && mkdir -p SIDD && mv ./SIDD_Medium_Srgb_Patches_512/* ./SIDD/ \
+        && mv ./SIDD_Valid_Srgb_Patches_256/* ./SIDD/ && mv ./SIDD/valid ./SIDD/val \
+        && mv ./SIDD/train/GT ./SIDD/train/target && mv ./SIDD/train/Noisy ./SIDD/train/input \
+        && mv ./SIDD/val/Noisy ./SIDD/val/input && mv ./SIDD/val/GT ./SIDD/val/target && cd ../ ;;
     singan)
         rm -rf ./data/singan*
         wget -nc -P ./data/ https://paddlegan.bj.bcebos.com/datasets/singan-official_images.zip --no-check-certificate
