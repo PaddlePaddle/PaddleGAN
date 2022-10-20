@@ -22,16 +22,21 @@ gpu_id=$(func_parser_value "${lines[9]}")
 use_mkldnn=$(func_parser_value "${lines[10]}")
 cpu_threads=$(func_parser_value "${lines[11]}")
 
-LOG_PATH="./test_tipc/output/infer_cpp"
+# only support fp32、bs=1, trt is not supported yet.
+precision="fp32"
+use_trt=false
+batch_size=1
+
+LOG_PATH="./test_tipc/output/${model_name}/${MODE}"
 mkdir -p ${LOG_PATH}
-status_log="${LOG_PATH}/results_cpp_infer.log"
+status_log="${LOG_PATH}/results_cpp.log"
 
 function func_cpp_inference(){
     # set log
     if [ ${device} = "GPU" ]; then
-        _save_log_path="${LOG_PATH}/infer_cpp_${device}.log"
+        _save_log_path="${LOG_PATH}/cpp_infer_gpu_usetrt_${use_trt}_precision_${precision}_batchsize_${batch_size}.log"
     elif [ ${device} = "CPU" ]; then
-        _save_log_path="${LOG_PATH}/infer_cpp_${device}_usemkldnn_${usemkldnn}_threads_${cpu_threads}.log"
+        _save_log_path="${LOG_PATH}/cpp_infer_cpu_usemkldnn_${use_mkldnn}_threads_${cpu_threads}_precision_${precision}_batchsize_${batch_size}.log"
     fi
 
     # set params
