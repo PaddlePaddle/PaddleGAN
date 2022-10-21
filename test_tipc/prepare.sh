@@ -197,5 +197,6 @@ elif [ ${MODE} = "cpp_infer" ]; then
         rm -rf ./inference/msvsr*
         wget -nc  -P ./inference https://paddlegan.bj.bcebos.com/static_model/msvsr.tar --no-check-certificate
         cd ./inference && tar xf msvsr.tar && cd ../
+        wget -nc -P ./data https://paddlegan.bj.bcebos.com/datasets/low_res.mp4 --no-check-certificate
     fi
 fi

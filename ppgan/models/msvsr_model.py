@@ -98,7 +98,7 @@ class MultiStageVSRModel(BaseSRModel):
         self.current_iter += 1
 
     # amp train with brute force implementation
-    def train_iter_amp(self, optims=None, scaler=None, amp_level='O1'):
+    def train_iter_amp(self, optims=None, scalers=None, amp_level='O1'):
         optims['optim'].clear_grad()
         if self.fix_iter:
             if self.current_iter == 1:
@@ -133,9 +133,9 @@ class MultiStageVSRModel(BaseSRModel):
                             if 'loss_pix' in _key)
             self.losses['loss'] = self.loss
 
-        scaled_loss = scaler.scale(self.loss)
+        scaled_loss = scalers[0].scale(self.loss)
         scaled_loss.backward()
-        scaler.minimize(optims['optim'], scaled_loss)
+        scalers[0].minimize(optims['optim'], scaled_loss)
 
         self.current_iter += 1
 

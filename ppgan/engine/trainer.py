@@ -133,7 +133,7 @@ class Trainer:
                                                       cfg.optimizer)
 
         # setup amp train
-        self.scaler = self.setup_amp_train() if self.cfg.amp else None
+        self.scalers = self.setup_amp_train() if self.cfg.amp else None
 
         # multiple gpus prepare
         if ParallelEnv().nranks > 1:
@@ -164,11 +164,10 @@ class Trainer:
         self.profiler_options = cfg.profiler_options
 
     def setup_amp_train(self):
-        """ decerate model, optimizer and return a GradScaler """
-
+        """ decerate model, optimizer and return a list of GradScaler """
         self.logger.info('use AMP to train. AMP level = {}'.format(
             self.cfg.amp_level))
-        scaler = paddle.amp.GradScaler(init_loss_scaling=1024)
+
         # need to decorate model and optim if amp_level == 'O2'
         if self.cfg.amp_level == 'O2':
             nets, optimizers = list(self.model.nets.values()), list(
@@ -181,7 +180,13 @@ class Trainer:
                 self.model.nets[k] = nets[i]
             for i, (k, _) in enumerate(self.optimizers.items()):
                 self.optimizers[k] = optimizers[i]
-        return scaler
+
+        scalers = [
+            paddle.amp.GradScaler(init_loss_scaling=1024)
+            for i in range(len(self.optimizers))
+        ]
+
+        return scalers
 
     def distributed_data_parallel(self):
         paddle.distributed.init_parallel_env()
@@ -223,7 +228,7 @@ class Trainer:
             self.model.setup_input(data)
 
             if self.cfg.amp:
-                self.model.train_iter_amp(self.optimizers, self.scaler,
+                self.model.train_iter_amp(self.optimizers, self.scalers,
                                           self.cfg.amp_level)  # amp train
             else:
                 self.model.train_iter(self.optimizers)  # norm train
