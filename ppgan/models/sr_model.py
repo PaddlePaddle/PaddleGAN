@@ -27,6 +27,7 @@ from ..modules.init import reset_parameters
 class BaseSRModel(BaseModel):
     """Base SR model for single image super-resolution.
     """
+
     def __init__(self, generator, pixel_criterion=None, use_init_weight=False):
         """
         Args:
@@ -65,6 +66,22 @@ class BaseSRModel(BaseModel):
         loss_pixel.backward()
         optims['optim'].step()
 
+    # amp training
+    def train_iter_amp(self, optims=None, scalers=None, amp_level='O1'):
+        optims['optim'].clear_grad()
+
+        # put fwd and loss computation in amp context
+        with paddle.amp.auto_cast(enable=True, level=amp_level):
+            self.output = self.nets['generator'](self.lq)
+            self.visual_items['output'] = self.output
+            # pixel loss
+            loss_pixel = self.pixel_criterion(self.output, self.gt)
+            self.losses['loss_pixel'] = loss_pixel
+
+        scaled_loss_pixel = scalers[0].scale(loss_pixel)
+        scaled_loss_pixel.backward()
+        scalers[0].minimize(optims['optim'], scaled_loss_pixel)
+
     def test_iter(self, metrics=None):
         self.nets['generator'].eval()
         with paddle.no_grad():
@@ -84,6 +101,7 @@ class BaseSRModel(BaseModel):
 
 
 def init_sr_weight(net):
+
     def reset_func(m):
         if hasattr(m, 'weight') and (not isinstance(
                 m, (nn.BatchNorm, nn.BatchNorm2D))):

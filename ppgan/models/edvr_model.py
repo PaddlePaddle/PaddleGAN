@@ -76,7 +76,7 @@ class EDVRModel(BaseSRModel):
         self.current_iter += 1
 
     # amp train with brute force implementation
-    def train_iter_amp(self, optims=None, scaler=None, amp_level='O1'):
+    def train_iter_amp(self, optims=None, scalers=None, amp_level='O1'):
         optims['optim'].clear_grad()
         if self.tsa_iter:
             if self.current_iter == 1:
@@ -97,9 +97,9 @@ class EDVRModel(BaseSRModel):
             loss_pixel = self.pixel_criterion(self.output, self.gt)
             self.losses['loss_pixel'] = loss_pixel
 
-        scaled_loss = scaler.scale(loss_pixel)
+        scaled_loss = scalers[0].scale(loss_pixel)
         scaled_loss.backward()
-        scaler.minimize(optims['optim'], scaled_loss)
+        scalers[0].minimize(optims['optim'], scaled_loss)
 
         self.current_iter += 1
 
