@@ -14,11 +14,12 @@
 
 import os
 import time
+import yaml
 import paddle
 import numpy as np
 import random
+from .config import cfg2dict
 from .logger import setup_logger
-
 
 def setup(args, cfg):
     if args.evaluate_only:
@@ -39,7 +40,7 @@ def setup(args, cfg):
 
     logger = setup_logger(cfg.output_dir)
 
-    logger.info('Configs: {}'.format(cfg))
+    logger.info('Configs: \n{}'.format(yaml.dump(cfg2dict(cfg))))
 
     if paddle.is_compiled_with_cuda():
         paddle.set_device('gpu')
