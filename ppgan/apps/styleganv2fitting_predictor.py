@@ -144,8 +144,8 @@ class StyleGANv2FittingPredictor(StyleGANv2Predictor):
             optimizer.step()
 
             pbar.set_description(
-                (f"perceptual: {p_loss.numpy()[0]:.4f}; "
-                 f"mse: {mse_loss.numpy()[0]:.4f}; lr: {lr:.4f}"))
+                (f"perceptual: {float(p_loss):.4f}; "
+                 f"mse: {float(mse_loss):.4f}; lr: {lr:.4f}"))
 
         img_gen, _ = generator([latent_n],
                                input_is_latent=True,

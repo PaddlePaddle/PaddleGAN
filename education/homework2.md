@@ -182,7 +182,7 @@ for pass_id in range(100):
         optimizerD.clear_grad()
 
         errD = errD_real + errD_fake
-        losses[0].append(errD.numpy()[0])
+        losses[0].append(float(errD))
 
         ############################
         # (2) Update G network: maximize log(D(G(z)))
@@ -197,7 +197,7 @@ for pass_id in range(100):
         optimizerG.step()
         optimizerG.clear_grad()
 
-        losses[1].append(errG.numpy()[0])
+        losses[1].append(float(errG))
 
 
         ############################
@@ -219,7 +219,7 @@ for pass_id in range(100):
                     plt.xticks([])
                     plt.yticks([])
                     plt.subplots_adjust(wspace=0.1, hspace=0.1)
-                msg = 'Epoch ID={0} Batch ID={1} \n\n D-Loss={2} G-Loss={3}'.format(pass_id, batch_id, errD.numpy()[0], errG.numpy()[0])
+                msg = 'Epoch ID={0} Batch ID={1} \n\n D-Loss={2} G-Loss={3}'.format(pass_id, batch_id, float(errD), float(errG))
                 print(msg)
                 plt.suptitle(msg,fontsize=20)
                 plt.draw()
