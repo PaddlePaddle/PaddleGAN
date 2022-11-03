@@ -19,7 +19,6 @@ dataset:
     name: InvDNDataset
     num_workers: 10
     batch_size: 14 # 4 GPUs
-    use_shared_memory: False
     opt:
       phase: train
       scale: 4
@@ -27,9 +26,8 @@ dataset:
       train_dir: data/SIDD_Medium_Srgb_Patches_512/train/
   test:
     name: InvDNDataset
-    num_workers: 0
+    num_workers: 1
     batch_size: 1
-    use_shared_memory: False
     opt:
       phase: test
       scale: 4
