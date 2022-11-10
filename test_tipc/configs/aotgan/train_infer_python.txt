@@ -49,11 +49,3 @@ null:null
 null:null
 --benchmark:True
 null:null
-===========================train_benchmark_params==========================
-batch_size:1
-fp_items:fp32
-epoch:10
---profiler_options:batch_range=[10,20];state=GPU;tracer_option=Default;profile_path=model.profile
-flags:null
-===========================infer_benchmark_params==========================
-random_infer_input:[{float32,[3,256,256]}]
