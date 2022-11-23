@@ -132,6 +132,7 @@ GAN--生成对抗网络，被“卷积网络之父”**Yann LeCun（杨立昆）
   * 人脸编码：[Pixel2Style2Pixel](./docs/zh_CN/tutorials/pixel2style2pixel.md)
   * 人脸增强：[FaceEnhancement](./docs/zh_CN/tutorials/face_enhancement.md)
   * 人脸解析：[FaceParsing](./docs/zh_CN/tutorials/face_parse.md)
+  * 盲人脸修复：[GFPGan](./docs/zh_CN/tutorials/gfpgan.md)、[GPEN](./docs/zh_CN/tutorials/gpen.md)
 * 分辨率提升
   * 单张图片超分：[Single Image Super Resolution(SISR)](./docs/zh_CN/tutorials/single_image_super_resolution.md)
     * 包含模型：RealSR、ESRGAN、LESRCNN、PAN、DRN

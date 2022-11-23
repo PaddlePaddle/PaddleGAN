@@ -109,9 +109,15 @@ parser.add_argument('--process_order',
                     default='none',
                     nargs='+',
                     help='Process order')
+parser.add_argument("--cpu",
+                    dest="cpu",
+                    action="store_true",
+                    help="cpu mode.")
 
 if __name__ == "__main__":
     args = parser.parse_args()
+    if args.cpu:
+        paddle.set_device('cpu')
 
     orders = args.process_order
     temp_video_path = None

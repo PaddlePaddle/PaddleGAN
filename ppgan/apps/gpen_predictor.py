@@ -21,7 +21,7 @@ import sys
 sys.path.append(".")
 from .base_predictor import BasePredictor
 from ppgan.datasets.gpen_dataset import GFPGAN_degradation
-from ppgan.models.generators import GPEN
+from ppgan.models.generators import GPENGenerator
 from ppgan.metrics.fid import FID
 from ppgan.utils.download import get_path_from_url
 import cv2
@@ -103,7 +103,7 @@ class GPENPredictor(BasePredictor):
             checkpoint = paddle.load(weight_path)
 
         warnings.filterwarnings("always")
-        self.generator = GPEN(size, style_dim, n_mlp, channel_multiplier,
+        self.generator = GPENGenerator(size, style_dim, n_mlp, channel_multiplier,
                               narrow)
         self.generator.set_state_dict(checkpoint)
         self.generator.eval()

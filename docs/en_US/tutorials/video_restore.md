@@ -12,6 +12,7 @@ python tools/video-enhance.py --input you_video_path.mp4 --process_order DAIN De
 - `--input (str)`: path of the input video.
 - `--output (str)`: path of the output video.
 - `--process_order`: name and order of called model. For example, if the input is `DAIN DeOldify EDVR`, then `DAINPredictor` `DeOldifyPredictor` `EDVRPredictor` will be called in sequence.
+- `--cpu`: use cpu inference, GPU inference is used by default.
 
 #### Results
 ![](../../imgs/color_sr_peking.gif)
