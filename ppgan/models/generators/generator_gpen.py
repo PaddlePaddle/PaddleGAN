@@ -469,7 +469,7 @@ class GPENGenerator(nn.Layer):
         lr_mlp=0.01,
         is_concat=True,
     ):
-        super(GPEN, self).__init__()
+        super(GPENGenerator, self).__init__()
         channels = {
             4: int(512 * narrow),
             8: int(512 * narrow),
