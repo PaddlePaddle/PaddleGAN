@@ -192,6 +192,7 @@ class BaseModel(ABC):
                 for i in range(net["inputs_num"])
             ]
             inputs_num = inputs_num + net["inputs_num"]
+            self.nets[net["name"]].export_mode = True
             static_model = paddle.jit.to_static(self.nets[net["name"]],
                                                 input_spec=input_spec)
             if output_dir is None:

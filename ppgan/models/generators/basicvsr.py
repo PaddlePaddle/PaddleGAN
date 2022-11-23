@@ -546,6 +546,22 @@ class BasicVSRNet(nn.Layer):
 
         return flows_forward, flows_backward
 
+    def compute_flow_export(self, lrs):
+        """export version of compute_flow
+        """
+
+        n, t, c, h, w = lrs.shape
+
+        lrs_1 = lrs[:, :-1, :, :, :].reshape([-1, c, h, w])
+        lrs_2 = lrs[:, 1:, :, :, :].reshape([-1, c, h, w])
+
+        flows_backward = self.spynet(lrs_1, lrs_2).reshape([n, t - 1, 2, h, w])
+
+        flows_forward = self.spynet(lrs_2,
+                                    lrs_1).reshape([n, t - 1, 2, h, w])
+
+        return flows_forward, flows_backward
+
     def forward(self, lrs):
         """Forward function for BasicVSR.
 
@@ -566,7 +582,10 @@ class BasicVSRNet(nn.Layer):
         self.check_if_mirror_extended(lrs)
 
         # compute optical flow
-        flows_forward, flows_backward = self.compute_flow(lrs)
+        if hasattr(self, 'export_mode') and self.export_mode is True:
+            flows_forward, flows_backward = self.compute_flow_export(lrs)
+        else:
+            flows_forward, flows_backward = self.compute_flow(lrs)
 
         # backward-time propgation
         outputs = []
