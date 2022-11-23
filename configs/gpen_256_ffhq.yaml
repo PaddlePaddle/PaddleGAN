@@ -6,7 +6,7 @@ find_unused_parameters: True
 model:
   name: GPENModel
   generator:
-    name: GPEN
+    name: GPENGenerator
     size: 256
     style_dim: 512
     n_mlp: 8
