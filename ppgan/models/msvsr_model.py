@@ -118,7 +118,7 @@ class MultiStageVSRModel(BaseSRModel):
                     net.find_unused_parameters = False
 
         # put loss computation in amp context
-        with paddle.amp.auto_cast(enable=True, level=amp_level):
+        with paddle.amp.auto_cast(enable=True, custom_black_list={'sqrt','scale'}, level=amp_level):
             output = self.nets['generator'](self.lq)
             if isinstance(output, (list, tuple)):
                 out_stage2, output = output
