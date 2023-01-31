@@ -218,7 +218,7 @@ def kernel_shift(kernel, sf):
 
     # Before applying the shift, we first pad the kernel so that nothing is lost due to the shift
     # (biggest shift among dims + 1 for safety)
-    kernel = np.pad(kernel, np.int(np.ceil(np.max(shift_vec))) + 1, 'constant')
+    kernel = np.pad(kernel, np.int_(np.ceil(np.max(shift_vec))) + 1, 'constant')
 
     # Finally shift the kernel and return
     return interpolation.shift(kernel, shift_vec)
