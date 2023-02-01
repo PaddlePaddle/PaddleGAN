@@ -1,0 +1,163 @@
+[02/01 09:41:33] ppgan INFO: Configs: 
+checkpoints_dir: checkpoints
+dataset:
+  test:
+    ann_file: ./data/REDS/meta_info_REDS_GT.txt
+    gt_folder: ./data/REDS/REDS4_test_sharp/X4
+    lq_folder: ./data/REDS/REDS4_test_sharp_bicubic/X4
+    name: VSRREDSMultipleGTDataset
+    num_frames: 100
+    preprocess:
+    - interval_list:
+      - 1
+      name: GetNeighboringFramesIdx
+    - key: lq
+      name: ReadImageSequence
+    - key: gt
+      name: ReadImageSequence
+    - input_keys:
+      - lq
+      - gt
+      name: Transforms
+      pipeline:
+      - keys:
+        - image
+        - image
+        name: TransposeSequence
+      - keys:
+        - image
+        - image
+        mean:
+        - 0.0
+        - 0.0
+        - 0.0
+        name: NormalizeSequence
+        std:
+        - 255.0
+        - 255.0
+        - 255.0
+    test_mode: true
+  train:
+    batch_size: 2
+    dataset:
+      ann_file: ./data/REDS/meta_info_REDS_GT.txt
+      gt_folder: ./data/REDS/train_sharp/X4
+      lq_folder: ./data/REDS/train_sharp_bicubic/X4
+      name: VSRREDSMultipleGTDataset
+      num_frames: 20
+      preprocess:
+      - interval_list:
+        - 1
+        name: GetNeighboringFramesIdx
+      - key: lq
+        name: ReadImageSequence
+      - key: gt
+        name: ReadImageSequence
+      - input_keys:
+        - lq
+        - gt
+        name: Transforms
+        pipeline:
+        - gt_patch_size: 256
+          keys:
+          - image
+          - image
+          name: SRPairedRandomCrop
+          scale: 4
+        - keys:
+          - image
+          - image
+          name: PairedRandomHorizontalFlip
+        - keys:
+          - image
+          - image
+          name: PairedRandomVerticalFlip
+        - keys:
+          - image
+          - image
+          name: PairedRandomTransposeHW
+        - keys:
+          - image
+          - image
+          name: TransposeSequence
+        - keys:
+          - image
+          - image
+          mean:
+          - 0.0
+          - 0.0
+          - 0.0
+          name: NormalizeSequence
+          std:
+          - 255.0
+          - 255.0
+          - 255.0
+    name: RepeatDataset
+    num_workers: 6
+    times: 1000
+export_model:
+- inputs_num: 1
+  name: generator
+find_unused_parameters: true
+is_train: true
+log_config:
+  interval: 10
+  visiual_interval: 5000
+lr_scheduler:
+  eta_min: 1.0e-07
+  learning_rate: 0.0002
+  name: CosineAnnealingRestartLR
+  periods:
+  - 150000
+  restart_weights:
+  - 1
+min_max: !!python/tuple
+- 0.0
+- 1.0
+model:
+  fix_iter: 2500
+  generator:
+    aux_reconstruction_blocks: 1
+    auxiliary_loss: true
+    deform_groups: 4
+    mid_channels: 32
+    name: MSVSR
+    num_blocks: 3
+    num_init_blocks: 2
+    num_reconstruction_blocks: 2
+    only_last: true
+    stage1_groups: 8
+    use_local_connnect: true
+    use_refine_align: true
+    use_tiny_spynet: true
+  name: MultiStageVSRModel
+  pixel_criterion:
+    name: CharbonnierLoss
+    reduction: mean
+optimizer:
+  beta1: 0.9
+  beta2: 0.99
+  name: Adam
+  net_names:
+  - generator
+output_dir: more_fp32_8_output_dir/msvsr_reds-2023-02-01-09-41
+profiler_options: null
+snapshot_config:
+  interval: 5000
+timestamp: -2023-02-01-09-41
+total_iters: 150000
+use_dataset: true
+validate:
+  interval: 5000
+  metrics:
+    psnr:
+      crop_border: 0
+      name: PSNR
+      test_y_channel: false
+    ssim:
+      crop_border: 0
+      name: SSIM
+      test_y_channel: false
+  save_img: false
+
+[02/01 09:41:35] ppgan INFO: Found /root/.cache/ppgan/modified_spynet_tiny.pdparams

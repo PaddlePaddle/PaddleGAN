@@ -51,11 +51,18 @@ def setup(args, cfg):
     else:
         paddle.set_device('cpu')
 
+    paddle.version.cudnn.FLAGS_cudnn_deterministic = False
+    print("Set FLAGS_cudnn_deterministic !!! ", paddle.version.cudnn.FLAGS_cudnn_deterministic)
     if args.seed:
+
+        paddle.seed(args.seed)
+        np.random.seed(args.seed)
+        random.seed(args.seed)
         paddle.seed(args.seed)
         random.seed(args.seed)
         np.random.seed(args.seed)
         paddle.framework.random._manual_program_seed(args.seed)
+        print("Set seed !!! ", args.seed)
 
     # add amp and amp_level args into cfg
     cfg['amp'] = args.amp
