@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import paddle
-from .base_model import BaseModel
+from .base_model import BaseModel, apply_to_static
 
 from .builder import MODELS
 from .generators.builder import build_generator
@@ -40,7 +40,9 @@ class CycleGANModel(BaseModel):
                  pool_size=50,
                  direction='a2b',
                  lambda_a=10.,
-                 lambda_b=10.):
+                 lambda_b=10.,
+                 to_static=False,
+                 image_shape=None):
         """Initialize the CycleGAN class.
 
         Args:
@@ -59,6 +61,9 @@ class CycleGANModel(BaseModel):
         # Code (vs. paper): G_A (G), G_B (F), D_A (D_Y), D_B (D_X)
         self.nets['netG_A'] = build_generator(generator)
         self.nets['netG_B'] = build_generator(generator)
+        # set @to_static for benchmark, skip this by default.
+        apply_to_static(to_static, image_shape, self.nets['netG_A'])
+        apply_to_static(to_static, image_shape, self.nets['netG_B'])
         init_weights(self.nets['netG_A'])
         init_weights(self.nets['netG_B'])
 
@@ -66,6 +71,9 @@ class CycleGANModel(BaseModel):
         if discriminator:
             self.nets['netD_A'] = build_discriminator(discriminator)
             self.nets['netD_B'] = build_discriminator(discriminator)
+            # set @to_static for benchmark, skip this by default.
+            apply_to_static(to_static, image_shape, self.nets['netD_A'])
+            apply_to_static(to_static, image_shape, self.nets['netD_B'])
             init_weights(self.nets['netD_A'])
             init_weights(self.nets['netD_B'])
 

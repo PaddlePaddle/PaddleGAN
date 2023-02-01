@@ -19,9 +19,13 @@ import numpy as np
 from collections import OrderedDict
 from abc import ABC, abstractmethod
 
+from paddle.jit import to_static
+from paddle.static import InputSpec
+
 from .criterions.builder import build_criterion
 from ..solver import build_lr_scheduler, build_optimizer
 from ..utils.visual import tensor2img
+from ..utils.logger import get_logger
 
 
 class BaseModel(ABC):
@@ -217,3 +221,13 @@ class BaseModel(ABC):
                                                                 model_name),
                     model_filename="{}.pdmodel".format(model_name),
                     params_filename="{}.pdiparams".format(model_name))
+
+def apply_to_static(support_to_static, image_shape, model):
+    if support_to_static:
+        specs = None
+        if image_shape is not None:
+            specs = [InputSpec([None] + image_shape)]
+        model = to_static(model, input_spec=specs)
+        logger = get_logger('ppgan')
+        logger.info("Successfully to apply @to_static with specs: {}".format(specs))
+    return model
