@@ -59,7 +59,7 @@ def crop(image, center, scale, resolution=256.0):
                           dtype=np.int32)
         newImg = np.zeros(newDim, dtype=np.uint8)
     else:
-        newDim = np.array([br[1] - ul[1], br[0] - ul[0]], dtype=np.int)
+        newDim = np.array([br[1] - ul[1], br[0] - ul[0]], dtype=np.int_)
         newImg = np.zeros(newDim, dtype=np.uint8)
     ht = image.shape[0]
     wd = image.shape[1]

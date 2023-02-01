@@ -240,8 +240,8 @@ class StarGANv2Mapping(nn.Layer):
         s = []
         for i in range(idx.shape[0]):
             s += [
-                out[idx[i].numpy().astype(np.int).tolist()[0],
-                    y[i].numpy().astype(np.int).tolist()[0]]
+                out[idx[i].numpy().astype(np.int_).tolist()[0],
+                    y[i].numpy().astype(np.int_).tolist()[0]]
             ]
         s = paddle.stack(s)
         s = paddle.reshape(s, (s.shape[0], -1))
@@ -286,8 +286,8 @@ class StarGANv2Style(nn.Layer):
         s = []
         for i in range(idx.shape[0]):
             s += [
-                out[idx[i].numpy().astype(np.int).tolist()[0],
-                    y[i].numpy().astype(np.int).tolist()[0]]
+                out[idx[i].numpy().astype(np.int_).tolist()[0],
+                    y[i].numpy().astype(np.int_).tolist()[0]]
             ]
         s = paddle.stack(s)
         s = paddle.reshape(s, (s.shape[0], -1))
