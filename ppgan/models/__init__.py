@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .base_model import BaseModel
+from .base_model import BaseModel, apply_to_static
 from .gan_model import GANModel
 from .cycle_gan_model import CycleGANModel
 from .pix2pix_model import Pix2PixModel

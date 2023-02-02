@@ -26,6 +26,8 @@ model:
   gan_criterion:
     name: GANLoss
     gan_mode: lsgan
+  # training model under @to_static
+  to_static: False
 
 export_model:
   - {name: 'netG_A', inputs_num: 1}
