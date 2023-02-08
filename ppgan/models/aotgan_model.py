@@ -91,8 +91,8 @@ class AOTGANModel(BaseModel):
         super(AOTGANModel, self).__init__()
 
         # define nets
-        self.nets['net_gen'] = build_generator(generator)
-        self.nets['net_des'] = build_discriminator(discriminator)
+        self.nets['netG'] = build_generator(generator)
+        self.nets['netD'] = build_discriminator(discriminator)
         self.net_vgg = build_criterion(criterion)
 
         self.adv_loss = Adversal()
@@ -113,7 +113,7 @@ class AOTGANModel(BaseModel):
         input_x = paddle.concat([self.img_masked, self.mask], 1)
         self.pred_img = self.nets['net_gen'](input_x)
         self.comp_img = (1 - self.mask) * self.img + self.mask * self.pred_img
-        self.visual_items['pred_img'] = self.pred_img
+        self.visual_items['pred_img'] = self.pred_img.detach()
 
     def train_iter(self, optimizers=None):
         self.forward()
