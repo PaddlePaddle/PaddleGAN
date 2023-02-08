@@ -69,7 +69,8 @@ MODE=$2
 PARAMS=$3
 REST_ARGS=$4
 
-to_static="d2sF"
+# for log name
+to_static=""
 # parse "to_static" options and modify trainer into "to_static_trainer"
 if [ $REST_ARGS = "to_static" ] || [ $PARAMS = "to_static" ] ;then
    to_static="d2sT"
