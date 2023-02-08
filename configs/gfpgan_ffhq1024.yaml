@@ -165,8 +165,9 @@ dataset:
 
         # data loader
         use_shuffle: true
-        num_workers: 4
+        num_workers: 0
         batch_size: 1
+        use_shared_memory: False
         prefetch_mode: ~
 
     test:
@@ -180,8 +181,9 @@ dataset:
         mean: [0.5, 0.5, 0.5]
         std: [0.5, 0.5, 0.5]
         scale: 1
-        num_workers: 4
+        num_workers: 0
         batch_size: 8
+        use_shared_memory: False
         phase: val
 
 lr_scheduler:

@@ -27,11 +27,13 @@ dataset:
     dataset_path: data/aotgan
     batch_size: 8 # Multi-Card:4
     img_size: 512
+    use_shared_memory: False
   test:
     name: AOTGANDataset_test
     dataset_path: data/aotgan
     batch_size: 1
     img_size: 512
+    use_shared_memory: False
 
 lr_scheduler: # abundoned
   name: MultiStepDecay
