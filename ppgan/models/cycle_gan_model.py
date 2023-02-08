@@ -122,6 +122,7 @@ class CycleGANModel(BaseModel):
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
         if hasattr(self, 'real_A'):
+            self.real_A.stop_gradient = False
             self.fake_B = self.nets['netG_A'](self.real_A)  # G_A(A)
             self.rec_A = self.nets['netG_B'](self.fake_B)  # G_B(G_A(A))
 
@@ -229,14 +230,13 @@ class CycleGANModel(BaseModel):
         # forward
         # compute fake images and reconstruction images.
         self.forward()
-        # G_A and G_B
-        # Ds require no gradients when optimizing Gs
-        self.set_requires_grad([self.nets['netD_A'], self.nets['netD_B']],
-                               False)
         # set G_A and G_B's gradients to zero
         optimizers['optimG'].clear_grad()
         # calculate gradients for G_A and G_B
         self.backward_G()
+        # G_A and G_B
+        # Ds require no gradients when optimizing Gs
+        self.set_requires_grad([self.nets['netD_A'], self.nets['netD_B']], False)
         # update G_A and G_B's weights
         self.optimizers['optimG'].step()
         # D_A and D_B
