@@ -111,7 +111,7 @@ class AOTGANModel(BaseModel):
 
     def forward(self):
         input_x = paddle.concat([self.img_masked, self.mask], 1)
-        self.pred_img = self.nets['net_gen'](input_x)
+        self.pred_img = self.nets['netG'](input_x)
         self.comp_img = (1 - self.mask) * self.img + self.mask * self.pred_img
         self.visual_items['pred_img'] = self.pred_img.detach()
 
@@ -121,7 +121,7 @@ class AOTGANModel(BaseModel):
         self.losses['l1'] = l1_loss * self.l1_weight
         self.losses['perceptual'] = perceptual_loss * self.perceptual_weight
         self.losses['style'] = style_loss * self.style_weight
-        dis_loss, gen_loss = self.adv_loss(self.nets['net_des'], self.comp_img, self.img, self.mask)
+        dis_loss, gen_loss = self.adv_loss(self.nets['netD'], self.comp_img, self.img, self.mask)
         self.losses['adv_g'] = gen_loss * self.adversal_weight
         loss_d_fake = dis_loss[0]
         loss_d_real = dis_loss[1]
