@@ -19,7 +19,6 @@ dataset:
     rgb_dir: data/SIDD/train
     num_workers: 0
     batch_size: 8 # 8GPU
-    use_shared_memory: False
     img_options:
       patch_size: 256
   test:
@@ -27,7 +26,6 @@ dataset:
     rgb_dir: data/SIDD/val
     num_workers: 0
     batch_size: 1
-    use_shared_memory: False
     img_options:
       patch_size: 256
 

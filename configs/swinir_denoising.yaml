@@ -22,7 +22,6 @@ dataset:
     name: SwinIRDataset
     num_workers: 0
     batch_size: 2 # 4GPU
-    use_shared_memory: False
     opt:
       phase: train
       n_channels: 3
@@ -34,7 +33,6 @@ dataset:
     name: SwinIRDataset
     num_workers: 0
     batch_size: 1
-    use_shared_memory: False
     opt:
       phase: test
       n_channels: 3
