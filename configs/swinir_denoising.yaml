@@ -1,4 +1,4 @@
-total_iters: 6400000
+total_iters: 420000
 output_dir: output_dir
 
 model:
@@ -20,8 +20,9 @@ model:
 dataset:
   train:
     name: SwinIRDataset
-    num_workers: 8
-    batch_size: 2 # 1GPU
+    # TODO fix out of memory for val while training
+    num_workers: 0
+    batch_size: 2 # 4GPU
     opt:
       phase: train
       n_channels: 3
@@ -31,7 +32,8 @@ dataset:
       dataroot_H: data/trainsets/trainH
   test:
     name: SwinIRDataset
-    num_workers: 1
+    # TODO fix out of memory for val while training
+    num_workers: 0
     batch_size: 1
     opt:
       phase: test
@@ -46,8 +48,8 @@ export_model:
 
 lr_scheduler:
   name: MultiStepDecay
-  learning_rate: 5e-5 # num_gpu * 5e-5
-  milestones: [3200000, 4800000, 5600000, 6000000, 6400000]
+  learning_rate: 2e-4
+  milestones: [210000, 305000, 345000, 385000, 420000]
   gamma: 0.5
 
 validate:

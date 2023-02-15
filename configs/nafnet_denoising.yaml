@@ -1,4 +1,4 @@
-total_iters: 3200000
+total_iters: 400000
 output_dir: output_dir
 
 model:
@@ -17,14 +17,16 @@ dataset:
   train:
     name: NAFNetTrain
     rgb_dir: data/SIDD/train
-    num_workers: 16
-    batch_size: 8 # 1GPU
+    # TODO fix out of memory for val while training
+    num_workers: 0
+    batch_size: 8 # 8GPU
     img_options:
       patch_size: 256
   test:
     name: NAFNetVal
     rgb_dir: data/SIDD/val
-    num_workers: 1
+    # TODO fix out of memory for val while training
+    num_workers: 0
     batch_size: 1
     img_options:
       patch_size: 256
@@ -34,10 +36,10 @@ export_model:
 
 lr_scheduler:
   name: CosineAnnealingRestartLR
-  learning_rate: !!float 125e-6 # num_gpu * 0.000125
-  periods: [3200000]
+  learning_rate: 0.001
+  periods: [400000]
   restart_weights: [1]
-  eta_min: !!float 1e-7
+  eta_min: !!float 8e-7
 
 validate:
   interval: 5000

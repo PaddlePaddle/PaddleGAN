@@ -2,7 +2,7 @@ tqdm
 PyYAML>=5.1
 scikit-image>=0.14.0
 scipy>=1.1.0
-opencv-python==4.6.0.66
+opencv-python<=4.6.0.66
 imageio==2.9.0
 imageio-ffmpeg
 librosa==0.8.1

@@ -165,7 +165,8 @@ dataset:
 
         # data loader
         use_shuffle: true
-        num_workers: 4
+        # TODO fix out of memory for val while training
+        num_workers: 0
         batch_size: 1
         prefetch_mode: ~
 
@@ -180,7 +181,8 @@ dataset:
         mean: [0.5, 0.5, 0.5]
         std: [0.5, 0.5, 0.5]
         scale: 1
-        num_workers: 4
+        # TODO fix out of memory for val while training
+        num_workers: 0
         batch_size: 8
         phase: val
 

@@ -17,7 +17,8 @@ model:
 dataset:
   train:
     name: InvDNDataset
-    num_workers: 10
+    # TODO fix out of memory for val while training
+    num_workers: 0
     batch_size: 14 # 4 GPUs
     opt:
       phase: train
@@ -26,7 +27,8 @@ dataset:
       train_dir: data/SIDD_Medium_Srgb_Patches_512/train/
   test:
     name: InvDNDataset
-    num_workers: 1
+    # TODO fix out of memory for val while training
+    num_workers: 0
     batch_size: 1
     opt:
       phase: test

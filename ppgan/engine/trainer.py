@@ -216,7 +216,7 @@ class Trainer:
         self.model.setup_train_mode(is_train=True)
         while self.current_iter < (self.total_iters + 1):
             self.current_epoch = iter_loader.epoch
-            self.inner_iter = self.current_iter % self.iters_per_epoch
+            self.inner_iter = self.current_iter % max(self.iters_per_epoch, 1)
 
             add_profiler_step(self.profiler_options)
 
