@@ -20,6 +20,7 @@ model:
 dataset:
   train:
     name: SwinIRDataset
+    # TODO fix out of memory for val while training
     num_workers: 0
     batch_size: 2 # 4GPU
     opt:
@@ -31,6 +32,7 @@ dataset:
       dataroot_H: data/trainsets/trainH
   test:
     name: SwinIRDataset
+    # TODO fix out of memory for val while training
     num_workers: 0
     batch_size: 1
     opt:

@@ -17,6 +17,7 @@ dataset:
   train:
     name: NAFNetTrain
     rgb_dir: data/SIDD/train
+    # TODO fix out of memory for val while training
     num_workers: 0
     batch_size: 8 # 8GPU
     img_options:
@@ -24,6 +25,7 @@ dataset:
   test:
     name: NAFNetVal
     rgb_dir: data/SIDD/val
+    # TODO fix out of memory for val while training
     num_workers: 0
     batch_size: 1
     img_options:
