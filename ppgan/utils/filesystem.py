@@ -53,8 +53,7 @@ def save(state_dicts, file_name):
         else:
             final_dict[k] = v
 
-    with open(file_name, 'wb') as f:
-        pickle.dump(final_dict, f, protocol=2)
+    paddle.save(final_dict, file_name)
 
 
 def load(file_name):
