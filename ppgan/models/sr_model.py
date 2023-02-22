@@ -17,7 +17,7 @@ import paddle.nn as nn
 
 from .generators.builder import build_generator
 from .criterions.builder import build_criterion
-from .base_model import BaseModel
+from .base_model import BaseModel, apply_to_static
 from .builder import MODELS
 from ..utils.visual import tensor2img
 from ..modules.init import reset_parameters
@@ -28,7 +28,8 @@ class BaseSRModel(BaseModel):
     """Base SR model for single image super-resolution.
     """
 
-    def __init__(self, generator, pixel_criterion=None, use_init_weight=False):
+    def __init__(self, generator, pixel_criterion=None, use_init_weight=False, to_static=False,
+                 image_shape=None):
         """
         Args:
             generator (dict): config of generator.
@@ -37,6 +38,8 @@ class BaseSRModel(BaseModel):
         super(BaseSRModel, self).__init__()
 
         self.nets['generator'] = build_generator(generator)
+        # set @to_static for benchmark, skip this by default.
+        apply_to_static(to_static, image_shape, self.nets['generator'])
 
         if pixel_criterion:
             self.pixel_criterion = build_criterion(pixel_criterion)

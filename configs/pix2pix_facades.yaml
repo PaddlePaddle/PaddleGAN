@@ -24,6 +24,8 @@ model:
   gan_criterion:
     name: GANLoss
     gan_mode: vanilla
+  # training model under @to_static
+  to_static: False
 
 dataset:
   train:

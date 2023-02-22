@@ -14,6 +14,8 @@ model:
     nb: 23
   pixel_criterion:
     name: L1Loss
+  # training model under @to_static
+  to_static: False
 
 export_model:
   - {name: 'generator', inputs_num: 1}

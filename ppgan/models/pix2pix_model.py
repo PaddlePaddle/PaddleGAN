@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import paddle
-from .base_model import BaseModel
+from .base_model import BaseModel, apply_to_static
 
 from .builder import MODELS
 from .generators.builder import build_generator
@@ -36,7 +36,9 @@ class Pix2PixModel(BaseModel):
                  discriminator=None,
                  pixel_criterion=None,
                  gan_criterion=None,
-                 direction='a2b'):
+                 direction='a2b', 
+                 to_static=False,
+                 image_shape=None):
         """Initialize the pix2pix class.
 
         Args:
@@ -51,11 +53,15 @@ class Pix2PixModel(BaseModel):
         # define networks (both generator and discriminator)
         self.nets['netG'] = build_generator(generator)
         init_weights(self.nets['netG'])
+        # set @to_static for benchmark, skip this by default.
+        apply_to_static(to_static, image_shape, self.nets['netG'])
 
         # define a discriminator; conditional GANs need to take both input and output images; Therefore, #channels for D is input_nc + output_nc
         if discriminator:
             self.nets['netD'] = build_discriminator(discriminator)
             init_weights(self.nets['netD'])
+            # set @to_static for benchmark, skip this by default.
+            apply_to_static(to_static, image_shape, self.nets['netD'])
 
         if pixel_criterion:
             self.pixel_criterion = build_criterion(pixel_criterion)
