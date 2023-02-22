@@ -17,7 +17,7 @@ norm_train:tools/main.py -c configs/pix2pix_facades.yaml --seed 123 -o log_confi
 pact_train:null
 fpgm_train:null
 distill_train:null
-null:null
+to_static_train:model.to_static=True
 null:null
 ##
 ===========================eval_params===========================

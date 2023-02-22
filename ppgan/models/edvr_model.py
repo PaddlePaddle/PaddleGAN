@@ -15,6 +15,7 @@
 import paddle
 import paddle.nn as nn
 
+from .base_model import apply_to_static
 from .builder import MODELS
 from .sr_model import BaseSRModel
 from .generators.edvr import ResidualBlockNoBN, DCNPack
@@ -28,7 +29,8 @@ class EDVRModel(BaseSRModel):
     Paper: EDVR: Video Restoration with Enhanced Deformable Convolutional Networks.
     """
 
-    def __init__(self, generator, tsa_iter, pixel_criterion=None):
+    def __init__(self, generator, tsa_iter, pixel_criterion=None, to_static=False,
+                 image_shape=None):
         """Initialize the EDVR class.
 
         Args:
@@ -36,7 +38,9 @@ class EDVRModel(BaseSRModel):
             tsa_iter (dict): config of tsa_iter.
             pixel_criterion (dict): config of pixel criterion.
         """
-        super(EDVRModel, self).__init__(generator, pixel_criterion)
+        super(EDVRModel, self).__init__(generator, pixel_criterion, 
+                                        to_static=to_static,
+                                        image_shape=image_shape)
         self.tsa_iter = tsa_iter
         self.current_iter = 1
         init_edvr_weight(self.nets['generator'])

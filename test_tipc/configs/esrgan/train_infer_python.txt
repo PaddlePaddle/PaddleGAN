@@ -17,7 +17,7 @@ norm_train:tools/main.py -c configs/esrgan_psnr_x4_div2k.yaml --seed 123 -o log_
 pact_train:null
 fpgm_train:null
 distill_train:null
-null:null
+to_static_train:model.to_static=True
 null:null
 ##
 ===========================eval_params===========================
