@@ -31,7 +31,8 @@ class MultiStageVSRModel(BaseSRModel):
         PP-MSVSR: Multi-Stage Video Super-Resolution, 2021
     """
 
-    def __init__(self, generator, fix_iter, pixel_criterion=None):
+    def __init__(self, generator, fix_iter, pixel_criterion=None, to_static=False,
+                 image_shape=None):
         """Initialize the PP-MSVSR class.
 
         Args:
@@ -39,7 +40,9 @@ class MultiStageVSRModel(BaseSRModel):
             fix_iter (dict): config of fix_iter.
             pixel_criterion (dict): config of pixel criterion.
         """
-        super(MultiStageVSRModel, self).__init__(generator, pixel_criterion)
+        super(MultiStageVSRModel, self).__init__(generator, pixel_criterion, 
+                                                to_static=to_static,
+                                                image_shape=image_shape)
         self.fix_iter = fix_iter
         self.current_iter = 1
         self.flag = True
