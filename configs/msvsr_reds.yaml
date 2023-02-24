@@ -27,6 +27,8 @@ model:
   pixel_criterion:
     name: CharbonnierLoss
     reduction: mean
+  # training model under @to_static
+  to_static: False
 
 dataset:
   train:
