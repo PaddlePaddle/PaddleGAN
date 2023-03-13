@@ -5,7 +5,7 @@ FILENAME=$1
 # MODE be one of ['lite_train_lite_infer' 'lite_train_whole_infer' 'whole_train_whole_infer', 'whole_infer']
 MODE=$2
 
-dataline=$(awk 'NR==1, NR==51{print}'  $FILENAME)
+dataline=$(cat ${FILENAME})
 
 # parser params
 IFS=$'\n'
@@ -33,8 +33,8 @@ trainer_list=$(func_parser_value "${lines[14]}")
 trainer_norm=$(func_parser_key "${lines[15]}")
 norm_trainer=$(func_parser_value "${lines[15]}")
 
-to_static_key=$(func_parser_key "${lines[19]}")
-to_static_trainer=$(func_parser_value "${lines[19]}")
+trainer_key1=$(func_parser_key "${lines[19]}")
+trainer_value1=$(func_parser_value "${lines[19]}")
 trainer_key2=$(func_parser_key "${lines[20]}")
 trainer_value2=$(func_parser_value "${lines[20]}")
 
@@ -72,6 +72,10 @@ infer_img_dir=$(func_parser_value "${lines[47]}")
 save_log_key=$(func_parser_key "${lines[48]}")
 infer_key1=$(func_parser_key "${lines[50]}")
 infer_value1=$(func_parser_value "${lines[50]}")
+
+line_num=`grep -n -w "to_static_train_benchmark_params" $FILENAME  | cut -d ":" -f 1`
+to_static_key=$(func_parser_key "${lines[line_num]}")
+to_static_trainer=$(func_parser_value "${lines[line_num]}")
 
 LOG_PATH="./test_tipc/output/${model_name}/${MODE}"
 mkdir -p ${LOG_PATH}
