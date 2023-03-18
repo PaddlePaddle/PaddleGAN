@@ -223,6 +223,7 @@ def main():
 
         elif model_type == "cyclegan":
             import auto_log
+            
             size = data['A'].shape
             pid = os.getpid()
             auto_logger = auto_log.AutoLogger(
