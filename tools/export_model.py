@@ -84,5 +84,5 @@ def main(args, cfg):
 
 if __name__ == "__main__":
     args = parse_args()
-    cfg = get_config(args.config_file, args.opt)
+    cfg = get_config(args.config_file, args.opt, show=True)
     main(args, cfg)
