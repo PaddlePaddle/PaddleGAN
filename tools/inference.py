@@ -16,6 +16,7 @@ from ppgan.utils.visual import save_image
 from ppgan.utils.visual import tensor2img
 from ppgan.utils.filesystem import makedirs
 from ppgan.metrics import build_metric
+from ppgan.utils.logger import get_logger
 
 
 MODEL_CLASSES = ["pix2pix", "cyclegan", "wav2lip", "esrgan", \
@@ -223,6 +224,7 @@ def main():
 
         elif model_type == "cyclegan":
             import auto_log
+            logger = get_logger(name='ppgan')
             
             size = data['A'].shape
             pid = os.getpid()
@@ -252,6 +254,7 @@ def main():
             save_image(
                 image_numpy,
                 os.path.join(args.output_path, "cyclegan/{}.png".format(i)))
+            logger.info("Inference succeeded! The inference result has been saved in {}".format(os.path.join(args.output_path, "cyclegan/{}.png".format(i))))
             auto_logger.times.end(stamp=True)
             auto_logger.report()
             metric_file = os.path.join(args.output_path, "cyclegan/metric.txt")
