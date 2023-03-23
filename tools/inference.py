@@ -16,6 +16,7 @@ from ppgan.utils.visual import save_image
 from ppgan.utils.visual import tensor2img
 from ppgan.utils.filesystem import makedirs
 from ppgan.metrics import build_metric
+from ppgan.utils.logger import get_logger
 
 
 MODEL_CLASSES = ["pix2pix", "cyclegan", "wav2lip", "esrgan", \
@@ -151,7 +152,7 @@ def create_predictor(model_path,
             print('trt set dynamic shape done!')
 
     predictor = paddle.inference.create_predictor(config)
-    return predictor
+    return predictor, config
 
 
 def setup_metrics(cfg):
@@ -172,8 +173,8 @@ def main():
         paddle.seed(args.seed)
         random.seed(args.seed)
         np.random.seed(args.seed)
-    cfg = get_config(args.config_file, args.opt)
-    predictor = create_predictor(args.model_path, args.device, args.run_mode,
+    cfg = get_config(args.config_file, args.opt, show=True)
+    predictor, config = create_predictor(args.model_path, args.device, args.run_mode,
                                  args.batch_size, args.min_subgraph_size,
                                  args.use_dynamic_shape, args.trt_min_shape,
                                  args.trt_max_shape, args.trt_opt_shape,
@@ -222,15 +223,40 @@ def main():
                 metric.update(prediction, real_B)
 
         elif model_type == "cyclegan":
+            import auto_log
+            logger = get_logger(name='ppgan')
+            
+            size = data['A'].shape
+            pid = os.getpid()
+            auto_logger = auto_log.AutoLogger(
+                model_name=args.model_type,
+                model_precision=args.run_mode,
+                batch_size=args.batch_size,
+                data_shape=size,
+                save_path=args.output_path+'auto_log.lpg',
+                inference_config=config,
+                pids=pid,
+                process_name=None,
+                gpu_ids=None,
+                time_keys=[
+                    'preprocess_time', 'inference_time', 'postprocess_time'
+                ],
+                warmup=0)
+            auto_logger.times.start()
             real_A = data['A'].numpy()
             input_handles[0].copy_from_cpu(real_A)
+            auto_logger.times.stamp()
             predictor.run()
+            auto_logger.times.stamp()
             prediction = output_handle.copy_to_cpu()
             prediction = paddle.to_tensor(prediction)
             image_numpy = tensor2img(prediction[0], min_max)
             save_image(
                 image_numpy,
                 os.path.join(args.output_path, "cyclegan/{}.png".format(i)))
+            logger.info("Inference succeeded! The inference result has been saved in {}".format(os.path.join(args.output_path, "cyclegan/{}.png".format(i))))
+            auto_logger.times.end(stamp=True)
+            auto_logger.report()
             metric_file = os.path.join(args.output_path, "cyclegan/metric.txt")
             real_B = paddle.to_tensor(data['B'])
             for metric in metrics.values():

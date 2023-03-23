@@ -22,6 +22,7 @@ import ppgan
 from ppgan.utils.config import get_config
 from ppgan.utils.setup import setup
 from ppgan.engine.trainer import Trainer
+from ppgan.utils.logger import get_logger
 
 
 def parse_args():
@@ -80,9 +81,11 @@ def main(args, cfg):
             net.set_state_dict(state_dicts[net_name])
     model.export_model(cfg.export_model, args.output_dir, inputs_size,
                        args.export_serving_model, args.model_name)
+    logger = get_logger(name='ppgan')
+    logger.info("Export succeeded! The inference model exported has been saved in {}".format(args.output_dir))
 
 
 if __name__ == "__main__":
     args = parse_args()
-    cfg = get_config(args.config_file, args.opt)
+    cfg = get_config(args.config_file, args.opt, show=True)
     main(args, cfg)
