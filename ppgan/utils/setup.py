@@ -21,6 +21,7 @@ import random
 from .config import cfg2dict
 from .logger import setup_logger
 
+
 def setup(args, cfg):
     if args.evaluate_only:
         cfg.is_train = False
@@ -44,7 +45,12 @@ def setup(args, cfg):
 
     if paddle.is_compiled_with_cuda():
         paddle.set_device('gpu')
-    elif paddle.is_compiled_with_npu():
+    # paddle.is_compiled_with_npu() will be aborted after paddle-2.4
+    elif int(paddle.version.major) != 0 and int(
+            paddle.version.major) <= 2 and int(
+                paddle.version.minor) <= 4 and paddle.is_compiled_with_npu():
+        paddle.set_device('npu')
+    elif paddle.is_compiled_with_custom_device("npu"):
         paddle.set_device('npu')
     elif paddle.is_compiled_with_xpu():
         paddle.set_device('xpu')
