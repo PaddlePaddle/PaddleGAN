@@ -254,11 +254,11 @@ else
                 fi
                 set_save_model=$(func_set_params "${save_model_key}" "${save_log}")
                 if [ ${#gpu} -le 2 ];then  # train with cpu or single gpu
-                    cmd="${python} ${run_train} ${set_use_gpu}  ${set_save_model} ${set_train_params1} ${set_epoch} ${set_pretrain} ${set_batchsize} ${set_amp_config} ${set_amp_level}"
+                    cmd="${python} ${run_train} ${set_use_gpu}  ${set_save_model} ${set_epoch} ${set_pretrain} ${set_batchsize} ${set_amp_config} ${set_amp_level} ${set_train_params1} "
                 elif [ ${#ips} -le 26 ];then  # train with multi-gpu
-                    cmd="${python} -m paddle.distributed.launch --gpus=${gpu} ${run_train} ${set_use_gpu} ${set_save_model} ${set_train_params1} ${set_epoch} ${set_pretrain} ${set_batchsize} ${set_amp_config} ${set_amp_level}"
+                    cmd="${python} -m paddle.distributed.launch --gpus=${gpu} ${run_train} ${set_use_gpu} ${set_save_model} ${set_epoch} ${set_pretrain} ${set_batchsize} ${set_amp_config} ${set_amp_level} ${set_train_params1}"
                 else     # train with multi-machine
-                    cmd="${python} -m paddle.distributed.launch --ips=${ips} --gpus=${gpu} ${run_train} ${set_use_gpu} ${set_save_model} ${set_train_params1} ${set_pretrain} ${set_epoch} ${set_batchsize} ${set_amp_config} ${set_amp_level}"
+                    cmd="${python} -m paddle.distributed.launch --ips=${ips} --gpus=${gpu} ${run_train} ${set_use_gpu} ${set_save_model} ${set_pretrain} ${set_epoch} ${set_batchsize} ${set_amp_config} ${set_amp_level} ${set_train_params1}"
                 fi
                 # run train
                 export FLAGS_cudnn_deterministic=True
