@@ -22,6 +22,8 @@ FILENAME=$1
 sed -i "s/state=GPU/state=NPU/g" $FILENAME
 sed -i "s/--device:gpu/--device:npu/g" $FILENAME
 sed -i "s/--benchmark:True/--benchmark:False/g" $FILENAME
+# python has been updated to version 3.9 for npu backend
+sed -i "s/python3.7/python3.9/g" $FILENAME
 dataline=`cat $FILENAME`
 
 # parser params
