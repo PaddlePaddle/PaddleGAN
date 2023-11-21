@@ -22,6 +22,8 @@ FILENAME=$1
 sed -i "s/state=GPU/state=XPU/g" $FILENAME
 sed -i "s/--device:gpu/--device:xpu/g" $FILENAME
 sed -i "s/--benchmark:True/--benchmark:False/g" $FILENAME
+# python has been updated to version 3.9 for npu backend
+sed -i "s/python3.7/python3.9/g" $FILENAME
 dataline=`cat $FILENAME`
 
 # change gpu to npu in execution script
@@ -31,6 +33,19 @@ sed -i 's/--gpus/--xpus/g' test_tipc/test_train_inference_python.sh
 # parser params
 IFS=$'\n'
 lines=(${dataline})
+
+# change total iters/epochs for npu/xpu to accelaration
+modelname=$(func_parser_value "${lines[1]}")
+echo $modelname
+if  [ $modelname == "Pix2pix" ]; then
+    sed -i "s/lite_train_lite_infer=10/lite_train_lite_infer=1/g" $FILENAME
+    sed -i "s/-o log_config.interval=1/-o log_config.interval=1 snapshot_config.interval=1/g" $FILENAME
+fi
+
+if  [ $modelname == "edvr" ]; then
+    sed -i "s/lite_train_lite_infer=100/lite_train_lite_infer=10/g" $FILENAME
+    sed -i "s/snapshot_config.interval=25/snapshot_config.interval=5/g" $FILENAME
+fi
 
 # pass parameters to test_train_inference_python.sh
 cmd="bash test_tipc/test_train_inference_python.sh ${FILENAME} $2"
