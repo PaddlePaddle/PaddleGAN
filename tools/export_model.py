@@ -76,7 +76,7 @@ def main(args, cfg):
     model = ppgan.models.builder.build_model(cfg.model)
     model.setup_train_mode(is_train=False)
     state_dicts = ppgan.utils.filesystem.load(args.load)
-    if 'netG' in model.nets.keys():
+    if 'Wav2Lip' in cfg.model.name:
         model.nets['netG'].set_state_dict(state_dicts)
     else:
         for net_name, net in model.nets.items():
