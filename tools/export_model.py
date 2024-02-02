@@ -76,9 +76,12 @@ def main(args, cfg):
     model = ppgan.models.builder.build_model(cfg.model)
     model.setup_train_mode(is_train=False)
     state_dicts = ppgan.utils.filesystem.load(args.load)
-    for net_name, net in model.nets.items():
-        if net_name in state_dicts:
-            net.set_state_dict(state_dicts[net_name])
+    if 'Wav2Lip' in cfg.model.name:
+        model.nets['netG'].set_state_dict(state_dicts)
+    else:
+        for net_name, net in model.nets.items():
+            if net_name in state_dicts:
+                net.set_state_dict(state_dicts[net_name])
     model.export_model(cfg.export_model, args.output_dir, inputs_size,
                        args.export_serving_model, args.model_name)
     logger = get_logger(name='ppgan')
