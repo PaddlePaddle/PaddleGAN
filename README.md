@@ -215,7 +215,7 @@ You can run those projects in the [AI Studio](https://aistudio.baidu.com/aistudi
   <img src='https://user-images.githubusercontent.com/48054808/119470166-a6618200-bd7a-11eb-9f98-58052ce21b14.gif'width='700'>
 </div>
 
-
+**NEW** try out the Lip-Syncing web demo on [Huggingface Spaces](https://huggingface.co/spaces) using [Gradio](https://github.com/gradio-app/gradio):  [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/akhaliq/steerable-nafx)
 
 ## Changelog
 - v2.1.0 (2021.12.8)
