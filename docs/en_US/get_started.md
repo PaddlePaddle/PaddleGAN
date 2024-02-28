@@ -34,7 +34,7 @@ Download the Cityscapes dataset to ~/.cache/ppgan and softlink to PaddleGAN/data
 ```
 python data/download_cyclegan_data.py --name cityscapes
 ```
-## Trianing
+## Training
 
 ### 1. Single Card Training
 
