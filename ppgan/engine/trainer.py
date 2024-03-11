@@ -29,7 +29,7 @@ from ..utils.visual import tensor2img, save_image
 from ..utils.filesystem import makedirs, save, load
 from ..utils.timer import TimeAverager
 from ..utils.profiler import add_profiler_step
-
+from ..utils.loggers import *
 
 class IterLoader:
 
@@ -114,9 +114,20 @@ class Trainer:
             self.is_save_img = validate_cfg['save_img']
 
         self.enable_visualdl = cfg.get('enable_visualdl', False)
+        self.enable_wandb = cfg.get('enable_wandb', False)
+
+        loggers = []
         if self.enable_visualdl:
-            import visualdl
-            self.vdl_logger = visualdl.LogWriter(logdir=cfg.output_dir)
+            self.vdl_logger = VDLLogger(cfg.output_dir)
+            loggers.append(self.vdl_logger)
+        
+        if self.enable_wandb:
+            if "wandb" in cfg:
+                wandb_config = cfg.wandb
+            self.wandb_logger = WandbLogger(config=cfg, **wandb_config)
+            loggers.append(self.wandb_logger)
+        
+        self.loggers = Loggers(loggers)
 
         # build train dataloader
         self.train_dataloader = build_dataloader(cfg.dataset.train)
@@ -320,6 +331,8 @@ class Trainer:
             for metric_name, metric in self.metrics.items():
                 self.logger.info("Metric {}: {:.4f}".format(
                     metric_name, metric.accumulate()))
+            if self.local_rank == 0:
+                self.loggers.log_metrics(self.metrics, prefix="test")
 
     def print_log(self):
         losses = self.model.get_current_losses()
@@ -334,10 +347,11 @@ class Trainer:
 
         message += f'lr: {self.current_learning_rate:.3e} '
 
+        if self.local_rank == 0:
+            self.loggers.log_metrics(losses, step=self.current_iter)
+
         for k, v in losses.items():
             message += '%s: %.3f ' % (k, v)
-            if self.enable_visualdl:
-                self.vdl_logger.add_scalar(k, v, step=self.global_steps)
 
         if hasattr(self, 'step_time'):
             message += 'batch_cost: %.5f sec ' % self.step_time
@@ -391,17 +405,22 @@ class Trainer:
             min_max = (-1., 1.)
 
         image_num = self.cfg.get('image_num', None)
-        if (image_num is None) or (not self.enable_visualdl):
+        if image_num is None:
             image_num = 1
+        
+        if self.local_rank == 0:
+            self.loggers.log_images(
+                visual_results,
+                image_num,
+                min_max,
+                results_dir,
+                dataformats="HWC" if image_num == 1 else "NCHW",
+                step=step if step else self.current_iter
+            )
+
         for label, image in visual_results.items():
             image_numpy = tensor2img(image, min_max, image_num)
-            if (not is_save_image) and self.enable_visualdl:
-                self.vdl_logger.add_image(
-                    results_dir + '/' + label,
-                    image_numpy,
-                    step=step if step else self.global_steps,
-                    dataformats="HWC" if image_num == 1 else "NCHW")
-            else:
+            if is_save_image:
                 if self.cfg.is_train:
                     if self.by_epoch:
                         msg = 'epoch%.3d_' % self.current_epoch
@@ -442,6 +461,7 @@ class Trainer:
             state_dicts[opt_name] = opt.state_dict()
 
         save(state_dicts, save_path)
+        self.loggers.log_model(save_path, aliases=[f"epoch {epoch}", name])
 
         if keep > 0:
             try:
