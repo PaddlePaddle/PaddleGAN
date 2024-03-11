@@ -248,7 +248,7 @@ You can run those projects in the [AI Studio](https://aistudio.baidu.com/aistudi
 
 ## Community
 
-Scan OR Code below to join [PaddleGAN QQ Group：1058398620], you can get offical technical support  here and communicate with other developers/friends. Look forward to your participation!
+Scan OR Code below to join [PaddleGAN QQ Group：1058398620], you can get offcial technical support  here and communicate with other developers/friends. Look forward to your participation!
 
 <div align='center'>
   <img src='./docs/imgs/qq.png'width='250' height='300'/>
