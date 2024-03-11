@@ -342,7 +342,7 @@ class MANet(paddle.nn.Layer):
 
         a_ *= 200
         a = F.softmax(a_, axis=-1)
-        a = a * a_mask
+        a = a * a_mask.astype(a.dtype)
 
         gamma, beta = self.simple_spade(y)
         gamma = gamma.tile([3, 1, 1, 1]) * mask_y
