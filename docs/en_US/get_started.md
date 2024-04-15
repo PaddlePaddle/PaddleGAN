@@ -84,6 +84,8 @@ output_dir
 
 #### Visualize Training
 
+##### VisualDL
+
 [VisualDL](https://github.com/PaddlePaddle/VisualDL) is a visual analysis tool developed for deep learning model development, providing real-time trend visualization of key metrics, sample training intermediate process visualization, network structure visualization, etc. It can visually show the relationship between the effects of super participant models and assist in efficient tuning.
 
 Please make sure that you have installed [VisualDL](https://github.com/PaddlePaddle/VisualDL). Refer to the [VisualDL installation guide](https://github.com/PaddlePaddle/VisualDL/blob/develop/README.md#Installation).
@@ -105,6 +107,29 @@ visualdl --logdir output_dir/CycleGANModel-2020-10-29-09-21/
 ```
 
 Please refer to the [VisualDL User's Guide](https://github.com/PaddlePaddle/VisualDL/blob/develop/docs/components/README.md) for more guidance on how to start and use those visualization functions.
+
+##### Weights & Biases
+
+W&B is a MLOps tool that can be used for experiment tracking, dataset/model versioning, visualizing results and collaborating with colleagues. A W&B logger is integrated directly into PaddleOCR and to use it, first you need to install the `wandb` sdk and login to your wandb account.
+
+```shell
+pip install wandb
+wandb login
+```
+
+If you do not have a wandb account, you can make one [here](https://wandb.ai/site).
+
+To visualize and track your model training add the command `enable_wandb: True` to your config yaml file. To add more arguments to the `WandbLogger` listed [here](./config_doc.md) add the header `wandb` to the yaml file and add the arguments under it - 
+
+![W&B Args](../imgs/wandb_args.png)
+
+These config variables from the yaml file are used to instantiate the `WandbLogger` object with the project name, entity name (the logged in user by default), directory to store metadata (`./wandb` by default) and more. During the training process, the `log_metrics` function is called to log training and evaluation metrics at the training and evaluation steps respectively from the rank 0 process only.
+
+At every model saving step, the WandbLogger, logs the model using the `log_model` function along with relavant metadata and tags to W&B if the `log_model` flag is set as true.
+
+The W&B logger, also supports visualizing images that are generated during the training process. An example W&B dashboard is available [here](https://wandb.ai/manan-goel/paddlegan/runs/24ezjmlz).
+
+P.S. - You can use both VisualDL and Weights & Biases together if you want by just enabling both of them.
 
 #### Resume Training
 
