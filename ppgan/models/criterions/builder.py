@@ -38,5 +38,5 @@ def build_criterion(cfg):
         criterion = CRITERIONS.get(name)(**cfg_)
     except Exception as e:
         cls_ = CRITERIONS.get(name)
-        raise RuntimeError('class {} {}'.format(cls_.__name__, e))
+        raise RuntimeError('class {} {}'.format(cls_.__name__, e)) from e
     return criterion

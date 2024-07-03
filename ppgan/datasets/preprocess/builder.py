@@ -47,7 +47,7 @@ class Compose(object):
                 stack_info = traceback.format_exc()
                 print("fail to perform fuction [{}] with error: "
                       "{} and stack:\n{}".format(func, e, str(stack_info)))
-                raise RuntimeError
+                raise RuntimeError from e
         return datas
 
 

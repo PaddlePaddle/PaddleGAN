@@ -516,9 +516,8 @@ class MemcachedBackend(BaseStorageBackend):
             sys.path.append(sys_path)
         try:
             import mc
-        except ImportError:
-            raise ImportError(
-                'Please install memcached to enable MemcachedBackend.')
+        except ImportError as exc:
+            raise ImportError('Please install memcached to enable MemcachedBackend.') from exc
         self.server_list_cfg = server_list_cfg
         self.client_cfg = client_cfg
         self._client = mc.MemcachedClient.GetInstance(self.server_list_cfg,
@@ -579,8 +578,8 @@ class LmdbBackend(BaseStorageBackend):
                  **kwargs):
         try:
             import lmdb
-        except ImportError:
-            raise ImportError('Please install lmdb to enable LmdbBackend.')
+        except ImportError as exc:
+            raise ImportError('Please install lmdb to enable LmdbBackend.') from exc
         if isinstance(client_keys, str):
             client_keys = [client_keys]
         if isinstance(db_paths, list):

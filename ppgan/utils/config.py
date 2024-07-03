@@ -23,8 +23,8 @@ class AttrDict(dict):
     def __getattr__(self, key):
         try:
             return self[key]
-        except KeyError:
-            raise AttributeError(key)
+        except KeyError as exc:
+            raise AttributeError(key) from exc
 
     def __setattr__(self, key, value):
         if key in self.__dict__:
