@@ -43,6 +43,7 @@ setup(
     url='https://github.com/PaddlePaddle/PaddleGAN',
     download_url='https://github.com/PaddlePaddle/PaddleGAN.git',
     keywords=['gan paddlegan'],
+    python_requires='3.9.20'
     classifiers=[
         'Intended Audience :: Developers', 'Operating System :: OS Independent',
         'Natural Language :: Chinese (Simplified)',

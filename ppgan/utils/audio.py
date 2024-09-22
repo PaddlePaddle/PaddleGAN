@@ -130,8 +130,8 @@ def _linear_to_mel(spectogram):
 def _build_mel_basis():
     assert audio_config.fmax <= audio_config.sample_rate // 2
     librosa = try_import('librosa')
-    return librosa.filters.mel(audio_config.sample_rate,
-                               audio_config.n_fft,
+    return librosa.filters.mel(sr=audio_config.sample_rate,
+                               n_fft=audio_config.n_fft,
                                n_mels=audio_config.num_mels,
                                fmin=audio_config.fmin,
                                fmax=audio_config.fmax)
