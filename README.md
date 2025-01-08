@@ -24,7 +24,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 ## 🚀 Recent Updates
 
 - 👶 **Young or Old？：[StyleGAN V2 Face Editing](./docs/en_US/tutorials/styleganv2editing.md)-Time Machine！** 👨‍🦳
-  - **[Online Toturials](https://aistudio.baidu.com/aistudio/projectdetail/3251280?channelType=0&channel=0)**
+  - **[Online Tutorials](https://aistudio.baidu.com/aistudio/projectdetail/3251280?channelType=0&channel=0)**
   <div align='center'>
     <img src='https://user-images.githubusercontent.com/48054808/146649047-765ec085-0a2c-4c88-9527-744836448651.gif' width='200'/>
   </div>
@@ -36,14 +36,14 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
   </div>
 
 - 😍 **Boy or Girl？：[StyleGAN V2 Face Editing](./docs/en_US/tutorials/styleganv2editing.md)-Changing genders！** 😍
-  - **[Online Toturials](https://aistudio.baidu.com/aistudio/projectdetail/2565277?contributionType=1)**
+  - **[Online Tutorials](https://aistudio.baidu.com/aistudio/projectdetail/2565277?contributionType=1)**
   <div align='center'>
     <img src='https://user-images.githubusercontent.com/48054808/141226707-58bd661e-2102-4fb7-8e18-c794a6b59ee8.gif' width='300'/>
   </div>
 
 - 👩‍🚀 **A Space Odyssey ：[LapStyle](./docs/zh_CN/tutorials/lap_style.md) image translation take you travel around the universe**👨‍🚀
 
-  - **[Online Toturials](https://aistudio.baidu.com/aistudio/projectdetail/2343740?contributionType=1)**
+  - **[Online Tutorials](https://aistudio.baidu.com/aistudio/projectdetail/2343740?contributionType=1)**
 
     <div align='center'>
       <img src='https://user-images.githubusercontent.com/48054808/133392621-9a552c46-841b-4fe4-bb24-7b0cbf86616c.gif' width='250'/>
@@ -53,7 +53,7 @@ GAN-Generative Adversarial Network, was praised by "the Father of Convolutional 
 
 - 🧙‍♂️ **Latest Creative Project：create magic/dynamic profile for your student ID in Hogwarts** 🧙‍♀️
 
-  - **[Online Toturials](https://aistudio.baidu.com/aistudio/projectdetail/2288888?channelType=0&channel=0)**
+  - **[Online Tutorials](https://aistudio.baidu.com/aistudio/projectdetail/2288888?channelType=0&channel=0)**
 
     <div align='center'>
       <img src='https://ai-studio-static-online.cdn.bcebos.com/da1c51844ac048aa8d4fa3151be95215eee75d8bb488409d92ec17285b227c2c' width='200'/>
@@ -248,7 +248,7 @@ You can run those projects in the [AI Studio](https://aistudio.baidu.com/aistudi
 
 ## Community
 
-Scan OR Code below to join [PaddleGAN QQ Group：1058398620], you can get offical technical support  here and communicate with other developers/friends. Look forward to your participation!
+Scan OR Code below to join [PaddleGAN QQ Group：1058398620], you can get official technical support  here and communicate with other developers/friends. Look forward to your participation!
 
 <div align='center'>
   <img src='./docs/imgs/qq.png'width='250' height='300'/>
